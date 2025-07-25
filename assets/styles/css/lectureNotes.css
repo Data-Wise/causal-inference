@@ -1,0 +1,146 @@
+/**
+ * Lecture Notes Styles
+ * ====================
+ * 
+ * This CSS file defines the styles for the lecture notes section of the DOE website.
+ * It includes styles for headings, code blocks, links, and layout.
+ * 
+ * Color Variables:
+ * - primary-color: White (#ffffff)
+ * - secondary-color: Black (#000000)
+ * - accent-color: University of New Mexico Red (#ba0c2f)
+ * - background-color: Light gray (#f8f9fa)
+ * - code-block-bg: Light gray (#e9ecef)
+ * - code-color: Dark gray (#333)
+ * 
+ * Key Components:
+ * - Body: Roboto font, base font size, and line height
+ * - Headings: Montserrat font, accent color
+ * - Code Blocks: Fira Code font, background color, padding, border radius
+ * - Links: Accent color, underline on hover
+ * - Container: Max width, centered content with padding
+ * - Header and Footer: Centered text with margins
+ */
+
+/* Import Google Fonts */
+/* Note: Move the following line to your HTML file within the <head> tag */
+/* <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet"> */
+
+/* Define color variables */
+:root {
+  --primary-color: #ffffff;
+  /* Primary color used for backgrounds and text */
+  --secondary-color: #000000;
+  /* Secondary color used for text and other elements */
+  --accent-color: #ba0c2f;
+  /* Updated accent color to match University of New Mexico */
+  --background-color: #f8f9fa;
+  /* Background color for the body */
+  --code-block-bg: #e9ecef;
+  /* Background color for code blocks */
+  --code-color: #333;
+  /* Text color for code blocks */
+  --font-size-base: 15px;
+  /* Base font size for the body */
+  --font-size-code: 13px;
+  /* Font size for code blocks */
+  --line-height-base: 1.6;
+  /* Line height for the body */
+  --line-height-code: 1.4;
+  /* Line height for code blocks */
+  --padding-code: 0.5em;
+  /* Padding for code blocks */
+  --border-radius: 4px;
+  /* Border radius for elements like buttons and cards */
+}
+
+/* 
+
+Styles for the lecture notes webpage:
+
+- body: Sets the base font, background color, and removes default margin and padding.
+- .banner-image: Styles for banner images to be full width and maintain aspect ratio.
+- h1, h2, h3, h4, h5, h6: Sets font and color for all heading levels.
+- code, pre: Styles for code blocks with specific font, background, padding, and border radius.
+- a: Styles for links with color and hover effect.
+- .container: Centers content with a max width and padding.
+- .header: Centers header text and adds bottom margin.
+- .footer: Centers footer text, adds top margin, and sets a smaller font size with a lighter color.
+*/
+
+body {
+  font-family: 'Roboto', sans-serif;
+  /* Base font for the body */
+  font-size: var(--font-size-base);
+  /* Base font size for the body */
+  line-height: var(--line-height-base);
+  /* Line height for the body */
+  background-color: var(--background-color);
+  /* Background color for the body */
+  color: var(--code-color);
+  /* Text color for code blocks */
+  margin: 1;
+  /* Remove default margin */
+  padding: 1;
+  /* Remove default padding */
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 1em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--accent-color);
+}
+
+/* Set distance between slide title and body */
+h1 {
+  margin-top: 1em;
+  margin-bottom: 2em;
+  color: steelblue;
+}
+
+code,
+pre {
+  font-family: 'Fira Code', monospace;
+  font-size: var(--font-size-code);
+  background-color: var(--code-block-bg);
+  padding: var(--padding-code);
+  border-radius: var(--border-radius);
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3em;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 2em;
+  font-size: 0.9em;
+  color: #666;
+}
