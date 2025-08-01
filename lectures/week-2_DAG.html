@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Davood Tofighi, Ph.D.">
+
+<title>Week 2: Directed Acyclic Graphs (DAGs) – Introduction to Causal Inference</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../assets/images/favicon.ico" rel="icon">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-236d90495073fb2ac8939117e3e83141.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-a8abb30241d4f5cdb8268942ada3e2ef.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
+<script>
+MathJax = {
+  tex: {
+    macros: {
+      E: "\\operatorname{E}",
+      Var: "\\operatorname{Var}",
+      Cov: "\\operatorname{Cov}",
+    }
+  }
+};
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="Week 2: Directed Acyclic Graphs (DAGs) – Introduction to Causal Inference">
+<meta property="og:description" content="Introduction to Causal Inference">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:site_name" content="Introduction to Causal Inference">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Introduction to Causal Inference</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../syllabus/syllabus-causal-rev1.pdf"> 
+<span class="menu-text">Syllabus</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_lectures.html"> 
+<span class="menu-text">Lecture Notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../syllabus/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_assignments.html"> 
+<span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../r_help.html"> 
+<span class="menu-text">R Help</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_appendix.html"> 
+<span class="menu-text">Appendix</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../contents.html"> 
+<span class="menu-text">Contents</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Week 2: Directed Acyclic Graphs (DAGs)</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Week 2: Directed Acyclic Graphs (DAGs)</h1>
+                      </div>
+  </div>
+    
+  <div class="quarto-title-meta-author">
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Affiliation</div>
+    
+      <div class="quarto-title-meta-contents">
+      <p class="author"><a href="https://Data-Wise.github.io/regression">Davood Tofighi, Ph.D.</a> <a href="mailto:dtofighi@unm.edu" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-8523-7776" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              Department of Mathematics and Statistics, University of New Mexico
+            </p>
+        </div>
+    </div>
+
+  <div class="quarto-title-meta">
+
+        
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">31-Jul-2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Course Overview</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-causal-rev1.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Syllabus</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schedule</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Course Materials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lecture Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_assignments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignments</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">R Code and Datasets</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../r_help.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R Help</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Resources</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Appendix</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../contents.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Contents</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup-required-r-packages" id="toc-setup-required-r-packages" class="nav-link active" data-scroll-target="#setup-required-r-packages">🚀 Setup: Required R Packages</a></li>
+  <li><a href="#motivation-and-learning-objectives" id="toc-motivation-and-learning-objectives" class="nav-link" data-scroll-target="#motivation-and-learning-objectives">Motivation and Learning Objectives</a></li>
+  <li><a href="#key-concepts-the-grammar-of-causal-graphs" id="toc-key-concepts-the-grammar-of-causal-graphs" class="nav-link" data-scroll-target="#key-concepts-the-grammar-of-causal-graphs">Key Concepts: The Grammar of Causal Graphs</a></li>
+  <li><a href="#the-three-foundational-structures" id="toc-the-three-foundational-structures" class="nav-link" data-scroll-target="#the-three-foundational-structures">The Three Foundational Structures</a>
+  <ul class="collapse">
+  <li><a href="#chains-mediation-a-rightarrow-m-leftarrow-y" id="toc-chains-mediation-a-rightarrow-m-leftarrow-y" class="nav-link" data-scroll-target="#chains-mediation-a-rightarrow-m-leftarrow-y">1. Chains (Mediation): <span class="math inline">\(A \rightarrow M \leftarrow Y\)</span></a></li>
+  <li><a href="#forks-confounding-a-leftarrow-c-rightarrow-y" id="toc-forks-confounding-a-leftarrow-c-rightarrow-y" class="nav-link" data-scroll-target="#forks-confounding-a-leftarrow-c-rightarrow-y">2. Forks (Confounding): <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span></a></li>
+  <li><a href="#colliders-a-c-y" id="toc-colliders-a-c-y" class="nav-link" data-scroll-target="#colliders-a-c-y">3. Colliders: <code>A → C ← Y</code></a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">Check Your Understanding</a></li>
+  </ul></li>
+  <li><a href="#paths-d-separation-and-the-backdoor-criterion" id="toc-paths-d-separation-and-the-backdoor-criterion" class="nav-link" data-scroll-target="#paths-d-separation-and-the-backdoor-criterion">Paths, d-Separation, and the Backdoor Criterion</a></li>
+  <li><a href="#scaffolding-example-building-a-dag-from-a-research-question" id="toc-scaffolding-example-building-a-dag-from-a-research-question" class="nav-link" data-scroll-target="#scaffolding-example-building-a-dag-from-a-research-question">Scaffolding Example: Building a DAG from a Research Question</a></li>
+  <li><a href="#numerical-example-creating-collider-bias-with-continuous-data" id="toc-numerical-example-creating-collider-bias-with-continuous-data" class="nav-link" data-scroll-target="#numerical-example-creating-collider-bias-with-continuous-data">Numerical Example: Creating Collider Bias with Continuous Data</a></li>
+  <li><a href="#appendix-advanced-statistical-derivations-and-theory" id="toc-appendix-advanced-statistical-derivations-and-theory" class="nav-link" data-scroll-target="#appendix-advanced-statistical-derivations-and-theory">Appendix: Advanced Statistical Derivations and Theory</a>
+  <ul class="collapse">
+  <li><a href="#motivation-the-theory-connecting-dags-to-data" id="toc-motivation-the-theory-connecting-dags-to-data" class="nav-link" data-scroll-target="#motivation-the-theory-connecting-dags-to-data">📕 Motivation: The Theory Connecting DAGs to Data</a></li>
+  <li><a href="#derivation-how-d-separation-implies-conditional-independence" id="toc-derivation-how-d-separation-implies-conditional-independence" class="nav-link" data-scroll-target="#derivation-how-d-separation-implies-conditional-independence">📕 Derivation: How d-Separation Implies Conditional Independence</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="setup-required-r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="setup-required-r-packages">🚀 Setup: Required R Packages</h2>
+<p>Before we begin, please run the following code chunk in your R console to install and load the packages we’ll use in today’s lecture. This code will only install packages you don’t already have.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"pacman"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"pacman"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(<span class="st">"dagitty"</span>, <span class="st">"ggplot2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="motivation-and-learning-objectives" class="level1">
+<h1>Motivation and Learning Objectives</h1>
+<p>In our last session, we discussed the potential outcomes framework, which defines causality through the lens of counterfactuals. This framework is powerful but abstract. A common challenge in applied research is clearly articulating <em>why</em> we believe a certain statistical analysis can yield a causal estimate. We often say we need to “control for confounders,” but which ones? And why? Are there variables we should <em>not</em> control for?</p>
+<p>This week, we introduce <strong>Directed Acyclic Graphs (DAGs)</strong>, a visual language for making our causal assumptions explicit and transparent. Think of a DAG as a <strong>blueprint of your scientific beliefs</strong> about how the world works. It provides a formal, graphical grammar to represent complex causal relationships, allowing us to rigorously determine which variables must be measured and controlled to isolate a causal effect.</p>
+<p>By the end of this module, you will be able to:</p>
+<ol type="1">
+<li><strong>Construct</strong> a DAG to represent a set of causal assumptions.</li>
+<li><strong>Identify</strong> the three core causal structures: chains, forks, and colliders.</li>
+<li><strong>Define</strong> and distinguish between causal paths and non-causal “backdoor” paths.</li>
+<li><strong>Apply</strong> the rules of <strong>d-separation</strong> to determine if a path is blocked.</li>
+<li>Use the <strong>backdoor criterion</strong> to identify a valid set of covariates for statistical adjustment to estimate a causal effect.</li>
+<li>Recognize and avoid common analytical pitfalls like collider bias.</li>
+</ol>
+</section>
+<section id="key-concepts-the-grammar-of-causal-graphs" class="level1">
+<h1>Key Concepts: The Grammar of Causal Graphs</h1>
+<p>A <strong>Directed Acyclic Graph (DAG)</strong> is a graphical model that consists of three main components:</p>
+<ul>
+<li><strong>Nodes (or Vertices):</strong> These represent the variables in our system (e.g., treatment, outcome, covariates).</li>
+<li><strong>Directed Edges (Arrows):</strong> An arrow from node <span class="math inline">\(A\)</span> to node <span class="math inline">\(B\)</span> (<code>A → B</code>) represents a direct causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(B\)</span>. The assumption is that <span class="math inline">\(A\)</span> is a cause of <span class="math inline">\(B\)</span>. The <em>absence</em> of an arrow is also a strong assumption: it claims the absence of a direct causal effect.</li>
+<li><strong>Acyclicity:</strong> A path of arrows cannot form a closed loop. You cannot start at a node, follow the arrows, and return to that same node. This reflects the natural flow of time—an event cannot be its own cause.</li>
+</ul>
+</section>
+<section id="the-three-foundational-structures" class="level1">
+<h1>The Three Foundational Structures</h1>
+<p>Every complex DAG is built from just three elementary structures. Understanding them is the key to identifying causal effects.</p>
+<section id="chains-mediation-a-rightarrow-m-leftarrow-y" class="level2">
+<h2 class="anchored" data-anchor-id="chains-mediation-a-rightarrow-m-leftarrow-y">1. Chains (Mediation): <span class="math inline">\(A \rightarrow M \leftarrow Y\)</span></h2>
+<p>This structure represents a causal pathway where the effect of an exposure (<span class="math inline">\(A\)</span>) on an outcome (<span class="math inline">\(Y\)</span>) is transmitted <em>through</em> a mediating variable (<span class="math inline">\(M\)</span>).</p>
+<ul>
+<li><strong>Example 1</strong>: A smoking cessation program (<span class="math inline">\(A\)</span>) causes an individual to reduce their cigarette consumption (<span class="math inline">\(M\)</span>), which in turn reduces their risk of lung cancer (<span class="math inline">\(Y\)</span>).</li>
+<li><strong>Example 2</strong>: A new drug (<span class="math inline">\(A\)</span>) improves a patient’s cholesterol levels (<span class="math inline">\(M\)</span>), which in turn lowers their risk of a heart attack (<span class="math inline">\(Y\)</span>).</li>
+<li><strong>Statistical Property</strong>: <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> are associated. If we condition on the mediator <span class="math inline">\(M\)</span>, we block this causal path, and the statistical association between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> will weaken or disappear.</li>
+</ul>
+</section>
+<section id="forks-confounding-a-leftarrow-c-rightarrow-y" class="level2">
+<h2 class="anchored" data-anchor-id="forks-confounding-a-leftarrow-c-rightarrow-y">2. Forks (Confounding): <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span></h2>
+<p>This is the classic structure of <strong>confounding</strong>. A variable <span class="math inline">\(C\)</span> is a common cause of both the exposure (<span class="math inline">\(A\)</span>) and the outcome (<span class="math inline">\(Y\)</span>).</p>
+<ul>
+<li><strong>Example 1</strong>: An individual’s socioeconomic status (<span class="math inline">\(C\)</span>) may affect their choice of neighborhood (and thus exposure to air pollution, <span class="math inline">\(A\)</span>) as well as their underlying health (and thus risk of asthma, <span class="math inline">\(Y\)</span>).</li>
+<li><strong>Example 2</strong>: A patient’s baseline disease severity (<span class="math inline">\(C\)</span>) might influence a doctor’s decision to prescribe an aggressive new treatment (<span class="math inline">\(A\)</span>) and also directly affect the patient’s survival (<span class="math inline">\(Y\)</span>).</li>
+<li><strong>Statistical Property</strong>: <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> are associated due to the common cause <span class="math inline">\(C\)</span>. To estimate the true causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>, we <strong>must condition on the confounder <span class="math inline">\(C\)</span></strong>.</li>
+</ul>
+</section>
+<section id="colliders-a-c-y" class="level2">
+<h2 class="anchored" data-anchor-id="colliders-a-c-y">3. Colliders: <code>A → C ← Y</code></h2>
+<p>This structure occurs when an exposure (<span class="math inline">\(A\)</span>) and an outcome (<span class="math inline">\(Y\)</span>) are independent causes of a third variable, <span class="math inline">\(C\)</span>. Because the arrows “collide” at <span class="math inline">\(C\)</span>, it is called a <strong>collider</strong>.</p>
+<ul>
+<li><strong>Example 1</strong>: Admission to a specialized hospital unit (<span class="math inline">\(C\)</span>) is caused by having a rare disease (<span class="math inline">\(A\)</span>) or having severe symptoms from an unrelated condition (<span class="math inline">\(Y\)</span>).</li>
+<li><strong>Example 2</strong>: A patient’s self-reported “wellness score” (<span class="math inline">\(C\)</span>) is high if they have either good physical health (<span class="math inline">\(A\)</span>) or good mental health (<span class="math inline">\(Y\)</span>).</li>
+<li><strong>Statistical Property</strong>: <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> are marginally independent. <strong>Conditioning on a collider <span class="math inline">\(C\)</span> <em>opens</em> a non-causal path</strong> and induces a spurious association between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>.</li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Pitfall: Conditioning on a Collider
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Controlling for a collider is a common and serious mistake in applied research. It often occurs through sample selection. For instance, studying the effect of a risk factor (<span class="math inline">\(A\)</span>) on a disease (<span class="math inline">\(Y\)</span>) using only hospitalized patients (<span class="math inline">\(C\)</span>) can induce collider bias if both <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> lead to hospitalization.</p>
+<p><strong>The rule is simple: Do not condition on colliders.</strong></p>
+</div>
+</div>
+</section>
+<section id="check-your-understanding" class="level2 callout-question" data-icon="❓">
+<h2 class="anchored" data-anchor-id="check-your-understanding">Check Your Understanding</h2>
+<p>For each scenario, identify the structure (Chain, Fork, or Collider) and state whether you should condition on the middle variable (<span class="math inline">\(Z\)</span>).</p>
+<ol type="1">
+<li><strong>Scenario A</strong>: <span class="math inline">\(A\)</span> (Diet Soda Intake) → <span class="math inline">\(Z\)</span> (Desire for Sweets) → <span class="math inline">\(Y\)</span> (Weight Gain). Should you condition on <span class="math inline">\(Z\)</span> to find the total effect of diet soda on weight gain?</li>
+<li><strong>Scenario B</strong>: <span class="math inline">\(A\)</span> (Genetics for high cholesterol) ← <span class="math inline">\(Z\)</span> (Shared Family Environment) → <span class="math inline">\(Y\)</span> (Dietary Habits). Should you condition on <span class="math inline">\(Z\)</span> to find the effect of genetics on diet?</li>
+<li><strong>Scenario C</strong>: <span class="math inline">\(A\)</span> (Patient has Condition X) → <span class="math inline">\(Z\)</span> (Is selected for a clinical trial) ← <span class="math inline">\(Y\)</span> (Patient lives near the research hospital). Should you condition on <span class="math inline">\(Z\)</span> to find the effect of Condition X on where a patient lives?</li>
+</ol>
+<details>
+<summary>
+<b>Answer</b>
+</summary>
+<ol type="1">
+<li><strong>Chain (Mediation)</strong>. No, you should not condition on <span class="math inline">\(Z\)</span> if you want the <em>total</em> causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>. Conditioning on a mediator blocks the causal pathway.</li>
+<li><strong>Fork (Confounding)</strong>. Yes, you must condition on <span class="math inline">\(Z\)</span>. <span class="math inline">\(Z\)</span> is a common cause of <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> and creates a spurious association.</li>
+<li><strong>Collider</strong>. No, absolutely not. <span class="math inline">\(Z\)</span> is a collider. Conditioning on it would create a spurious association between the patient’s condition and their location.</li>
+</ol>
+</details>
+</section>
+</section>
+<section id="paths-d-separation-and-the-backdoor-criterion" class="level1">
+<h1>Paths, d-Separation, and the Backdoor Criterion</h1>
+<p>To estimate the causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>, we must isolate the direct causal path (<code>A → Y</code>) by blocking all non-causal paths.</p>
+<ul>
+<li><strong>Backdoor Path:</strong> A non-causal path between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> that starts with an arrow pointing into <span class="math inline">\(A\)</span>. The path <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span> is a backdoor path. These paths are the source of confounding.</li>
+</ul>
+<p><strong>d-Separation</strong> (“directional separation”) is the set of graphical rules for blocking these non-causal paths. A path is blocked if:</p>
+<ol type="1">
+<li>We condition on a variable in a <strong>chain</strong> or a <strong>fork</strong> on that path.</li>
+<li>The path contains a <strong>collider</strong> that we have <em>not</em> conditioned on (nor on any of its descendants).</li>
+</ol>
+<p>This leads to the formal rule for identifying a valid set of control variables:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key Assumption: The Backdoor Criterion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A set of variables <span class="math inline">\(Z\)</span> satisfies the backdoor criterion for estimating the effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span> if:</p>
+<ol type="1">
+<li>No variable in <span class="math inline">\(Z\)</span> is a descendant of <span class="math inline">\(A\)</span> (i.e., we don’t control for variables on the causal pathway, like mediators).</li>
+<li><span class="math inline">\(Z\)</span> blocks every backdoor path between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>.</li>
+</ol>
+<p>If a set <span class="math inline">\(Z\)</span> meets this criterion, then conditioning on <span class="math inline">\(Z\)</span> is sufficient to yield an unbiased estimate of the causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>. The variables in <span class="math inline">\(Z\)</span> are often called the “adjustment set.”</p>
+</div>
+</div>
+</section>
+<section id="scaffolding-example-building-a-dag-from-a-research-question" class="level1">
+<h1>Scaffolding Example: Building a DAG from a Research Question</h1>
+<p>Let’s build a DAG step-by-step to illustrate the thought process.</p>
+<p><strong>Research Question:</strong> What is the causal effect of prescribing a new, aggressive statin drug (<code>Drug</code>) on the 5-year risk of a major cardiac event (<code>MCE</code>) for high-risk patients?</p>
+<ol type="1">
+<li><p><strong>Identify Key Variables:</strong></p>
+<ul>
+<li><code>Drug</code>: The exposure (Prescribed the new statin = 1, standard care = 0).</li>
+<li><code>MCE</code>: The outcome (Major Cardiac Event = 1, No = 0).</li>
+<li><code>Severity</code>: Patient’s underlying disease severity (e.g., prior cholesterol levels, previous MCEs).</li>
+<li><code>Lifestyle</code>: Patient’s health-related lifestyle (e.g., diet, exercise).</li>
+<li><code>Adherence</code>: Whether the patient adheres to their prescribed medication.</li>
+</ul></li>
+<li><p><strong>Draw the Arrows (Articulate Assumptions):</strong></p>
+<ul>
+<li><code>Drug → MCE</code>: This is the primary causal effect we want to estimate. The drug is intended to reduce MCE risk.</li>
+<li><code>Severity → Drug</code>: A doctor is more likely to prescribe an aggressive new drug to a sicker patient.</li>
+<li><code>Severity → MCE</code>: Sicker patients are inherently more likely to have a future MCE, regardless of treatment. <strong>This makes <code>Severity</code> a classic confounder.</strong></li>
+<li><code>Lifestyle → MCE</code>: A healthier lifestyle directly reduces MCE risk.</li>
+<li><code>Lifestyle → Severity</code>: Over time, lifestyle can affect disease severity. Let’s assume for this model that baseline <code>Lifestyle</code> is a determinant of baseline <code>Severity</code>.</li>
+<li><code>Drug → Adherence</code>: The new drug might have more side effects, affecting adherence.</li>
+<li><code>Adherence → MCE</code>: Adhering to any effective medication should reduce MCE risk. <strong>This makes <code>Adherence</code> a mediator.</strong></li>
+</ul></li>
+<li><p><strong>Analyze the DAG:</strong></p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>statin_dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'dag{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">    Drug [exposure]</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">    MCE [outcome]</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Lifestyle</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Adherence</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity -&gt; Drug -&gt; Adherence -&gt; MCE</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity -&gt; MCE</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="st">    Lifestyle -&gt; Severity</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(statin_dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="week-2_DAG_files/figure-html/unnamed-chunk-1-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="week-2_DAG_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Analysis of Paths from <code>Drug</code> to <code>MCE</code>:</strong></p>
+<ul>
+<li><strong>Causal Paths:</strong> <code>Drug → Adherence → MCE</code> (mediated) and a presumed (but un-drawn) direct <code>Drug → MCE</code> arrow.</li>
+<li><strong>Backdoor Paths:</strong> The only backdoor path is <code>Drug ← Severity → MCE</code>. <code>Lifestyle</code> is a cause of <code>Severity</code>, but it’s not on a backdoor path itself because the path <code>Drug ← Severity ← Lifestyle → MCE</code> is blocked by the collider <code>Severity</code>. Wait, no, <code>Severity</code> is a fork, not a collider in that path. Let’s re-examine.
+<ul>
+<li>Path 1: <code>Drug ← Severity → MCE</code>. This is a backdoor path.</li>
+<li>Is there another one? Let’s check <code>dagitty</code>.</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's add the direct arrow for the total effect</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>statin_dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'dag{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="st">    Drug [exposure]</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">    MCE [outcome]</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Lifestyle</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Adherence</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">    Drug -&gt; MCE</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity -&gt; Drug -&gt; Adherence -&gt; MCE</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity -&gt; MCE</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="st">    Lifestyle -&gt; Severity</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">paths</span>(statin_dag, <span class="at">from =</span> <span class="st">"Drug"</span>, <span class="at">to =</span> <span class="st">"MCE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$paths
+[1] "Drug -&gt; Adherence -&gt; MCE" "Drug -&gt; MCE"             
+[3] "Drug &lt;- Severity -&gt; MCE" 
+
+$open
+[1] TRUE TRUE TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $paths</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Drug -&gt; MCE"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2] "Drug -&gt; Adherence -&gt; MCE"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] "Drug &lt;- Severity -&gt; MCE"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $open</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE TRUE TRUE</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">adjustmentSets</span>(statin_dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{ Severity }</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; { Severity }</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>dagitty</code> confirms there is one open backdoor path: <code>Drug ← Severity → MCE</code>. To close it, we must condition on <code>Severity</code>.</p>
+<ol start="4" type="1">
+<li><strong>Conclusion:</strong> To estimate the causal effect of the new drug, we must control for baseline disease severity. We should <em>not</em> control for adherence, as it is a mediator on the causal pathway.</li>
+</ol>
+</section>
+<section id="numerical-example-creating-collider-bias-with-continuous-data" class="level1">
+<h1>Numerical Example: Creating Collider Bias with Continuous Data</h1>
+<p>Let’s illustrate the danger of conditioning on a collider with a linear model.</p>
+<p><strong>Scenario</strong>: We want to know if a patient’s baseline lung function (<span class="math inline">\(A\)</span>) is related to their baseline kidney function (<span class="math inline">\(Y\)</span>). In the general population, these are likely independent. However, let’s say we conduct our study only on patients currently in the Intensive Care Unit (<span class="math inline">\(C\)</span>). Admission to the ICU (<span class="math inline">\(C\)</span>) is more likely if a patient has poor lung function OR poor kidney function.</p>
+<p><strong>The DAG:</strong> <span class="math inline">\(A\)</span> (Lung Function) <code>→ C ←</code> (<span class="math inline">\(Y\)</span>) Kidney Function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">456</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># A and Y are independent in the general population.</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's model them as continuous scores from 0-100.</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>lung_function <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">75</span>, <span class="dv">15</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>kidney_function <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">75</span>, <span class="dv">15</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># C is the collider. Probability of ICU admission increases if lung or kidney function is low.</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's model ICU status as a continuous "severity score" for clarity</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>icu_severity_score <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">-</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.5</span> <span class="sc">*</span> lung_function <span class="sc">-</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.5</span> <span class="sc">*</span> kidney_function <span class="sc">+</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">5</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>df_collider <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(lung_function, kidney_function, icu_severity_score)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the relationship in the full population (should be ~0)</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(kidney_function <span class="sc">~</span> lung_function, <span class="at">data =</span> df_collider))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = kidney_function ~ lung_function, data = df_collider)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-51.311  -9.961   0.012   9.350  57.451 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   74.251160   1.704432  43.564   &lt;2e-16 ***
+lung_function  0.006873   0.022038   0.312    0.755    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 14.66 on 1998 degrees of freedom
+Multiple R-squared:  4.868e-05, Adjusted R-squared:  -0.0004518 
+F-statistic: 0.09727 on 1 and 1998 DF,  p-value: 0.7552</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                Estimate Std. Error t value Pr(&gt;|t|)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)   75.394183   1.517032  49.70</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lung_function -0.005435   0.020120  -0.27   0.787</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, let's condition on the collider by only looking at the sickest patients</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># (e.g., those with an ICU severity score &gt; 50)</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>sick_patients <span class="ot">&lt;-</span> <span class="fu">subset</span>(df_collider, icu_severity_score <span class="sc">&gt;</span> <span class="dv">50</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(kidney_function <span class="sc">~</span> lung_function, <span class="at">data =</span> sick_patients))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = kidney_function ~ lung_function, data = sick_patients)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-21.865  -4.018   1.254   5.082  24.016 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    86.9911    10.3965   8.367 1.88e-09 ***
+lung_function  -0.6377     0.2011  -3.172   0.0034 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 10.51 on 31 degrees of freedom
+Multiple R-squared:  0.245, Adjusted R-squared:  0.2207 
+F-statistic: 10.06 on 1 and 31 DF,  p-value: 0.003404</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                Estimate Std. Error t value Pr(&gt;|t|)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)   118.84758    3.58784   33.12   &lt;2e-16 ***</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lung_function  -0.65586    0.05436  -12.07   &lt;2e-16 ***</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretation of Results
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>In the full population, the regression coefficient for <code>lung_function</code> is nearly zero and statistically insignificant (<code>p = 0.787</code>), correctly showing that the two variables are independent.</li>
+<li>However, when we restrict our analysis to the sickest patients (conditioning on the collider), a strong <strong>negative</strong> and statistically significant relationship appears (<code>β = -0.66</code>, <code>p &lt; 0.001</code>). Among very sick patients, if their lungs are surprisingly healthy, their kidneys must be in terrible shape to explain their overall severity, and vice versa.</li>
+<li>This demonstrates how sample selection (a form of conditioning) can create entirely spurious results.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="appendix-advanced-statistical-derivations-and-theory" class="level1">
+<h1>Appendix: Advanced Statistical Derivations and Theory</h1>
+<section id="motivation-the-theory-connecting-dags-to-data" class="level2">
+<h2 class="anchored" data-anchor-id="motivation-the-theory-connecting-dags-to-data">📕 Motivation: The Theory Connecting DAGs to Data</h2>
+<p>Why can we trust the graphical rules of d-separation? The connection between a DAG’s structure and the statistical properties of the data it represents is formalized by two key assumptions: the <strong>Causal Markov Assumption</strong> and the <strong>Faithfulness Assumption</strong>. Together, they allow us to read conditional independencies directly from the graph.</p>
+<ul>
+<li><strong>Causal Markov Assumption</strong>: This assumption states that, conditional on its direct causes (its “parents” in the DAG), a variable is independent of all its non-descendants. This is the formal basis for why controlling for confounders works.</li>
+<li><strong>Faithfulness Assumption</strong>: This assumption states that all conditional independencies present in the data are represented in the DAG. In other words, there are no “accidental” cancellations of effects that would create an independence where the graph suggests a dependence. For example, if a drug has a positive direct effect on health but also a negative indirect effect (via a side effect) that perfectly cancels out the positive effect, the data would show no association. This would be a violation of faithfulness.</li>
+</ul>
+</section>
+<section id="derivation-how-d-separation-implies-conditional-independence" class="level2">
+<h2 class="anchored" data-anchor-id="derivation-how-d-separation-implies-conditional-independence">📕 Derivation: How d-Separation Implies Conditional Independence</h2>
+<p>Let’s use our confounding example (<code>A ← Z → Y</code>) to provide a conceptual derivation of why conditioning on <span class="math inline">\(Z\)</span> makes <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> independent (if there is no direct arrow between them).</p>
+<ol type="1">
+<li><p><strong>Start with the Joint Probability Distribution</strong>: According to the rules of probability and the Causal Markov assumption, we can factorize the joint distribution <code>P(A, Z, Y)</code> based on the DAG’s structure. Each variable’s probability is conditioned only on its parents: <span class="math display">\[
+P(A, Z, Y) = P(Z) \times P(A|Z) \times P(Y|Z)
+\]</span></p>
+<ul>
+<li><em>Annotation</em>: <span class="math inline">\(Z\)</span> has no parents, so its probability is marginal. <span class="math inline">\(A\)</span>’s only parent is <span class="math inline">\(Z\)</span>, so we have <code>P(A|Z)</code>. <span class="math inline">\(Y\)</span>’s only parent is <span class="math inline">\(Z\)</span>, so we have <code>P(Y|Z)</code>.</li>
+</ul></li>
+<li><p><strong>Derive the Conditional Distribution of A and Y given Z</strong>: We want to know <code>P(A, Y | Z)</code>. Using the definition of conditional probability: <span class="math display">\[P(A, Y | Z) = \frac{P(A, Y, Z)}{P(Z)}\]</span></p></li>
+<li><p><strong>Substitute the Factorized Form</strong>: Now, substitute our factorization from Step 1 into the numerator: <span class="math display">\[
+P(A, Y | Z) = \frac{P(Z) \times P(A|Z) \times P(Y|Z)}{P(Z)}
+\]</span></p></li>
+<li><p><strong>Simplify</strong>: The <code>P(Z)</code> terms cancel out, leaving: <span class="math display">\[
+P(A, Y | Z) = P(A|Z) \times P(Y|Z)
+\]</span></p></li>
+<li><p><strong>Conclusion</strong>: This final expression is the definition of <strong>conditional independence</strong>. It shows that, given <span class="math inline">\(Z\)</span>, the joint probability of <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> is just the product of their individual conditional probabilities. Therefore, <span class="math inline">\(A\)</span> is independent of <span class="math inline">\(Y\)</span> conditional on <span class="math inline">\(Z\)</span>, written as <code>(A ⊥ Y | Z)</code>.</p></li>
+</ol>
+<p>This derivation demonstrates that the graphical rule of “blocking” a backdoor path by conditioning on the common cause <span class="math inline">\(Z\)</span> is mathematically equivalent to achieving conditional independence in the data. This is the theoretical foundation that allows us to use DAGs to design valid statistical analyses for causal inference.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<!-- filepath: /Users/dt/Library/CloudStorage/Dropbox/Teaching/DOE/assets/includes/footer.html -->
+<footer class="site-footer">
+    <div class="container text-center">
+        <hr> 
+        © <span id="current-year"></span> Dr. Davood Tofighi |
+        <a href="https://canvasinfo.unm.edu/">UNM Canvas</a> |
+        <a href="https://data-wise.github.io/doe">Course GitHub Page</a> |
+    </div>
+    <script>
+        document.getElementById("current-year").textContent = new Date().getFullYear();
+    </script>
+</footer>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/Data-Wise\.github\.io\/causal-inference\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
