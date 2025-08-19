@@ -495,14 +495,14 @@
     "href": "syllabus/syllabus-final.html",
     "title": "STAT 579: Applied Causal Inference",
     "section": "",
-    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM\n\n\nLocation\nScience Math Learning Center (SMLC) 120"
+    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM"
   },
   {
     "objectID": "syllabus/syllabus-final.html#instructor-logistics",
     "href": "syllabus/syllabus-final.html#instructor-logistics",
     "title": "STAT 579: Applied Causal Inference",
     "section": "",
-    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM\n\n\nLocation\nScience Math Learning Center (SMLC) 120"
+    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM"
   },
   {
     "objectID": "syllabus/syllabus-final.html#course-overview",
@@ -1019,13 +1019,13 @@
   {
     "objectID": "home_readings.html",
     "href": "home_readings.html",
-    "title": "STAT 579 • Weekly Readings & Critique Hub",
+    "title": "Weekly Readings",
     "section": "",
     "text": "Applied Causal Inference • Fall 2025\nWelcome! This is your one‑stop index for weekly papers, critique guidelines (“goodies”), reusable templates, and submission logistics. Everything below is designed to keep us assumption‑centric, identification‑first, and replication‑ready.",
     "crumbs": [
       "Home",
       "Course Materials",
-      "STAT 579 • Weekly Readings & Critique Hub"
+      "Weekly Readings"
     ]
   },
   {
@@ -1194,109 +1194,109 @@
   {
     "objectID": "home_readings.html#quick-navigation",
     "href": "home_readings.html#quick-navigation",
-    "title": "STAT 579 • Weekly Readings & Critique Hub",
+    "title": "Weekly Readings",
     "section": "Quick Navigation",
     "text": "Quick Navigation\n\nSchedule at a Glance\nCritique Deliverables & Deadlines\nHow to Write a Great Critique\nTemplates & Checklists\nStarter R Snippets\nEvaluation Rubric\nHelpful Resources\nSubmission Logistics",
     "crumbs": [
       "Home",
       "Course Materials",
-      "STAT 579 • Weekly Readings & Critique Hub"
+      "Weekly Readings"
     ]
   },
   {
     "objectID": "home_readings.html#schedule-at-a-glance",
     "href": "home_readings.html#schedule-at-a-glance",
-    "title": "STAT 579 • Weekly Readings & Critique Hub",
+    "title": "Weekly Readings",
     "section": "Schedule at a Glance",
     "text": "Schedule at a Glance\n\nWeek 1 — Instructor demo (no submissions)\nWeek 2 — DAGs & Assumption Transparency Pearl (1995) Biometrika. Focus: d‑separation, backdoor sets, DAG as data‑generating story.\nWeek 3 — Exchangeability, Positivity, Consistency Rubin (1974) JEP. Focus: \\(Y^1,Y^0\\), SUTVA, exchangeability vs. design.\nWeek 4 — Confounding, Selection, Measurement Bias Hernán, Hernández‑Díaz, & Robins (2004) Epidemiology. Focus: collider/selection bias, loss to follow‑up as conditioning.\nWeek 5 — Propensity Scores Rosenbaum & Rubin (1983) Biometrika. Focus: balancing score, overlap, matching/stratification/weighting.\nWeek 6 — IPTW, MSMs, DR Robins, Hernán, & Brumback (2000) Epidemiology. Focus: time‑varying confounding, stabilized weights, pseudo‑populations.\nWeek 7 — G‑computation Snowden, Rose, & Mortimer (2011) AJE. Focus: standardization via outcome modeling vs. IPTW.\nWeek 8 — Instrumental Variables Angrist, Imbens, & Rubin (1996) JASA. Focus: IV assumptions, LATE, monotonicity, principal strata.\nWeek 9 — Effect Modification Yusuf et al. (1991) JAMA. Focus: pre‑specification, multiplicity, tests of interaction.\nWeek 10 — Mediation I (Foundations) Pearl (2014) Psychological Methods. Focus: CDE vs. NDE/NIE, mediation formulae and assumptions.\nWeek 11 — Mediation II & Principal Stratification Imai, Keele, & Tingley (2010) Psychological Methods. Focus: sequential ignorability, software, sensitivity.\nWeek 12 — Sensitivity Analysis VanderWeele & Ding (2017) Ann Intern Med. Focus: E‑value interpretation/limits.\nWeek 13 — Target Trial Emulation Hernán & Robins (2016) AJE. Focus: 7 components, time zero, immortal time, assignment procedure.",
     "crumbs": [
       "Home",
       "Course Materials",
-      "STAT 579 • Weekly Readings & Critique Hub"
+      "Weekly Readings"
     ]
   },
   {
     "objectID": "home_readings.html#critique-deliverables-deadlines",
     "href": "home_readings.html#critique-deliverables-deadlines",
-    "title": "STAT 579 • Weekly Readings & Critique Hub",
+    "title": "Weekly Readings",
     "section": "Critique Deliverables & Deadlines",
     "text": "Critique Deliverables & Deadlines\n\nWhat to submit each week (Weeks 2–13):\n\n2‑page critique (max 900 words, not counting figures/refs)\nOne-page DAG with minimal sufficient adjustment set(s) highlighted\nAssumption log (bullet list) + robustness plan (≤10 bullets)\nReproducible appendix (R code or pseudocode) for at least one key diagnostic (balance, overlap, weight diagnostics, or a small sensitivity calc)\n\nWhen: Mondays 11:59 pm MT (the night before our Tue class)\nWhere: Canvas → “Weekly Paper Critique — Week X”\nCollaboration: Discuss ideas freely; write/code your own submission.",
     "crumbs": [
       "Home",
       "Course Materials",
-      "STAT 579 • Weekly Readings & Critique Hub"
+      "Weekly Readings"
     ]
   },
   {
     "objectID": "home_readings.html#how-to-write-a-great-critique",
     "href": "home_readings.html#how-to-write-a-great-critique",
-    "title": "STAT 579 • Weekly Readings & Critique Hub",
+    "title": "Weekly Readings",
     "section": "How to Write a Great Critique",
     "text": "How to Write a Great Critique\nUse our Assumption‑Centric 4‑Step:\n\nStudy Design → Causal Question\n\nState the estimand (e.g., \\(ATE\\), \\(ATT\\), \\(LATE\\), NDE/NIE).\nWrite the target trial version in one paragraph (eligibility, treatment strategies, time zero, outcome, follow‑up, causal contrast).\n\nMethod Selection → Identification\n\nDraw the DAG; list minimal backdoor sets (if applicable).\nIf IV/mediation/MSM, write assumptions explicitly (relevance, independence, exclusion; sequential ignorability; positivity; consistency; no interference).\nNote any positivity risks (sparse cells/extreme propensities).\n\nAssumption Validation → Diagnostics\n\nExchangeability: covariate balance & overlap plots; placebo/negative controls (if available).\nPositivity: common support figures, weight distribution summaries (mean/sd/skew, max).\nModeling: mis‑specification checks, flexible learners where helpful.\nSensitivity: E‑values; IV falsification tests; Rosenbaum bounds; alternative specs.\n\nInterpretation → Uncertainty Communication\n\nInterpret the causal estimand with audience‑appropriate language; flag scope (population, time).\nState where violations would flip conclusions.\nOffer at least one alternative method that could triangulate the main claim.",
     "crumbs": [
       "Home",
       "Course Materials",
-      "STAT 579 • Weekly Readings & Critique Hub"
+      "Weekly Readings"
     ]
   },
   {
     "objectID": "home_readings.html#templates-checklists",
     "href": "home_readings.html#templates-checklists",
-    "title": "STAT 579 • Weekly Readings & Critique Hub",
+    "title": "Weekly Readings",
     "section": "Templates & Checklists",
     "text": "Templates & Checklists\n\nA) 2‑Page Critique Template (copy/paste)\n\nTitle: Week X — [Paper Title] — STAT 579 Critique\nCausal Question & Estimand (≤120 words): …\nTarget Trial (≤120 words): Eligibility; treatment strategies; time zero; outcome; follow‑up; causal contrast.\nDAG (figure): include nodes and arrows; highlight chosen adjustment set.\nIdentification Plan (≤150 words): backdoor/IV/mediation/MSM rationale.\nDiagnostics (bullets): balance/overlap; weight quality; model checks.\nSensitivity (bullets): E‑value or alternative; what violation would overturn results.\nInterpretation (≤120 words): estimand in plain language; limitations; - generalizability.\nRepro Appendix: code or pseudocode for one diagnostic.\n\n\n\nB) DAG Checklist (quick yes/no)\n\nAll pre‑treatment common causes included?\nNo conditioning on colliders or their descendants?\nIf time‑varying confounders exist, did you avoid “adjusting them away” in outcome models (favor MSM/IPTW)?\nIs the minimal sufficient set clearly highlighted?\nAre measurement error nodes (if suspected) represented?\n\n\n\nC) Positivity & Weight Quality\n\nReport: % with \\(\\hat e(X)\\in[0.1,0.9]\\); histogram/density; stabilized weight mean≈1, sd small, max reasonable (&lt;10 suggested for weekly demos).\nIf violations: restrict support, coarsen covariates, or switch method (e.g., g‑comp/TMLE).\n\n\n\nD) Sensitivity Menu (pick ≥1)\n\nE‑value for point & CI limit\nRosenbaum bounds (binary outcomes)\nPlacebo/negative control (if plausible)\nIV falsification (balance on observables; over‑id tests with caution)\nSequential ignorability stress tests (mediation)",
     "crumbs": [
       "Home",
       "Course Materials",
-      "STAT 579 • Weekly Readings & Critique Hub"
+      "Weekly Readings"
     ]
   },
   {
     "objectID": "home_readings.html#starter-r-snippets",
     "href": "home_readings.html#starter-r-snippets",
-    "title": "STAT 579 • Weekly Readings & Critique Hub",
+    "title": "Weekly Readings",
     "section": "Starter R Snippets",
     "text": "Starter R Snippets\nPropensity, Overlap, and Balance\nlibrary(WeightIt); library(cobalt)\nw &lt;- weightit(A ~ X1+X2+X3, data=df, method=\"ps\", estimand=\"ATE\")\nlove.plot(bal.tab(w), thresholds=c(m=.1))\nsummary(w$weights)  # check mean≈1 (if stabilized), max, skew\nIPTW for MSM (stabilized)\nnum &lt;- glm(A ~ L0, family=binomial, data=df)      # numerator model (coarse)\nden &lt;- glm(A ~ L0+L1, family=binomial, data=df)   # denominator model\nsw  &lt;- predict(num, type=\"response\")/predict(den, type=\"response\")\nmsm &lt;- glm(Y ~ A, weights=sw, data=df)            # simple MSM\nG‑computation (parametric)\nmY &lt;- glm(Y ~ A + X1 + X2, family=gaussian, data=df)\nmu1 &lt;- mean(predict(mY, newdata=transform(df, A=1), type=\"response\"))\nmu0 &lt;- mean(predict(mY, newdata=transform(df, A=0), type=\"response\"))\nATE &lt;- mu1 - mu0\nMediation (NDE/NIE via mediation)\nlibrary(mediation)\nmM &lt;- glm(M ~ A + X, family=binomial, data=df)\nmY &lt;- glm(Y ~ A + M + X, family=binomial, data=df)\nmed &lt;- mediate(mM, mY, treat=\"A\", mediator=\"M\", sims=1000)\nsummary(med)  # NDE/NIE under sequential ignorability\nE‑value (risk ratio)\nlibrary(EValue)\nevalue.RR(est=2.5, lo=1.8, hi=3.4)",
     "crumbs": [
       "Home",
       "Course Materials",
-      "STAT 579 • Weekly Readings & Critique Hub"
+      "Weekly Readings"
     ]
   },
   {
     "objectID": "home_readings.html#evaluation-rubric",
     "href": "home_readings.html#evaluation-rubric",
-    "title": "STAT 579 • Weekly Readings & Critique Hub",
+    "title": "Weekly Readings",
     "section": "Evaluation Rubric",
     "text": "Evaluation Rubric\n\n\n\n\n\n\n\n\nDimension\nPoints\nWhat “Excellent” Looks Like\n\n\n\n\nCausal question & estimand clarity\n10\nPrecise estimand; clean target‑trial description\n\n\nDAG & identification\n25\nCorrect minimal set; no collider adjustment; right method for the structure\n\n\nDiagnostics\n20\nBalance, overlap, weight quality, model checks shown clearly\n\n\nSensitivity\n15\nAt least one appropriate sensitivity tool; interprets what strength is needed to overturn\n\n\nInterpretation & uncertainty\n15\nPlain‑language, scope noted; limitations tied to assumptions\n\n\nReproducibility appendix\n10\nRuns or is plausibly runnable; shows key diagnostic\n\n\nWriting & figures\n5\nClear, concise, well‑labeled\n\n\n\nLate policy: −10% per day (course policy).",
     "crumbs": [
       "Home",
       "Course Materials",
-      "STAT 579 • Weekly Readings & Critique Hub"
+      "Weekly Readings"
     ]
   },
   {
     "objectID": "home_readings.html#helpful-resources",
     "href": "home_readings.html#helpful-resources",
-    "title": "STAT 579 • Weekly Readings & Critique Hub",
+    "title": "Weekly Readings",
     "section": "Helpful Resources",
     "text": "Helpful Resources\n\nOpen textbooks (free):\n\nHernán & Robins, What If — target trials, MSM/IPTW, g‑methods\nNeal, Introduction to Causal Inference — DAGs, backdoor, IPW/DR\nPearl, Glymour, & Jewell, Causal Inference in Statistics: A Primer — backdoor/frontdoor, SCM intuition\nVanderWeele, Explanation in Causal Inference — mediation & interaction (foundational)\nWager, STATS 361 Notes — DR/AIPW, IV/LATE, heterogeneity\n\nR packages: dagitty, ggdag, MatchIt, WeightIt, cobalt, ipw, twang, ivreg, mediation, EValue, tmle3\nDiagnostic expectations per topic:\n\nPS/Matching (Week 5): SMDs &lt; 0.1; overlap plots; matched sample description\nMSM/IPTW (Week 6): stabilized weight moments; truncation sensitivity\nG‑comp (Week 7): flexible outcome model; residual checks; alt link funcs\nIV (Week 8): 3 assumptions stated; first‑stage strength; monotonicity rationale; LATE interpretation\nMediation (Weeks 10–11): explicit sequential ignorability; cross‑world cautions; sensitivity param(s)\nSensitivity (Week 12): E‑value prose for non‑statisticians; limits acknowledged\nTarget trial (Week 13): 7 components table; immortal time avoidance; assignment emulation plan",
     "crumbs": [
       "Home",
       "Course Materials",
-      "STAT 579 • Weekly Readings & Critique Hub"
+      "Weekly Readings"
     ]
   },
   {
     "objectID": "home_readings.html#submission-logistics",
     "href": "home_readings.html#submission-logistics",
-    "title": "STAT 579 • Weekly Readings & Critique Hub",
+    "title": "Weekly Readings",
     "section": "Submission Logistics",
     "text": "Submission Logistics\n\nFile names: Wk##_Lastname_Firstname.pdf (+ optional .R or .qmd)\nFigures: readable in grayscale; include captions; axes labeled\nReproducibility: seed set; simulated data OK but mark clearly; no PHI/sensitive data\n\n\nNext Development Phase Based on this index page, I recommend: 1. Publish a “Critique Gallery” with anonymized exemplary submissions to reinforce Assumption Validation and model diagnostics. 2. Add a mini “Method‑of‑the‑Week” card (e.g., IPTW pitfalls, IV monotonicity) to address the key assumption for that method with a 6‑line checklist. 3. Release a tiny Quarto template that pre‑loads the critique skeleton, DAG chunk, and R boilerplate to develop reproducible reporting skills. Rationale: Exemplars + just‑in‑time assumption prompts + turnkey reproducibility directly support our course outcomes on transparency, identification‑first thinking, and robust, defensible causal claims.",
     "crumbs": [
       "Home",
       "Course Materials",
-      "STAT 579 • Weekly Readings & Critique Hub"
+      "Weekly Readings"
     ]
   },
   {
