@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>STAT 440/540: Suggested Weekly Assignments (with Graduate Problems) – Introduction to Causal Inference</title>
+<title>Assignments – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -169,39 +169,9 @@ MathJax = {
   };
 </script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="assets/styles/css/home.css">
-<meta property="og:title" content="STAT 440/540: Suggested Weekly Assignments (with Graduate Problems) – Introduction to Causal Inference">
-<meta property="og:description" content="Introduction to Causal Inference">
+<meta property="og:title" content="Assignments – Introduction to Causal Inference">
 <meta property="og:image" content="https://Data-Wise.github.io/causal-inference/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
 </head>
@@ -390,11 +360,11 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./syllabus/syllabus-final.pdf"> 
+    <a class="nav-link" href="./syllabus/syllabus-final.html"> 
 <span class="menu-text">Syllabus</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./syllabus/schedule.pdf"> 
+    <a class="nav-link" href="./syllabus/schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
@@ -408,7 +378,7 @@ window.Quarto = {
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./home_readings.html"> 
-<span class="menu-text">Weekly Readings</span></a>
+<span class="menu-text">STAT 579 • Weekly Readings &amp; Critique Hub</span></a>
   </li>  
   <li class="nav-item">
     <span class="nav-link">
@@ -444,7 +414,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">STAT 440/540: Suggested Weekly Assignments (with Graduate Problems)</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Assignments</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -454,7 +424,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">STAT 440/540: Suggested Weekly Assignments (with Graduate Problems)</h1>
+      <h1 class="title">Assignments</h1>
                       </div>
   </div>
     
@@ -478,7 +448,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Jul-12-2025</p>
+        <p class="date">Aug-19-2025</p>
       </div>
     </div>
     
@@ -514,7 +484,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/schedule.pdf" class="sidebar-item-text sidebar-link">
+  <a href="./syllabus/schedule.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Schedule</span></a>
   </div>
 </li>
@@ -541,7 +511,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./home_readings.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Weekly Readings</span></a>
+ <span class="menu-text">STAT 579 • Weekly Readings &amp; Critique Hub</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -583,34 +553,8 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
-  <ul class="collapse">
-  <li><a href="#assignment-policies" id="toc-assignment-policies" class="nav-link" data-scroll-target="#assignment-policies">Assignment Policies</a></li>
-  </ul></li>
-  <li><a href="#weekly-problem-sets" id="toc-weekly-problem-sets" class="nav-link" data-scroll-target="#weekly-problem-sets">Weekly Problem Sets</a>
-  <ul class="collapse">
-  <li><a href="#week-1-introduction-to-regression" id="toc-week-1-introduction-to-regression" class="nav-link" data-scroll-target="#week-1-introduction-to-regression">Week 1: Introduction to Regression</a></li>
-  <li><a href="#week-2-simple-linear-regression" id="toc-week-2-simple-linear-regression" class="nav-link" data-scroll-target="#week-2-simple-linear-regression">Week 2: Simple Linear Regression</a></li>
-  <li><a href="#week-3-inference-in-regression" id="toc-week-3-inference-in-regression" class="nav-link" data-scroll-target="#week-3-inference-in-regression">Week 3: Inference in Regression</a></li>
-  <li><a href="#week-4-diagnostics-remedial-measures" id="toc-week-4-diagnostics-remedial-measures" class="nav-link" data-scroll-target="#week-4-diagnostics-remedial-measures">Week 4: Diagnostics &amp; Remedial Measures</a></li>
-  <li><a href="#week-5-midterm-exam-1" id="toc-week-5-midterm-exam-1" class="nav-link" data-scroll-target="#week-5-midterm-exam-1">Week 5: Midterm Exam 1</a></li>
-  <li><a href="#week-6-simultaneous-inference" id="toc-week-6-simultaneous-inference" class="nav-link" data-scroll-target="#week-6-simultaneous-inference">Week 6: Simultaneous Inference</a></li>
-  <li><a href="#week-7-matrix-approach-to-slr" id="toc-week-7-matrix-approach-to-slr" class="nav-link" data-scroll-target="#week-7-matrix-approach-to-slr">Week 7: Matrix Approach to SLR</a></li>
-  <li><a href="#week-8-multiple-linear-regression-i" id="toc-week-8-multiple-linear-regression-i" class="nav-link" data-scroll-target="#week-8-multiple-linear-regression-i">Week 8: Multiple Linear Regression I</a></li>
-  <li><a href="#week-9-multiple-linear-regression-ii" id="toc-week-9-multiple-linear-regression-ii" class="nav-link" data-scroll-target="#week-9-multiple-linear-regression-ii">Week 9: Multiple Linear Regression II</a></li>
-  <li><a href="#week-10-midterm-exam-2" id="toc-week-10-midterm-exam-2" class="nav-link" data-scroll-target="#week-10-midterm-exam-2">Week 10: Midterm Exam 2</a></li>
-  <li><a href="#week-11-12-interaction-polynomial-qualitative-models" id="toc-week-11-12-interaction-polynomial-qualitative-models" class="nav-link" data-scroll-target="#week-11-12-interaction-polynomial-qualitative-models">Week 11 &amp; 12: Interaction, Polynomial, &amp; Qualitative Models</a></li>
-  <li><a href="#week-13-model-selection-and-validation" id="toc-week-13-model-selection-and-validation" class="nav-link" data-scroll-target="#week-13-model-selection-and-validation">Week 13: Model Selection and Validation</a></li>
-  <li><a href="#week-14-15-advanced-diagnostics-remedial-measures" id="toc-week-14-15-advanced-diagnostics-remedial-measures" class="nav-link" data-scroll-target="#week-14-15-advanced-diagnostics-remedial-measures">Week 14 &amp; 15: Advanced Diagnostics &amp; Remedial Measures</a></li>
-  <li><a href="#week-16-final-review-course-project" id="toc-week-16-final-review-course-project" class="nav-link" data-scroll-target="#week-16-final-review-course-project">Week 16: Final Review &amp; Course Project</a></li>
-  </ul></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/assignment schedule.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -620,228 +564,8 @@ window.Quarto = {
 
 
 
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
-<p>This document outlines the suggested weekly assignments for STAT 440/540: Regression Analysis. The problems are from the required textbook, <em>Applied Linear Regression Models, 4th ed.</em> by Kutner, Nachtsheim, and Neter (2004).</p>
-<p>The assignments are structured to provide a solid foundation for all students, with additional theoretical and applied problems for graduate students enrolled in STAT 540 to ensure greater depth.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This list is a guide. The official and final list of problems, along with due dates and submission guidelines, will be posted on <strong>Canvas</strong>. Please refer to Canvas for all definitive assignment information.</p>
-</div>
-</div>
-<section id="assignment-policies" class="level2">
-<h2 class="anchored" data-anchor-id="assignment-policies">Assignment Policies</h2>
-<ul>
-<li><strong>Submission:</strong> All assignments must be submitted via Canvas.</li>
-<li><strong>Grade Weight:</strong> Assignments account for <strong>30%</strong> of the final grade.</li>
-<li><strong>Late Submissions:</strong> A <strong>10% penalty per day</strong> is applied for a maximum of three days. Assignments will not be accepted after this period.</li>
-</ul>
-<hr>
-</section>
-</section>
-<section id="weekly-problem-sets" class="level1">
-<h1>Weekly Problem Sets</h1>
-<section id="week-1-introduction-to-regression" class="level2">
-<h2 class="anchored" data-anchor-id="week-1-introduction-to-regression">Week 1: Introduction to Regression</h2>
-<p><strong>Topics:</strong> Review of probability/stats; history and applications of regression. <strong>Reading:</strong> Kutner et al., Ch. 1.1, 1.2, App. A, B</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 1.3, 1.5, 1.8, 1.15</li>
-<li><strong>Projects:</strong> 1.19, 1.21</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> A.3, B.4 (from Appendix)</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-2-simple-linear-regression" class="level2">
-<h2 class="anchored" data-anchor-id="week-2-simple-linear-regression">Week 2: Simple Linear Regression</h2>
-<p><strong>Topics:</strong> Model specification; parameter estimation (Least Squares, MLE). <strong>Reading:</strong> Kutner et al., Ch. 1.5–1.8</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 1.6, 1.7, 1.10, 1.27</li>
-<li><strong>Projects:</strong> 1.20, 1.24</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> 1.30, 1.35 (Prove that the sum of residuals is zero and that the sample mean of Y is on the regression line).</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-3-inference-in-regression" class="level2">
-<h2 class="anchored" data-anchor-id="week-3-inference-in-regression">Week 3: Inference in Regression</h2>
-<p><strong>Topics:</strong> Hypothesis testing; confidence and prediction intervals; ANOVA. <strong>Reading:</strong> Kutner et al., Ch. 2.1–2.7</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 2.1, 2.3, 2.5, 2.13, 2.15</li>
-<li><strong>Projects:</strong> 2.29, 2.34, 2.41</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> 2.20, 2.25 (Derive the expected value of MSR and MSE).</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-4-diagnostics-remedial-measures" class="level2">
-<h2 class="anchored" data-anchor-id="week-4-diagnostics-remedial-measures">Week 4: Diagnostics &amp; Remedial Measures</h2>
-<p><strong>Topics:</strong> Residual analysis; outlier detection; tests for model assumptions. <strong>Reading:</strong> Kutner et al., Ch. 3</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 3.1, 3.4, 3.8, 3.10</li>
-<li><strong>Projects:</strong> 3.14, 3.17</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> 3.13 (Show the equivalence of two forms of the F-test for lack of fit).</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-5-midterm-exam-1" class="level2">
-<h2 class="anchored" data-anchor-id="week-5-midterm-exam-1">Week 5: Midterm Exam 1</h2>
-<p>There is <strong>no assignment</strong> this week. Focus on reviewing for the midterm exam.</p>
-</section>
-<section id="week-6-simultaneous-inference" class="level2">
-<h2 class="anchored" data-anchor-id="week-6-simultaneous-inference">Week 6: Simultaneous Inference</h2>
-<p><strong>Topics:</strong> Joint estimation; Bonferroni &amp; Working-Hotelling procedures. <strong>Reading:</strong> Kutner et al., Ch. 4</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 4.2, 4.5, 4.9, 4.11</li>
-<li><strong>Projects:</strong> 4.18, 4.20</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> 4.15 (Derive the Working-Hotelling confidence band).</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-7-matrix-approach-to-slr" class="level2">
-<h2 class="anchored" data-anchor-id="week-7-matrix-approach-to-slr">Week 7: Matrix Approach to SLR</h2>
-<p><strong>Topics:</strong> Regression model in matrix terms; estimation and inference. <strong>Reading:</strong> Kutner et al., Ch. 5</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 5.1, 5.4, 5.9, 5.12, 5.20</li>
-<li><strong>Projects:</strong> 5.25, 5.28</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> 5.15, 5.23 (Work with the hat matrix <code>H</code> and prove properties of residuals).</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-8-multiple-linear-regression-i" class="level2">
-<h2 class="anchored" data-anchor-id="week-8-multiple-linear-regression-i">Week 8: Multiple Linear Regression I</h2>
-<p><strong>Topics:</strong> Model specification with multiple predictors; parameter interpretation. <strong>Reading:</strong> Kutner et al., Ch. 6</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 6.1, 6.3, 6.5, 6.9, 6.15</li>
-<li><strong>Projects:</strong> 6.19, 6.23</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> 6.17 (Show that the coefficient of multiple determination <span class="math inline">\(R^2\)</span> cannot decrease as predictors are added).</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-9-multiple-linear-regression-ii" class="level2">
-<h2 class="anchored" data-anchor-id="week-9-multiple-linear-regression-ii">Week 9: Multiple Linear Regression II</h2>
-<p><strong>Topics:</strong> Extra sums of squares; tests for coefficients; standardized models. <strong>Reading:</strong> Kutner et al., Ch. 7</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 7.2, 7.6, 7.8, 7.12, 7.17</li>
-<li><strong>Projects:</strong> 7.25, 7.30</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> 7.20, 7.22 (Theory behind the general linear F-test).</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-10-midterm-exam-2" class="level2">
-<h2 class="anchored" data-anchor-id="week-10-midterm-exam-2">Week 10: Midterm Exam 2</h2>
-<p>There is <strong>no assignment</strong> this week. Focus on reviewing for the midterm exam.</p>
-</section>
-<section id="week-11-12-interaction-polynomial-qualitative-models" class="level2">
-<h2 class="anchored" data-anchor-id="week-11-12-interaction-polynomial-qualitative-models">Week 11 &amp; 12: Interaction, Polynomial, &amp; Qualitative Models</h2>
-<p><strong>Topics:</strong> Fitting polynomial models; interaction terms; indicator variables. <strong>Reading:</strong> Kutner et al., Ch. 8</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 8.2, 8.5, 8.8, 8.10, 8.15</li>
-<li><strong>Projects:</strong> 8.18, 8.21, 8.29</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> 8.17, 8.26 (Derive the meaning of coefficients in a model with interaction between quantitative and qualitative variables).</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-13-model-selection-and-validation" class="level2">
-<h2 class="anchored" data-anchor-id="week-13-model-selection-and-validation">Week 13: Model Selection and Validation</h2>
-<p><strong>Topics:</strong> Criteria for model selection (Cp, AIC, PRESS); stepwise procedures. <strong>Reading:</strong> Kutner et al., Ch. 9</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 9.3, 9.6, 9.10, 9.12</li>
-<li><strong>Projects:</strong> 9.15, 9.19</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> 9.14 (Relate <span class="math inline">\(R^2\)</span> to the PRESS statistic).</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-14-15-advanced-diagnostics-remedial-measures" class="level2">
-<h2 class="anchored" data-anchor-id="week-14-15-advanced-diagnostics-remedial-measures">Week 14 &amp; 15: Advanced Diagnostics &amp; Remedial Measures</h2>
-<p><strong>Topics:</strong> Influential cases (Cook’s D); multicollinearity (VIFs); Ridge Regression. <strong>Reading:</strong> Kutner et al., Ch. 10 &amp; 11</p>
-<ul>
-<li><strong>Core Assignment (STAT 440/540):</strong>
-<ul>
-<li><strong>Problems:</strong> 10.2, 10.8, 10.12, 11.1, 11.7, 11.19</li>
-<li><strong>Projects:</strong> 10.15, 11.25</li>
-</ul></li>
-<li><strong>Graduate Assignment (STAT 540):</strong>
-<ul>
-<li><strong>Exercises:</strong> 10.14 (Derive Cook’s distance), 11.16 (Show the effect of multicollinearity on variance of coefficients).</li>
-</ul></li>
-</ul>
-</section>
-<section id="week-16-final-review-course-project" class="level2">
-<h2 class="anchored" data-anchor-id="week-16-final-review-course-project">Week 16: Final Review &amp; Course Project</h2>
-<p>There is <strong>no weekly problem set</strong>.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Course Project Due
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The final course project is due this week. Graduate students (STAT 540) are expected to incorporate more advanced modeling techniques, perform a more rigorous model validation, and include a literature review component in their final report.</p>
-</div>
-</div>
 
 
-</section>
-</section>
 
 </main> <!-- /main -->
 <!-- filepath: /Users/dt/Library/CloudStorage/Dropbox/Teaching/DOE/assets/includes/footer.html -->
@@ -1280,5 +1004,5 @@ Course Project Due
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/assignment schedule.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/assignment schedule.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

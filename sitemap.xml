@@ -2,15 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/index.html</loc>
-    <lastmod>2025-08-19T05:28:24.406Z</lastmod>
+    <lastmod>2025-08-19T15:14:30.974Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/assignment schedule.html</loc>
-    <lastmod>2025-07-12T22:36:39.901Z</lastmod>
+    <lastmod>2025-08-19T14:53:40.532Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_contents.html</loc>
-    <lastmod>2025-07-12T21:50:58.115Z</lastmod>
+    <lastmod>2025-08-19T14:54:10.260Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-4_potential_outcomes-interpretation.html</loc>
@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_assignments.html</loc>
-    <lastmod>2025-08-19T05:16:47.652Z</lastmod>
+    <lastmod>2025-08-19T15:14:57.490Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_readings.html</loc>
@@ -66,7 +66,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_project.html</loc>
-    <lastmod>2025-08-19T05:00:02.289Z</lastmod>
+    <lastmod>2025-08-19T15:14:37.567Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/syllabus/schedule.html</loc>
@@ -87,5 +87,25 @@
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/writing_critique_guidlines.html</loc>
     <lastmod>2025-08-19T06:36:00.483Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/readings/writing_critique_guidlines.html</loc>
+    <lastmod>2025-08-19T06:36:00.483Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/home_lectures.html</loc>
+    <lastmod>2025-08-19T15:14:43.002Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/lectures/week-1_Gold_standard-rev2.html</loc>
+    <lastmod>2025-08-04T02:35:04.902Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/lectures/week-2_DAG-rev1.html</loc>
+    <lastmod>2025-08-13T17:18:28.537Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/home_appendix.html</loc>
+    <lastmod>2025-08-19T15:15:14.195Z</lastmod>
   </url>
 </urlset>
