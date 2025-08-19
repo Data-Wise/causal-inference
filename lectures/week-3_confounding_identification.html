@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>Week 2: Directed Acyclic Graphs (DAGs) – Introduction to Causal Inference</title>
+<title>Week 3: Confounding &amp; Identification – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,9 +81,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
-<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -238,7 +235,7 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../assets/styles/css/home.css">
-<meta property="og:title" content="Week 2: Directed Acyclic Graphs (DAGs) – Introduction to Causal Inference">
+<meta property="og:title" content="Week 3: Confounding &amp; Identification – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
 <meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
@@ -482,7 +479,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Week 2: Directed Acyclic Graphs (DAGs)</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Week 3: Confounding &amp; Identification</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -492,7 +489,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Week 2: Directed Acyclic Graphs (DAGs)</h1>
+      <h1 class="title">Week 3: Confounding &amp; Identification</h1>
                       </div>
   </div>
     
@@ -516,7 +513,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Jul-31-2025</p>
+        <p class="date">Aug-04-2025</p>
       </div>
     </div>
     
@@ -626,26 +623,33 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#setup-required-r-packages" id="toc-setup-required-r-packages" class="nav-link active" data-scroll-target="#setup-required-r-packages">🚀 Setup: Required R Packages</a></li>
-  <li><a href="#motivation-and-learning-objectives" id="toc-motivation-and-learning-objectives" class="nav-link" data-scroll-target="#motivation-and-learning-objectives">Motivation and Learning Objectives</a></li>
-  <li><a href="#key-concepts-the-grammar-of-causal-graphs" id="toc-key-concepts-the-grammar-of-causal-graphs" class="nav-link" data-scroll-target="#key-concepts-the-grammar-of-causal-graphs">Key Concepts: The Grammar of Causal Graphs</a></li>
-  <li><a href="#the-three-foundational-structures" id="toc-the-three-foundational-structures" class="nav-link" data-scroll-target="#the-three-foundational-structures">The Three Foundational Structures</a>
+  <li><a href="#introduction-the-problem-of-confounding" id="toc-introduction-the-problem-of-confounding" class="nav-link active" data-scroll-target="#introduction-the-problem-of-confounding">🧭 Introduction: The Problem of Confounding</a></li>
+  <li><a href="#conceptual-foundations-confounding-and-exchangeability" id="toc-conceptual-foundations-confounding-and-exchangeability" class="nav-link" data-scroll-target="#conceptual-foundations-confounding-and-exchangeability">🧠 Conceptual Foundations: Confounding and Exchangeability</a>
   <ul class="collapse">
-  <li><a href="#chains-mediation-a-rightarrow-m-leftarrow-y" id="toc-chains-mediation-a-rightarrow-m-leftarrow-y" class="nav-link" data-scroll-target="#chains-mediation-a-rightarrow-m-leftarrow-y">1. Chains (Mediation): <span class="math inline">\(A \rightarrow M \leftarrow Y\)</span></a></li>
-  <li><a href="#forks-confounding-a-leftarrow-c-rightarrow-y" id="toc-forks-confounding-a-leftarrow-c-rightarrow-y" class="nav-link" data-scroll-target="#forks-confounding-a-leftarrow-c-rightarrow-y">2. Forks (Confounding): <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span></a></li>
-  <li><a href="#colliders-a-c-y" id="toc-colliders-a-c-y" class="nav-link" data-scroll-target="#colliders-a-c-y">3. Colliders: <code>A → C ← Y</code></a></li>
-  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">Check Your Understanding</a></li>
+  <li><a href="#the-definition-of-a-confounder" id="toc-the-definition-of-a-confounder" class="nav-link" data-scroll-target="#the-definition-of-a-confounder">The Definition of a Confounder</a></li>
+  <li><a href="#what-is-being-exchanged" id="toc-what-is-being-exchanged" class="nav-link" data-scroll-target="#what-is-being-exchanged">What is Being “Exchanged”?</a></li>
+  <li><a href="#exchangeability-and-potential-outcomes" id="toc-exchangeability-and-potential-outcomes" class="nav-link" data-scroll-target="#exchangeability-and-potential-outcomes">Exchangeability and Potential Outcomes</a></li>
+  <li><a href="#conditional-exchangeability" id="toc-conditional-exchangeability" class="nav-link" data-scroll-target="#conditional-exchangeability">Conditional Exchangeability</a></li>
+  <li><a href="#the-goal-achieving-exchangeability" id="toc-the-goal-achieving-exchangeability" class="nav-link" data-scroll-target="#the-goal-achieving-exchangeability">The Goal: Achieving Exchangeability</a></li>
+  <li><a href="#unconditional-exchangeability-in-an-rct" id="toc-unconditional-exchangeability-in-an-rct" class="nav-link" data-scroll-target="#unconditional-exchangeability-in-an-rct">Unconditional Exchangeability in an RCT</a></li>
   </ul></li>
-  <li><a href="#paths-d-separation-and-the-backdoor-criterion" id="toc-paths-d-separation-and-the-backdoor-criterion" class="nav-link" data-scroll-target="#paths-d-separation-and-the-backdoor-criterion">Paths, d-Separation, and the Backdoor Criterion</a></li>
-  <li><a href="#scaffolding-example-building-a-dag-from-a-research-question" id="toc-scaffolding-example-building-a-dag-from-a-research-question" class="nav-link" data-scroll-target="#scaffolding-example-building-a-dag-from-a-research-question">Scaffolding Example: Building a DAG from a Research Question</a></li>
-  <li><a href="#numerical-example-creating-collider-bias-with-continuous-data" id="toc-numerical-example-creating-collider-bias-with-continuous-data" class="nav-link" data-scroll-target="#numerical-example-creating-collider-bias-with-continuous-data">Numerical Example: Creating Collider Bias with Continuous Data</a></li>
-  <li><a href="#appendix-advanced-statistical-derivations-and-theory" id="toc-appendix-advanced-statistical-derivations-and-theory" class="nav-link" data-scroll-target="#appendix-advanced-statistical-derivations-and-theory">Appendix: Advanced Statistical Derivations and Theory</a>
+  <li><a href="#the-backdoor-criterion-finding-the-right-adjustment-set" id="toc-the-backdoor-criterion-finding-the-right-adjustment-set" class="nav-link" data-scroll-target="#the-backdoor-criterion-finding-the-right-adjustment-set">🧠 The Backdoor Criterion: Finding the Right Adjustment Set</a>
   <ul class="collapse">
-  <li><a href="#motivation-the-theory-connecting-dags-to-data" id="toc-motivation-the-theory-connecting-dags-to-data" class="nav-link" data-scroll-target="#motivation-the-theory-connecting-dags-to-data">📕 Motivation: The Theory Connecting DAGs to Data</a></li>
-  <li><a href="#derivation-how-d-separation-implies-conditional-independence" id="toc-derivation-how-d-separation-implies-conditional-independence" class="nav-link" data-scroll-target="#derivation-how-d-separation-implies-conditional-independence">📕 Derivation: How d-Separation Implies Conditional Independence</a></li>
+  <li><a href="#the-criterion" id="toc-the-criterion" class="nav-link" data-scroll-target="#the-criterion">The Criterion</a></li>
+  <li><a href="#how-to-block-a-path" id="toc-how-to-block-a-path" class="nav-link" data-scroll-target="#how-to-block-a-path">How to Block a Path</a></li>
+  <li><a href="#comparison-to-the-potential-outcomes-framework" id="toc-comparison-to-the-potential-outcomes-framework" class="nav-link" data-scroll-target="#comparison-to-the-potential-outcomes-framework">Comparison to the Potential Outcomes Framework</a></li>
   </ul></li>
+  <li><a href="#bad-controls-variables-to-avoid" id="toc-bad-controls-variables-to-avoid" class="nav-link" data-scroll-target="#bad-controls-variables-to-avoid">🧠 “Bad Controls”: Variables to Avoid</a></li>
+  <li><a href="#detailed-numerical-and-r-example" id="toc-detailed-numerical-and-r-example" class="nav-link" data-scroll-target="#detailed-numerical-and-r-example">✅ Detailed Numerical and R Example</a>
+  <ul class="collapse">
+  <li><a href="#the-scenario" id="toc-the-scenario" class="nav-link" data-scroll-target="#the-scenario">The Scenario</a></li>
+  <li><a href="#step-by-step-calculation" id="toc-step-by-step-calculation" class="nav-link" data-scroll-target="#step-by-step-calculation">Step-by-Step Calculation</a></li>
+  <li><a href="#r-code-implementation" id="toc-r-code-implementation" class="nav-link" data-scroll-target="#r-code-implementation">R Code Implementation</a></li>
+  </ul></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">❓ Check Your Understanding</a></li>
+  <li><a href="#reflective-prompt" id="toc-reflective-prompt" class="nav-link" data-scroll-target="#reflective-prompt">🧠 Reflective Prompt</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-2_DAG.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-3_confounding_identification.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -655,388 +659,416 @@ window.Quarto = {
 
 
 
-<section id="setup-required-r-packages" class="level2">
-<h2 class="anchored" data-anchor-id="setup-required-r-packages">🚀 Setup: Required R Packages</h2>
-<p>Before we begin, please run the following code chunk in your R console to install and load the packages we’ll use in today’s lecture. This code will only install packages you don’t already have.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"pacman"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"pacman"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(<span class="st">"dagitty"</span>, <span class="st">"ggplot2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
+<section id="introduction-the-problem-of-confounding" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-the-problem-of-confounding">🧭 Introduction: The Problem of Confounding</h2>
+<p>Welcome to Week 3 of STAT 579. This week, we will tackle the central challenge of causal inference in observational studies: <strong>confounding</strong>. The goal is to move from simply observing an association to confidently making a causal claim. We will learn a rigorous, graphical method—the <strong>backdoor criterion</strong>—to identify the variables we need to adjust for to achieve this goal.</p>
+<p>Our journey this week connects the <strong>potential outcomes framework</strong> we learned in Week 2 with the <strong>causal graphical models</strong> (DAGs) that we will use throughout the semester. By the end of this module, you will be able to define confounding, use DAGs to find an appropriate adjustment set, and implement this logic in R code.</p>
 </section>
-<section id="motivation-and-learning-objectives" class="level1">
-<h1>Motivation and Learning Objectives</h1>
-<p>In our last session, we discussed the potential outcomes framework, which defines causality through the lens of counterfactuals. This framework is powerful but abstract. A common challenge in applied research is clearly articulating <em>why</em> we believe a certain statistical analysis can yield a causal estimate. We often say we need to “control for confounders,” but which ones? And why? Are there variables we should <em>not</em> control for?</p>
-<p>This week, we introduce <strong>Directed Acyclic Graphs (DAGs)</strong>, a visual language for making our causal assumptions explicit and transparent. Think of a DAG as a <strong>blueprint of your scientific beliefs</strong> about how the world works. It provides a formal, graphical grammar to represent complex causal relationships, allowing us to rigorously determine which variables must be measured and controlled to isolate a causal effect.</p>
-<p>By the end of this module, you will be able to:</p>
-<ol type="1">
-<li><strong>Construct</strong> a DAG to represent a set of causal assumptions.</li>
-<li><strong>Identify</strong> the three core causal structures: chains, forks, and colliders.</li>
-<li><strong>Define</strong> and distinguish between causal paths and non-causal “backdoor” paths.</li>
-<li><strong>Apply</strong> the rules of <strong>d-separation</strong> to determine if a path is blocked.</li>
-<li>Use the <strong>backdoor criterion</strong> to identify a valid set of covariates for statistical adjustment to estimate a causal effect.</li>
-<li>Recognize and avoid common analytical pitfalls like collider bias.</li>
-</ol>
-</section>
-<section id="key-concepts-the-grammar-of-causal-graphs" class="level1">
-<h1>Key Concepts: The Grammar of Causal Graphs</h1>
-<p>A <strong>Directed Acyclic Graph (DAG)</strong> is a graphical model that consists of three main components:</p>
-<ul>
-<li><strong>Nodes (or Vertices):</strong> These represent the variables in our system (e.g., treatment, outcome, covariates).</li>
-<li><strong>Directed Edges (Arrows):</strong> An arrow from node <span class="math inline">\(A\)</span> to node <span class="math inline">\(B\)</span> (<code>A → B</code>) represents a direct causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(B\)</span>. The assumption is that <span class="math inline">\(A\)</span> is a cause of <span class="math inline">\(B\)</span>. The <em>absence</em> of an arrow is also a strong assumption: it claims the absence of a direct causal effect.</li>
-<li><strong>Acyclicity:</strong> A path of arrows cannot form a closed loop. You cannot start at a node, follow the arrows, and return to that same node. This reflects the natural flow of time—an event cannot be its own cause.</li>
-</ul>
-</section>
-<section id="the-three-foundational-structures" class="level1">
-<h1>The Three Foundational Structures</h1>
-<p>Every complex DAG is built from just three elementary structures. Understanding them is the key to identifying causal effects.</p>
-<section id="chains-mediation-a-rightarrow-m-leftarrow-y" class="level2">
-<h2 class="anchored" data-anchor-id="chains-mediation-a-rightarrow-m-leftarrow-y">1. Chains (Mediation): <span class="math inline">\(A \rightarrow M \leftarrow Y\)</span></h2>
-<p>This structure represents a causal pathway where the effect of an exposure (<span class="math inline">\(A\)</span>) on an outcome (<span class="math inline">\(Y\)</span>) is transmitted <em>through</em> a mediating variable (<span class="math inline">\(M\)</span>).</p>
-<ul>
-<li><strong>Example 1</strong>: A smoking cessation program (<span class="math inline">\(A\)</span>) causes an individual to reduce their cigarette consumption (<span class="math inline">\(M\)</span>), which in turn reduces their risk of lung cancer (<span class="math inline">\(Y\)</span>).</li>
-<li><strong>Example 2</strong>: A new drug (<span class="math inline">\(A\)</span>) improves a patient’s cholesterol levels (<span class="math inline">\(M\)</span>), which in turn lowers their risk of a heart attack (<span class="math inline">\(Y\)</span>).</li>
-<li><strong>Statistical Property</strong>: <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> are associated. If we condition on the mediator <span class="math inline">\(M\)</span>, we block this causal path, and the statistical association between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> will weaken or disappear.</li>
-</ul>
-</section>
-<section id="forks-confounding-a-leftarrow-c-rightarrow-y" class="level2">
-<h2 class="anchored" data-anchor-id="forks-confounding-a-leftarrow-c-rightarrow-y">2. Forks (Confounding): <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span></h2>
-<p>This is the classic structure of <strong>confounding</strong>. A variable <span class="math inline">\(C\)</span> is a common cause of both the exposure (<span class="math inline">\(A\)</span>) and the outcome (<span class="math inline">\(Y\)</span>).</p>
-<ul>
-<li><strong>Example 1</strong>: An individual’s socioeconomic status (<span class="math inline">\(C\)</span>) may affect their choice of neighborhood (and thus exposure to air pollution, <span class="math inline">\(A\)</span>) as well as their underlying health (and thus risk of asthma, <span class="math inline">\(Y\)</span>).</li>
-<li><strong>Example 2</strong>: A patient’s baseline disease severity (<span class="math inline">\(C\)</span>) might influence a doctor’s decision to prescribe an aggressive new treatment (<span class="math inline">\(A\)</span>) and also directly affect the patient’s survival (<span class="math inline">\(Y\)</span>).</li>
-<li><strong>Statistical Property</strong>: <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> are associated due to the common cause <span class="math inline">\(C\)</span>. To estimate the true causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>, we <strong>must condition on the confounder <span class="math inline">\(C\)</span></strong>.</li>
-</ul>
-</section>
-<section id="colliders-a-c-y" class="level2">
-<h2 class="anchored" data-anchor-id="colliders-a-c-y">3. Colliders: <code>A → C ← Y</code></h2>
-<p>This structure occurs when an exposure (<span class="math inline">\(A\)</span>) and an outcome (<span class="math inline">\(Y\)</span>) are independent causes of a third variable, <span class="math inline">\(C\)</span>. Because the arrows “collide” at <span class="math inline">\(C\)</span>, it is called a <strong>collider</strong>.</p>
-<ul>
-<li><strong>Example 1</strong>: Admission to a specialized hospital unit (<span class="math inline">\(C\)</span>) is caused by having a rare disease (<span class="math inline">\(A\)</span>) or having severe symptoms from an unrelated condition (<span class="math inline">\(Y\)</span>).</li>
-<li><strong>Example 2</strong>: A patient’s self-reported “wellness score” (<span class="math inline">\(C\)</span>) is high if they have either good physical health (<span class="math inline">\(A\)</span>) or good mental health (<span class="math inline">\(Y\)</span>).</li>
-<li><strong>Statistical Property</strong>: <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> are marginally independent. <strong>Conditioning on a collider <span class="math inline">\(C\)</span> <em>opens</em> a non-causal path</strong> and induces a spurious association between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>.</li>
-</ul>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Pitfall: Conditioning on a Collider
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Controlling for a collider is a common and serious mistake in applied research. It often occurs through sample selection. For instance, studying the effect of a risk factor (<span class="math inline">\(A\)</span>) on a disease (<span class="math inline">\(Y\)</span>) using only hospitalized patients (<span class="math inline">\(C\)</span>) can induce collider bias if both <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> lead to hospitalization.</p>
-<p><strong>The rule is simple: Do not condition on colliders.</strong></p>
-</div>
-</div>
-</section>
-<section id="check-your-understanding" class="level2 callout-question" data-icon="❓">
-<h2 class="anchored" data-anchor-id="check-your-understanding">Check Your Understanding</h2>
-<p>For each scenario, identify the structure (Chain, Fork, or Collider) and state whether you should condition on the middle variable (<span class="math inline">\(Z\)</span>).</p>
-<ol type="1">
-<li><strong>Scenario A</strong>: <span class="math inline">\(A\)</span> (Diet Soda Intake) → <span class="math inline">\(Z\)</span> (Desire for Sweets) → <span class="math inline">\(Y\)</span> (Weight Gain). Should you condition on <span class="math inline">\(Z\)</span> to find the total effect of diet soda on weight gain?</li>
-<li><strong>Scenario B</strong>: <span class="math inline">\(A\)</span> (Genetics for high cholesterol) ← <span class="math inline">\(Z\)</span> (Shared Family Environment) → <span class="math inline">\(Y\)</span> (Dietary Habits). Should you condition on <span class="math inline">\(Z\)</span> to find the effect of genetics on diet?</li>
-<li><strong>Scenario C</strong>: <span class="math inline">\(A\)</span> (Patient has Condition X) → <span class="math inline">\(Z\)</span> (Is selected for a clinical trial) ← <span class="math inline">\(Y\)</span> (Patient lives near the research hospital). Should you condition on <span class="math inline">\(Z\)</span> to find the effect of Condition X on where a patient lives?</li>
-</ol>
-<details>
-<summary>
-<b>Answer</b>
-</summary>
-<ol type="1">
-<li><strong>Chain (Mediation)</strong>. No, you should not condition on <span class="math inline">\(Z\)</span> if you want the <em>total</em> causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>. Conditioning on a mediator blocks the causal pathway.</li>
-<li><strong>Fork (Confounding)</strong>. Yes, you must condition on <span class="math inline">\(Z\)</span>. <span class="math inline">\(Z\)</span> is a common cause of <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> and creates a spurious association.</li>
-<li><strong>Collider</strong>. No, absolutely not. <span class="math inline">\(Z\)</span> is a collider. Conditioning on it would create a spurious association between the patient’s condition and their location.</li>
-</ol>
-</details>
-</section>
-</section>
-<section id="paths-d-separation-and-the-backdoor-criterion" class="level1">
-<h1>Paths, d-Separation, and the Backdoor Criterion</h1>
-<p>To estimate the causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>, we must isolate the direct causal path (<code>A → Y</code>) by blocking all non-causal paths.</p>
-<ul>
-<li><strong>Backdoor Path:</strong> A non-causal path between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> that starts with an arrow pointing into <span class="math inline">\(A\)</span>. The path <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span> is a backdoor path. These paths are the source of confounding.</li>
-</ul>
-<p><strong>d-Separation</strong> (“directional separation”) is the set of graphical rules for blocking these non-causal paths. A path is blocked if:</p>
-<ol type="1">
-<li>We condition on a variable in a <strong>chain</strong> or a <strong>fork</strong> on that path.</li>
-<li>The path contains a <strong>collider</strong> that we have <em>not</em> conditioned on (nor on any of its descendants).</li>
-</ol>
-<p>This leads to the formal rule for identifying a valid set of control variables:</p>
+<section id="conceptual-foundations-confounding-and-exchangeability" class="level2">
+<h2 class="anchored" data-anchor-id="conceptual-foundations-confounding-and-exchangeability">🧠 Conceptual Foundations: Confounding and Exchangeability</h2>
+<section id="the-definition-of-a-confounder" class="level3">
+<h3 class="anchored" data-anchor-id="the-definition-of-a-confounder">The Definition of a Confounder</h3>
+<p>A <strong>confounder</strong> is a variable that is a common cause of both the treatment and the outcome. This creates a non-causal association between the treatment and outcome that can be mistaken for a true causal effect.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Key Assumption: The Backdoor Criterion
+🧠 Learning Tip: Two Frameworks, One Problem
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A set of variables <span class="math inline">\(Z\)</span> satisfies the backdoor criterion for estimating the effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span> if:</p>
-<ol type="1">
-<li>No variable in <span class="math inline">\(Z\)</span> is a descendant of <span class="math inline">\(A\)</span> (i.e., we don’t control for variables on the causal pathway, like mediators).</li>
-<li><span class="math inline">\(Z\)</span> blocks every backdoor path between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>.</li>
+<p>The concept of confounding can be understood through two lenses:</p>
+<!-- 1. **Potential Outcomes Framework**: Confounding exists when the treatment assignment ($A$) and the potential outcomes ($Y^a$) are not independent. That is, $A \not\!\perp Y^a$. This means that the treated and untreated groups are fundamentally different with respect to their outcomes, even if no one received the treatment. This difference is due to the confounder's influence. -->
+<ol start="2" type="1">
+<li><strong>Graphical Framework (DAGs)</strong>: Confounding is visually represented by a <strong>backdoor path</strong>. A backdoor path is a sequence of arrows that connects the treatment (<span class="math inline">\(A\)</span>) to the outcome (<span class="math inline">\(Y\)</span>) and begins with an arrow pointing into the treatment node. For example, in the DAG <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span>, the path <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span> is a backdoor path. The variable <span class="math inline">\(C\)</span> is a confounder.</li>
 </ol>
-<p>If a set <span class="math inline">\(Z\)</span> meets this criterion, then conditioning on <span class="math inline">\(Z\)</span> is sufficient to yield an unbiased estimate of the causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>. The variables in <span class="math inline">\(Z\)</span> are often called the “adjustment set.”</p>
 </div>
 </div>
 </section>
-<section id="scaffolding-example-building-a-dag-from-a-research-question" class="level1">
-<h1>Scaffolding Example: Building a DAG from a Research Question</h1>
-<p>Let’s build a DAG step-by-step to illustrate the thought process.</p>
-<p><strong>Research Question:</strong> What is the causal effect of prescribing a new, aggressive statin drug (<code>Drug</code>) on the 5-year risk of a major cardiac event (<code>MCE</code>) for high-risk patients?</p>
-<ol type="1">
-<li><p><strong>Identify Key Variables:</strong></p>
+<section id="what-is-being-exchanged" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-being-exchanged">What is Being “Exchanged”?</h3>
+<p>In causal inference, when we say two groups are <strong>exchangeable</strong>, we mean that they are comparable in every way relevant to the outcome. Specifically, if we were to hypothetically <strong>exchange</strong> the treatment assignment between the two groups, the distribution of their potential outcomes would remain the same.</p>
+<p>The key misunderstanding to avoid is thinking we are exchanging the individuals themselves, or the treatments. Instead, we are making an assumption about the comparability of the groups <em>at baseline</em>.</p>
+<p>The concept of exchangeability applies to the <strong>potential outcomes</strong>, not the observed outcomes or the treatments themselves.</p>
+</section>
+<section id="exchangeability-and-potential-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="exchangeability-and-potential-outcomes">Exchangeability and Potential Outcomes</h3>
+<p>Let’s break this down using our notation from Week 2:</p>
 <ul>
-<li><code>Drug</code>: The exposure (Prescribed the new statin = 1, standard care = 0).</li>
-<li><code>MCE</code>: The outcome (Major Cardiac Event = 1, No = 0).</li>
-<li><code>Severity</code>: Patient’s underlying disease severity (e.g., prior cholesterol levels, previous MCEs).</li>
-<li><code>Lifestyle</code>: Patient’s health-related lifestyle (e.g., diet, exercise).</li>
-<li><code>Adherence</code>: Whether the patient adheres to their prescribed medication.</li>
-</ul></li>
-<li><p><strong>Draw the Arrows (Articulate Assumptions):</strong></p>
-<ul>
-<li><code>Drug → MCE</code>: This is the primary causal effect we want to estimate. The drug is intended to reduce MCE risk.</li>
-<li><code>Severity → Drug</code>: A doctor is more likely to prescribe an aggressive new drug to a sicker patient.</li>
-<li><code>Severity → MCE</code>: Sicker patients are inherently more likely to have a future MCE, regardless of treatment. <strong>This makes <code>Severity</code> a classic confounder.</strong></li>
-<li><code>Lifestyle → MCE</code>: A healthier lifestyle directly reduces MCE risk.</li>
-<li><code>Lifestyle → Severity</code>: Over time, lifestyle can affect disease severity. Let’s assume for this model that baseline <code>Lifestyle</code> is a determinant of baseline <code>Severity</code>.</li>
-<li><code>Drug → Adherence</code>: The new drug might have more side effects, affecting adherence.</li>
-<li><code>Adherence → MCE</code>: Adhering to any effective medication should reduce MCE risk. <strong>This makes <code>Adherence</code> a mediator.</strong></li>
-</ul></li>
-<li><p><strong>Analyze the DAG:</strong></p></li>
-</ol>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>statin_dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'dag{</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">    Drug [exposure]</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">    MCE [outcome]</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Lifestyle</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Adherence</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity -&gt; Drug -&gt; Adherence -&gt; MCE</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity -&gt; MCE</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="st">    Lifestyle -&gt; Severity</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(statin_dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><a href="week-2_DAG_files/figure-html/unnamed-chunk-1-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="week-2_DAG_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></a></p>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Analysis of Paths from <code>Drug</code> to <code>MCE</code>:</strong></p>
-<ul>
-<li><strong>Causal Paths:</strong> <code>Drug → Adherence → MCE</code> (mediated) and a presumed (but un-drawn) direct <code>Drug → MCE</code> arrow.</li>
-<li><strong>Backdoor Paths:</strong> The only backdoor path is <code>Drug ← Severity → MCE</code>. <code>Lifestyle</code> is a cause of <code>Severity</code>, but it’s not on a backdoor path itself because the path <code>Drug ← Severity ← Lifestyle → MCE</code> is blocked by the collider <code>Severity</code>. Wait, no, <code>Severity</code> is a fork, not a collider in that path. Let’s re-examine.
-<ul>
-<li>Path 1: <code>Drug ← Severity → MCE</code>. This is a backdoor path.</li>
-<li>Is there another one? Let’s check <code>dagitty</code>.</li>
-</ul></li>
+<li><span class="math inline">\(Y^1\)</span>: The potential outcome if an individual receives treatment (<span class="math inline">\(A=1\)</span>).</li>
+<li><span class="math inline">\(Y^0\)</span>: The potential outcome if an individual receives no treatment (<span class="math inline">\(A=0\)</span>).</li>
 </ul>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's add the direct arrow for the total effect</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>statin_dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'dag{</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="st">    Drug [exposure]</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">    MCE [outcome]</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Lifestyle</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Adherence</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">    Drug -&gt; MCE</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity -&gt; Drug -&gt; Adherence -&gt; MCE</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st">    Severity -&gt; MCE</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="st">    Lifestyle -&gt; Severity</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">paths</span>(statin_dag, <span class="at">from =</span> <span class="st">"Drug"</span>, <span class="at">to =</span> <span class="st">"MCE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>$paths
-[1] "Drug -&gt; Adherence -&gt; MCE" "Drug -&gt; MCE"             
-[3] "Drug &lt;- Severity -&gt; MCE" 
-
-$open
-[1] TRUE TRUE TRUE</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $paths</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Drug -&gt; MCE"</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2] "Drug -&gt; Adherence -&gt; MCE"</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] "Drug &lt;- Severity -&gt; MCE"</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $open</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE TRUE TRUE</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">adjustmentSets</span>(statin_dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>{ Severity }</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; { Severity }</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p><code>dagitty</code> confirms there is one open backdoor path: <code>Drug ← Severity → MCE</code>. To close it, we must condition on <code>Severity</code>.</p>
-<ol start="4" type="1">
-<li><strong>Conclusion:</strong> To estimate the causal effect of the new drug, we must control for baseline disease severity. We should <em>not</em> control for adherence, as it is a mediator on the causal pathway.</li>
+<p>When we say the treatment group (<span class="math inline">\(A=1\)</span>) and the control group (<span class="math inline">\(A=0\)</span>) are <strong>unconditionally exchangeable</strong>, we are making the following two assumptions:</p>
+<ol type="1">
+<li><p><strong>The control group is a valid proxy for what would have happened to the treated group if they had not been treated.</strong> This means the average potential outcome of the treated group under no treatment, <span class="math inline">\(\E{Y^0 \mid A=1}\)</span>, is equal to the average potential outcome of the control group under no treatment, <span class="math inline">\(\E{Y^0 \mid A=0}\)</span>. The groups are identical in their potential outcomes under the control condition.</p></li>
+<li><p><strong>The treated group is a valid proxy for what would have happened to the control group if they had been treated.</strong> This means the average potential outcome of the treated group under treatment, <span class="math inline">\(\E{Y^1 \mid A=1}\)</span>, is equal to the average potential outcome of the control group under treatment, <span class="math inline">\(\E{Y^1 \mid A=0}\)</span>. The groups are identical in their potential outcomes under the treatment condition.</p></li>
 </ol>
+<p>The full assumption of unconditional exchangeability is captured by the single formula: <span class="math display">\[
+Y^a \indep A \quad \text{for } a=0,1
+\]</span></p>
+<p><strong>In plain English:</strong> “The potential outcome for a given treatment level ‘a’ is independent of whether a unit actually received that treatment.” This is the foundation of a randomized controlled trial (RCT), where the random assignment ensures these two distributions are, on average, identical.</p>
 </section>
-<section id="numerical-example-creating-collider-bias-with-continuous-data" class="level1">
-<h1>Numerical Example: Creating Collider Bias with Continuous Data</h1>
-<p>Let’s illustrate the danger of conditioning on a collider with a linear model.</p>
-<p><strong>Scenario</strong>: We want to know if a patient’s baseline lung function (<span class="math inline">\(A\)</span>) is related to their baseline kidney function (<span class="math inline">\(Y\)</span>). In the general population, these are likely independent. However, let’s say we conduct our study only on patients currently in the Intensive Care Unit (<span class="math inline">\(C\)</span>). Admission to the ICU (<span class="math inline">\(C\)</span>) is more likely if a patient has poor lung function OR poor kidney function.</p>
-<p><strong>The DAG:</strong> <span class="math inline">\(A\)</span> (Lung Function) <code>→ C ←</code> (<span class="math inline">\(Y\)</span>) Kidney Function.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">456</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># A and Y are independent in the general population.</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's model them as continuous scores from 0-100.</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>lung_function <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">75</span>, <span class="dv">15</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>kidney_function <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">75</span>, <span class="dv">15</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># C is the collider. Probability of ICU admission increases if lung or kidney function is low.</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's model ICU status as a continuous "severity score" for clarity</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>icu_severity_score <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">-</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.5</span> <span class="sc">*</span> lung_function <span class="sc">-</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.5</span> <span class="sc">*</span> kidney_function <span class="sc">+</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">5</span>)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>df_collider <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(lung_function, kidney_function, icu_severity_score)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the relationship in the full population (should be ~0)</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(kidney_function <span class="sc">~</span> lung_function, <span class="at">data =</span> df_collider))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = kidney_function ~ lung_function, data = df_collider)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--51.311  -9.961   0.012   9.350  57.451 
-
-Coefficients:
-               Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)   74.251160   1.704432  43.564   &lt;2e-16 ***
-lung_function  0.006873   0.022038   0.312    0.755    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 14.66 on 1998 degrees of freedom
-Multiple R-squared:  4.868e-05, Adjusted R-squared:  -0.0004518 
-F-statistic: 0.09727 on 1 and 1998 DF,  p-value: 0.7552</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                Estimate Std. Error t value Pr(&gt;|t|)</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)   75.394183   1.517032  49.70</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lung_function -0.005435   0.020120  -0.27   0.787</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, let's condition on the collider by only looking at the sickest patients</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># (e.g., those with an ICU severity score &gt; 50)</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>sick_patients <span class="ot">&lt;-</span> <span class="fu">subset</span>(df_collider, icu_severity_score <span class="sc">&gt;</span> <span class="dv">50</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(kidney_function <span class="sc">~</span> lung_function, <span class="at">data =</span> sick_patients))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = kidney_function ~ lung_function, data = sick_patients)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--21.865  -4.018   1.254   5.082  24.016 
-
-Coefficients:
-              Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)    86.9911    10.3965   8.367 1.88e-09 ***
-lung_function  -0.6377     0.2011  -3.172   0.0034 ** 
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 10.51 on 31 degrees of freedom
-Multiple R-squared:  0.245, Adjusted R-squared:  0.2207 
-F-statistic: 10.06 on 1 and 31 DF,  p-value: 0.003404</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                Estimate Std. Error t value Pr(&gt;|t|)</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)   118.84758    3.58784   33.12   &lt;2e-16 ***</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lung_function  -0.65586    0.05436  -12.07   &lt;2e-16 ***</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
+<section id="conditional-exchangeability" class="level3">
+<h3 class="anchored" data-anchor-id="conditional-exchangeability">Conditional Exchangeability</h3>
+<p>In an observational study, we know this unconditional assumption is usually false. However, we can still achieve <strong>conditional exchangeability</strong> if we can identify and adjust for all confounders (<span class="math inline">\(\vect{C}\)</span>). This means the two groups are comparable <em>within levels of the confounders</em>.</p>
+<p>The formula we use is: <span class="math display">\[
+Y^a \indep A \mid \vect{C}
+\]</span></p>
+<p><strong>In plain English:</strong> “The potential outcome for a given treatment level ‘a’ is independent of whether a unit actually received that treatment, <em>once we have accounted for the variables in <span class="math inline">\(\vect{C}\)</span></em>.” This allows us to make causal claims from observational data, as long as this assumption holds.</p>
+</section>
+<section id="the-goal-achieving-exchangeability" class="level3">
+<h3 class="anchored" data-anchor-id="the-goal-achieving-exchangeability">The Goal: Achieving Exchangeability</h3>
+<p>To estimate a causal effect, we need the treatment and control groups to be <strong>exchangeable</strong>.</p>
+<ul>
+<li><strong>Unconditional Exchangeability</strong>: This is the ideal state, often achieved in a randomized controlled trial (RCT). The randomization ensures that treatment assignment (<span class="math inline">\(A\)</span>) is independent of the potential outcomes (<span class="math inline">\(Y^a\)</span>) for all units. That is, <span class="math inline">\(A \indep Y^a\)</span>. This means the treated and untreated groups are, on average, identical on all factors (measured and unmeasured) that influence the outcome.</li>
+<li><strong>Conditional Exchangeability</strong>: In observational studies, we can’t randomize. Instead, we can assume that we have measured all the confounders. If we adjust for this set of measured confounders, say <span class="math inline">\(\vect{C}\)</span>, then within each stratum of <span class="math inline">\(\vect{C}\)</span>, the treatment assignment is “as good as random.” This assumption is formally stated as:</li>
+</ul>
+<p><span class="math display">\[
+Y^a \indep A \mid \vect{C}
+\]</span></p>
+<p>This is the central assumption that allows us to move from an observed association to a causal conclusion. The key challenge, then, is to identify the correct set of variables <span class="math inline">\(\vect{C}\)</span> to adjust for.</p>
+</section>
+<section id="unconditional-exchangeability-in-an-rct" class="level3">
+<h3 class="anchored" data-anchor-id="unconditional-exchangeability-in-an-rct">Unconditional Exchangeability in an RCT</h3>
+<p>Let’s illustrate the concept of unconditional exchangeability with a simple numerical example. Imagine we have a population of 200 patients and a new drug we believe will cure a disease. For each patient, there are two potential outcomes: the outcome if they take the drug (<span class="math inline">\(Y^1\)</span>) and the outcome if they don’t (<span class="math inline">\(Y^0\)</span>). A value of 1 means they are cured, and 0 means they are not.</p>
+<p>In a perfect world, we would observe both potential outcomes for every person, as shown in the table below. The true causal effect for each person is the difference <span class="math inline">\(Y^1 - Y^0\)</span>. The <strong>Average Treatment Effect (ATE)</strong> is the average of these differences across the population.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 29%">
+<col style="width: 29%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Patient</th>
+<th style="text-align: center;">Potential Outcome (<span class="math inline">\(Y^1\)</span>)</th>
+<th style="text-align: center;">Potential Outcome (<span class="math inline">\(Y^0\)</span>)</th>
+<th style="text-align: center;">Individual Causal Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">+1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">…</td>
+<td style="text-align: center;">…</td>
+<td style="text-align: center;">…</td>
+<td style="text-align: center;">…</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">200</td>
+<td style="text-align: center;">…</td>
+<td style="text-align: center;">…</td>
+<td style="text-align: center;">…</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>Average</strong></td>
+<td style="text-align: center;"><strong>0.6</strong></td>
+<td style="text-align: center;"><strong>0.4</strong></td>
+<td style="text-align: center;"><strong>+0.2</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The true ATE in this population is 0.2 (20% of patients are cured by the drug). But, in reality, we can only observe one of these potential outcomes for each person.</p>
+<p>Now, let’s simulate an <strong>RCT</strong> where we randomly assign 100 patients to the treatment group (<span class="math inline">\(A=1\)</span>) and 100 to the control group (<span class="math inline">\(A=0\)</span>). Because of random assignment, the two groups are, on average, identical. This is the essence of <strong>unconditional exchangeability</strong>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 2%">
+<col style="width: 27%">
+<col style="width: 27%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Group</th>
+<th style="text-align: center;">N</th>
+<th style="text-align: center;">Average Potential Outcome (<span class="math inline">\(Y^1\)</span>)</th>
+<th style="text-align: center;">Average Potential Outcome (<span class="math inline">\(Y^0\)</span>)</th>
+<th style="text-align: center;">Observed Outcome (Observed <span class="math inline">\(Y\)</span>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>Treated (<span class="math inline">\(A=1\)</span>)</strong></td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;"><span class="math inline">\(\E{Y^1 \mid A=1}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\E{Y^0 \mid A=1}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\E{Y^1 \mid A=1}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>Control (<span class="math inline">\(A=0\)</span>)</strong></td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;"><span class="math inline">\(\E{Y^1 \mid A=0}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\E{Y^0 \mid A=0}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\E{Y^0 \mid A=0}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>Population</strong></td>
+<td style="text-align: center;">200</td>
+<td style="text-align: center;"><span class="math inline">\(\E{Y^1}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\E{Y^0}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<p>Because the two groups are exchangeable, their potential outcome distributions are the same. This means:</p>
+<ul>
+<li><span class="math display">\[\E{Y^1 \mid A=1} = \E{Y^1 \mid A=0} = \E{Y^1} = 0.6\]</span></li>
+<li><span class="math display">\[\E{Y^0 \mid A=1} = \E{Y^0 \mid A=0} = \E{Y^0} = 0.4\]</span></li>
+</ul>
+<p>The magic of randomization is that it allows us to use the observed outcomes to estimate the potential outcomes of the other group.</p>
+<ul>
+<li><p>The observed average outcome in the <strong>treated</strong> group, <span class="math inline">\(\E{Y \mid A=1}\)</span>, gives us an unbiased estimate of the average potential outcome for the entire population under treatment, <span class="math inline">\(\E{Y^1}\)</span>. <span class="math display">\[
+  \E{Y \mid A=1} = \E{Y^1 \mid A=1} \approx \E{Y^1} = 0.6
+  \]</span></p></li>
+<li><p>The observed average outcome in the <strong>control</strong> group, <span class="math inline">\(\E{Y \mid A=0}\)</span>, gives us an unbiased estimate of the average potential outcome for the entire population under no treatment, <span class="math inline">\(\E{Y^0}\)</span>. <span class="math display">\[
+  \E{Y \mid A=0} = \E{Y^0 \mid A=0} \approx \E{Y^0} = 0.4
+  \]</span></p></li>
+</ul>
+<p>The observed difference in our data is <span class="math inline">\(\E{Y \mid A=1} - \E{Y \mid A=0} = 0.6 - 0.4 = 0.2\)</span>. This observed difference is an unbiased estimate of the true ATE, because of the exchangeability created by randomization.</p>
+</section>
+</section>
+<section id="the-backdoor-criterion-finding-the-right-adjustment-set" class="level2">
+<h2 class="anchored" data-anchor-id="the-backdoor-criterion-finding-the-right-adjustment-set">🧠 The Backdoor Criterion: Finding the Right Adjustment Set</h2>
+<p>The backdoor criterion is a formal rule, derived from the theory of DAGs, that tells us precisely which set of variables to adjust for to achieve conditional exchangeability.</p>
+<section id="the-criterion" class="level3">
+<h3 class="anchored" data-anchor-id="the-criterion">The Criterion</h3>
+<p>A set of variables <span class="math inline">\(\vect{C}\)</span> satisfies the <strong>backdoor criterion</strong> relative to an exposure <span class="math inline">\(A\)</span> and an outcome <span class="math inline">\(Y\)</span> if:</p>
+<ol type="1">
+<li><strong>It blocks every backdoor path</strong> from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span>.</li>
+<li><strong>It does not contain any variable that is a descendant of <span class="math inline">\(A\)</span></strong> (this prevents us from conditioning on a mediator, which we will discuss later).</li>
+</ol>
+<p>A <strong>backdoor path</strong> from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span> is any path that connects <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span> with an arrow pointing into <span class="math inline">\(A\)</span>.</p>
+</section>
+<section id="how-to-block-a-path" class="level3">
+<h3 class="anchored" data-anchor-id="how-to-block-a-path">How to Block a Path</h3>
+<p>Blocking a path is a key concept. A path is blocked if it contains:</p>
+<ul>
+<li>A <strong>collider (O)</strong> that we have <em>not</em> conditioned on.</li>
+<li>A <strong>non-collider (C)</strong> that we <em>have</em> conditioned on.</li>
+</ul>
+<p>A <strong>collider (O)</strong> is a variable on a path where two arrows point into it (e.g., <span class="math inline">\(X \to O \leftarrow Y\)</span>).</p>
+<p>Therefore, to block a backdoor path, we must adjust for a non-collider (C) on that path.</p>
+</section>
+<section id="comparison-to-the-potential-outcomes-framework" class="level3">
+<h3 class="anchored" data-anchor-id="comparison-to-the-potential-outcomes-framework">Comparison to the Potential Outcomes Framework</h3>
+<p>The backdoor criterion provides the bridge between our two frameworks. The assumption of conditional exchangeability (<span class="math inline">\(Y^a \indep A \mid \vect{C}\)</span>) is the <em>potential outcomes</em> condition for identifiability. The backdoor criterion is the <em>graphical</em> rule for finding a set of variables <span class="math inline">\(\vect{C}\)</span> that, if correctly measured and controlled for, makes the conditional exchangeability assumption plausible.</p>
+</section>
+</section>
+<section id="bad-controls-variables-to-avoid" class="level2">
+<h2 class="anchored" data-anchor-id="bad-controls-variables-to-avoid">🧠 “Bad Controls”: Variables to Avoid</h2>
+<p>Not all variables should be adjusted for. In fact, adjusting for the wrong variable can create bias where there was none before. These are often called “bad controls.”</p>
+<div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Interpretation of Results
+Common Pitfall: Adjusting for Colliders
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<ul>
-<li>In the full population, the regression coefficient for <code>lung_function</code> is nearly zero and statistically insignificant (<code>p = 0.787</code>), correctly showing that the two variables are independent.</li>
-<li>However, when we restrict our analysis to the sickest patients (conditioning on the collider), a strong <strong>negative</strong> and statistically significant relationship appears (<code>β = -0.66</code>, <code>p &lt; 0.001</code>). Among very sick patients, if their lungs are surprisingly healthy, their kidneys must be in terrible shape to explain their overall severity, and vice versa.</li>
-<li>This demonstrates how sample selection (a form of conditioning) can create entirely spurious results.</li>
-</ul>
+<p>Consider the DAG <span class="math inline">\(A \to Y \leftarrow O \to C\)</span>. In this case, <span class="math inline">\(O\)</span> is a collider on the path between <span class="math inline">\(A\)</span> and <span class="math inline">\(C\)</span>. There is no backdoor path from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span>. However, if we condition on <span class="math inline">\(O\)</span> (e.g., by including it in a regression model), we “open” the path through the collider, creating a spurious association between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p>For example, imagine <span class="math inline">\(A\)</span> is <code>talent</code> and <span class="math inline">\(Y\)</span> is <code>physical attractiveness</code>, which are independent. We study their effect on <code>fame</code> (<span class="math inline">\(O\)</span>). If we only look at people who are famous (conditioning on <span class="math inline">\(O\)</span>), we will find that less attractive people must have more talent to be famous, and vice versa. This creates a spurious, non-causal association between <code>talent</code> and <code>attractiveness</code>.</p>
 </div>
 </div>
-</section>
-<section id="appendix-advanced-statistical-derivations-and-theory" class="level1">
-<h1>Appendix: Advanced Statistical Derivations and Theory</h1>
-<section id="motivation-the-theory-connecting-dags-to-data" class="level2">
-<h2 class="anchored" data-anchor-id="motivation-the-theory-connecting-dags-to-data">📕 Motivation: The Theory Connecting DAGs to Data</h2>
-<p>Why can we trust the graphical rules of d-separation? The connection between a DAG’s structure and the statistical properties of the data it represents is formalized by two key assumptions: the <strong>Causal Markov Assumption</strong> and the <strong>Faithfulness Assumption</strong>. Together, they allow us to read conditional independencies directly from the graph.</p>
 <ul>
-<li><strong>Causal Markov Assumption</strong>: This assumption states that, conditional on its direct causes (its “parents” in the DAG), a variable is independent of all its non-descendants. This is the formal basis for why controlling for confounders works.</li>
-<li><strong>Faithfulness Assumption</strong>: This assumption states that all conditional independencies present in the data are represented in the DAG. In other words, there are no “accidental” cancellations of effects that would create an independence where the graph suggests a dependence. For example, if a drug has a positive direct effect on health but also a negative indirect effect (via a side effect) that perfectly cancels out the positive effect, the data would show no association. This would be a violation of faithfulness.</li>
+<li><strong>Mediators</strong>: A <strong>mediator</strong> (<span class="math inline">\(M\)</span>) lies on the causal pathway from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span> (i.e., <span class="math inline">\(A \to M \to Y\)</span>). If we are interested in the <strong>total effect</strong> of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>, we should <strong>not</strong> adjust for the mediator, as this would block a part of the causal effect we are trying to measure. However, if we want to estimate the direct effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span> (holding <span class="math inline">\(M\)</span> constant), we would need to adjust for it, which is a different estimand entirely.</li>
+<li><strong>Confounders</strong>: Adjusting for confounders is necessary.</li>
+<li><strong>Colliders</strong>: Adjusting for colliders is bad.</li>
+<li><strong>Mediators</strong>: Adjusting for mediators is bad if you want the total effect.</li>
 </ul>
 </section>
-<section id="derivation-how-d-separation-implies-conditional-independence" class="level2">
-<h2 class="anchored" data-anchor-id="derivation-how-d-separation-implies-conditional-independence">📕 Derivation: How d-Separation Implies Conditional Independence</h2>
-<p>Let’s use our confounding example (<code>A ← Z → Y</code>) to provide a conceptual derivation of why conditioning on <span class="math inline">\(Z\)</span> makes <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> independent (if there is no direct arrow between them).</p>
+<section id="detailed-numerical-and-r-example" class="level2">
+<h2 class="anchored" data-anchor-id="detailed-numerical-and-r-example">✅ Detailed Numerical and R Example</h2>
+<p>Let’s use the example from the lecture notes and walk through it step-by-step, including the corresponding R code.</p>
+<section id="the-scenario" class="level3">
+<h3 class="anchored" data-anchor-id="the-scenario">The Scenario</h3>
+<p>We are studying the effect of a new blood pressure medication (<span class="math inline">\(A\)</span>) on heart disease mortality (<span class="math inline">\(Y\)</span>). We believe that <code>age</code> (<span class="math inline">\(C\)</span>) is a confounder, as older patients are more likely to be prescribed the medication and are also more likely to die from heart disease.</p>
+<p>The DAG is: <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span> and <span class="math inline">\(A \rightarrow Y\)</span>.</p>
+<ul>
+<li><strong>Backdoor Path</strong>: <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span>.</li>
+<li><strong>Adjustment Set</strong>: To block this path, we must adjust for <span class="math inline">\(C\)</span>, as it is the only non-collider on the path.</li>
+<li><strong>Minimal Adjustment Set</strong>: The minimal sufficient adjustment set is <span class="math inline">\(\vect{C}\)</span>. The set contains all variables that are not colliders (or its descendants) nor mediators (or its descendants) on any backdoor paths from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span>.</li>
+</ul>
+</section>
+<section id="step-by-step-calculation" class="level3">
+<h3 class="anchored" data-anchor-id="step-by-step-calculation">Step-by-Step Calculation</h3>
+<p>We have the following data from 200 patients:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Group</th>
+<th style="text-align: center;">Treatment (<span class="math inline">\(A\)</span>)</th>
+<th style="text-align: center;">Mortality (<span class="math inline">\(Y\)</span>)</th>
+<th style="text-align: center;">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>Young (<span class="math inline">\(C=0\)</span>)</strong></td>
+<td style="text-align: center;"><span class="math inline">\(A=1\)</span></td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">40</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(A=0\)</span></td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>Old (<span class="math inline">\(C=1\)</span>)</strong></td>
+<td style="text-align: center;"><span class="math inline">\(A=1\)</span></td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">60</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(A=0\)</span></td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">80</td>
+</tr>
+</tbody>
+</table>
 <ol type="1">
-<li><p><strong>Start with the Joint Probability Distribution</strong>: According to the rules of probability and the Causal Markov assumption, we can factorize the joint distribution <code>P(A, Z, Y)</code> based on the DAG’s structure. Each variable’s probability is conditioned only on its parents: <span class="math display">\[
-P(A, Z, Y) = P(Z) \times P(A|Z) \times P(Y|Z)
-\]</span></p>
+<li><p><strong>Crude Association</strong>: The unadjusted association between treatment and mortality.</p>
 <ul>
-<li><em>Annotation</em>: <span class="math inline">\(Z\)</span> has no parents, so its probability is marginal. <span class="math inline">\(A\)</span>’s only parent is <span class="math inline">\(Z\)</span>, so we have <code>P(A|Z)</code>. <span class="math inline">\(Y\)</span>’s only parent is <span class="math inline">\(Z\)</span>, so we have <code>P(Y|Z)</code>.</li>
+<li>Total treated (<span class="math inline">\(A=1\)</span>): <span class="math inline">\(40+60 = 100\)</span>. Deaths: <span class="math inline">\(10+40=50\)</span>. Crude mortality: <span class="math inline">\(50/100 = 50%\)</span>.</li>
+<li>Total untreated (<span class="math inline">\(A=0\)</span>): <span class="math inline">\(20+80=100\)</span>. Deaths: <span class="math inline">\(5+20=25\)</span>. Crude mortality: <span class="math inline">\(25/100 = 25%\)</span>.</li>
+<li>Crude risk difference: <span class="math inline">\(50% - 25% = 25%\)</span>. This suggests the drug increases mortality, but this is a biased estimate.</li>
 </ul></li>
-<li><p><strong>Derive the Conditional Distribution of A and Y given Z</strong>: We want to know <code>P(A, Y | Z)</code>. Using the definition of conditional probability: <span class="math display">\[P(A, Y | Z) = \frac{P(A, Y, Z)}{P(Z)}\]</span></p></li>
-<li><p><strong>Substitute the Factorized Form</strong>: Now, substitute our factorization from Step 1 into the numerator: <span class="math display">\[
-P(A, Y | Z) = \frac{P(Z) \times P(A|Z) \times P(Y|Z)}{P(Z)}
-\]</span></p></li>
-<li><p><strong>Simplify</strong>: The <code>P(Z)</code> terms cancel out, leaving: <span class="math display">\[
-P(A, Y | Z) = P(A|Z) \times P(Y|Z)
-\]</span></p></li>
-<li><p><strong>Conclusion</strong>: This final expression is the definition of <strong>conditional independence</strong>. It shows that, given <span class="math inline">\(Z\)</span>, the joint probability of <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> is just the product of their individual conditional probabilities. Therefore, <span class="math inline">\(A\)</span> is independent of <span class="math inline">\(Y\)</span> conditional on <span class="math inline">\(Z\)</span>, written as <code>(A ⊥ Y | Z)</code>.</p></li>
+<li><p><strong>Conditional Effects</strong>: We calculate the risk difference within each stratum of the confounder <span class="math inline">\(C\)</span>.</p>
+<ul>
+<li><strong>Young Group (<span class="math inline">\(C=0\)</span>)</strong>:
+<ul>
+<li>Risk with treatment: <span class="math inline">\(10/40 = 25\%\)</span>.</li>
+<li>Risk without treatment: <span class="math inline">\(5/20 = 25\%\)</span>.</li>
+<li>Conditional risk difference: <span class="math inline">\(25\% - 25\% = 0\%\)</span>.</li>
+</ul></li>
+<li><strong>Old Group (<span class="math inline">\(C=1\)</span>)</strong>:
+<ul>
+<li>Risk with treatment: <span class="math inline">\(40/60 = 66.7\%\)</span>.</li>
+<li>Risk without treatment: <span class="math inline">\(20/80 = 25\%\)</span>.</li>
+<li>Conditional risk difference: <span class="math inline">\(66.7\% - 25\% \approx 41.7\%\)</span>.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Adjusted Estimate (Standardization)</strong>: To get the Average Treatment Effect (ATE), we average the conditional effects across the marginal distribution of the confounder <span class="math inline">\(C\)</span>.</p>
+<ul>
+<li>Marginal distribution of <span class="math inline">\(C\)</span>:
+<ul>
+<li>Total young: <span class="math inline">\(40+20=60\)</span>. Total old: <span class="math inline">\(60+80=140\)</span>.</li>
+<li><span class="math inline">\(\mathbb{P}(C=0) = 60/200 = 0.3\)</span>.</li>
+<li><span class="math inline">\(\mathbb{P}(C=1) = 140/200 = 0.7\)</span>.</li>
+</ul></li>
+<li>The ATE is the weighted average of the stratum-specific effects:
+<ul>
+<li><span class="math inline">\(\text{ATE} = \sum_z (\E{Y \mid A=1, C=z} - \E{Y \mid A=0, C=z}) \mathbb{P}(C=z)\)</span></li>
+<li><span class="math inline">\(\text{ATE} = (0\% \times 0.3) + (41.7\% \times 0.7) = 0 + 29.2\% = 29.2\%\)</span>.</li>
+</ul></li>
+<li>The adjusted causal effect is a 29.2% increase in mortality, which is a significant difference from the crude estimate of 25%.</li>
+</ul></li>
 </ol>
-<p>This derivation demonstrates that the graphical rule of “blocking” a backdoor path by conditioning on the common cause <span class="math inline">\(Z\)</span> is mathematically equivalent to achieving conditional independence in the data. This is the theoretical foundation that allows us to use DAGs to design valid statistical analyses for causal inference.</p>
-
-
 </section>
+<section id="r-code-implementation" class="level3">
+<h3 class="anchored" data-anchor-id="r-code-implementation">R Code Implementation</h3>
+<p>We can use <code>glm</code> to perform this adjustment. The key is to include the confounder <code>C</code> in the model.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Necessary Libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("dagitty")</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("dplyr")</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Visualize the DAG and Identify the Adjustment Set</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Causal Structure: A &lt;- C -&gt; Y and A -&gt; Y</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">"dag {</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="st">    A {exposure, pos=</span><span class="sc">\"</span><span class="st">0,0</span><span class="sc">\"</span><span class="st">};</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="st">    Y {outcome, pos=</span><span class="sc">\"</span><span class="st">1,0</span><span class="sc">\"</span><span class="st">};</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="st">    C {confounder, pos=</span><span class="sc">\"</span><span class="st">0.5,1</span><span class="sc">\"</span><span class="st">};</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="st">    C -&gt; A;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="st">    C -&gt; Y;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="st">    A -&gt; Y;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="st">}"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dag)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># The Backdoor Path is A &lt;- C -&gt; Y.</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># We Need to Block This Path by Adjusting for C.</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># The `adjustmentSets()` Function Will Confirm This.</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>adjustment_sets <span class="ot">&lt;-</span> <span class="fu">adjustmentSets</span>(dag, <span class="at">exposure =</span> <span class="st">"A"</span>, <span class="at">outcome =</span> <span class="st">"Y"</span>, <span class="at">effect =</span> <span class="st">"total"</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(adjustment_sets)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Output Will Confirm that {C} is a Valid Adjustment Set.</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Simulate Data Based on This Causal Structure</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">579</span>) <span class="co"># For reproducibility</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.7</span>) <span class="co"># Confounder (0=young, 1=old)</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fu">case_when</span>(C <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="fl">0.4</span>, C <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="fl">0.6</span>)) <span class="co"># Treatment depends on confounder</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fu">case_when</span>(A <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> C <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="fl">0.25</span>, A <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> C <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="fl">0.25</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                                   A <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> C <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="fl">0.25</span>, A <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> C <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="fl">0.667</span>)) <span class="co"># Outcome depends on A and C</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(A, Y, C)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Perform the Crude (unadjusted) Analysis Using a Logistic Regression</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># This Model Ignores the Confounder C.</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>crude_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> data, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(crude_model)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Crude odds ratio for A:"</span>, <span class="fu">exp</span>(<span class="fu">coef</span>(crude_model){<span class="st">"A"</span>}), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co"># The Coefficient for A Will Be Biased, Reflecting the Confounded Association.</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Perform the Adjusted Analysis by including the Confounder C</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co"># This Model Blocks the Backdoor Path.</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>adjusted_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> C, <span class="at">data =</span> data, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjusted_model)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Adjusted odds ratio for A (within strata of C):"</span>, <span class="fu">exp</span>(<span class="fu">coef</span>(adjusted_model){<span class="st">"A"</span>}), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co"># The Coefficient for A in This Model is an Estimate of the Conditional Causal Effect.</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: For Logistic Regression, This is the Conditional Odds Ratio. To Get the</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="co"># ATE (risk difference), We Need to Use More Advanced Methods like G-computation,</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Which We Will Cover in a Later Lecture. For Now, the Key is that This Model</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Successfully Blocks the Backdoor Path and Provides an Unbiased Estimate</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Of the *conditional* Causal Effect, Which is the Log-odds Ratio Here.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="check-your-understanding" class="level2">
+<h2 class="anchored" data-anchor-id="check-your-understanding">❓ Check Your Understanding</h2>
+<ol type="1">
+<li><strong>Question</strong>: In an observational study, if we are certain that all confounders are measured, what core assumption of the potential outcomes framework are we trying to satisfy?
+<ul>
+<li><strong>Answer</strong>: You are trying to satisfy the <strong>conditional exchangeability</strong> assumption, <span class="math inline">\(Y^a \indep A \mid X\)</span>.</li>
+</ul></li>
+<li><strong>Question</strong>: Draw a DAG with nodes <span class="math inline">\(A\)</span>, <span class="math inline">\(Y\)</span>, <span class="math inline">\(M\)</span>, and <span class="math inline">\(C\)</span>, where <span class="math inline">\(C\)</span> is a confounder and <span class="math inline">\(M\)</span> is a mediator. Write down the paths from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span>. What is the minimal sufficient adjustment set for the total effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>?
+<ul>
+<li><strong>Answer</strong>: The DAG is <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span> and <span class="math inline">\(A \rightarrow M \rightarrow Y\)</span>. The paths from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span> are:
+<ol type="1">
+<li><span class="math inline">\(A \to Y\)</span> (the direct causal effect)</li>
+<li><span class="math inline">\(A \to M \to Y\)</span> (the indirect causal effect)</li>
+<li><span class="math inline">\(A \leftarrow C \rightarrow Y\)</span> (the backdoor confounding path)</li>
+</ol></li>
+<li>The minimal sufficient adjustment set is <span class="math inline">\({C}\)</span> because it is the only variable on the backdoor path that is not a descendant of <span class="math inline">\(A\)</span>. We should not adjust for <span class="math inline">\(M\)</span> because we are interested in the total effect.</li>
+</ul></li>
+<li><strong>Question</strong>: A study on the effect of exercise (<span class="math inline">\(A\)</span>) on blood pressure (<span class="math inline">\(Y\)</span>) adjusts for both diet (<span class="math inline">\(C\)</span>) and a genetic marker (<span class="math inline">\(O\)</span>). The DAG shows <span class="math inline">\(A \leftarrow C \rightarrow Y\)</span>, <span class="math inline">\(A \to O \leftarrow Y\)</span>. Based on this DAG, is adjusting for <span class="math inline">\(O\)</span> a good idea? Why or why not?
+<ul>
+<li><strong>Answer</strong>: No, adjusting for <span class="math inline">\(O\)</span> is a bad idea. In this DAG, <span class="math inline">\(O\)</span> is a <strong>collider</strong> on the path between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>. Conditioning on a collider opens a non-causal path, which can induce a spurious association and bias your estimate. You should only adjust for the confounder <span class="math inline">\(C\)</span>.</li>
+</ul></li>
+</ol>
+</section>
+<section id="reflective-prompt" class="level2">
+<h2 class="anchored" data-anchor-id="reflective-prompt">🧠 Reflective Prompt</h2>
+<p>Consider the difference between confounding and selection bias. Can you use the graphical framework (DAGs) to describe a scenario where you have only confounding, a scenario with only selection bias, and a scenario with both? What variables would you need to adjust for in each case to get an unbiased estimate?</p>
+
+
 </section>
 
 </main> <!-- /main -->
@@ -1472,41 +1504,9 @@ P(A, Y | Z) = P(A|Z) \times P(Y|Z)
   });
   </script>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-2_DAG.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
-(function() {
-  let previousOnload = window.onload;
-  window.onload = () => {
-    if (previousOnload) {
-      previousOnload();
-    }
-    lightboxQuarto.on('slide_before_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      const href = trigger.getAttribute('href');
-      if (href !== null) {
-        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-        if (imgEl !== null) {
-          const srcAttr = imgEl.getAttribute("src");
-          if (srcAttr && srcAttr.startsWith("data:")) {
-            slideConfig.href = srcAttr;
-          }
-        }
-      } 
-    });
-  
-    lightboxQuarto.on('slide_after_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(slideNode);
-      }
-    });
-  
-  };
-  
-})();
-          </script>
 
 
 
 
-<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-3_confounding_identification.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

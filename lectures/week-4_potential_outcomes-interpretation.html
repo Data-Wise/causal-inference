@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>STAT 579: Applied Causal Inference – Introduction to Causal Inference</title>
+<title>Interpreting Potential Outcomes Across Causal Inference Methods – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -43,9 +43,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-1024271a3ded9d1f7224d65e019eef21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-1024271a3ded9d1f7224d65e019eef21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-1024271a3ded9d1f7224d65e019eef21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -168,11 +168,45 @@ MathJax = {
     }
   };
 </script>
-<meta property="og:title" content="STAT 579: Applied Causal Inference – Introduction to Causal Inference">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="Interpreting Potential Outcomes Across Causal Inference Methods – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
-<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/syllabus/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
-</head><body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -334,47 +368,7 @@ MathJax = {
     } else {
       toggleColorMode(false);
     }
-  </script>\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-\rhead{STAT 579 Applied Causal Inference}
-\lhead{Fall 2025 Syllabus}
-\cfoot{\thepage}
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="../assets/styles/css/home.css">
-
-
-
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -396,11 +390,11 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../syllabus/syllabus-final.html"> 
+    <a class="nav-link" href="../syllabus/syllabus-final.pdf"> 
 <span class="menu-text">Syllabus</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../syllabus/schedule.html"> 
+    <a class="nav-link" href="../syllabus/schedule.pdf"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
@@ -450,7 +444,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">STAT 579: Applied Causal Inference</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Interpreting Potential Outcomes Across Causal Inference Methods</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -460,7 +454,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">STAT 579: Applied Causal Inference</h1>
+      <h1 class="title">Interpreting Potential Outcomes Across Causal Inference Methods</h1>
                       </div>
   </div>
     
@@ -484,7 +478,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Aug-18-2025</p>
+        <p class="date">Aug-03-2025</p>
       </div>
     </div>
     
@@ -520,7 +514,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/schedule.pdf" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Schedule</span></a>
   </div>
 </li>
@@ -590,7 +584,49 @@ window.Quarto = {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="syllabus-final.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction-the-contextual-nature-of-causal-notation" id="toc-introduction-the-contextual-nature-of-causal-notation" class="nav-link active" data-scroll-target="#introduction-the-contextual-nature-of-causal-notation">Introduction: The Contextual Nature of Causal Notation</a></li>
+  <li><a href="#mediation-analysis-cross-world-counterfactuals" id="toc-mediation-analysis-cross-world-counterfactuals" class="nav-link" data-scroll-target="#mediation-analysis-cross-world-counterfactuals">1. Mediation Analysis: Cross-World Counterfactuals</a>
+  <ul class="collapse">
+  <li><a href="#the-challenge-of-nested-potential-outcomes" id="toc-the-challenge-of-nested-potential-outcomes" class="nav-link" data-scroll-target="#the-challenge-of-nested-potential-outcomes">The Challenge of Nested Potential Outcomes</a></li>
+  </ul></li>
+  <li><a href="#instrumental-variables-compliance-defined-counterfactuals" id="toc-instrumental-variables-compliance-defined-counterfactuals" class="nav-link" data-scroll-target="#instrumental-variables-compliance-defined-counterfactuals">2. Instrumental Variables: Compliance-Defined Counterfactuals</a>
+  <ul class="collapse">
+  <li><a href="#the-instrumental-variable-setup" id="toc-the-instrumental-variable-setup" class="nav-link" data-scroll-target="#the-instrumental-variable-setup">The Instrumental Variable Setup</a></li>
+  </ul></li>
+  <li><a href="#difference-in-differences-temporal-counterfactuals" id="toc-difference-in-differences-temporal-counterfactuals" class="nav-link" data-scroll-target="#difference-in-differences-temporal-counterfactuals">3. Difference-in-Differences: Temporal Counterfactuals</a>
+  <ul class="collapse">
+  <li><a href="#the-did-framework" id="toc-the-did-framework" class="nav-link" data-scroll-target="#the-did-framework">The DiD Framework</a></li>
+  </ul></li>
+  <li><a href="#time-varying-interventions-sequential-counterfactuals" id="toc-time-varying-interventions-sequential-counterfactuals" class="nav-link" data-scroll-target="#time-varying-interventions-sequential-counterfactuals">4. Time-Varying Interventions: Sequential Counterfactuals</a>
+  <ul class="collapse">
+  <li><a href="#the-g-formula-framework" id="toc-the-g-formula-framework" class="nav-link" data-scroll-target="#the-g-formula-framework">The g-Formula Framework</a></li>
+  </ul></li>
+  <li><a href="#comparative-analysis-how-context-shapes-interpretation" id="toc-comparative-analysis-how-context-shapes-interpretation" class="nav-link" data-scroll-target="#comparative-analysis-how-context-shapes-interpretation">5. Comparative Analysis: How Context Shapes Interpretation</a>
+  <ul class="collapse">
+  <li><a href="#common-mathematical-forms-different-meanings" id="toc-common-mathematical-forms-different-meanings" class="nav-link" data-scroll-target="#common-mathematical-forms-different-meanings">Common Mathematical Forms, Different Meanings</a></li>
+  <li><a href="#identification-strategies-and-assumptions" id="toc-identification-strategies-and-assumptions" class="nav-link" data-scroll-target="#identification-strategies-and-assumptions">Identification Strategies and Assumptions</a></li>
+  <li><a href="#the-role-of-time-in-counterfactual-reasoning" id="toc-the-role-of-time-in-counterfactual-reasoning" class="nav-link" data-scroll-target="#the-role-of-time-in-counterfactual-reasoning">The Role of Time in Counterfactual Reasoning</a></li>
+  </ul></li>
+  <li><a href="#advanced-topics-and-extensions" id="toc-advanced-topics-and-extensions" class="nav-link" data-scroll-target="#advanced-topics-and-extensions">6. Advanced Topics and Extensions</a>
+  <ul class="collapse">
+  <li><a href="#interference-and-spillover-effects" id="toc-interference-and-spillover-effects" class="nav-link" data-scroll-target="#interference-and-spillover-effects">Interference and Spillover Effects</a></li>
+  <li><a href="#mediation-with-time-varying-treatments" id="toc-mediation-with-time-varying-treatments" class="nav-link" data-scroll-target="#mediation-with-time-varying-treatments">Mediation with Time-Varying Treatments</a></li>
+  <li><a href="#survival-analysis-and-truncation-by-death" id="toc-survival-analysis-and-truncation-by-death" class="nav-link" data-scroll-target="#survival-analysis-and-truncation-by-death">Survival Analysis and Truncation by Death</a></li>
+  <li><a href="#machine-learning-and-potential-outcomes" id="toc-machine-learning-and-potential-outcomes" class="nav-link" data-scroll-target="#machine-learning-and-potential-outcomes">Machine Learning and Potential Outcomes</a></li>
+  </ul></li>
+  <li><a href="#practical-guidelines-for-interpretation" id="toc-practical-guidelines-for-interpretation" class="nav-link" data-scroll-target="#practical-guidelines-for-interpretation">7. Practical Guidelines for Interpretation</a>
+  <ul class="collapse">
+  <li><a href="#checklist-for-interpreting-potential-outcomes" id="toc-checklist-for-interpreting-potential-outcomes" class="nav-link" data-scroll-target="#checklist-for-interpreting-potential-outcomes">Checklist for Interpreting Potential Outcomes</a></li>
+  <li><a href="#common-misinterpretations" id="toc-common-misinterpretations" class="nav-link" data-scroll-target="#common-misinterpretations">Common Misinterpretations</a></li>
+  </ul></li>
+  <li><a href="#conclusion-the-art-of-causal-interpretation" id="toc-conclusion-the-art-of-causal-interpretation" class="nav-link" data-scroll-target="#conclusion-the-art-of-causal-interpretation">Conclusion: The Art of Causal Interpretation</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-4_potential_outcomes-interpretation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -599,347 +635,361 @@ window.Quarto = {
 
 
 
-<section id="instructor-logistics" class="level2 cell">
-<h2 class="anchored" data-anchor-id="instructor-logistics">Instructor &amp; Logistics</h2>
-<table class="caption-top table table-sm table-striped small">
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Instructor</strong></td>
-<td style="text-align: left;">Dr.&nbsp;Davood Tofighi</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Affiliation</strong></td>
-<td style="text-align: left;">Department of Mathematics and Statistics</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Email</strong></td>
-<td style="text-align: left;">Through Canvas</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Office Hours</strong></td>
-<td style="text-align: left;">TBD – Office/Zoom</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Class Time</strong></td>
-<td style="text-align: left;">Tuesdays &amp; Thursdays, 9:30 AM – 10:45 AM</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Location</strong></td>
-<td style="text-align: left;">Science Math Learning Center (SMLC) 120</td>
-</tr>
-</tbody>
-</table>
+<section id="introduction-the-contextual-nature-of-causal-notation" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-the-contextual-nature-of-causal-notation">Introduction: The Contextual Nature of Causal Notation</h2>
+<p>The potential outcomes framework provides a unified mathematical language for causal inference, but the same notation can carry dramatically different interpretations depending on the identification strategy employed. Understanding these contextual differences is crucial for proper application and interpretation of causal methods. This chapter explores how potential outcome notation adapts across mediation analysis, instrumental variables, difference-in-differences, and time-varying interventions, revealing both the flexibility and precision required in modern causal reasoning.</p>
 </section>
-<section id="course-overview" class="level2">
-<h2 class="anchored" data-anchor-id="course-overview">Course Overview</h2>
-<p>This graduate-level seminar introduces the <strong>theory and application of causal inference</strong>, with a strong emphasis on <strong>biostatistical and epidemiological contexts</strong>. The course builds from <strong>conceptual foundations and core assumptions</strong> to <strong>modern estimation methods</strong> for causal effects, emphasizing <strong>target trial emulation</strong> as a unifying framework.</p>
-<p>Key frameworks and tools include:</p>
+<section id="mediation-analysis-cross-world-counterfactuals" class="level2">
+<h2 class="anchored" data-anchor-id="mediation-analysis-cross-world-counterfactuals">1. Mediation Analysis: Cross-World Counterfactuals</h2>
+<section id="the-challenge-of-nested-potential-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="the-challenge-of-nested-potential-outcomes">The Challenge of Nested Potential Outcomes</h3>
+<p>In mediation analysis, we encounter the most complex form of potential outcome notation: <strong>nested counterfactuals</strong> of the form <span class="math inline">\(Y^{a, M^{a'}}\)</span>. This notation describes outcomes in hypothetical worlds that combine elements from multiple parallel universes.</p>
+<section id="deconstructing-the-superscript-ya-ma" class="level4">
+<h4 class="anchored" data-anchor-id="deconstructing-the-superscript-ya-ma">Deconstructing the Superscript: <span class="math inline">\(Y^{a, M^{a'}}\)</span></h4>
+<p>The superscript contains two conceptually distinct components:</p>
+<p><strong>Component 1: Direct Intervention (<span class="math inline">\(a\)</span>)</strong></p>
 <ul>
-<li>Potential Outcomes Framework &amp; SUTVA</li>
-<li>Directed Acyclic Graphs (DAGs)</li>
-<li>Propensity Scores, IPW, and Doubly Robust Methods</li>
-<li>Instrumental Variables</li>
-<li>Mediation Analysis (NDE/NIE)</li>
-<li>Marginal Structural Models (MSMs)</li>
-<li>Sensitivity Analysis</li>
+<li>Represents an active manipulation of treatment <span class="math inline">\(A\)</span> to value <span class="math inline">\(a\)</span></li>
+<li>This is a standard intervention, similar to what we see in randomized experiments</li>
 </ul>
-<section id="instructors-approach" class="level3">
-<h3 class="anchored" data-anchor-id="instructors-approach">Instructor’s Approach</h3>
-<p>Causal inference is not just a toolbox—it’s a <strong>rigorous way of thinking</strong> about cause and effect. We will prioritize:</p>
+<p><strong>Component 2: Counterfactual Mediator Value (<span class="math inline">\(M^{a'}\)</span>)</strong></p>
 <ul>
-<li><strong>Precise causal questions</strong> (not just statistical associations).</li>
-<li><strong>Transparency of assumptions</strong> (via DAGs and formal notation).</li>
-<li><strong>Identification before estimation</strong> (thinking carefully about what is learnable from data).</li>
-<li><strong>Critical robustness assessment</strong> (sensitivity, replication, target trial framing).</li>
+<li>This is <strong>not</strong> an intervention on <span class="math inline">\(M\)</span></li>
+<li>Instead, <span class="math inline">\(M^{a'}\)</span> represents the natural value that mediator <span class="math inline">\(M\)</span> would have taken if treatment had been set to <span class="math inline">\(a'\)</span></li>
+<li>Crucially, <span class="math inline">\(M^{a'}\)</span> is a random variable capturing natural variation in mediator response</li>
 </ul>
 </section>
+<section id="the-cross-world-interpretation" class="level4">
+<h4 class="anchored" data-anchor-id="the-cross-world-interpretation">The Cross-World Interpretation</h4>
+<p><span class="math inline">\(Y^{a, M^{a'}}\)</span> means: <em>“The potential outcome that would be realized if we intervened to set treatment <span class="math inline">\(A\)</span> to <span class="math inline">\(a\)</span>, while the mediator <span class="math inline">\(M\)</span> simultaneously took on the value it would have naturally attained if treatment had been set to <span class="math inline">\(a'\)</span>.”</em></p>
+<p>This creates a “cross-world” counterfactual requiring information from multiple parallel universes:</p>
+<ul>
+<li>World 1: Where <span class="math inline">\(A = a'\)</span> (to determine <span class="math inline">\(M^{a'}\)</span>)</li>
+<li>World 2: Where <span class="math inline">\(A = a\)</span> and <span class="math inline">\(M = M^{a'}\)</span> (to determine <span class="math inline">\(Y\)</span>)</li>
+</ul>
 </section>
-<section id="learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
-<p>By the end of the course, students will be able to:</p>
+<section id="natural-direct-and-indirect-effects" class="level4">
+<h4 class="anchored" data-anchor-id="natural-direct-and-indirect-effects">Natural Direct and Indirect Effects</h4>
+<p><strong>Natural Direct Effect (NDE)</strong></p>
+<p><span class="math display">\[
+\text{NDE} = \E{Y^{a=1, M^{a=0}} - Y^{a=0, M^{a=0}}}
+\]</span></p>
+<p><em>Interpretation</em>: Compare two worlds where the mediator is frozen at its natural control value (<span class="math inline">\(M^{a=0}\)</span>). Only the treatment varies. Any difference isolates the pathway that bypasses the mediator.</p>
+<p><strong>Natural Indirect Effect (NIE)</strong></p>
+<p><span class="math display">\[
+\text{NIE} = \E{Y^{a=1, M^{a=1}} - Y^{a=1, M^{a=0}}}
+\]</span></p>
+<p><em>Interpretation</em>: Treatment is fixed at the treated level. Only the mediator’s natural value changes (from control to treatment level). Any difference isolates the pathway flowing through the mediator.</p>
+</section>
+<section id="alternative-mediation-frameworks" class="level4">
+<h4 class="anchored" data-anchor-id="alternative-mediation-frameworks">Alternative Mediation Frameworks</h4>
+<p><strong>Controlled Direct Effects</strong></p>
+<p><span class="math display">\[
+\text{CDE}(m) = \E{Y^{a=1, m} - Y^{a=0, m}}
+\]</span></p>
+<p>Here, the mediator is set to a fixed value <span class="math inline">\(m\)</span> (not a counterfactual value). This represents a different causal question: the effect of treatment when we directly control the mediator.</p>
+<p><strong>Interventional Effects (Vanderweele &amp; Tchetgen Tchetgen)</strong> These effects consider interventions that shift the distribution of the mediator rather than fixing it to specific values, providing yet another interpretation of “mediated” effects.</p>
+</section>
+</section>
+</section>
+<section id="instrumental-variables-compliance-defined-counterfactuals" class="level2">
+<h2 class="anchored" data-anchor-id="instrumental-variables-compliance-defined-counterfactuals">2. Instrumental Variables: Compliance-Defined Counterfactuals</h2>
+<section id="the-instrumental-variable-setup" class="level3">
+<h3 class="anchored" data-anchor-id="the-instrumental-variable-setup">The Instrumental Variable Setup</h3>
+<p>In IV analysis, potential outcomes take on a different meaning, intimately connected to the concept of <strong>compliance types</strong>. The notation <span class="math inline">\(Y^z\)</span> represents the outcome that would be observed if the instrument <span class="math inline">\(Z\)</span> were set to <span class="math inline">\(z\)</span>, but this masks considerable heterogeneity.</p>
+<section id="compliance-types-and-potential-outcomes" class="level4">
+<h4 class="anchored" data-anchor-id="compliance-types-and-potential-outcomes">Compliance Types and Potential Outcomes</h4>
+<p>Consider instrument <span class="math inline">\(Z \in \{0,1\}\)</span> and treatment <span class="math inline">\(A \in \{0,1\}\)</span>. Each unit has potential treatment values <span class="math inline">\((A^0, A^1)\)</span>, defining four compliance types:</p>
 <ol type="1">
-<li>Formulate and distinguish causal from associational questions.</li>
-<li>Represent assumptions using DAGs and counterfactual notation.</li>
-<li>Evaluate and apply key assumptions (SUTVA, exchangeability, positivity).</li>
-<li>Implement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).</li>
-<li>Decompose effects via mediation analysis.</li>
-<li>Conduct sensitivity analyses for unmeasured confounding.</li>
-<li>Frame observational studies as target trial emulations.</li>
-<li>Critically evaluate causal claims in the literature.</li>
+<li><strong>Always-takers</strong>: <span class="math inline">\(A^0 = 1, A^1 = 1\)</span></li>
+<li><strong>Never-takers</strong>: <span class="math inline">\(A^0 = 0, A^1 = 0\)</span></li>
+<li><strong>Compliers</strong>: <span class="math inline">\(A^0 = 0, A^1 = 1\)</span></li>
+<li><strong>Defiers</strong>: <span class="math inline">\(A^0 = 1, A^1 = 0\)</span></li>
 </ol>
 </section>
-<section id="assessment-and-grading" class="level2">
-<h2 class="anchored" data-anchor-id="assessment-and-grading">Assessment and Grading</h2>
-<div class="cell">
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 14%">
-<col style="width: 2%">
-<col style="width: 83%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Component</th>
-<th style="text-align: left;">Weight</th>
-<th style="text-align: left;"><span class="math inline">\(\qquad \qquad \textrm{Description}\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Weekly Concept Checks</strong></td>
-<td style="text-align: left;">10%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Short, low-stakes exercises on assumptions, DAGs, and interpretation.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Problem Sets (3–4 sets)</strong></td>
-<td style="text-align: left;">25%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Analytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Paper Critique &amp; Discussion Lead</strong></td>
-<td style="text-align: left;">20%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Each student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Final Project</strong></td>
-<td style="text-align: left;">35%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Independent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Final Presentation</strong></td>
-<td style="text-align: left;">10%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> 15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results.</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="course-materials" class="level2">
-<h2 class="anchored" data-anchor-id="course-materials">Course Materials</h2>
-<section id="required-freely-available-online" class="level3">
-<h3 class="anchored" data-anchor-id="required-freely-available-online">Required (Freely Available Online)</h3>
+<section id="the-local-average-treatment-effect-late" class="level4">
+<h4 class="anchored" data-anchor-id="the-local-average-treatment-effect-late">The Local Average Treatment Effect (LATE)</h4>
+<p>The IV estimand identifies the <strong>Local Average Treatment Effect</strong>:</p>
+<p><span class="math display">\[
+\text{LATE} = \E{Y^1 - Y^0 | \text{Complier}}
+\]</span></p>
+<p><strong>Critical Interpretation</strong>: <span class="math inline">\(Y^1\)</span> and <span class="math inline">\(Y^0\)</span> here do <strong>not</strong> represent potential outcomes under direct intervention on <span class="math inline">\(Y\)</span>. Instead:</p>
 <ul>
-<li>Hernán, M. A., &amp; Robins, J. M. (2024). <em>Causal Inference: What If</em>.</li>
-<li>Neal, B. (2020). <em>Introduction to Causal Inference</em>.</li>
+<li><span class="math inline">\(Y^1\)</span> = outcome when instrument encourages treatment (and compliers take treatment)</li>
+<li><span class="math inline">\(Y^0\)</span> = outcome when instrument discourages treatment (and compliers avoid treatment)</li>
 </ul>
 </section>
-<section id="recommended" class="level3">
-<h3 class="anchored" data-anchor-id="recommended">Recommended</h3>
+<section id="the-indirect-nature-of-iv-counterfactuals" class="level4">
+<h4 class="anchored" data-anchor-id="the-indirect-nature-of-iv-counterfactuals">The Indirect Nature of IV Counterfactuals</h4>
+<p>Unlike in experimental settings, IV counterfactuals are <strong>mediated through compliance behavior</strong>:</p>
+<p><span class="math display">\[
+Y^z = \sum_{\text{types}} Y^{A^z} \cdot \ind{\text{type}} \cdot \Prob{\text{type}}
+\]</span></p>
+<p>This shows that <span class="math inline">\(Y^z\)</span> is actually a mixture of different potential outcomes, weighted by compliance type probabilities.</p>
+</section>
+<section id="principal-stratification-framework" class="level4">
+<h4 class="anchored" data-anchor-id="principal-stratification-framework">Principal Stratification Framework</h4>
+<p>In IV analysis, we’re essentially doing <strong>principal stratification</strong> on compliance types:</p>
 <ul>
-<li>Cunningham, S. (2021). <em>Causal Inference: The Mixtape</em>.</li>
-<li>VanderWeele, T. J. (2015). <em>Explanation in Causal Inference</em>.</li>
-<li>Pearl, J., Glymour, M., &amp; Jewell, N. (2016). <em>Causal Inference in Statistics: A Primer</em>.</li>
+<li><strong>Principal strata</strong>: Defined by <span class="math inline">\((A^0, A^1)\)</span></li>
+<li><strong>Causal effect of interest</strong>: <span class="math inline">\(\E{Y^{A=1} - Y^{A=0} | A^0 = 0, A^1 = 1}\)</span></li>
+<li><strong>Identification</strong>: Uses the instrument to reveal this stratum-specific effect</li>
 </ul>
 </section>
-<section id="software" class="level3">
-<h3 class="anchored" data-anchor-id="software">Software</h3>
-<ul>
-<li><strong>Required:</strong> R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.</li>
-<li><strong>Core Packages:</strong> <code>tidyverse</code>, <code>dagitty</code>, <code>ggdag</code>, <code>MatchIt</code>, <code>WeightIt</code>, <code>cobalt</code>, <code>ivreg</code>, <code>mediation</code>, <code>EValue</code>.</li>
-</ul>
+<section id="exclusion-restriction-interpretation" class="level4">
+<h4 class="anchored" data-anchor-id="exclusion-restriction-interpretation">Exclusion Restriction Interpretation</h4>
+<p>The exclusion restriction (<span class="math inline">\(Y^{z,d} = Y^d\)</span> for all <span class="math inline">\(z,d\)</span>) means:</p>
+<p><em>“The instrument only affects outcomes through its effect on treatment receipt.”</em></p>
+<p>This creates a specific type of mediation structure where the instrument → treatment → outcome, but unlike general mediation, we can point-identify the effect for compliers under additional assumptions.</p>
 </section>
 </section>
-<section id="course-schedule-14-weeks" class="level2">
-<h2 class="anchored" data-anchor-id="course-schedule-14-weeks">Course Schedule (14 Weeks)</h2>
-<section id="part-i-foundations" class="level3">
-<h3 class="anchored" data-anchor-id="part-i-foundations">Part I: Foundations</h3>
+</section>
+<section id="difference-in-differences-temporal-counterfactuals" class="level2">
+<h2 class="anchored" data-anchor-id="difference-in-differences-temporal-counterfactuals">3. Difference-in-Differences: Temporal Counterfactuals</h2>
+<section id="the-did-framework" class="level3">
+<h3 class="anchored" data-anchor-id="the-did-framework">The DiD Framework</h3>
+<p>In difference-in-differences, potential outcomes acquire a <strong>temporal dimension</strong>. The notation <span class="math inline">\(Y_{it}^g\)</span> represents the outcome for unit <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span> if first treated in period <span class="math inline">\(g\)</span>.</p>
+<section id="treatment-timing-and-potential-outcomes" class="level4">
+<h4 class="anchored" data-anchor-id="treatment-timing-and-potential-outcomes">Treatment Timing and Potential Outcomes</h4>
+<p><strong>Never-treated units</strong>: <span class="math inline">\(Y_{it}^{\infty}\)</span> (outcome if never treated) <strong>Treated units</strong>: <span class="math inline">\(Y_{it}^g\)</span> where <span class="math inline">\(g\)</span> is the first treatment period</p>
+</section>
+<section id="parallel-trends-as-a-counterfactual-assumption" class="level4">
+<h4 class="anchored" data-anchor-id="parallel-trends-as-a-counterfactual-assumption">Parallel Trends as a Counterfactual Assumption</h4>
+<p>The parallel trends assumption states:</p>
+<p><span class="math display">\[
+\E{Y_{it}^{\infty} - Y_{i,t-1}^{\infty} | G_i = g} = \E{Y_{it}^{\infty} - Y_{i,t-1}^{\infty} | G_i = \infty}
+\]</span></p>
+<p><em>Interpretation</em>: The <strong>counterfactual trend</strong> for treated units (had they not been treated) equals the observed trend for control units.</p>
+</section>
+<section id="the-att-in-did" class="level4">
+<h4 class="anchored" data-anchor-id="the-att-in-did">The ATT in DiD</h4>
+<p>The Average Treatment Effect on the Treated becomes:</p>
+<p><span class="math display">\[
+\text{ATT}_{g,t} = \E{Y_{it}^g - Y_{it}^{\infty} | G_i = g, t \geq g}
+\]</span></p>
+<p><strong>Key insight</strong>: We observe <span class="math inline">\(Y_{it}^g\)</span> but must construct <span class="math inline">\(Y_{it}^{\infty}\)</span> using the parallel trends assumption and control group observations.</p>
+</section>
+<section id="staggered-adoption-and-dynamic-effects" class="level4">
+<h4 class="anchored" data-anchor-id="staggered-adoption-and-dynamic-effects">Staggered Adoption and Dynamic Effects</h4>
+<p><strong>Modern DiD with staggered treatment timing</strong>:</p>
+<p><span class="math display">\[
+Y_{it}^g = Y_{it}^{\infty} + \sum_{s=0}^{\infty} \tau_{g,s} \cdot \mathbf{1}{t = g + s}
+\]</span></p>
+<p>where <span class="math inline">\(\tau_{g,s}\)</span> is the treatment effect <span class="math inline">\(s\)</span> periods after initial treatment for cohort <span class="math inline">\(g\)</span>.</p>
+<p><strong>Interpretation complexity</strong>: Each potential outcome <span class="math inline">\(Y_{it}^g\)</span> now represents a <strong>dynamic treatment trajectory</strong> starting at time <span class="math inline">\(g\)</span>, not just a static treatment state.</p>
+</section>
+</section>
+</section>
+<section id="time-varying-interventions-sequential-counterfactuals" class="level2">
+<h2 class="anchored" data-anchor-id="time-varying-interventions-sequential-counterfactuals">4. Time-Varying Interventions: Sequential Counterfactuals</h2>
+<section id="the-g-formula-framework" class="level3">
+<h3 class="anchored" data-anchor-id="the-g-formula-framework">The g-Formula Framework</h3>
+<p>For time-varying treatments <span class="math inline">\(\bar{A}_t = (A_0, A_1, \ldots, A_t)\)</span>, potential outcomes become <strong>path-dependent</strong>: <span class="math inline">\(Y^{\bar{a}_t}\)</span>.</p>
+<section id="sequential-randomization" class="level4">
+<h4 class="anchored" data-anchor-id="sequential-randomization">Sequential Randomization</h4>
+<p>The key assumption becomes <strong>sequential exchangeability</strong>:</p>
+<p><span class="math display">\[
+Y^{\bar{a}_t} \indep A_t | \bar{A}_{t-1} = \bar{a}_{t-1}, \bar{L}_t
+\]</span></p>
+<p><em>Interpretation</em>: At each time point, treatment assignment is as-good-as-random given observed history.</p>
+</section>
+<section id="the-g-formula" class="level4">
+<h4 class="anchored" data-anchor-id="the-g-formula">The g-Formula</h4>
+<p><span class="math display">\[
+\E{Y^{\bar{a}_t}} = \sum_{\bar{l}_t} \E{Y | \bar{A}_t = \bar{a}_t, \bar{L}_t = \bar{l}_t} \prod_{k=0}^t \Prob{L_k = l_k | \bar{A}_{k-1} = \bar{a}_{k-1}, \bar{L}_{k-1} = \bar{l}_{k-1}}
+\]</span></p>
+<p><strong>Interpretation</strong>: The counterfactual mean under treatment regime <span class="math inline">\(\bar{a}_t\)</span> equals a weighted average over all possible covariate histories, where weights represent the probability of each history under the treatment regime.</p>
+</section>
+<section id="sustained-vs.-point-interventions" class="level4">
+<h4 class="anchored" data-anchor-id="sustained-vs.-point-interventions">Sustained vs.&nbsp;Point Interventions</h4>
+<p><strong>Sustained intervention</strong>: <span class="math inline">\(\bar{a}_t = (1,1,\ldots,1)\)</span> - “always treat” <strong>Point intervention</strong>: <span class="math inline">\(\bar{a}_t = (0,\ldots,0,1,0,\ldots,0)\)</span> - “treat only at time <span class="math inline">\(s\)</span>”</p>
+<p>Each creates different counterfactual worlds with distinct causal interpretations.</p>
+</section>
+<section id="natural-vs.-modified-treatment-policies" class="level4">
+<h4 class="anchored" data-anchor-id="natural-vs.-modified-treatment-policies">Natural vs.&nbsp;Modified Treatment Policies</h4>
+<p><strong>Static regimes</strong>: <span class="math inline">\(\bar{a}_t\)</span> fixed regardless of evolving covariates <strong>Dynamic regimes</strong>: <span class="math inline">\(a_t = d_t(\bar{l}_t)\)</span> where treatment depends on covariate history <strong>Modified treatment policies</strong>: Shift observed treatment probabilities rather than imposing fixed regimes</p>
+</section>
+</section>
+</section>
+<section id="comparative-analysis-how-context-shapes-interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="comparative-analysis-how-context-shapes-interpretation">5. Comparative Analysis: How Context Shapes Interpretation</h2>
+<section id="common-mathematical-forms-different-meanings" class="level3">
+<h3 class="anchored" data-anchor-id="common-mathematical-forms-different-meanings">Common Mathematical Forms, Different Meanings</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 2%">
-<col style="width: 5%">
-<col style="width: 25%">
-<col style="width: 12%">
-<col style="width: 17%">
-<col style="width: 35%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Week</th>
-<th>Dates</th>
-<th>Core Topic</th>
-<th>Primary Readings</th>
-<th>Project Link</th>
-<th>Paper Critique</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>Aug 19, 21</td>
-<td>What is a Causal Effect? Counterfactuals &amp; SUTVA</td>
-<td>HR Ch. 1–2; Neal Ch. 1–2</td>
-<td>Define your causal question</td>
-<td>Instructor-led demo critique (introducing assignment expectations)</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>Aug 26, 28</td>
-<td>DAGs &amp; Assumption Transparency</td>
-<td>Neal Ch. 3; HR Ch. 6</td>
-<td>Draw a preliminary DAG</td>
-<td>Student critique</td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>Sep 2, 4</td>
-<td>Exchangeability, Positivity, Consistency</td>
-<td>HR Ch. 7; Neal Ch. 4</td>
-<td>Identify assumptions for your DAG</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>Sep 9, 11</td>
-<td>Confounding, Selection, Measurement Bias</td>
-<td>HR Ch. 8–9</td>
-<td>Consider biases in your dataset</td>
-<td>Student critique</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="part-ii-estimation-methods" class="level3">
-<h3 class="anchored" data-anchor-id="part-ii-estimation-methods">Part II: Estimation Methods</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 3%">
-<col style="width: 9%">
-<col style="width: 29%">
-<col style="width: 20%">
-<col style="width: 25%">
-<col style="width: 12%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Week</th>
-<th>Dates</th>
-<th>Core Topic</th>
-<th>Primary Readings</th>
-<th>Project Link</th>
-<th>Paper Critique</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>5</td>
-<td>Sep 16, 18</td>
-<td>Propensity Scores (matching, weighting)</td>
-<td>HR Ch. 12–13; Neal Ch. 7</td>
-<td>Select adjustment strategy</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>6</td>
-<td>Sep 23, 25</td>
-<td>IPTW, MSMs, Doubly Robust Estimators</td>
-<td>HR Ch. 15; Neal Ch. 7.5–7.6</td>
-<td>Evaluate MSM relevance</td>
-<td>Student critique</td>
-</tr>
-<tr class="odd">
-<td>7</td>
-<td>Sep 30, Oct 2</td>
-<td>G-computation</td>
-<td>HR Ch. 20–21</td>
-<td>Explore g-methods for your project</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>8</td>
-<td>Oct 7</td>
-<td>Instrumental Variables</td>
-<td>HR Ch. 16; Neal Ch. 9</td>
-<td>Assess natural experiments</td>
-<td>Student critique</td>
-</tr>
-</tbody>
-</table>
-<p><em><strong>Note:</strong> UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.</em></p>
-</section>
-<section id="part-iii-advanced-topics-applications" class="level3">
-<h3 class="anchored" data-anchor-id="part-iii-advanced-topics-applications">Part III: Advanced Topics &amp; Applications</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 3%">
-<col style="width: 7%">
-<col style="width: 30%">
-<col style="width: 25%">
+<col style="width: 15%">
 <col style="width: 19%">
-<col style="width: 12%">
+<col style="width: 36%">
+<col style="width: 28%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Week</th>
-<th>Dates</th>
-<th>Core Topic</th>
-<th>Primary Readings</th>
-<th>Project Link</th>
-<th>Paper Critique</th>
+<th>Method</th>
+<th>Notation</th>
+<th>Core Interpretation</th>
+<th>Key Challenge</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>9</td>
-<td>Oct 14, 16</td>
-<td>Effect Modification</td>
-<td>HR Ch. 4–5; Neal Ch. 10</td>
-<td><strong>Project Proposal Due</strong></td>
-<td>Student critique</td>
+<td><strong>RCT</strong></td>
+<td><span class="math inline">\(Y^a\)</span></td>
+<td>Outcome under direct intervention</td>
+<td>Simple, unconfounded</td>
 </tr>
 <tr class="even">
-<td>10</td>
-<td>Oct 21, 23</td>
-<td>Mediation Analysis I (Foundations)</td>
-<td>VanderWeele Ch. 1–2; Neal Ch. 14</td>
-<td>Refine DAG with mediators</td>
-<td>Student critique</td>
+<td><strong>Mediation</strong></td>
+<td><span class="math inline">\(Y^{a, M^{a'}}\)</span></td>
+<td>Cross-world counterfactual</td>
+<td>Requires multiple universes</td>
 </tr>
 <tr class="odd">
-<td>11</td>
-<td>Oct 28, 30</td>
-<td>Mediation II &amp; Principal Stratification</td>
-<td>VanderWeele Ch. 3; HR Ch. 23</td>
-<td>-</td>
-<td>Student critique</td>
+<td><strong>IV</strong></td>
+<td><span class="math inline">\(Y^z\)</span></td>
+<td>Outcome under instrument-induced treatment</td>
+<td>Compliance heterogeneity</td>
 </tr>
 <tr class="even">
-<td>12</td>
-<td>Nov 4, 6</td>
-<td>Sensitivity Analysis</td>
-<td>Neal Ch. 8; HR Ch. 14</td>
-<td>Plan robustness checks</td>
-<td>Student critique</td>
+<td><strong>DiD</strong></td>
+<td><span class="math inline">\(Y_{it}^g\)</span></td>
+<td>Outcome under treatment starting at time <span class="math inline">\(g\)</span></td>
+<td>Parallel trends assumption</td>
 </tr>
 <tr class="odd">
-<td>13</td>
-<td>Nov 11, 13</td>
-<td>Target Trial Emulation</td>
-<td>HR Ch. 22</td>
-<td>Reframe project as trial</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>14</td>
-<td>Nov 18, 20</td>
-<td><strong>Final Presentations</strong></td>
-<td>–</td>
-<td>Present findings</td>
-<td>–</td>
+<td><strong>Time-varying</strong></td>
+<td><span class="math inline">\(Y^{\bar{a}_t}\)</span></td>
+<td>Outcome under treatment sequence</td>
+<td>Sequential confounding</td>
 </tr>
 </tbody>
 </table>
-<p><em><strong>Note:</strong> Thanksgiving Break is Nov 27-28.</em></p>
-<p><strong>Finals Week (Dec 8–13):</strong> Final Project Paper Due.</p>
 </section>
-</section>
-<section id="course-policies" class="level2">
-<h2 class="anchored" data-anchor-id="course-policies">Course Policies</h2>
+<section id="identification-strategies-and-assumptions" class="level3">
+<h3 class="anchored" data-anchor-id="identification-strategies-and-assumptions">Identification Strategies and Assumptions</h3>
+<p><strong>Mediation Analysis</strong></p>
 <ul>
-<li><strong>Late Work:</strong> Deadlines are firm. Late work will be penalized 10% per day unless a prior arrangement is made for a documented emergency.</li>
-<li><strong>Academic Integrity:</strong> Collaboration on ideas is encouraged, but all submitted work must be your own.</li>
-<li><strong>Participation &amp; Respect:</strong> Active, inclusive, and evidence-based dialogue is expected.</li>
-<li><strong>Accessibility:</strong> Students requiring accommodations should contact the Accessibility Resource Center and provide the instructor with an official letter.</li>
+<li><em>Sequential ignorability</em>: <span class="math inline">\((Y^{a,m}, M^{a'}) \indep A | X\)</span> and <span class="math inline">\(Y^{a,m} \indep M | A, X\)</span></li>
+<li><em>Cross-world independence</em>: Cannot be tested empirically</li>
 </ul>
+<p><strong>Instrumental Variables</strong></p>
+<ul>
+<li><em>Instrument relevance</em>: <span class="math inline">\(\cov{Z, A} \neq 0\)</span></li>
+<li><em>Exclusion restriction</em>: <span class="math inline">\(Y^{z,d} = Y^d\)</span></li>
+<li><em>Monotonicity</em>: No defiers</li>
+</ul>
+<p><strong>Difference-in-Differences</strong></p>
+<ul>
+<li><em>Parallel trends</em>: <span class="math inline">\(\E{Y_{it}^{\infty} - Y_{i,t-1}^{\infty} | G_i = g} = \E{Y_{it}^{\infty} - Y_{i,t-1}^{\infty} | G_i = \infty}\)</span></li>
+<li><em>No anticipation</em>: Treatment doesn’t affect outcomes before implementation</li>
+</ul>
+<p><strong>Time-Varying Interventions</strong></p>
+<ul>
+<li><em>Sequential exchangeability</em>: <span class="math inline">\(Y^{\bar{a}_t} \indep A_t | \bar{A}_{t-1} = \bar{a}_{t-1}, \bar{L}_t\)</span></li>
+<li><em>Positivity</em>: <span class="math inline">\(P(A_t = a_t | \bar{A}_{t-1} = \bar{a}_{t-1}, \bar{L}_t = \bar{l}_t) &gt; 0\)</span></li>
+</ul>
+</section>
+<section id="the-role-of-time-in-counterfactual-reasoning" class="level3">
+<h3 class="anchored" data-anchor-id="the-role-of-time-in-counterfactual-reasoning">The Role of Time in Counterfactual Reasoning</h3>
+<p><strong>Static potential outcomes</strong> (RCT, basic mediation): Time-invariant treatment effects <strong>Dynamic potential outcomes</strong> (DiD): Treatment effects can vary with exposure duration <strong>Sequential potential outcomes</strong> (Time-varying): Treatment history determines outcomes</p>
+</section>
+</section>
+<section id="advanced-topics-and-extensions" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-topics-and-extensions">6. Advanced Topics and Extensions</h2>
+<section id="interference-and-spillover-effects" class="level3">
+<h3 class="anchored" data-anchor-id="interference-and-spillover-effects">Interference and Spillover Effects</h3>
+<p>When units interfere with each other, potential outcomes become:</p>
+<p><span class="math display">\[
+Y_i^{\bar{a}_N} = Y_i(a_i, a_{-i})
+\]</span></p>
+<p>where <span class="math inline">\(a_{-i}\)</span> represents treatment assignments for all other units. This creates <strong>network-dependent counterfactuals</strong>.</p>
+</section>
+<section id="mediation-with-time-varying-treatments" class="level3">
+<h3 class="anchored" data-anchor-id="mediation-with-time-varying-treatments">Mediation with Time-Varying Treatments</h3>
+<p>Combining mediation and time-varying interventions:</p>
+<p><span class="math display">\[
+Y^{\bar{a}_t, \bar{M}^{\bar{a}'_t}}
+\]</span></p>
+<p><em>Interpretation</em>: Outcome under treatment sequence <span class="math inline">\(\bar{a}_t\)</span> with mediator trajectory that would have emerged under alternative sequence <span class="math inline">\(\bar{a}'_t\)</span>.</p>
+</section>
+<section id="survival-analysis-and-truncation-by-death" class="level3">
+<h3 class="anchored" data-anchor-id="survival-analysis-and-truncation-by-death">Survival Analysis and Truncation by Death</h3>
+<p>In survival settings:</p>
+<p><span class="math display">\[
+Y^a = Y(a) \text{ if } T(a) &gt; t, \text{ undefined otherwise}
+\]</span></p>
+<p><em>Interpretation</em>: Potential outcomes may not be well-defined if treatment affects survival. This leads to <strong>principal stratification</strong> on survival status.</p>
+</section>
+<section id="machine-learning-and-potential-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="machine-learning-and-potential-outcomes">Machine Learning and Potential Outcomes</h3>
+<p>Modern methods (double/debiased ML) estimate:</p>
+<p><span class="math display">\[
+\E{Y^1 - Y^0} = \E{\E{Y|A=1,X} - \E{Y|A=0,X}}
+\]</span></p>
+<p><em>Interpretation</em>: The same potential outcome difference, but estimated via outcome regression functions rather than direct randomization.</p>
+</section>
+</section>
+<section id="practical-guidelines-for-interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="practical-guidelines-for-interpretation">7. Practical Guidelines for Interpretation</h2>
+<section id="checklist-for-interpreting-potential-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="checklist-for-interpreting-potential-outcomes">Checklist for Interpreting Potential Outcomes</h3>
+<ol type="1">
+<li><strong>Identify the intervention type</strong>
+<ul>
+<li>Direct manipulation vs.&nbsp;instrument-induced vs.&nbsp;natural variation</li>
+</ul></li>
+<li><strong>Understand the reference population</strong>
+<ul>
+<li>Entire population vs.&nbsp;compliers vs.&nbsp;treated units vs.&nbsp;survivors</li>
+</ul></li>
+<li><strong>Consider temporal aspects</strong>
+<ul>
+<li>Static vs.&nbsp;dynamic vs.&nbsp;sequential treatments</li>
+</ul></li>
+<li><strong>Examine cross-world dependencies</strong>
+<ul>
+<li>Single universe vs.&nbsp;multiple counterfactual worlds</li>
+</ul></li>
+<li><strong>Assess identification assumptions</strong>
+<ul>
+<li>What makes the counterfactual identifiable from observed data?</li>
+</ul></li>
+</ol>
+</section>
+<section id="common-misinterpretations" class="level3">
+<h3 class="anchored" data-anchor-id="common-misinterpretations">Common Misinterpretations</h3>
+<p><strong>Mediation Analysis</strong></p>
+<ul>
+<li><em>Error</em>: Treating <span class="math inline">\(M^{a'}\)</span> as an intervention rather than counterfactual value</li>
+<li><em>Correction</em>: Recognize that mediation effects require cross-world reasoning</li>
+</ul>
+<p><strong>Instrumental Variables</strong></p>
+<ul>
+<li><em>Error</em>: Interpreting LATE as population average treatment effect</li>
+<li><em>Correction</em>: Remember LATE applies only to compliers</li>
+</ul>
+<p><strong>Difference-in-Differences</strong></p>
+<ul>
+<li><em>Error</em>: Assuming treatment effects are constant over time</li>
+<li><em>Correction</em>: Allow for dynamic treatment effects and test parallel trends</li>
+</ul>
+<p><strong>Time-Varying Interventions</strong></p>
+<ul>
+<li><em>Error</em>: Ignoring time-varying confounding</li>
+<li><em>Correction</em>: Use g-formula or marginal structural models</li>
+</ul>
+</section>
+</section>
+<section id="conclusion-the-art-of-causal-interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion-the-art-of-causal-interpretation">Conclusion: The Art of Causal Interpretation</h2>
+<p>The potential outcomes framework provides remarkable flexibility for expressing diverse causal questions, but this flexibility comes with the responsibility of careful interpretation. The same mathematical notation can represent fundamentally different causal concepts depending on the identification strategy employed.</p>
+<p>Understanding these distinctions is not merely academic—it directly impacts:</p>
+<ul>
+<li><strong>Study design decisions</strong>: What assumptions are reasonable for your setting?</li>
+<li><strong>Estimation strategies</strong>: Which methods are appropriate for your causal question?</li>
+<li><strong>Policy interpretation</strong>: What populations and scenarios do your results apply to?</li>
+</ul>
+<p>The evolution of causal inference continues to expand our ability to answer complex causal questions, but the fundamental requirement remains unchanged: precise thinking about counterfactual scenarios and the assumptions that make them identifiable from observed data.</p>
+<p>As the field advances toward more complex settings—network interference, continuous treatments, high-dimensional mediators, machine learning integration—the principles outlined in this chapter provide the foundation for rigorous causal reasoning. The mathematics may grow more sophisticated, but the core interpretive challenges remain: What counterfactual world are we imagining, and what assumptions allow us to learn about it from the world we observe?</p>
 
 
 </section>
@@ -1381,5 +1431,5 @@ window.Quarto = {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/syllabus/syllabus-final.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-4_potential_outcomes-interpretation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

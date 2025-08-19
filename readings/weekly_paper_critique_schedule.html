@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>STAT 579: Applied Causal Inference – Introduction to Causal Inference</title>
+<title>Weekly Paper Critique Schedule – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -43,9 +43,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-1024271a3ded9d1f7224d65e019eef21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-1024271a3ded9d1f7224d65e019eef21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-1024271a3ded9d1f7224d65e019eef21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -168,11 +168,45 @@ MathJax = {
     }
   };
 </script>
-<meta property="og:title" content="STAT 579: Applied Causal Inference – Introduction to Causal Inference">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="Weekly Paper Critique Schedule – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
-<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/syllabus/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/readings/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
-</head><body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -334,47 +368,7 @@ MathJax = {
     } else {
       toggleColorMode(false);
     }
-  </script>\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-\rhead{STAT 579 Applied Causal Inference}
-\lhead{Fall 2025 Syllabus}
-\cfoot{\thepage}
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="../assets/styles/css/home.css">
-
-
-
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -450,7 +444,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">STAT 579: Applied Causal Inference</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Weekly Paper Critique Schedule</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -460,7 +454,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">STAT 579: Applied Causal Inference</h1>
+      <h1 class="title">Weekly Paper Critique Schedule</h1>
                       </div>
   </div>
     
@@ -590,7 +584,25 @@ window.Quarto = {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="syllabus-final.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#week-2-dags-assumption-transparency" id="toc-week-2-dags-assumption-transparency" class="nav-link active" data-scroll-target="#week-2-dags-assumption-transparency"><strong>Week 2: DAGs &amp; Assumption Transparency</strong></a></li>
+  <li><a href="#week-3-exchangeability-positivity-consistency" id="toc-week-3-exchangeability-positivity-consistency" class="nav-link" data-scroll-target="#week-3-exchangeability-positivity-consistency"><strong>Week 3: Exchangeability, Positivity, Consistency</strong></a></li>
+  <li><a href="#week-4-confounding-selection-measurement-bias" id="toc-week-4-confounding-selection-measurement-bias" class="nav-link" data-scroll-target="#week-4-confounding-selection-measurement-bias"><strong>Week 4: Confounding, Selection, Measurement Bias</strong></a></li>
+  <li><a href="#week-5-propensity-scores" id="toc-week-5-propensity-scores" class="nav-link" data-scroll-target="#week-5-propensity-scores"><strong>Week 5: Propensity Scores</strong></a></li>
+  <li><a href="#week-6-iptw-msms-doubly-robust-estimators" id="toc-week-6-iptw-msms-doubly-robust-estimators" class="nav-link" data-scroll-target="#week-6-iptw-msms-doubly-robust-estimators"><strong>Week 6: IPTW, MSMs, Doubly Robust Estimators</strong></a></li>
+  <li><a href="#week-7-g-computation" id="toc-week-7-g-computation" class="nav-link" data-scroll-target="#week-7-g-computation"><strong>Week 7: G-computation</strong></a></li>
+  <li><a href="#week-8-instrumental-variables" id="toc-week-8-instrumental-variables" class="nav-link" data-scroll-target="#week-8-instrumental-variables"><strong>Week 8: Instrumental Variables</strong></a></li>
+  <li><a href="#week-9-effect-modification" id="toc-week-9-effect-modification" class="nav-link" data-scroll-target="#week-9-effect-modification"><strong>Week 9: Effect Modification</strong></a></li>
+  <li><a href="#week-10-mediation-analysis-i-foundations" id="toc-week-10-mediation-analysis-i-foundations" class="nav-link" data-scroll-target="#week-10-mediation-analysis-i-foundations"><strong>Week 10: Mediation Analysis I (Foundations)</strong></a></li>
+  <li><a href="#week-11-mediation-ii-principal-stratification" id="toc-week-11-mediation-ii-principal-stratification" class="nav-link" data-scroll-target="#week-11-mediation-ii-principal-stratification"><strong>Week 11: Mediation II &amp; Principal Stratification</strong></a></li>
+  <li><a href="#week-12-sensitivity-analysis" id="toc-week-12-sensitivity-analysis" class="nav-link" data-scroll-target="#week-12-sensitivity-analysis"><strong>Week 12: Sensitivity Analysis</strong></a></li>
+  <li><a href="#week-13-target-trial-emulation" id="toc-week-13-target-trial-emulation" class="nav-link" data-scroll-target="#week-13-target-trial-emulation"><strong>Week 13: Target Trial Emulation</strong></a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/readings/weekly_paper_critique_schedule.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -599,346 +611,197 @@ window.Quarto = {
 
 
 
-<section id="instructor-logistics" class="level2 cell">
-<h2 class="anchored" data-anchor-id="instructor-logistics">Instructor &amp; Logistics</h2>
-<table class="caption-top table table-sm table-striped small">
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Instructor</strong></td>
-<td style="text-align: left;">Dr.&nbsp;Davood Tofighi</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Affiliation</strong></td>
-<td style="text-align: left;">Department of Mathematics and Statistics</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Email</strong></td>
-<td style="text-align: left;">Through Canvas</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Office Hours</strong></td>
-<td style="text-align: left;">TBD – Office/Zoom</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Class Time</strong></td>
-<td style="text-align: left;">Tuesdays &amp; Thursdays, 9:30 AM – 10:45 AM</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Location</strong></td>
-<td style="text-align: left;">Science Math Learning Center (SMLC) 120</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="course-overview" class="level2">
-<h2 class="anchored" data-anchor-id="course-overview">Course Overview</h2>
-<p>This graduate-level seminar introduces the <strong>theory and application of causal inference</strong>, with a strong emphasis on <strong>biostatistical and epidemiological contexts</strong>. The course builds from <strong>conceptual foundations and core assumptions</strong> to <strong>modern estimation methods</strong> for causal effects, emphasizing <strong>target trial emulation</strong> as a unifying framework.</p>
-<p>Key frameworks and tools include:</p>
+<p><strong>Week 1:</strong> Instructor-led demonstration. No student assignment.</p>
+<section id="week-2-dags-assumption-transparency" class="level2">
+<h2 class="anchored" data-anchor-id="week-2-dags-assumption-transparency"><strong>Week 2: DAGs &amp; Assumption Transparency</strong></h2>
 <ul>
-<li>Potential Outcomes Framework &amp; SUTVA</li>
-<li>Directed Acyclic Graphs (DAGs)</li>
-<li>Propensity Scores, IPW, and Doubly Robust Methods</li>
-<li>Instrumental Variables</li>
-<li>Mediation Analysis (NDE/NIE)</li>
-<li>Marginal Structural Models (MSMs)</li>
-<li>Sensitivity Analysis</li>
-</ul>
-<section id="instructors-approach" class="level3">
-<h3 class="anchored" data-anchor-id="instructors-approach">Instructor’s Approach</h3>
-<p>Causal inference is not just a toolbox—it’s a <strong>rigorous way of thinking</strong> about cause and effect. We will prioritize:</p>
-<ul>
-<li><strong>Precise causal questions</strong> (not just statistical associations).</li>
-<li><strong>Transparency of assumptions</strong> (via DAGs and formal notation).</li>
-<li><strong>Identification before estimation</strong> (thinking carefully about what is learnable from data).</li>
-<li><strong>Critical robustness assessment</strong> (sensitivity, replication, target trial framing).</li>
-</ul>
-</section>
-</section>
-<section id="learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
-<p>By the end of the course, students will be able to:</p>
+<li><strong>Primary Paper:</strong> Pearl, J. (1995). Causal diagrams for empirical research. <em>Biometrika</em>, 82(4), 669–710.</li>
+<li><strong>DOI:</strong> <a href="https://doi.org/10.1093/biomet/82.4.669">https://doi.org/10.1093/biomet/82.4.669</a></li>
+<li><strong>Reason for Inclusion:</strong> This is the seminal paper that introduced Directed Acyclic Graphs (DAGs) as a formal, non-parametric language for encoding causal assumptions and deriving their testable implications. It established the mathematical link between causal structures and statistical dependencies, providing a graphical toolkit for identifying and mitigating bias.</li>
+<li><strong>Critique Focus:</strong> Understand that a DAG is a visual representation of the assumed data-generating process, making assumptions transparent and debatable. Master the rules of d-separation to identify conditional independencies. Critically evaluate how the “back-door criterion” provides a clear, non-parametric justification for selecting a sufficient set of adjustment covariates.</li>
+<li><strong>Suggested Discussion Questions:</strong>
 <ol type="1">
-<li>Formulate and distinguish causal from associational questions.</li>
-<li>Represent assumptions using DAGs and counterfactual notation.</li>
-<li>Evaluate and apply key assumptions (SUTVA, exchangeability, positivity).</li>
-<li>Implement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).</li>
-<li>Decompose effects via mediation analysis.</li>
-<li>Conduct sensitivity analyses for unmeasured confounding.</li>
-<li>Frame observational studies as target trial emulations.</li>
-<li>Critically evaluate causal claims in the literature.</li>
-</ol>
-</section>
-<section id="assessment-and-grading" class="level2">
-<h2 class="anchored" data-anchor-id="assessment-and-grading">Assessment and Grading</h2>
-<div class="cell">
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 14%">
-<col style="width: 2%">
-<col style="width: 83%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Component</th>
-<th style="text-align: left;">Weight</th>
-<th style="text-align: left;"><span class="math inline">\(\qquad \qquad \textrm{Description}\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Weekly Concept Checks</strong></td>
-<td style="text-align: left;">10%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Short, low-stakes exercises on assumptions, DAGs, and interpretation.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Problem Sets (3–4 sets)</strong></td>
-<td style="text-align: left;">25%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Analytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Paper Critique &amp; Discussion Lead</strong></td>
-<td style="text-align: left;">20%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Each student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Final Project</strong></td>
-<td style="text-align: left;">35%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Independent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Final Presentation</strong></td>
-<td style="text-align: left;">10%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> 15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results.</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="course-materials" class="level2">
-<h2 class="anchored" data-anchor-id="course-materials">Course Materials</h2>
-<section id="required-freely-available-online" class="level3">
-<h3 class="anchored" data-anchor-id="required-freely-available-online">Required (Freely Available Online)</h3>
-<ul>
-<li>Hernán, M. A., &amp; Robins, J. M. (2024). <em>Causal Inference: What If</em>.</li>
-<li>Neal, B. (2020). <em>Introduction to Causal Inference</em>.</li>
+<li>What is the “back-door criterion,” and how does it formally define a sufficient set of covariates to close all confounding pathways between an exposure and outcome?</li>
+<li>Explain the difference between a confounder, a mediator, and a collider on a DAG. What are the analytical consequences of adjusting for each?</li>
+<li>How does the concept of d-separation allow a researcher to test the assumptions encoded in their DAG against the observed data?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> Greenland, S., Pearl, J., &amp; Robins, J. M. (1999). Causal diagrams for epidemiologic research. <em>Epidemiology</em>, 10(1), 37–48.</li>
 </ul>
 </section>
-<section id="recommended" class="level3">
-<h3 class="anchored" data-anchor-id="recommended">Recommended</h3>
+<section id="week-3-exchangeability-positivity-consistency" class="level2">
+<h2 class="anchored" data-anchor-id="week-3-exchangeability-positivity-consistency"><strong>Week 3: Exchangeability, Positivity, Consistency</strong></h2>
 <ul>
-<li>Cunningham, S. (2021). <em>Causal Inference: The Mixtape</em>.</li>
-<li>VanderWeele, T. J. (2015). <em>Explanation in Causal Inference</em>.</li>
-<li>Pearl, J., Glymour, M., &amp; Jewell, N. (2016). <em>Causal Inference in Statistics: A Primer</em>.</li>
+<li><strong>Primary Paper:</strong> Rubin, D. B. (1974). Estimating Causal Effects of Treatments in Randomized and Nonrandomized Studies. <em>Journal of Educational Psychology</em>, 66(5), 688–701.</li>
+<li><strong>DOI:</strong> <a href="https://doi.org/10.1037/h0037350">https://doi.org/10.1037/h0037350</a></li>
+<li><strong>Reason for Inclusion:</strong> This paper established the potential outcomes framework (or Rubin Causal Model), which underpins most modern causal inference methods. It provides a precise mathematical language for defining a causal effect for an individual unit and formalizes the core challenge of causal inference.</li>
+<li><strong>Critique Focus:</strong> Deconstruct the “fundamental problem of causal inference”—that we can never simultaneously observe both potential outcomes for the same unit. Critically examine the Stable Unit Treatment Value Assumption (SUTVA) and its two components (no interference, consistent versions of treatment) as necessary prerequisites for defining causal effects.</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>Explain the concepts of potential outcomes, <span class="math inline">\(Y\_i(1)\)</span> and <span class="math inline">\(Y\_i(0)\)</span>. Why is the individual causal effect, <span class="math inline">\(Y\_i(1) - Y\_i(0)\)</span>, fundamentally unobservable?</li>
+<li>What is SUTVA, and can you provide a realistic public health scenario (e.g., involving infectious disease or social networks) where it would likely be violated?</li>
+<li>How does a randomized controlled trial (RCT) allow us to overcome the fundamental problem to estimate the <em>average</em> causal effect?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> Holland, P. W. (1986). Statistics and Causal Inference. <em>Journal of the American Statistical Association</em>, 81(396), 945–960.</li>
 </ul>
 </section>
-<section id="software" class="level3">
-<h3 class="anchored" data-anchor-id="software">Software</h3>
+<section id="week-4-confounding-selection-measurement-bias" class="level2">
+<h2 class="anchored" data-anchor-id="week-4-confounding-selection-measurement-bias"><strong>Week 4: Confounding, Selection, Measurement Bias</strong></h2>
 <ul>
-<li><strong>Required:</strong> R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.</li>
-<li><strong>Core Packages:</strong> <code>tidyverse</code>, <code>dagitty</code>, <code>ggdag</code>, <code>MatchIt</code>, <code>WeightIt</code>, <code>cobalt</code>, <code>ivreg</code>, <code>mediation</code>, <code>EValue</code>.</li>
+<li><strong>Primary Paper:</strong> Hernán, M. Á., Hernández-Díaz, S., &amp; Robins, J. M. (2004). A structural approach to selection bias. <em>Epidemiology</em>, 15(5), 615–625.</li>
+<li><strong>DOI:</strong> <a href="https://doi.org/10.1097/01.ede.0000135174.63482.43">https://doi.org/10.1097/01.ede.0000135174.63482.43</a></li>
+<li><strong>Reason for Inclusion:</strong> This paper provides a clear, unified taxonomy of selection bias using the language of DAGs. It brilliantly clarifies that many forms of bias, including Berkson’s bias and bias from loss-to-follow-up, are structurally equivalent to conditioning on a collider, thereby creating spurious associations.</li>
+<li><strong>Critique Focus:</strong> Use DAGs to differentiate between classical confounding (a “back-door path” with a common cause) and selection bias (an open path created by conditioning on a common effect). Pay special attention to how study design choices—such as restricting analyses to hospital patients or complete cases—can induce selection bias.</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>Draw a simple DAG to illustrate how restricting a study population to hospital attendees could induce a spurious association between two diseases that are independent in the general population.</li>
+<li>How can loss-to-follow-up be represented on a DAG? Under what conditions will it induce bias in an exposure-outcome relationship?</li>
+<li>The paper argues that confounding and selection bias are structurally different but can be handled by similar methods (e.g., weighting). How would you construct inverse probability weights to account for selection bias?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> VanderWeele, T. J., &amp; Shpitser, I. (2013). On the definition of a confounder. <em>Annals of Statistics</em>, 41(1), 196–220.</li>
 </ul>
 </section>
-</section>
-<section id="course-schedule-14-weeks" class="level2">
-<h2 class="anchored" data-anchor-id="course-schedule-14-weeks">Course Schedule (14 Weeks)</h2>
-<section id="part-i-foundations" class="level3">
-<h3 class="anchored" data-anchor-id="part-i-foundations">Part I: Foundations</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 2%">
-<col style="width: 5%">
-<col style="width: 25%">
-<col style="width: 12%">
-<col style="width: 17%">
-<col style="width: 35%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Week</th>
-<th>Dates</th>
-<th>Core Topic</th>
-<th>Primary Readings</th>
-<th>Project Link</th>
-<th>Paper Critique</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>Aug 19, 21</td>
-<td>What is a Causal Effect? Counterfactuals &amp; SUTVA</td>
-<td>HR Ch. 1–2; Neal Ch. 1–2</td>
-<td>Define your causal question</td>
-<td>Instructor-led demo critique (introducing assignment expectations)</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>Aug 26, 28</td>
-<td>DAGs &amp; Assumption Transparency</td>
-<td>Neal Ch. 3; HR Ch. 6</td>
-<td>Draw a preliminary DAG</td>
-<td>Student critique</td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>Sep 2, 4</td>
-<td>Exchangeability, Positivity, Consistency</td>
-<td>HR Ch. 7; Neal Ch. 4</td>
-<td>Identify assumptions for your DAG</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>Sep 9, 11</td>
-<td>Confounding, Selection, Measurement Bias</td>
-<td>HR Ch. 8–9</td>
-<td>Consider biases in your dataset</td>
-<td>Student critique</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="part-ii-estimation-methods" class="level3">
-<h3 class="anchored" data-anchor-id="part-ii-estimation-methods">Part II: Estimation Methods</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 3%">
-<col style="width: 9%">
-<col style="width: 29%">
-<col style="width: 20%">
-<col style="width: 25%">
-<col style="width: 12%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Week</th>
-<th>Dates</th>
-<th>Core Topic</th>
-<th>Primary Readings</th>
-<th>Project Link</th>
-<th>Paper Critique</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>5</td>
-<td>Sep 16, 18</td>
-<td>Propensity Scores (matching, weighting)</td>
-<td>HR Ch. 12–13; Neal Ch. 7</td>
-<td>Select adjustment strategy</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>6</td>
-<td>Sep 23, 25</td>
-<td>IPTW, MSMs, Doubly Robust Estimators</td>
-<td>HR Ch. 15; Neal Ch. 7.5–7.6</td>
-<td>Evaluate MSM relevance</td>
-<td>Student critique</td>
-</tr>
-<tr class="odd">
-<td>7</td>
-<td>Sep 30, Oct 2</td>
-<td>G-computation</td>
-<td>HR Ch. 20–21</td>
-<td>Explore g-methods for your project</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>8</td>
-<td>Oct 7</td>
-<td>Instrumental Variables</td>
-<td>HR Ch. 16; Neal Ch. 9</td>
-<td>Assess natural experiments</td>
-<td>Student critique</td>
-</tr>
-</tbody>
-</table>
-<p><em><strong>Note:</strong> UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.</em></p>
-</section>
-<section id="part-iii-advanced-topics-applications" class="level3">
-<h3 class="anchored" data-anchor-id="part-iii-advanced-topics-applications">Part III: Advanced Topics &amp; Applications</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 3%">
-<col style="width: 7%">
-<col style="width: 30%">
-<col style="width: 25%">
-<col style="width: 19%">
-<col style="width: 12%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Week</th>
-<th>Dates</th>
-<th>Core Topic</th>
-<th>Primary Readings</th>
-<th>Project Link</th>
-<th>Paper Critique</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>9</td>
-<td>Oct 14, 16</td>
-<td>Effect Modification</td>
-<td>HR Ch. 4–5; Neal Ch. 10</td>
-<td><strong>Project Proposal Due</strong></td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>10</td>
-<td>Oct 21, 23</td>
-<td>Mediation Analysis I (Foundations)</td>
-<td>VanderWeele Ch. 1–2; Neal Ch. 14</td>
-<td>Refine DAG with mediators</td>
-<td>Student critique</td>
-</tr>
-<tr class="odd">
-<td>11</td>
-<td>Oct 28, 30</td>
-<td>Mediation II &amp; Principal Stratification</td>
-<td>VanderWeele Ch. 3; HR Ch. 23</td>
-<td>-</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>12</td>
-<td>Nov 4, 6</td>
-<td>Sensitivity Analysis</td>
-<td>Neal Ch. 8; HR Ch. 14</td>
-<td>Plan robustness checks</td>
-<td>Student critique</td>
-</tr>
-<tr class="odd">
-<td>13</td>
-<td>Nov 11, 13</td>
-<td>Target Trial Emulation</td>
-<td>HR Ch. 22</td>
-<td>Reframe project as trial</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>14</td>
-<td>Nov 18, 20</td>
-<td><strong>Final Presentations</strong></td>
-<td>–</td>
-<td>Present findings</td>
-<td>–</td>
-</tr>
-</tbody>
-</table>
-<p><em><strong>Note:</strong> Thanksgiving Break is Nov 27-28.</em></p>
-<p><strong>Finals Week (Dec 8–13):</strong> Final Project Paper Due.</p>
-</section>
-</section>
-<section id="course-policies" class="level2">
-<h2 class="anchored" data-anchor-id="course-policies">Course Policies</h2>
+<section id="week-5-propensity-scores" class="level2">
+<h2 class="anchored" data-anchor-id="week-5-propensity-scores"><strong>Week 5: Propensity Scores</strong></h2>
 <ul>
-<li><strong>Late Work:</strong> Deadlines are firm. Late work will be penalized 10% per day unless a prior arrangement is made for a documented emergency.</li>
-<li><strong>Academic Integrity:</strong> Collaboration on ideas is encouraged, but all submitted work must be your own.</li>
-<li><strong>Participation &amp; Respect:</strong> Active, inclusive, and evidence-based dialogue is expected.</li>
-<li><strong>Accessibility:</strong> Students requiring accommodations should contact the Accessibility Resource Center and provide the instructor with an official letter.</li>
+<li><strong>Primary Paper:</strong> Rosenbaum, P. R., &amp; Rubin, D. B. (1983). The central role of the propensity score in observational studies for causal effects. <em>Biometrika</em>, 70(1), 41–55.</li>
+<li><strong>DOI:</strong> <a href="https://doi.org/10.1093/biomet/70.1.41">https://doi.org/10.1093/biomet/70.1.41</a></li>
+<li><strong>Reason for Inclusion:</strong> This is the foundational paper that introduced the propensity score—the conditional probability of treatment given observed covariates—and proved its key properties. It provided a revolutionary, practical tool for controlling for many observed confounders simultaneously.</li>
+<li><strong>Critique Focus:</strong> Understand the balancing property of the propensity score: at any given value of the score, the distribution of observed covariates is the same between treated and untreated subjects. Critically assess how matching, stratifying, or weighting on this single scalar value can recreate the covariate balance of an RCT, and evaluate the importance of the positivity (common support) assumption.</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>The authors state the propensity score is a “balancing score.” What does this mean, and why is it so useful in high-dimensional settings?</li>
+<li>What is the key assumption of “strong ignorability” (or unconfoundedness) that is required for propensity score methods to yield an unbiased estimate of the average treatment effect?</li>
+<li>How does the concept of “common support” or “overlap” relate to the positivity assumption? What can go wrong if there are regions of poor overlap?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> Stuart, E. A. (2010). Matching methods for causal inference: A review and a look forward. <em>Statistical Science</em>, 25(1), 1–21.</li>
+</ul>
+</section>
+<section id="week-6-iptw-msms-doubly-robust-estimators" class="level2">
+<h2 class="anchored" data-anchor-id="week-6-iptw-msms-doubly-robust-estimators"><strong>Week 6: IPTW, MSMs, Doubly Robust Estimators</strong></h2>
+<ul>
+<li><strong>Primary Paper:</strong> Robins, J. M., Hernán, M. Á., &amp; Brumback, B. (2000). Marginal Structural Models and Causal Inference in Epidemiology. <em>Epidemiology</em>, 11(5), 550–560.</li>
+<li><strong>DOI:</strong> <a href="https://www.google.com/search?q=https://doi.org/10.1097/00001648-200009000-00011">https://doi.org/10.1097/00001648-200009000-00011</a></li>
+<li><strong>Reason for Inclusion:</strong> This paper introduced Marginal Structural Models (MSMs) as a principled method for handling time-varying confounders that are themselves affected by past treatment. This solved a critical problem that standard adjustment methods (like regression) cannot handle without inducing bias.</li>
+<li><strong>Critique Focus:</strong> Understand the specific structure of a time-varying confounder that is also a mediator. Use a DAG to see why conditioning on this variable in a regression model blocks the causal path of interest while also inducing collider-stratification bias. Deconstruct the logic of Inverse Probability of Treatment Weighting (IPTW) and the “pseudo-population” it creates where treatment is independent of the confounders.</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>Provide a clinical example of a time-varying confounder affected by prior treatment (e.g., in HIV treatment). Why does adjusting for it via standard regression lead to bias?</li>
+<li>Explain intuitively how IPTW works. What is the “pseudo-population” it creates, and what properties does it have?</li>
+<li>What is the purpose of “stabilized weights” in an MSM, and how do they improve statistical efficiency compared to unstabilized weights?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> Kang, J. D. Y., &amp; Schafer, J. L. (2007). Demystifying double robustness: A comparison of alternative strategies for estimating a population mean from incomplete data. <em>Statistical Science</em>, 22(4), 523–539.</li>
+</ul>
+</section>
+<section id="week-7-g-computation" class="level2">
+<h2 class="anchored" data-anchor-id="week-7-g-computation"><strong>Week 7: G-computation</strong></h2>
+<ul>
+<li><strong>Primary Paper:</strong> Snowden, J. M., Rose, S., &amp; Mortimer, K. M. (2011). Implementation of G-computation on a simulated data set for time-varying confounding. <em>American Journal of Epidemiology</em>, 173(7), 731–738.</li>
+<li><strong>DOI:</strong> <a href="https://doi.org/10.1093/aje/kwq472">https://doi.org/10.1093/aje/kwq472</a></li>
+<li><strong>Reason for Inclusion:</strong> This paper provides a highly accessible, applied tutorial on implementing the parametric g-formula (g-computation). It demystifies a method that is conceptually powerful but can be difficult to grasp from more theoretical texts, making it a valuable resource for applied researchers.</li>
+<li><strong>Critique Focus:</strong> Contrast the standardization-based logic of g-computation with the weighting-based logic of IPTW. Understand the two-stage process: (1) fitting a flexible model for the outcome conditional on treatment and confounders, and (2) using this model to simulate potential outcomes under fixed treatment strategies and then averaging (standardizing) over the population’s confounder distribution.</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>What are the key steps in implementing the parametric g-formula for a time-varying exposure?</li>
+<li>G-computation relies on the assumption of no unmeasured confounding and correct specification of the outcome model. How does this differ from the key assumptions of an MSM with IPTW?</li>
+<li>When might you prefer g-computation over an MSM (e.g., when positivity is a major concern)? When might an MSM be preferred (e.g., when the outcome model is hard to specify)?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> Hernán, M. Á., &amp; Robins, J. M. (2006). Estimating causal effects from epidemiological data. <em>Journal of Epidemiology and Community Health</em>, 60(7), 578–586.</li>
+</ul>
+</section>
+<section id="week-8-instrumental-variables" class="level2">
+<h2 class="anchored" data-anchor-id="week-8-instrumental-variables"><strong>Week 8: Instrumental Variables</strong></h2>
+<ul>
+<li><strong>Primary Paper:</strong> Angrist, J. D., Imbens, G. W., &amp; Rubin, D. B. (1996). Identification of Causal Effects Using Instrumental Variables. <em>Journal of the American Statistical Association</em>, 91(434), 444–455.</li>
+<li><strong>DOI:</strong> <a href="https://doi.org/10.1080/01621459.1996.10476902">https://doi.org/10.1080/01621459.1996.10476902</a></li>
+<li><strong>Reason for Inclusion:</strong> This Nobel prize-winning work connected the econometric method of instrumental variables (IV) to the potential outcomes framework. It rigorously clarified the assumptions of IV and, crucially, defined the causal estimand that IV methods identify: the Local Average Treatment Effect (LATE).</li>
+<li><strong>Critique Focus:</strong> Deconstruct the three core assumptions of a valid instrument: (1) relevance (instrument affects exposure), (2) independence (instrument is “as-if” random), and (3) the exclusion restriction (instrument affects the outcome <em>only</em> through the exposure). Critically analyze the LATE—what specific causal effect is being estimated, and for which unobservable subpopulation (the “compliers”)?</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>Describe the three core IV assumptions using a DAG. Which of these are empirically testable, and which must be justified entirely on subject-matter grounds?</li>
+<li>What is the “Local Average Treatment Effect” (LATE)? How does it differ from the Average Treatment Effect (ATE), and why is this distinction so important for policy interpretation?</li>
+<li>Define the four principal strata in the IV context: compliers, never-takers, always-takers, and defiers. For which of these groups does IV estimate the treatment effect, and what is the “monotonicity” assumption?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> Angrist, J. D., &amp; Krueger, A. B. (1991). Does Compulsory School Attendance Affect Schooling and Earnings? <em>The Quarterly Journal of Economics</em>, 106(4), 979–1014.</li>
+</ul>
+</section>
+<section id="week-9-effect-modification" class="level2">
+<h2 class="anchored" data-anchor-id="week-9-effect-modification"><strong>Week 9: Effect Modification</strong></h2>
+<ul>
+<li><strong>Primary Paper:</strong> Yusuf, S., Wittes, J., Probstfield, J., &amp; Tyroler, H. A. (1991). Analysis and interpretation of treatment effects in subgroups of patients in randomized clinical trials. <em>JAMA</em>, 266(1), 93–98.</li>
+<li><strong>DOI:</strong> <a href="https://www.google.com/search?q=https://doi.org/10.1001/jama.1991.03470010099035">https://doi.org/10.1001/jama.1991.03470010099035</a></li>
+<li><strong>Reason for Inclusion:</strong> This is a highly influential and cautionary paper that outlines the statistical and inferential pitfalls of subgroup analysis. It provides a critical perspective on the search for heterogeneous treatment effects using traditional methods and establishes best practices for avoiding spurious claims.</li>
+<li><strong>Critique Focus:</strong> Evaluate the dangers of post-hoc, data-driven subgroup analyses, which often lead to false-positive findings that cannot be replicated. Discuss the crucial difference between an exploratory analysis of effect modification and a confirmatory one based on a pre-specified hypothesis. Consider the problem of multiple comparisons and the low statistical power of formal tests for interaction.</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>What are the five “major fallacies” or “considerations” the authors highlight regarding subgroup analysis (e.g., confusing within-subgroup significance with between-subgroup differences)?</li>
+<li>Why is a formal statistical test for interaction (a test of homogeneity of effects) vastly preferable to simply comparing the p-values or point estimates between subgroups?</li>
+<li>The authors argue that most subgroup findings should be considered “exploratory” or “hypothesis-generating.” What strict criteria would be required to elevate a subgroup finding to a “confirmatory” level?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> VanderWeele, T. J. (2009). On the distinction between interaction and effect modification. <em>Epidemiology</em>, 20(6), 863–871.</li>
+</ul>
+</section>
+<section id="week-10-mediation-analysis-i-foundations" class="level2">
+<h2 class="anchored" data-anchor-id="week-10-mediation-analysis-i-foundations"><strong>Week 10: Mediation Analysis I (Foundations)</strong></h2>
+<ul>
+<li><strong>Primary Paper:</strong> Pearl, J. (2014). Interpretation and identification of causal mediation. <em>Psychological Methods</em>, 19(4), 459–481.</li>
+<li><strong>DOI:</strong> <a href="https://www.google.com/search?q=https://doi.org/10.1037/a0036434">https://doi.org/10.1037/a0036434</a></li>
+<li><strong>Reason for Inclusion:</strong> This paper provides a clear, graphical model-based framework for defining and identifying direct and indirect effects. It directly addresses the limitations and ambiguities of traditional regression-based approaches (like the one in the optional reading) and establishes the non-parametric foundations of modern mediation analysis.</li>
+<li><strong>Critique Focus:</strong> Understand the “Mediation Formulas” and the assumptions they require (encoded in the DAG). Contrast the non-parametric definitions of direct and indirect effects with the product-of-coefficients method. Pay special attention to the conceptual and practical differences between the Natural Direct Effect (NDE) and the Controlled Direct Effect (CDE).</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>How does Pearl define the Controlled Direct Effect (CDE) and the Natural Direct Effect (NDE) using do-calculus and potential outcomes? What is the core conceptual difference?</li>
+<li>What are the four key identification assumptions (represented graphically as the absence of certain arrows) needed to non-parametrically identify the Natural Direct and Indirect Effects?</li>
+<li>Pearl is critical of the idea of “holding the mediator constant” via statistical adjustment in traditional approaches. What is his argument, and how does the concept of the CDE solve this problem?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> Baron, R. M., &amp; Kenny, D. A. (1986). The moderator-mediator variable distinction in social psychological research. <em>Journal of Personality and Social Psychology</em>, 51(6), 1173–1182.</li>
+</ul>
+</section>
+<section id="week-11-mediation-ii-principal-stratification" class="level2">
+<h2 class="anchored" data-anchor-id="week-11-mediation-ii-principal-stratification"><strong>Week 11: Mediation II &amp; Principal Stratification</strong></h2>
+<ul>
+<li><strong>Primary Paper:</strong> Imai, K., Keele, L., &amp; Tingley, D. (2010). A general approach to causal mediation analysis. <em>Psychological Methods</em>, 15(4), 309–334.</li>
+<li><strong>DOI:</strong> <a href="https://www.google.com/search?q=https://doi.org/10.1037/a0020761">https://doi.org/10.1037/a0020761</a></li>
+<li><strong>Reason for Inclusion:</strong> Building on the theoretical foundations of mediation, this paper provides a practical, potential-outcomes-based framework and software for applied researchers. It clearly defines the Natural Direct and Indirect Effects (NDE/NIE) and, crucially, highlights the strong “sequential ignorability” assumption needed for their identification.</li>
+<li><strong>Critique Focus:</strong> Go beyond the definitions of NDE and NIE to grapple with the plausibility of the key identification assumption: sequential ignorability. This assumption requires unconfoundedness of both the exposure-mediator-outcome relationships. Understand why this is a much stronger assumption than is required for estimating a total effect and why sensitivity analysis is therefore essential.</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>How are the Natural Direct Effect (NDE) and Natural Indirect Effect (NIE) defined using nested potential outcomes?</li>
+<li>What is the “sequential ignorability” assumption? Draw a DAG and explain why it involves two distinct “no unmeasured confounding” assumptions.</li>
+<li>This paper introduced widely used software for mediation analysis. What are the practical advantages of an estimation approach that is directly linked to the theoretical definitions of causal effects?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> Frangakis, C. E., &amp; Rubin, D. B. (2002). Principal stratification in causal inference. <em>Biometrics</em>, 58(1), 21–29.</li>
+</ul>
+</section>
+<section id="week-12-sensitivity-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="week-12-sensitivity-analysis"><strong>Week 12: Sensitivity Analysis</strong></h2>
+<ul>
+<li><strong>Primary Paper:</strong> VanderWeele, T. J., &amp; Ding, P. (2017). Sensitivity Analysis in Observational Research: Introducing the E-Value. <em>Annals of Internal Medicine</em>, 167(4), 268–274.</li>
+<li><strong>DOI:</strong> <a href="https://doi.org/10.7326/M16-2607">https://doi.org/10.7326/M16-2607</a></li>
+<li><strong>Reason for Inclusion:</strong> This paper introduces the E-value, an intuitive and easy-to-calculate metric for sensitivity analysis to unmeasured confounding. It has quickly become a standard for reporting in many biomedical and public health journals due to its simplicity and clear interpretation.</li>
+<li><strong>Critique Focus:</strong> Understand precisely what the E-value represents: the minimum strength of association that an unmeasured confounder would need to have with both the exposure and the outcome to fully explain away the observed association. Compare its ease of use with older, more complex sensitivity analysis techniques (like those of Rosenbaum).</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>What is the formal definition of the E-value? How is it calculated for a risk ratio?</li>
+<li>A study reports a risk ratio of 2.5 with a 95% CI of (1.8, 3.4). The E-value for the point estimate is 4.36. How would you interpret this E-value in a sentence or two for a non-statistician?</li>
+<li>What are the limitations of the E-value? Does it make any assumptions about the nature of the unmeasured confounder(s)?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> Rosenbaum, P. R., &amp; Rubin, D. B. (1983). Assessing sensitivity to an unobserved binary covariate in an observational study with binary outcome. <em>Journal of the Royal Statistical Society: Series B</em>, 45(2), 212–218.</li>
+</ul>
+</section>
+<section id="week-13-target-trial-emulation" class="level2">
+<h2 class="anchored" data-anchor-id="week-13-target-trial-emulation"><strong>Week 13: Target Trial Emulation</strong></h2>
+<ul>
+<li><strong>Primary Paper:</strong> Hernán, M. Á., &amp; Robins, J. M. (2016). Using Big Data to Emulate a Target Trial When a Randomized Trial Is Not Available. <em>American Journal of Epidemiology</em>, 183(8), 758–764.</li>
+<li><strong>DOI:</strong> <a href="https://doi.org/10.1093/aje/kwv254">https://doi.org/10.1093/aje/kwv254</a></li>
+<li><strong>Reason for Inclusion:</strong> This paper formalizes the “target trial emulation” framework. It provides a structured process for using observational data to answer a causal question by explicitly designing the observational analysis to mimic a hypothetical, well-designed randomized trial, thereby minimizing common and often-overlooked biases.</li>
+<li><strong>Critique Focus:</strong> Identify the key components of a target trial protocol (e.g., eligibility criteria, treatment strategies, outcome, follow-up, causal contrast). Analyze how ambiguities and biases in designing an observational study (such as immortal time bias or poorly defined interventions) can be avoided by explicitly mapping the design to these components.</li>
+<li><strong>Suggested Discussion Questions:</strong>
+<ol type="1">
+<li>What are the seven key components of a target trial’s protocol that the authors argue should be explicitly specified and emulated in an observational analysis?</li>
+<li>How does rigorously specifying a “time zero” (the start of follow-up) for each participant help prevent immortal time bias? Provide an example.</li>
+<li>Emulating the “assignment procedure” of the target trial is the most difficult step. Which causal inference methods (e.g., propensity scores, IPTW) are used to accomplish this emulation?</li>
+</ol></li>
+<li><strong>Optional Alternative:</strong> Caniglia, E. C., et al.&nbsp;(2018). Emulating a target trial of dynamic treatment strategies for HIV with a causal inference approach to observational data. <em>International Journal of Epidemiology</em>, 47(5), 1578–1588.</li>
 </ul>
 
 
@@ -1381,5 +1244,5 @@ window.Quarto = {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/syllabus/syllabus-final.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/readings/weekly_paper_critique_schedule.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

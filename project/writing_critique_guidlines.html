@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>STAT 579: Applied Causal Inference – Introduction to Causal Inference</title>
+<title>How to Write a Great Critique – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -43,9 +43,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-1024271a3ded9d1f7224d65e019eef21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-1024271a3ded9d1f7224d65e019eef21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-1024271a3ded9d1f7224d65e019eef21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -168,11 +168,16 @@ MathJax = {
     }
   };
 </script>
-<meta property="og:title" content="STAT 579: Applied Causal Inference – Introduction to Causal Inference">
+
+
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="How to Write a Great Critique – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
-<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/syllabus/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/project/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
-</head><body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -334,47 +339,7 @@ MathJax = {
     } else {
       toggleColorMode(false);
     }
-  </script>\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-\rhead{STAT 579 Applied Causal Inference}
-\lhead{Fall 2025 Syllabus}
-\cfoot{\thepage}
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="../assets/styles/css/home.css">
-
-
-
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -414,7 +379,7 @@ window.Quarto = {
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../home_readings.html"> 
-<span class="menu-text">Weekly Readings</span></a>
+<span class="menu-text">STAT 579 • Weekly Readings &amp; Critique Hub</span></a>
   </li>  
   <li class="nav-item">
     <span class="nav-link">
@@ -450,7 +415,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">STAT 579: Applied Causal Inference</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">How to Write a Great Critique</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -460,7 +425,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">STAT 579: Applied Causal Inference</h1>
+      <h1 class="title">How to Write a Great Critique</h1>
                       </div>
   </div>
     
@@ -484,7 +449,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Aug-18-2025</p>
+        <p class="date">Aug-19-2025</p>
       </div>
     </div>
     
@@ -547,7 +512,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../home_readings.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Weekly Readings</span></a>
+ <span class="menu-text">STAT 579 • Weekly Readings &amp; Critique Hub</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -590,7 +555,18 @@ window.Quarto = {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="syllabus-final.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#how-to-write-a-great-critique-for-stat-579" id="toc-how-to-write-a-great-critique-for-stat-579" class="nav-link active" data-scroll-target="#how-to-write-a-great-critique-for-stat-579">✍️ How to Write a Great Critique for STAT 579</a>
+  <ul class="collapse">
+  <li><a href="#the-two-modes-of-causal-critique" id="toc-the-two-modes-of-causal-critique" class="nav-link" data-scroll-target="#the-two-modes-of-causal-critique">The Two Modes of Causal Critique</a></li>
+  <li><a href="#synthesizing-for-your-weekly-assignment-a-walkthrough-for-week-5" id="toc-synthesizing-for-your-weekly-assignment-a-walkthrough-for-week-5" class="nav-link" data-scroll-target="#synthesizing-for-your-weekly-assignment-a-walkthrough-for-week-5"><strong>Synthesizing for Your Weekly Assignment: A Walkthrough for Week 5</strong></a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/project/writing_critique_guidlines.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -599,349 +575,93 @@ window.Quarto = {
 
 
 
-<section id="instructor-logistics" class="level2 cell">
-<h2 class="anchored" data-anchor-id="instructor-logistics">Instructor &amp; Logistics</h2>
-<table class="caption-top table table-sm table-striped small">
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Instructor</strong></td>
-<td style="text-align: left;">Dr.&nbsp;Davood Tofighi</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Affiliation</strong></td>
-<td style="text-align: left;">Department of Mathematics and Statistics</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Email</strong></td>
-<td style="text-align: left;">Through Canvas</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Office Hours</strong></td>
-<td style="text-align: left;">TBD – Office/Zoom</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Class Time</strong></td>
-<td style="text-align: left;">Tuesdays &amp; Thursdays, 9:30 AM – 10:45 AM</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Location</strong></td>
-<td style="text-align: left;">Science Math Learning Center (SMLC) 120</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="course-overview" class="level2">
-<h2 class="anchored" data-anchor-id="course-overview">Course Overview</h2>
-<p>This graduate-level seminar introduces the <strong>theory and application of causal inference</strong>, with a strong emphasis on <strong>biostatistical and epidemiological contexts</strong>. The course builds from <strong>conceptual foundations and core assumptions</strong> to <strong>modern estimation methods</strong> for causal effects, emphasizing <strong>target trial emulation</strong> as a unifying framework.</p>
-<p>Key frameworks and tools include:</p>
-<ul>
-<li>Potential Outcomes Framework &amp; SUTVA</li>
-<li>Directed Acyclic Graphs (DAGs)</li>
-<li>Propensity Scores, IPW, and Doubly Robust Methods</li>
-<li>Instrumental Variables</li>
-<li>Mediation Analysis (NDE/NIE)</li>
-<li>Marginal Structural Models (MSMs)</li>
-<li>Sensitivity Analysis</li>
-</ul>
-<section id="instructors-approach" class="level3">
-<h3 class="anchored" data-anchor-id="instructors-approach">Instructor’s Approach</h3>
-<p>Causal inference is not just a toolbox—it’s a <strong>rigorous way of thinking</strong> about cause and effect. We will prioritize:</p>
-<ul>
-<li><strong>Precise causal questions</strong> (not just statistical associations).</li>
-<li><strong>Transparency of assumptions</strong> (via DAGs and formal notation).</li>
-<li><strong>Identification before estimation</strong> (thinking carefully about what is learnable from data).</li>
-<li><strong>Critical robustness assessment</strong> (sensitivity, replication, target trial framing).</li>
-</ul>
-</section>
-</section>
-<section id="learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
-<p>By the end of the course, students will be able to:</p>
+<section id="how-to-write-a-great-critique-for-stat-579" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-write-a-great-critique-for-stat-579">✍️ How to Write a Great Critique for STAT 579</h2>
+<p>Welcome to the central guide for your weekly paper critiques. The goal of this assignment is to train you not just to understand a paper, but to deconstruct its argument, question its assumptions, and situate it within the broader field of causal inference.</p>
+<p>Our course uses a unique mix of readings: foundational methodological papers, applied case studies, and modern textbook chapters. Your critique assignment asks you to focus on the <strong>foundational paper</strong> for each week, but the key to an excellent critique is to skillfully synthesize insights from all three sources.</p>
+<section id="the-two-modes-of-causal-critique" class="level3">
+<h3 class="anchored" data-anchor-id="the-two-modes-of-causal-critique">The Two Modes of Causal Critique</h3>
+<p>Depending on the paper, you will need to wear one of two hats: the <strong>theoretician’s hat</strong> for methodological papers or the <strong>peer reviewer’s hat</strong> for case studies.</p>
+<section id="how-to-critique-a-foundational-methodological-paper" class="level4">
+<h4 class="anchored" data-anchor-id="how-to-critique-a-foundational-methodological-paper"><strong>1. How to Critique a Foundational (Methodological) Paper 🧭</strong></h4>
+<p><em>(Applies to papers like Rubin 1974, Pearl 1995, Rosenbaum &amp; Rubin 1983)</em></p>
+<p>When a paper proposes a <em>method</em>, your critique should focus on the validity, logic, and impact of that method. Since there is no data analysis, you must analyze the abstract argument.</p>
+<p>Use this four-step process to structure your thinking:</p>
 <ol type="1">
-<li>Formulate and distinguish causal from associational questions.</li>
-<li>Represent assumptions using DAGs and counterfactual notation.</li>
-<li>Evaluate and apply key assumptions (SUTVA, exchangeability, positivity).</li>
-<li>Implement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).</li>
-<li>Decompose effects via mediation analysis.</li>
-<li>Conduct sensitivity analyses for unmeasured confounding.</li>
-<li>Frame observational studies as target trial emulations.</li>
-<li>Critically evaluate causal claims in the literature.</li>
+<li><strong>Deconstruct the Problem &amp; Proposed Solution:</strong>
+<ul>
+<li><strong>The Problem:</strong> What specific challenge in causal inference is the paper trying to solve? (e.g., <em>How can we control for many confounders at once? How do we define a causal effect?</em>)</li>
+<li><strong>The Solution:</strong> What is the paper’s core contribution? Explain the new concept (e.g., potential outcomes, propensity scores, DAGs) in your own words.</li>
+</ul></li>
+<li><strong>Analyze the Logic &amp; Identification Strategy:</strong>
+<ul>
+<li><strong>The “Why”:</strong> What is the central logical argument for why their solution works? Explain the intuition behind any theorems or proofs. (e.g., <em>The authors prove the propensity score is a balancing score, meaning…</em>)</li>
+<li><strong>The Assumptions:</strong> What are the precise assumptions needed for this logic to hold? (e.g., <em>This entire framework rests on the untestable assumption of strong ignorability…</em>)</li>
+</ul></li>
+<li><strong>Scrutinize the Assumptions &amp; Plausibility:</strong>
+<ul>
+<li><strong>Real-World Plausibility:</strong> In what kinds of real-world studies would these assumptions be plausible? Where would they likely fail? Use examples from the case study or your own knowledge.</li>
+<li><strong>Failure Modes:</strong> What are the practical limitations of the method? (e.g., <em>The method offers no protection against unmeasured confounding and is sensitive to violations of the positivity assumption.</em>)</li>
+</ul></li>
+<li><strong>Evaluate the Impact &amp; Legacy:</strong>
+<ul>
+<li><strong>The Impact:</strong> How did this paper change the field? What did it make possible?</li>
+<li><strong>The Legacy:</strong> What subsequent research or methods did it inspire? What is its biggest remaining limitation?</li>
+</ul></li>
 </ol>
 </section>
-<section id="assessment-and-grading" class="level2">
-<h2 class="anchored" data-anchor-id="assessment-and-grading">Assessment and Grading</h2>
-<div class="cell">
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 14%">
-<col style="width: 2%">
-<col style="width: 83%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Component</th>
-<th style="text-align: left;">Weight</th>
-<th style="text-align: left;"><span class="math inline">\(\qquad \qquad \textrm{Description}\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Weekly Concept Checks</strong></td>
-<td style="text-align: left;">10%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Short, low-stakes exercises on assumptions, DAGs, and interpretation.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Problem Sets (3–4 sets)</strong></td>
-<td style="text-align: left;">25%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Analytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Paper Critique &amp; Discussion Lead</strong></td>
-<td style="text-align: left;">20%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Each student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Final Project</strong></td>
-<td style="text-align: left;">35%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> Independent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Final Presentation</strong></td>
-<td style="text-align: left;">10%</td>
-<td style="text-align: left;"><span class="math inline">\(\qquad\)</span> 15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results.</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="course-materials" class="level2">
-<h2 class="anchored" data-anchor-id="course-materials">Course Materials</h2>
-<section id="required-freely-available-online" class="level3">
-<h3 class="anchored" data-anchor-id="required-freely-available-online">Required (Freely Available Online)</h3>
+<section id="how-to-critique-a-case-study-applied-paper" class="level4">
+<h4 class="anchored" data-anchor-id="how-to-critique-a-case-study-applied-paper"><strong>2. How to Critique a Case Study (Applied) Paper ⛰️</strong></h4>
+<p><em>(Applies to papers like Yusuf et al.&nbsp;1991, Snowden et al.&nbsp;2011, and all of the “Expedition” readings)</em></p>
+<p>When a paper makes a causal claim about the world using data, your critique should focus on the credibility of that claim. Your job is to act as a rigorous, skeptical peer reviewer.</p>
+<ol type="1">
+<li><strong>Scrutinize the Causal Question &amp; Design:</strong>
 <ul>
-<li>Hernán, M. A., &amp; Robins, J. M. (2024). <em>Causal Inference: What If</em>.</li>
-<li>Neal, B. (2020). <em>Introduction to Causal Inference</em>.</li>
-</ul>
-</section>
-<section id="recommended" class="level3">
-<h3 class="anchored" data-anchor-id="recommended">Recommended</h3>
+<li><strong>The Question:</strong> Is the causal question well-defined (PICO)? Is the target trial clear?</li>
+<li><strong>The Data:</strong> Is the data source appropriate? Are there risks of major measurement error?</li>
+</ul></li>
+<li><strong>Interrogate the Identification Strategy:</strong>
 <ul>
-<li>Cunningham, S. (2021). <em>Causal Inference: The Mixtape</em>.</li>
-<li>VanderWeele, T. J. (2015). <em>Explanation in Causal Inference</em>.</li>
-<li>Pearl, J., Glymour, M., &amp; Jewell, N. (2016). <em>Causal Inference in Statistics: A Primer</em>.</li>
-</ul>
-</section>
-<section id="software" class="level3">
-<h3 class="anchored" data-anchor-id="software">Software</h3>
+<li><strong>The DAG:</strong> Draw a DAG for <em>this specific study</em>, reflecting its variables and context.</li>
+<li><strong>Attack the Key Assumption:</strong> This is the core of your critique. Is the central assumption (e.g., unconfoundedness, parallel trends, exclusion restriction) plausible <em>in this specific context</em>? What unmeasured confounder or alternative explanation did the authors likely miss?</li>
+</ul></li>
+<li><strong>Audit the Diagnostics &amp; Analysis:</strong>
 <ul>
-<li><strong>Required:</strong> R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.</li>
-<li><strong>Core Packages:</strong> <code>tidyverse</code>, <code>dagitty</code>, <code>ggdag</code>, <code>MatchIt</code>, <code>WeightIt</code>, <code>cobalt</code>, <code>ivreg</code>, <code>mediation</code>, <code>EValue</code>.</li>
-</ul>
-</section>
-</section>
-<section id="course-schedule-14-weeks" class="level2">
-<h2 class="anchored" data-anchor-id="course-schedule-14-weeks">Course Schedule (14 Weeks)</h2>
-<section id="part-i-foundations" class="level3">
-<h3 class="anchored" data-anchor-id="part-i-foundations">Part I: Foundations</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 2%">
-<col style="width: 5%">
-<col style="width: 25%">
-<col style="width: 12%">
-<col style="width: 17%">
-<col style="width: 35%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Week</th>
-<th>Dates</th>
-<th>Core Topic</th>
-<th>Primary Readings</th>
-<th>Project Link</th>
-<th>Paper Critique</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>Aug 19, 21</td>
-<td>What is a Causal Effect? Counterfactuals &amp; SUTVA</td>
-<td>HR Ch. 1–2; Neal Ch. 1–2</td>
-<td>Define your causal question</td>
-<td>Instructor-led demo critique (introducing assignment expectations)</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>Aug 26, 28</td>
-<td>DAGs &amp; Assumption Transparency</td>
-<td>Neal Ch. 3; HR Ch. 6</td>
-<td>Draw a preliminary DAG</td>
-<td>Student critique</td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>Sep 2, 4</td>
-<td>Exchangeability, Positivity, Consistency</td>
-<td>HR Ch. 7; Neal Ch. 4</td>
-<td>Identify assumptions for your DAG</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>Sep 9, 11</td>
-<td>Confounding, Selection, Measurement Bias</td>
-<td>HR Ch. 8–9</td>
-<td>Consider biases in your dataset</td>
-<td>Student critique</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="part-ii-estimation-methods" class="level3">
-<h3 class="anchored" data-anchor-id="part-ii-estimation-methods">Part II: Estimation Methods</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 3%">
-<col style="width: 9%">
-<col style="width: 29%">
-<col style="width: 20%">
-<col style="width: 25%">
-<col style="width: 12%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Week</th>
-<th>Dates</th>
-<th>Core Topic</th>
-<th>Primary Readings</th>
-<th>Project Link</th>
-<th>Paper Critique</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>5</td>
-<td>Sep 16, 18</td>
-<td>Propensity Scores (matching, weighting)</td>
-<td>HR Ch. 12–13; Neal Ch. 7</td>
-<td>Select adjustment strategy</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>6</td>
-<td>Sep 23, 25</td>
-<td>IPTW, MSMs, Doubly Robust Estimators</td>
-<td>HR Ch. 15; Neal Ch. 7.5–7.6</td>
-<td>Evaluate MSM relevance</td>
-<td>Student critique</td>
-</tr>
-<tr class="odd">
-<td>7</td>
-<td>Sep 30, Oct 2</td>
-<td>G-computation</td>
-<td>HR Ch. 20–21</td>
-<td>Explore g-methods for your project</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>8</td>
-<td>Oct 7</td>
-<td>Instrumental Variables</td>
-<td>HR Ch. 16; Neal Ch. 9</td>
-<td>Assess natural experiments</td>
-<td>Student critique</td>
-</tr>
-</tbody>
-</table>
-<p><em><strong>Note:</strong> UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.</em></p>
-</section>
-<section id="part-iii-advanced-topics-applications" class="level3">
-<h3 class="anchored" data-anchor-id="part-iii-advanced-topics-applications">Part III: Advanced Topics &amp; Applications</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 3%">
-<col style="width: 7%">
-<col style="width: 30%">
-<col style="width: 25%">
-<col style="width: 19%">
-<col style="width: 12%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Week</th>
-<th>Dates</th>
-<th>Core Topic</th>
-<th>Primary Readings</th>
-<th>Project Link</th>
-<th>Paper Critique</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>9</td>
-<td>Oct 14, 16</td>
-<td>Effect Modification</td>
-<td>HR Ch. 4–5; Neal Ch. 10</td>
-<td><strong>Project Proposal Due</strong></td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>10</td>
-<td>Oct 21, 23</td>
-<td>Mediation Analysis I (Foundations)</td>
-<td>VanderWeele Ch. 1–2; Neal Ch. 14</td>
-<td>Refine DAG with mediators</td>
-<td>Student critique</td>
-</tr>
-<tr class="odd">
-<td>11</td>
-<td>Oct 28, 30</td>
-<td>Mediation II &amp; Principal Stratification</td>
-<td>VanderWeele Ch. 3; HR Ch. 23</td>
-<td>-</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>12</td>
-<td>Nov 4, 6</td>
-<td>Sensitivity Analysis</td>
-<td>Neal Ch. 8; HR Ch. 14</td>
-<td>Plan robustness checks</td>
-<td>Student critique</td>
-</tr>
-<tr class="odd">
-<td>13</td>
-<td>Nov 11, 13</td>
-<td>Target Trial Emulation</td>
-<td>HR Ch. 22</td>
-<td>Reframe project as trial</td>
-<td>Student critique</td>
-</tr>
-<tr class="even">
-<td>14</td>
-<td>Nov 18, 20</td>
-<td><strong>Final Presentations</strong></td>
-<td>–</td>
-<td>Present findings</td>
-<td>–</td>
-</tr>
-</tbody>
-</table>
-<p><em><strong>Note:</strong> Thanksgiving Break is Nov 27-28.</em></p>
-<p><strong>Finals Week (Dec 8–13):</strong> Final Project Paper Due.</p>
-</section>
-</section>
-<section id="course-policies" class="level2">
-<h2 class="anchored" data-anchor-id="course-policies">Course Policies</h2>
+<li><strong>The Diagnostics:</strong> Did the authors perform and show the essential diagnostic checks for their method? (e.g., balance plots for propensity scores; first-stage F-statistic for IV).</li>
+<li><strong>The Model:</strong> Was the statistical model appropriate for the outcome and data structure?</li>
+</ul></li>
+<li><strong>Challenge the Interpretation &amp; Conclusion:</strong>
 <ul>
-<li><strong>Late Work:</strong> Deadlines are firm. Late work will be penalized 10% per day unless a prior arrangement is made for a documented emergency.</li>
-<li><strong>Academic Integrity:</strong> Collaboration on ideas is encouraged, but all submitted work must be your own.</li>
-<li><strong>Participation &amp; Respect:</strong> Active, inclusive, and evidence-based dialogue is expected.</li>
-<li><strong>Accessibility:</strong> Students requiring accommodations should contact the Accessibility Resource Center and provide the instructor with an official letter.</li>
-</ul>
+<li><strong>The Interpretation:</strong> Do the authors overstate their claims? Do they acknowledge their key limitations?</li>
+<li><strong>The Sensitivity Analysis:</strong> Did they quantify how robust their finding is to unmeasured confounding (e.g., with an E-value)? If not, it is a major weakness.</li>
+<li><strong>The Generalizability:</strong> Do they correctly interpret the scope of their finding (e.g., acknowledging a LATE is not an ATE)?</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="synthesizing-for-your-weekly-assignment-a-walkthrough-for-week-5" class="level3">
+<h3 class="anchored" data-anchor-id="synthesizing-for-your-weekly-assignment-a-walkthrough-for-week-5"><strong>Synthesizing for Your Weekly Assignment: A Walkthrough for Week 5</strong></h3>
+<p>Your assignment is to critique the <strong>foundational paper</strong>. You will use the other readings to become a smarter critic.</p>
+<p><strong>Your Task:</strong> Critique Rosenbaum &amp; Rubin (1983), “The central role of the propensity score…”</p>
+<ol type="1">
+<li><p><strong>Start with the Map (Textbook):</strong> You read Hernán &amp; Robins, Chapter 12. You now have a modern understanding of propensity scores, the ATE, and balancing diagnostics.</p></li>
+<li><p><strong>Critique the Journal (Foundational Paper):</strong> You apply the “How to Critique a Foundational Paper” framework to Rosenbaum &amp; Rubin (1983).</p>
+<ul>
+<li><strong>Problem:</strong> The paper addresses the problem of controlling for many confounders in observational studies.</li>
+<li><strong>Solution:</strong> It introduces the propensity score as a single-number summary for balancing covariates.</li>
+<li><strong>Logic:</strong> It proves the balancing property of the score.</li>
+<li><strong>Assumption:</strong> The entire method relies on the assumption of strong ignorability (unconfoundedness).</li>
+</ul></li>
+<li><p><strong>Enrich with the Expedition (Case Study):</strong> Now, you use Dehejia &amp; Wahba (1999) to add depth to your critique.</p>
+<ul>
+<li><p>In your section on <strong>Assumption Plausibility</strong>, you write: <em>“Rosenbaum &amp; Rubin’s framework is entirely dependent on the unconfoundedness assumption. The Dehejia &amp; Wahba (1999) case study provides an ideal scenario where this assumption is arguably plausible. By using a rich administrative dataset with detailed pre-treatment earnings and employment histories, they were able to control for the most likely determinants of both entering the training program and future earnings.”</em></p></li>
+<li><p>In your section on <strong>Impact &amp; Legacy</strong>, you write: <em>“A key limitation of the original paper is its focus on theory, with little guidance on diagnostics. The profound impact of this work is demonstrated in applications like Dehejia &amp; Wahba, which established the now-standard practice of reporting standardized mean differences in a balance plot to empirically verify that the propensity score did, in fact, balance the observed covariates.”</em></p></li>
+</ul></li>
+</ol>
+<p>By following this process, you are not critiquing the case study; you are using it as <strong>evidence</strong> to make your critique of the foundational paper more concrete, critical, and insightful.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -1381,5 +1101,5 @@ window.Quarto = {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/syllabus/syllabus-final.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/project/writing_critique_guidlines.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

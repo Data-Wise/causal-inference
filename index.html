@@ -362,16 +362,16 @@ MathJax = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./syllabus/syllabus-final.pdf"> 
+    <a class="nav-link" href="./syllabus/syllabus-final.html"> 
 <span class="menu-text">Syllabus</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./syllabus/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./home_lectures.html"> 
 <span class="menu-text">Lecture Notes</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./syllabus/schedule.pdf"> 
-<span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
     <span class="nav-link">
@@ -487,7 +487,7 @@ MathJax = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/schedule.pdf" class="sidebar-item-text sidebar-link">
+  <a href="./syllabus/schedule.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Schedule</span></a>
   </div>
 </li>
@@ -561,12 +561,14 @@ MathJax = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#welcome-to-stat-579-causality-awaits." id="toc-welcome-to-stat-579-causality-awaits." class="nav-link active" data-scroll-target="#welcome-to-stat-579-causality-awaits.">Welcome to STAT 579! Causality Awaits.</a></li>
+  <li><a href="#welcome-to-stat-579-causality-awaits." id="toc-welcome-to-stat-579-causality-awaits." class="nav-link active" data-scroll-target="#welcome-to-stat-579-causality-awaits.">🧠 Welcome to STAT 579! Causality Awaits.</a></li>
   <li><a href="#course-overview" id="toc-course-overview" class="nav-link" data-scroll-target="#course-overview">Course Overview</a>
   <ul class="collapse">
   <li><a href="#key-topics-you-will-master" id="toc-key-topics-you-will-master" class="nav-link" data-scroll-target="#key-topics-you-will-master">Key Topics You Will Master:</a></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
   </ul></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#assessment-strategy" id="toc-assessment-strategy" class="nav-link" data-scroll-target="#assessment-strategy">🏛️ Assessment Strategy</a></li>
+  <li><a href="#quick-links" id="toc-quick-links" class="nav-link" data-scroll-target="#quick-links">🔗 Quick Links</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -579,33 +581,60 @@ MathJax = {
 
 
 <section id="welcome-to-stat-579-causality-awaits." class="level2">
-<h2 class="anchored" data-anchor-id="welcome-to-stat-579-causality-awaits.">Welcome to STAT 579! Causality Awaits.</h2>
+<h2 class="anchored" data-anchor-id="welcome-to-stat-579-causality-awaits.">🧠 Welcome to STAT 579! Causality Awaits.</h2>
 <p>This website is the central hub for all materials related to <strong>STAT 579: Applied Causal Inference</strong>. Here you will find the syllabus, lecture notes, assignments, datasets, and important announcements. Please use the sidebar to navigate the course content.</p>
 </section>
 <section id="course-overview" class="level2">
 <h2 class="anchored" data-anchor-id="course-overview">Course Overview</h2>
 <p>This graduate seminar offers a practical and intuitive journey into modern causal inference methods. We will explore how to move beyond simple correlation to identify and estimate causal effects from both experimental and observational data, with a focus on applications in <strong>public health</strong>, <strong>epidemiology</strong>, and <strong>clinical research</strong>.</p>
-<p>The course emphasizes the practical application of methods and the critical assessment of causal claims in scientific literature. A central component of the seminar is a semester-long research project where you will ask and answer a causal question using real-world data.</p>
+<p>The course emphasizes a rigorous, assumption-driven approach. A central component is a semester-long research project where you will frame an observational study as a <strong>target trial emulation</strong>, applying modern methods to answer a causal question with real-world data.</p>
 <section id="key-topics-you-will-master" class="level3">
 <h3 class="anchored" data-anchor-id="key-topics-you-will-master">Key Topics You Will Master:</h3>
 <ul>
-<li>The <strong>Potential Outcomes</strong> Framework</li>
-<li><strong>Causal Graphs (DAGs)</strong> and Graphical Identification (Backdoor, Frontdoor, do-calculus)</li>
-<li><strong>Matching</strong> and <strong>Propensity Score</strong> Methods</li>
+<li>The <strong>Potential Outcomes</strong> Framework &amp; SUTVA</li>
+<li><strong>Causal Graphs (DAGs)</strong> for Assumption Transparency</li>
+<li><strong>Confounding</strong> and <strong>Selection Bias</strong> Identification</li>
+<li><strong>Propensity Scores</strong> (Matching &amp; Weighting)</li>
+<li><strong>Marginal Structural Models</strong> for Time-Varying Treatments</li>
 <li><strong>Instrumental Variables</strong> (IV)</li>
-<li><strong>Regression Discontinuity</strong> Designs (RDD)</li>
-<li><strong>Difference-in-Differences</strong> (DiD) and Panel Data Methods</li>
-<li><strong>Causal Mediation Analysis</strong></li>
+<li><strong>Causal Mediation Analysis</strong> (NDE/NIE)</li>
+<li><strong>Sensitivity Analysis</strong> for Unmeasured Confounding</li>
 </ul>
 </section>
-<section id="learning-objectives" class="level3">
-<h3 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h3>
-<p>Upon successful completion of this course, you will be able to: 1. Formulate a precise causal question from a substantive research problem. 2. Select, justify, and implement an appropriate causal inference method to address that question. 3. Critically evaluate the causal claims made in public health and biomedical literature.</p>
-<hr>
+</section>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<p>Upon successful completion of this course, you will be able to:</p>
+<ol type="1">
+<li><strong>Formulate</strong> precise causal questions from substantive research problems.</li>
+<li><strong>Represent</strong> and critique causal assumptions using Directed Acyclic Graphs (DAGs).</li>
+<li><strong>Evaluate</strong> the core assumptions required for identification (exchangeability, positivity, consistency).</li>
+<li><strong>Apply</strong> modern methods like propensity scores, MSMs, and IVs to estimate causal effects.</li>
+<li><strong>Assess</strong> the robustness of causal findings using sensitivity analysis.</li>
+<li><strong>Design</strong> an observational study by framing it as an emulation of a hypothetical “target trial.”</li>
+</ol>
+</section>
+<section id="assessment-strategy" class="level2">
+<h2 class="anchored" data-anchor-id="assessment-strategy">🏛️ Assessment Strategy</h2>
+<p>As a graduate seminar, assessment is focused on deep engagement and application, not just rote memorization.</p>
+<ul>
+<li><strong>Final Project (60%):</strong> A scaffolded, semester-long research project is the core of the course.</li>
+<li><strong>Paper Critique &amp; Discussion Leadership (25%):</strong> You will lead one class discussion, formally critiquing the causal methods of a published paper.</li>
+<li><strong>Final Presentation (15%):</strong> You will present your final project in a conference-style format.</li>
+</ul>
+</section>
+<section id="quick-links" class="level2">
+<h2 class="anchored" data-anchor-id="quick-links">🔗 Quick Links</h2>
+<ul>
+<li><a href="./syllabus/syllabus-final.html">📄 <strong>Full Syllabus</strong></a></li>
+<li><a href="./syllabus/schedule.html">🗓️ <strong>Course Schedule</strong></a></li>
+<li><a href="./home_assignments.html">📝 <strong>Assignments</strong></a></li>
+<li><a href="./home_project.html">🏛️ <strong>Project Guidelines</strong></a></li>
+<li><a href="./home_readings.html"><strong>Weekly Readings</strong></a></li>
+</ul>
 <p>This website is built with <a href="https://quarto.org/docs/websites">Quarto</a>.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
