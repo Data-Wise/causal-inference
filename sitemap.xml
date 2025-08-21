@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/index.html</loc>
-    <lastmod>2025-08-21T04:00:48.730Z</lastmod>
+    <lastmod>2025-08-21T15:00:07.294Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/assignment schedule.html</loc>
@@ -82,7 +82,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/project_rubric.html</loc>
-    <lastmod>2025-08-19T06:31:20.000Z</lastmod>
+    <lastmod>2025-08-21T14:57:10.423Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/writing_critique_guidlines.html</loc>
@@ -126,7 +126,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/project_guidelines-rev1.html</loc>
-    <lastmod>2025-08-19T04:19:45.840Z</lastmod>
+    <lastmod>2025-08-21T14:59:12.776Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/project_schedule.html</loc>
@@ -134,7 +134,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/data_resources.html</loc>
-    <lastmod>2025-08-21T02:14:24.669Z</lastmod>
+    <lastmod>2025-08-21T14:58:38.076Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/project_guidelines.html</loc>
@@ -155,5 +155,9 @@
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/r_help.html</loc>
     <lastmod>2025-07-13T17:52:20.811Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/readings/how_to_read_technocal_paper.html</loc>
+    <lastmod>2025-08-21T04:28:11.987Z</lastmod>
   </url>
 </urlset>

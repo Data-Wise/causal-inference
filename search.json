@@ -1357,28 +1357,28 @@
   {
     "objectID": "project/project_rubric.html",
     "href": "project/project_rubric.html",
-    "title": "Final Project Rubric & Instructor Checklist",
+    "title": "Rubric & Checklist",
     "section": "",
     "text": "Category\nWeight\nCriteria\n\n\n\n\nQuestion & Relevance\n10 pts\nIs the question causal? Clearly motivated?\n\n\nDAG & Identification\n20 pts\nDAG correct & justified, assumptions transparent, adjustment sets valid\n\n\nMethodology\n20 pts\nAppropriate causal method chosen, correctly implemented, diagnostics included\n\n\nSensitivity & Robustness\n15 pts\nAt least one sensitivity analysis, well-explained\n\n\nResults & Interpretation\n15 pts\nEstimates clearly reported, assumptions tied to conclusions, limitations addressed\n\n\nWriting & Presentation\n20 pts\nPaper clarity, organization, reproducibility (R code provided), presentation quality"
   },
   {
     "objectID": "project/project_rubric.html#proposal-week-9",
     "href": "project/project_rubric.html#proposal-week-9",
-    "title": "Final Project Rubric & Instructor Checklist",
+    "title": "Rubric & Checklist",
     "section": "Proposal (Week 9)",
     "text": "Proposal (Week 9)\n\nCausal question is precise and relevant\n\nTarget trial framework specified\n\nPreliminary DAG provided\n\nIdentification assumptions stated"
   },
   {
     "objectID": "project/project_rubric.html#final-paper",
     "href": "project/project_rubric.html#final-paper",
-    "title": "Final Project Rubric & Instructor Checklist",
+    "title": "Rubric & Checklist",
     "section": "Final Paper",
     "text": "Final Paper\n\nTitle & abstract present research clearly\n\nIntroduction frames question causally\n\nDAG correct and explained\n\nAssumptions (exchangeability, positivity, consistency) explicitly justified\n\nIdentification strategy appropriate\n\nCorrect causal method implemented\n\nDiagnostics shown (balance, overlap, IV strength, etc.)\n\nSensitivity analysis included\n\nResults reported with CIs and interpretation\n\nDiscussion connects assumptions to real-world plausibility\n\nAnnotated R code in appendix"
   },
   {
     "objectID": "project/project_rubric.html#presentation-week-14",
     "href": "project/project_rubric.html#presentation-week-14",
-    "title": "Final Project Rubric & Instructor Checklist",
+    "title": "Rubric & Checklist",
     "section": "Presentation (Week 14)",
     "text": "Presentation (Week 14)\n\nClear articulation of causal question & assumptions\n\nDAG presented visually\n\nResults summarized without excessive technical detail\n\nInterpretation emphasized over mechanics"
   },
@@ -2743,42 +2743,42 @@
   {
     "objectID": "project/project_guidelines-rev1.html",
     "href": "project/project_guidelines-rev1.html",
-    "title": "STAT 579: Applied Causal Inference",
+    "title": "Overall Project Guidelines",
     "section": "",
     "text": "Framed as a Target Trial Emulation"
   },
   {
     "objectID": "project/project_guidelines-rev1.html#purpose",
     "href": "project/project_guidelines-rev1.html#purpose",
-    "title": "STAT 579: Applied Causal Inference",
+    "title": "Overall Project Guidelines",
     "section": "Purpose",
     "text": "Purpose\nThe final project is designed to integrate conceptual, methodological, and applied skills in causal inference. Students will pose and answer a causal question using real or simulated data, grounding their analysis in the target trial emulation framework.\nThe project should demonstrate:\n\nClear articulation of a STAT 579 Final Project Guidelinesusal estimand (not just a statistical parameter).\nCareful identification strategy with explicit assumptions.\nImplementation of at least one modern estimation method (e.g., IPW, matching, IV, MSM).\nCritical sensitivity checks and interpretation within a real-world context."
   },
   {
     "objectID": "project/project_guidelines-rev1.html#timeline-deliverables",
     "href": "project/project_guidelines-rev1.html#timeline-deliverables",
-    "title": "STAT 579: Applied Causal Inference",
+    "title": "Overall Project Guidelines",
     "section": "Timeline & Deliverables",
     "text": "Timeline & Deliverables\n\nWeek 1–2: Causal Question Definition\n\nSubmit a 1–2 paragraph causal question relevant to biostatistics, epidemiology, or social/biomedical sciences.\nInclude justification of why the question is causal (not associational).\n\nWeek 3–4: Preliminary DAG\n\nProvide a directed acyclic graph (using dagitty or ggdag).\nState which paths must be blocked for identification.\nIdentify potential sources of bias (confounding, selection, measurement error).\n\nWeek 5–6: Identification Strategy\n\nExplicitly state whether exchangeability, positivity, SUTVA, and consistency are plausible.\nDescribe your strategy: backdoor adjustment, IV, MSM, or mediation.\n\nWeek 9: Project Proposal (10% of course grade)\n\n3–5 pages.\nElements:\n\nResearch question & target trial specification (eligibility, treatment strategies, follow-up, outcome).\nDAG & assumptions.\nIdentification strategy.\nPlanned data source (public dataset, your own research, or simulation).\nAnticipated challenges.\n\n\nWeeks 10–13: Analysis\n\nImplement at least one causal method (e.g., IPW, g-computation, IV, mediation, MSM).\nProvide R code and output with clear interpretation.\nConduct diagnostics (balance checks, overlap, weak instrument tests, model fit).\nPerform at least one sensitivity analysis (e.g., E-values, Rosenbaum bounds, tipr).\n\nWeek 14: Presentation (10%)\n\n12–15 minutes, conference-style.\nEmphasize assumptions, robustness, and substantive conclusions—not just technical detail.\n\nFinal Paper (25%) – Due Finals Week\n\n~12–15 pages, structured as a research article:\n\nIntroduction: Causal question and motivation.\nTarget Trial Protocol: Eligibility, treatment, follow-up, outcome, causal estimand.\nAssumptions & Identification: DAG, assumptions, strategy.\nMethods: Data source, causal methods used, software.\nResults: Estimates, sensitivity analyses, robustness checks.\nDiscussion: Interpretation, limitations, implications.\nAppendix: R code (clean, annotated)."
   },
   {
     "objectID": "project/project_guidelines-rev1.html#detailed-instructions",
     "href": "project/project_guidelines-rev1.html#detailed-instructions",
-    "title": "STAT 579: Applied Causal Inference",
+    "title": "Overall Project Guidelines",
     "section": "Detailed Instructions",
     "text": "Detailed Instructions\n\nStep 1: Choosing a Question\n\nPrefer health, social, or biomedical contexts (e.g., effect of smoking on lung cancer, impact of job training on income, role of diet on heart disease).\nThe question must be causal, not descriptive.\n\nBad: “What factors are associated with depression?”\nGood: “What is the effect of exercise on reducing depression severity?”\n\n\n\n\nStep 2: DAG Construction\n\nMust use dagitty or ggdag.\nInclude confounders, colliders, mediators, and selection mechanisms.\nExplicitly identify adjustment set(s) and whether positivity holds.\n\n\n\nStep 3: Identification & Assumptions\n\nAddress the three pillars:\n\nExchangeability (unconfoundedness, or IV/exclusion restriction justification).\nPositivity (overlap diagnostics, trimming if needed).\nConsistency & SUTVA (intervention is well-defined).\n\n\n\n\nStep 4: Method Implementation\n\nChoose a method appropriate to your design:\n\nBackdoor adjustment: matching, stratification, regression, IPW.\nIV: LATE, 2SLS.\nMediation: NDE/NIE decomposition.\nMSM: time-varying exposures.\n\nUse R packages: MatchIt, WeightIt, ivreg, mediation, EValue, tipr.\n\n\n\nStep 5: Sensitivity Analysis\n\nRequired to evaluate robustness. Options:\n\nE-value.\nRosenbaum bounds.\nSimulated confounding (tipr).\n\n\n\n\nStep 6: Writing & Presentation\n\nClarity of assumptions is more important than fancy methods.\nDiscussion must explicitly state: “If assumption X fails, my estimate is biased because…”"
   },
   {
     "objectID": "project/project_guidelines-rev1.html#evaluation-criteria",
     "href": "project/project_guidelines-rev1.html#evaluation-criteria",
-    "title": "STAT 579: Applied Causal Inference",
+    "title": "Overall Project Guidelines",
     "section": "Evaluation Criteria",
     "text": "Evaluation Criteria\n\nQuestion & Relevance (10%): Is the question causal and well-motivated?\nDAG & Identification (20%): Correct, complete, and clearly explained.\nMethodology (20%): Appropriate method, correct implementation, diagnostics.\nSensitivity & Robustness (15%): At least one sensitivity analysis, well-interpreted.\nResults & Interpretation (15%): Clear, correct, cautious interpretation.\nWriting & Presentation (20%): Organization, clarity, reproducibility."
   },
   {
     "objectID": "project/project_guidelines-rev1.html#references-for-guidance",
     "href": "project/project_guidelines-rev1.html#references-for-guidance",
-    "title": "STAT 579: Applied Causal Inference",
+    "title": "Overall Project Guidelines",
     "section": "References for Guidance",
     "text": "References for Guidance\n\nHernán & Robins (2024). Causal Inference: What If.\nNeal (2020). Introduction to Causal Inference.\nImbens & Rubin (2015). Causal Inference for Statistics, Social, and Biomedical Sciences oai_citation:2‡Imbens Rubin 2015 Causal Inference for Statistics Social and Biomedical Sciences An Introduction.pdf.\nBrumback (2022). Fundamentals of Causal Inference with R oai_citation:3‡Brumback 2021 Fundamentals of Causal Inference with R.pdf.\nVanderWeele (2015). Explanation in Causal Inference."
   },
@@ -2813,28 +2813,28 @@
   {
     "objectID": "project/data_resources.html",
     "href": "project/data_resources.html",
-    "title": "Data Exploration for Your Final Project",
+    "title": "How To Find a Dataset for Target Trial Emulation",
     "section": "",
     "text": "Welcome to the data exploration hub for your final project. Finding the right dataset is arguably the most important step in a successful causal inference study. A good dataset doesn’t just have interesting variables; it must have the right structure to allow for the emulation of a target trial.\nThis page provides you with two things: a powerful tool for searching broadly and a curated list of datasets that are known to be well-suited for this kind of work."
   },
   {
     "objectID": "project/data_resources.html#the-go-to-tool-google-dataset-search",
     "href": "project/data_resources.html#the-go-to-tool-google-dataset-search",
-    "title": "Data Exploration for Your Final Project",
+    "title": "How To Find a Dataset for Target Trial Emulation",
     "section": "The Go-To Tool: Google Dataset Search",
     "text": "The Go-To Tool: Google Dataset Search\nThink of this as Google Scholar, but for data. The Google Dataset Search engine indexes thousands of data repositories from around the world. It is the best place to start when you have a specific topic in mind.\nLaunch Google Dataset Search \n\nTips for Effective Searching\nWhen searching, use keywords that describe the structure of the data you need, not just the topic. Good causal inference requires data where time is well-defined.\n\nCombine your topic (e.g., “cancer”, “education”, “air pollution”) with structural keywords like:\n“longitudinal study”\n“cohort study”\n“prospective data”\n“panel data”\n“linked mortality data”"
   },
   {
     "objectID": "project/data_resources.html#curated-datasets-for-target-trial-emulation",
     "href": "project/data_resources.html#curated-datasets-for-target-trial-emulation",
-    "title": "Data Exploration for Your Final Project",
+    "title": "How To Find a Dataset for Target Trial Emulation",
     "section": "Curated Datasets for Target Trial Emulation",
     "text": "Curated Datasets for Target Trial Emulation\nNot all datasets are created equal. The best datasets for TTE are longitudinal cohort studies, where a group of people is enrolled at a baseline point in time and followed forward. This structure allows us to properly define eligibility, measure confounders before treatment, and follow individuals for the outcome.\nHere are a few high-quality, publicly-available datasets that are exceptionally well-suited for your project.\n\nFramingham Heart Study\n\nWhy it’s great for TTE: This is the archetypal prospective cohort study. A cohort of residents from Framingham, MA, was enrolled in 1948 and has been followed ever since. It contains detailed baseline measurements of potential confounders (e.g., smoking, cholesterol, blood pressure) and tracks cardiovascular outcomes over many decades. It’s a perfect dataset for emulating a trial of an intervention (e.g., lifestyle change, medication) on heart disease.\nAccess: Data is available to researchers through a proposal process. Visit the Framingham Heart Study Website.\n\n\n\nMIMIC-IV (Medical Information Mart for Intensive Care)\n\nWhy it’s great for TTE: This database of ICU admissions contains high-resolution, time-stamped data. This is critical because you can precisely define time zero (e.g., time of admission, time of a specific diagnosis). Treatments (medications, ventilators) and outcomes are all logged with precise timing, allowing you to emulate a trial of a clinical intervention in a critical care setting and avoid biases like immortal time bias.\nAccess: Requires completion of a human subjects research training course. Visit the MIMIC-IV Website.\n\n\n\nAdd Health (The National Longitudinal Study of Adolescent to Adult Health)\n\nWhy it’s great for TTE: This is a classic longitudinal cohort. A representative sample of U.S. adolescents was enrolled in 1994-95 and has been followed into adulthood. This is ideal for questions where the “treatment” occurs in adolescence (e.g., participation in sports, a specific educational program) and the outcome occurs in adulthood (e.g., income, health status). The baseline wave contains rich data on potential confounders (family background, school environment, etc.).\nAccess: Public-use data is readily available. Visit the Add Health Website.\n\n\n\nNHANES (National Health and Nutrition Examination Survey) with Linked Mortality Data\n\nWhy it’s great for TTE: By itself, NHANES is a series of cross-sectional surveys. However, participants can be linked to the National Death Index. This transforms the dataset into a prospective cohort study. You can use the rich survey data at baseline (diet, lab values, lifestyle) to define eligibility and measure confounders. You can then emulate a trial where the outcome is long-term mortality.\nAccess: Data is publicly available from the CDC. Visit the NHANES Website."
   },
   {
     "objectID": "project/data_resources.html#checklist-for-evaluating-a-dataset",
     "href": "project/data_resources.html#checklist-for-evaluating-a-dataset",
-    "title": "Data Exploration for Your Final Project",
+    "title": "How To Find a Dataset for Target Trial Emulation",
     "section": "✅ Checklist for Evaluating a Dataset",
     "text": "✅ Checklist for Evaluating a Dataset\nWhen you find a dataset that looks promising, use this checklist to assess its suitability for a Target Trial Emulation project.\n\nCan you define a clear time zero? Is there a variable that marks the start of follow-up for all individuals (e.g., date of enrollment, date of diagnosis, start of the school year)?\nAre confounders measured at or before time zero? The fundamental requirement for confounding control is that your covariates are measured before the treatment is assigned.\nIs the exposure/treatment variable well-defined? Can you clearly determine who is “treated” and “untreated” based on the data?\nIs the outcome measured after time zero? The dataset must have follow-up data to ascertain the outcome after the intervention.\nIs the follow-up period long enough? Is there sufficient time between treatment and outcome for a causal effect to plausibly occur?\n\nIf you can answer “yes” to these questions, you likely have a strong candidate dataset for your project."
   },
@@ -2918,7 +2918,7 @@
     "href": "readings/index.html",
     "title": "Readings",
     "section": "",
-    "text": "Order By\n      Default\n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nTitle\n\n\n\nCategories\n\n\n\n\n\n\n\n\nHow to Write a Great Critique\n\n\n \n\n\n\n\n\n\nReflection 1: Template for Critiquing Weekly Papers\n\n\n \n\n\n\n\n\n\nWeekly Paper Critique Schedule\n\n\n \n\n\n\n\n\n\nNo matching items",
+    "text": "Order By\n      Default\n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nTitle\n\n\n\nCategories\n\n\n\n\n\n\n\n\nHow To Read a Statistical Paper\n\n\n \n\n\n\n\n\n\nHow to Write a Great Critique\n\n\n \n\n\n\n\n\n\nWeekly Paper Critique Schedule\n\n\n \n\n\n\n\n\n\nNo matching items",
     "crumbs": [
       "Home",
       "Course Materials",
@@ -2930,7 +2930,7 @@
     "href": "project/index.html",
     "title": "Projects",
     "section": "",
-    "text": "Order By\n      Default\n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nTitle\n\n\n\nCategories\n\n\n\n\n\n\n\n\nData Exploration for Your Final Project\n\n\n \n\n\n\n\n\n\nFinal Project Rubric & Instructor Checklist\n\n\n \n\n\n\n\n\n\nSTAT 579: Applied Causal Inference\n\n\n \n\n\n\n\n\n\nSTAT 579: Detailed Final Project Schedule\n\n\n \n\n\n\n\n\n\nTarget Trial Emulation (TTE) vs Just Analyzing the Data\n\n\n \n\n\n\n\n\n\nNo matching items",
+    "text": "Order By\n      Default\n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nTitle\n\n\n\nCategories\n\n\n\n\n\n\n\n\nFinal Project Schedule\n\n\n \n\n\n\n\n\n\nHow To Find a Dataset for Target Trial Emulation\n\n\n \n\n\n\n\n\n\nOverall Project Guidelines\n\n\n \n\n\n\n\n\n\nRubric & Checklist\n\n\n \n\n\n\n\n\n\nTarget Trial Emulation (TTE) vs Just Analyzing the Data\n\n\n \n\n\n\n\n\n\nNo matching items",
     "crumbs": [
       "Home",
       "Course Materials",
@@ -3066,5 +3066,40 @@
     "title": "How To Read a Statistical Paper",
     "section": "Pass 3: The Feynman Technique – Solidifying Understanding (30 Minutes) ✍️",
     "text": "Pass 3: The Feynman Technique – Solidifying Understanding (30 Minutes) ✍️\nYou only truly understand something when you can explain it simply. This final pass solidifies your mental model and reveals any remaining gaps in your knowledge.\n\nPut the paper away. Open a blank document or grab a piece of paper.\nExplain the paper to an imaginary first-year graduate student. Your explanation must clearly and simply answer the following five questions:\n\nWhat was the central problem the authors were trying to solve?\nWhat was their key insight or proposed solution?\nIn simple terms, what is the core logic for why their solution works?\nWhat are the 1-3 critical assumptions it relies on to be valid?\nWhat is the single biggest limitation or most important implication of this work?\n\n\nIf you get stuck or find yourself using jargon you can’t define, you’ve found the edge of your understanding. Go back to the paper and focus specifically on that part. This technique is the most efficient way to build deep, lasting comprehension."
+  },
+  {
+    "objectID": "readings/how_to_read_technocal_paper.html",
+    "href": "readings/how_to_read_technocal_paper.html",
+    "title": "How To Read a Statistical Paper",
+    "section": "",
+    "text": "The goal when reading a methodological paper is not to memorize every formula but to build a robust mental model of the author’s argument. You want to understand the problem they solved, the logic of their solution, the assumptions required for it to work, and its ultimate impact. This active, model-building approach is far more effective than passive reading.\nWe will use a Three-Pass Approach designed to manage cognitive load and build your understanding from a scaffold to a fully-formed structure."
+  },
+  {
+    "objectID": "readings/how_to_read_technocal_paper.html#pass-1-the-birds-eye-view-building-the-scaffold-15-minutes",
+    "href": "readings/how_to_read_technocal_paper.html#pass-1-the-birds-eye-view-building-the-scaffold-15-minutes",
+    "title": "How To Read a Statistical Paper",
+    "section": "Pass 1: The Bird’s-Eye View – Building the Scaffold (15 Minutes) 🗺️",
+    "text": "Pass 1: The Bird’s-Eye View – Building the Scaffold (15 Minutes) 🗺️\nDon’t start by reading page one. Your first goal is to create a mental “map” of the paper’s purpose and structure. This provides a scaffold for your brain to hang the details on later, which significantly reduces cognitive load.\n\nRead the Abstract, Introduction, and Conclusion First: Read these three sections carefully. At the end of this step, you should be able to answer, in simple terms:\n\nThe Problem: What specific challenge or gap in knowledge existed before this paper was written?\nThe Solution: What is the main idea, method, or framework this paper proposes?\nThe Claim: What do the authors claim is the primary impact or takeaway of their work?\n\nScan the Section Headings: Look at the structure of the paper. How do the authors build their argument from the problem to the solution?\nExamine Figures and Conceptual Tables: Look at any diagrams (like DAGs), charts, or conceptual tables. Read their captions. These often contain the most important ideas in a condensed, visual format.\n\nAt the end of this pass, you shouldn’t understand the details, but you should have a clear sense of the paper’s story."
+  },
+  {
+    "objectID": "readings/how_to_read_technocal_paper.html#pass-2-the-deep-dive-adding-the-bricks-with-active-recall-1-2-hours",
+    "href": "readings/how_to_read_technocal_paper.html#pass-2-the-deep-dive-adding-the-bricks-with-active-recall-1-2-hours",
+    "title": "How To Read a Statistical Paper",
+    "section": "Pass 2: The Deep Dive – Adding the Bricks with Active Recall (1-2 Hours) 🧱",
+    "text": "Pass 2: The Deep Dive – Adding the Bricks with Active Recall (1-2 Hours) 🧱\nNow, read the paper from start to finish, but with an active, questioning mindset. Your goal is to deconstruct the argument, not just consume it.\n\n“Translate” the Math: When you encounter a block of equations, your goal is not to re-derive the proofs. Instead, focus on the English sentences before and after the math. Your task is to translate the mathematical statement into a conceptual one. For example, when you see the formula for the propensity score, you should translate it in your notes as: “This is the probability of getting the treatment, given the measured covariates L.”\nFocus on the Assumptions: For causal inference papers, assumptions are the most important part. They are the weak points of any argument. When an assumption is stated (e.g., “unconfoundedness,” “exclusion restriction”), stop and ask:\n\nWhat does this assumption mean conceptually?\nWhy is it necessary for the author’s argument to work?\nIs this assumption testable? If not, in what real-world scenarios might it be plausible or implausible?\n\nEngage in Active Recall: After reading each major section, stop, look away from the page, and ask yourself: “What was the single most important point of that section?” Try to summarize it in one or two sentences, either in your head or in your notes. This act of forcing your brain to retrieve the information is far more powerful for learning than passively re-reading the text."
+  },
+  {
+    "objectID": "readings/how_to_read_technocal_paper.html#pass-3-the-feynman-technique-solidifying-understanding-30-minutes",
+    "href": "readings/how_to_read_technocal_paper.html#pass-3-the-feynman-technique-solidifying-understanding-30-minutes",
+    "title": "How To Read a Statistical Paper",
+    "section": "Pass 3: The Feynman Technique – Solidifying Understanding (30 Minutes) ✍️",
+    "text": "Pass 3: The Feynman Technique – Solidifying Understanding (30 Minutes) ✍️\nYou only truly understand something when you can explain it simply. This final pass solidifies your mental model and reveals any remaining gaps in your knowledge.\n\nPut the paper away. Open a blank document or grab a piece of paper.\nExplain the paper to an imaginary first-year graduate student. Your explanation must clearly and simply answer the following five questions:\n\nWhat was the central problem the authors were trying to solve?\nWhat was their key insight or proposed solution?\nIn simple terms, what is the core logic for why their solution works?\nWhat are the 1-3 critical assumptions it relies on to be valid?\nWhat is the single biggest limitation or most important implication of this work?\n\n\nIf you get stuck or find yourself using jargon you can’t define, you’ve found the edge of your understanding. Go back to the paper and focus specifically on that part. This technique is the most efficient way to build deep, lasting comprehension."
+  },
+  {
+    "objectID": "readings/how_to_read_technocal_paper.html#example-application-the-feynman-technique-for-week-5-rosenbaum-rubin-1983",
+    "href": "readings/how_to_read_technocal_paper.html#example-application-the-feynman-technique-for-week-5-rosenbaum-rubin-1983",
+    "title": "How To Read a Statistical Paper",
+    "section": "Example Application: The Feynman Technique for Week 5 (Rosenbaum & Rubin, 1983)",
+    "text": "Example Application: The Feynman Technique for Week 5 (Rosenbaum & Rubin, 1983)\nAfter reading the paper, your Feynman explanation might look like this:\n\nProblem: In observational studies, people who get a treatment are different from those who don’t across many variables (confounders). Trying to adjust for all of them in a single regression model is complicated and non-transparent.\nSolution: They proposed the propensity score—the probability of getting treated given your set of covariates. They proved you only need to adjust for this single number to remove bias from all observed confounders.\nLogic: The propensity score has a “balancing property.” At any given value of the score, the distribution of the covariates is the same between the treated and untreated groups, just like in a randomized experiment.\nAssumptions: This only works if you’ve measured all the important confounders (unconfoundedness) and if there are both treated and untreated people at every level of the propensity score (positivity/overlap). Unconfoundedness is a huge, untestable assumption.\nImpact: This revolutionized observational research by creating a two-step process: first, focus on study design by creating balanced groups, and only then, perform the outcome analysis. Its biggest limitation is that it does nothing to solve the problem of unmeasured confounders."
   }
 ]
