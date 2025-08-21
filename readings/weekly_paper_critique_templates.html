@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>Reflection 1: Template for Critiquing Weekly Papers – Introduction to Causal Inference</title>
+<title>How To Read a Statistical Paper – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,41 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -205,7 +170,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="../assets/styles/css/home.css">
-<meta property="og:title" content="Reflection 1: Template for Critiquing Weekly Papers – Introduction to Causal Inference">
+<meta property="og:title" content="How To Read a Statistical Paper – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
 <meta property="og:image" content="https://Data-Wise.github.io/causal-inference/readings/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
@@ -394,7 +359,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -413,7 +378,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link active" href="../syllabus/schedule.html" aria-current="page"> 
+    <a class="nav-link" href="../syllabus/schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
@@ -455,7 +420,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Reflection 1: Template for Critiquing Weekly Papers</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">How To Read a Statistical Paper</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -465,7 +430,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Reflection 1: Template for Critiquing Weekly Papers</h1>
+      <h1 class="title">How To Read a Statistical Paper</h1>
                       </div>
   </div>
     
@@ -489,7 +454,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Aug-19-2025</p>
+        <p class="date">Aug-20-2025</p>
       </div>
     </div>
     
@@ -513,7 +478,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index." class="sidebar-item-text sidebar-link">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Home</span></a>
   </div>
 </li>
@@ -610,17 +575,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#reflection-memo-template" id="toc-reflection-memo-template" class="nav-link" data-scroll-target="#reflection-memo-template">📄 Reflection Memo Template</a>
-  <ul class="collapse">
-  <li><a href="#quarto-version-reflection_memo.qmd" id="toc-quarto-version-reflection_memo.qmd" class="nav-link" data-scroll-target="#quarto-version-reflection_memo.qmd">Quarto Version (<code>reflection_memo.qmd</code>)</a></li>
-  <li><a href="#worddocx-version-outline" id="toc-worddocx-version-outline" class="nav-link" data-scroll-target="#worddocx-version-outline">Word/Docx Version (outline)</a></li>
-  </ul></li>
-  <li><a href="#critique-template" id="toc-critique-template" class="nav-link" data-scroll-target="#critique-template">📄 Critique Template</a>
-  <ul class="collapse">
-  <li><a href="#quarto-version-critique_template.qmd" id="toc-quarto-version-critique_template.qmd" class="nav-link" data-scroll-target="#quarto-version-critique_template.qmd">Quarto Version (<code>critique_template.qmd</code>)</a></li>
-  <li><a href="#worddocx-version-outline-1" id="toc-worddocx-version-outline-1" class="nav-link" data-scroll-target="#worddocx-version-outline-1">Word/Docx Version (outline)</a></li>
-  </ul></li>
+  <li><a href="#pass-1-the-birds-eye-view-building-the-scaffold-15-minutes" id="toc-pass-1-the-birds-eye-view-building-the-scaffold-15-minutes" class="nav-link active" data-scroll-target="#pass-1-the-birds-eye-view-building-the-scaffold-15-minutes">Pass 1: The Bird’s-Eye View – Building the Scaffold (15 Minutes) 🗺️</a></li>
+  <li><a href="#pass-2-the-deep-dive-adding-the-bricks-with-active-recall-1-2-hours" id="toc-pass-2-the-deep-dive-adding-the-bricks-with-active-recall-1-2-hours" class="nav-link" data-scroll-target="#pass-2-the-deep-dive-adding-the-bricks-with-active-recall-1-2-hours">Pass 2: The Deep Dive – Adding the Bricks with Active Recall (1-2 Hours) 🧱</a></li>
+  <li><a href="#pass-3-the-feynman-technique-solidifying-understanding-30-minutes" id="toc-pass-3-the-feynman-technique-solidifying-understanding-30-minutes" class="nav-link" data-scroll-target="#pass-3-the-feynman-technique-solidifying-understanding-30-minutes">Pass 3: The Feynman Technique – Solidifying Understanding (30 Minutes) ✍️</a></li>
+  <li><a href="#example-application-the-feynman-technique-for-week-5-rosenbaum-rubin-1983" id="toc-example-application-the-feynman-technique-for-week-5-rosenbaum-rubin-1983" class="nav-link" data-scroll-target="#example-application-the-feynman-technique-for-week-5-rosenbaum-rubin-1983">Example Application: The Feynman Technique for Week 5 (Rosenbaum &amp; Rubin, 1983)</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/readings/weekly_paper_critique_templates.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -632,144 +590,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
-<p>The purpose of this templates is designed to help students critically analyze and reflect on weekly papers in causal inference. The goal is to encourage a deeper understanding of the material by prompting thoughtful questions and encouraging active participation. <!-- 
-# Template for Critiquing Weekly Papers
-
-## Paper Title and Authors
-
-**Title:** [Insert paper title]
-
-**Authors:** [Insert authors' names]
-
-## Summary of the Paper
-
-Provide a brief summary of the paper, highlighting its main contributions and findings. This section should be concise but informative.
-
-## Key Points and Findings
-
-- **Point 1:** [Brief description of point]
-- **Point 2:** [Brief description of point]
-- **Point 3:** [Brief description of point]
-
-## Critique Questions
-
-- **Question 1:** What is the main contribution of this paper?
-- **Question 2:** How does this paper address the causal inference problem it aims to solve?
-- **Question 3:** Are there any limitations or potential biases in the study design or analysis?
-- **Question 4:** How could the findings be applied in real-world scenarios?
-- **Question 5:** What are the implications of these results for future research?
-
-## Personal Reflection
-
-Reflect on what you learned from reading this paper and how it might influence your own research or thinking. --></p>
+<!-- ## How To Read a Statistical Paper: A Cognitive Science-Based Guide 🧠 -->
+<p>The goal when reading a methodological paper is not to memorize every formula but to build a robust <strong>mental model</strong> of the author’s argument. You want to understand the <em>problem</em> they solved, the <em>logic</em> of their solution, the <em>assumptions</em> required for it to work, and its ultimate <em>impact</em>. This active, model-building approach is far more effective than passive reading.</p>
+<p>We will use a <strong>Three-Pass Approach</strong> designed to manage cognitive load and build your understanding from a scaffold to a fully-formed structure.</p>
+<section id="pass-1-the-birds-eye-view-building-the-scaffold-15-minutes" class="level2">
+<h2 class="anchored" data-anchor-id="pass-1-the-birds-eye-view-building-the-scaffold-15-minutes">Pass 1: The Bird’s-Eye View – Building the Scaffold (15 Minutes) 🗺️</h2>
+<p>Don’t start by reading page one. Your first goal is to create a mental “map” of the paper’s purpose and structure. This provides a scaffold for your brain to hang the details on later, which significantly reduces cognitive load.</p>
+<ol type="1">
+<li><strong>Read the Abstract, Introduction, and Conclusion First:</strong> Read these three sections carefully. At the end of this step, you should be able to answer, in simple terms:
+<ul>
+<li><strong>The Problem:</strong> What specific challenge or gap in knowledge existed before this paper was written?</li>
+<li><strong>The Solution:</strong> What is the main idea, method, or framework this paper proposes?</li>
+<li><strong>The Claim:</strong> What do the authors claim is the primary impact or takeaway of their work?</li>
+</ul></li>
+<li><strong>Scan the Section Headings:</strong> Look at the structure of the paper. How do the authors build their argument from the problem to the solution?</li>
+<li><strong>Examine Figures and Conceptual Tables:</strong> Look at any diagrams (like DAGs), charts, or conceptual tables. Read their captions. These often contain the most important ideas in a condensed, visual format.</li>
+</ol>
+<p>At the end of this pass, you shouldn’t understand the details, but you should have a clear sense of the paper’s story.</p>
 </section>
-<section id="reflection-memo-template" class="level1">
-<h1>📄 Reflection Memo Template</h1>
-<section id="quarto-version-reflection_memo.qmd" class="level3">
-<h3 class="anchored" data-anchor-id="quarto-version-reflection_memo.qmd">Quarto Version (<code>reflection_memo.qmd</code>)</h3>
-<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "STAT 579 • Weekly Reflection Memo"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Your Name"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> ""</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> pdf</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## Week X: Topic Title</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">### 📝 Key Concept</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Summarize 1–2 key ideas from this week’s readings in your own words.  </span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use examples from public health, epidemiology, or your field.  </span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">### 📈 DAG Sketch (optional but encouraged)</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Example DAG code (students may hand-draw and paste image instead)</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># library(ggdag)</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># dagify(Y ~ A + L, A ~ L) |&gt; ggdag()</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">### 🔎 Assumption Spotlight</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Choose one assumption (e.g., exchangeability, positivity, SUTVA).</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Define it clearly.</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Provide an example of when it might hold or fail in practice.</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">### ❓ Muddy Point</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Write 1 question you still have for class discussion.</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>**Length guideline:** ≈300 words (1 page). Submit as PDF.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="pass-2-the-deep-dive-adding-the-bricks-with-active-recall-1-2-hours" class="level2">
+<h2 class="anchored" data-anchor-id="pass-2-the-deep-dive-adding-the-bricks-with-active-recall-1-2-hours">Pass 2: The Deep Dive – Adding the Bricks with Active Recall (1-2 Hours) 🧱</h2>
+<p>Now, read the paper from start to finish, but with an active, questioning mindset. Your goal is to deconstruct the argument, not just consume it.</p>
+<ol type="1">
+<li><strong>“Translate” the Math:</strong> When you encounter a block of equations, your goal is not to re-derive the proofs. Instead, focus on the English sentences <em>before and after</em> the math. Your task is to <strong>translate the mathematical statement into a conceptual one</strong>. For example, when you see the formula for the propensity score, you should translate it in your notes as: <em>“This is the probability of getting the treatment, given the measured covariates L.”</em></li>
+<li><strong>Focus on the Assumptions:</strong> For causal inference papers, <strong>assumptions are the most important part</strong>. They are the weak points of any argument. When an assumption is stated (e.g., “unconfoundedness,” “exclusion restriction”), stop and ask:
+<ul>
+<li>What does this assumption mean conceptually?</li>
+<li>Why is it necessary for the author’s argument to work?</li>
+<li>Is this assumption testable? If not, in what real-world scenarios might it be plausible or implausible?</li>
+</ul></li>
+<li><strong>Engage in Active Recall:</strong> After reading each major section, <strong>stop, look away from the page, and ask yourself: “What was the single most important point of that section?”</strong> Try to summarize it in one or two sentences, either in your head or in your notes. This act of forcing your brain to <em>retrieve</em> the information is far more powerful for learning than passively re-reading the text.</li>
+</ol>
 </section>
-<section id="worddocx-version-outline" class="level3">
-<h3 class="anchored" data-anchor-id="worddocx-version-outline">Word/Docx Version (outline)</h3>
-<p><strong>STAT 579 • Weekly Reflection Memo</strong><br>
-Student Name · Week X · Topic</p>
-<p><strong>Key Concept (1–2 paragraphs)</strong><br>
-…</p>
-<p><strong>DAG Sketch (Insert diagram or leave placeholder box)</strong><br>
-[Insert DAG here]</p>
-<p><strong>Assumption Spotlight (1 paragraph)</strong><br>
-…</p>
-<p><strong>Muddy Point (1–2 sentences)</strong><br>
-…</p>
+<section id="pass-3-the-feynman-technique-solidifying-understanding-30-minutes" class="level2">
+<h2 class="anchored" data-anchor-id="pass-3-the-feynman-technique-solidifying-understanding-30-minutes">Pass 3: The Feynman Technique – Solidifying Understanding (30 Minutes) ✍️</h2>
+<p>You only truly understand something when you can explain it simply. This final pass solidifies your mental model and reveals any remaining gaps in your knowledge.</p>
+<ol type="1">
+<li><strong>Put the paper away.</strong> Open a blank document or grab a piece of paper.</li>
+<li><strong>Explain the paper to an imaginary first-year graduate student.</strong> Your explanation must clearly and simply answer the following five questions:
+<ul>
+<li><strong>What was the central problem the authors were trying to solve?</strong></li>
+<li><strong>What was their key insight or proposed solution?</strong></li>
+<li><strong>In simple terms, what is the core logic for <em>why</em> their solution works?</strong></li>
+<li><strong>What are the 1-3 critical assumptions it relies on to be valid?</strong></li>
+<li><strong>What is the single biggest limitation or most important implication of this work?</strong></li>
+</ul></li>
+</ol>
+<p>If you get stuck or find yourself using jargon you can’t define, <strong>you’ve found the edge of your understanding.</strong> Go back to the paper and focus specifically on that part. This technique is the most efficient way to build deep, lasting comprehension.</p>
 </section>
-</section>
-<section id="critique-template" class="level1">
-<h1>📄 Critique Template</h1>
-<section id="quarto-version-critique_template.qmd" class="level3">
-<h3 class="anchored" data-anchor-id="quarto-version-critique_template.qmd">Quarto Version (<code>critique_template.qmd</code>)</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "STAT 579 • Weekly Article Critique"</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Your Name"</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> pdf</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## Week X: Foundational Paper</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Citation:** Full reference with DOI  </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Article Link:** <span class="co">[</span><span class="ot">Insert URL</span><span class="co">]</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Study Design → Causal Question</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>What causal question is the paper addressing?  </span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Define the estimand ($ATE$, $ATT$, $LATE$, etc.).  </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Describe the “target trial” the paper implicitly or explicitly emulates.  </span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Method Selection → Identification</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Draw the DAG for the study.  </span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>List minimal sufficient adjustment sets.  </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>State the identification assumptions.  </span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Assumption Validation → Diagnostics</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>How would one test/assess the assumptions?  </span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>What diagnostics or sensitivity checks are available?  </span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use the companion “case study” paper as a concrete example.  </span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Interpretation → Uncertainty Communication</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Summarize the key findings in your own words.  </span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Discuss primary threats to validity.  </span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Compare insights from **Map (textbook)**, **Journal (foundational paper)**, and **Expedition (case study)**.  </span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reflection</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>What did you find most convincing or unconvincing about the paper?  </span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>How does this method relate to your **project design**?  </span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>**Length guideline:** 2–3 pages (≈800–1000 words). Submit as PDF.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="worddocx-version-outline-1" class="level3">
-<h3 class="anchored" data-anchor-id="worddocx-version-outline-1">Word/Docx Version (outline)</h3>
-<p><strong>STAT 579 • Weekly Article Critique</strong> Student Name · Week X · Topic</p>
-<p><strong>Citation &amp; DOI</strong> …</p>
-<p><strong>1. Study Design → Causal Question</strong> …</p>
-<p><strong>2. Method Selection → Identification</strong> (DAG diagram placeholder) …</p>
-<p><strong>3. Assumption Validation → Diagnostics</strong> …</p>
-<p><strong>4. Interpretation → Uncertainty Communication</strong> …</p>
-<p><strong>Reflection</strong> …</p>
+<section id="example-application-the-feynman-technique-for-week-5-rosenbaum-rubin-1983" class="level2">
+<h2 class="anchored" data-anchor-id="example-application-the-feynman-technique-for-week-5-rosenbaum-rubin-1983">Example Application: The Feynman Technique for Week 5 (Rosenbaum &amp; Rubin, 1983)</h2>
+<p>After reading the paper, your Feynman explanation might look like this:</p>
+<ul>
+<li><strong>Problem:</strong> In observational studies, people who get a treatment are different from those who don’t across many variables (confounders). Trying to adjust for all of them in a single regression model is complicated and non-transparent.</li>
+<li><strong>Solution:</strong> They proposed the <strong>propensity score</strong>—the probability of getting treated given your set of covariates. They proved you only need to adjust for this single number to remove bias from all <em>observed</em> confounders.</li>
+<li><strong>Logic:</strong> The propensity score has a “balancing property.” At any given value of the score, the distribution of the covariates is the same between the treated and untreated groups, just like in a randomized experiment.</li>
+<li><strong>Assumptions:</strong> This only works if you’ve measured all the important confounders (<strong>unconfoundedness</strong>) and if there are both treated and untreated people at every level of the propensity score (<strong>positivity/overlap</strong>). Unconfoundedness is a huge, untestable assumption.</li>
+<li><strong>Impact:</strong> This revolutionized observational research by creating a two-step process: first, focus on study design by creating balanced groups, and only then, perform the outcome analysis. Its biggest limitation is that it does nothing to solve the problem of <em>unmeasured</em> confounders.</li>
+</ul>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
