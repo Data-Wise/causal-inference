@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
-<meta name="dcterms.date" content="2025-07-12">
 
-<title>Appendix – Introduction to Causal Inference</title>
+<title>Course Content – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,17 +21,51 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./assets/images/favicon.ico" rel="icon">
+<link href="./assets/images/icon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -44,9 +77,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-ab86f13fa607618020e3f7de5041b3a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -75,101 +108,130 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 <script>
-MathJax = {
-  tex: {
-    macros: {
-        RR: "{\\mathbb{R}}",
-        NN: "{\\mathbb{N}}",
-        QQ: "{\\mathbb{Q}}",
-        ZZ: "{\\mathbb{Z}}",
-        PP: "{\\mathbb{P}}",
-        // expectation & probability
-        E: ["{\\EE\\left[ #1 \\right]}", 1],
-        Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
-        EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
-        EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
-        EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
-        Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
-        ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
-        ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
-        ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
-        Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
-        ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
-        ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
-        ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
-        ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
-        ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
-        // operators (both lower & upper case)
-        var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
-        Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
-        cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
-        Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
-        cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
-        Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
-        logit: "{\\operatorname{logit}}",
-        expit: "{\\operatorname{expit}}", // inverse logit
-        sgn: "{\\operatorname{sgn}}",
-        EE: "{\\operatorname{\\mathbb{E}}}",
-        pr: "{\\operatorname{\\mathbb{P}}}",
+    MathJax = {
+        tex: {
+            macros: {
+                RR: "{\\mathbb{R}}",
+                NN: "{\\mathbb{N}}",
+                QQ: "{\\mathbb{Q}}",
+                ZZ: "{\\mathbb{Z}}",
+                PP: "{\\mathbb{P}}",
+                // expectation & probability
+                E: ["{\\EE\\left[ #1 \\right]}", 1],
+                Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
+                EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
+                EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
+                EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
+                Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
+                ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
+                Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
+                ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
+                ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
+                ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
+                ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
+                // operators (both lower & upper case)
+                var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
+                Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
+                cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
+                Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
+                cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
+                Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
+                logit: "{\\operatorname{logit}}",
+                expit: "{\\operatorname{expit}}", // inverse logit
+                sgn: "{\\operatorname{sgn}}",
+                EE: "{\\operatorname{\\mathbb{E}}}",
+                pr: "{\\operatorname{\\mathbb{P}}}",
 
-        // vector & basic constructs
-        vect: ["{\\mathbf{#1}}", 1],
-        abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
-        norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
-        ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
+                // vector & basic constructs
+                vect: ["{\\mathbf{#1}}", 1],
+                abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
+                norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
+                ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
 
-        // indicator variants
-        indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
-        ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
-        I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                // indicator variants
+                indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
+                ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
 
-        // independence & non-independence (bare + braced forms via separate names)
-        indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
-        Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
-        nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
-        Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
-        notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
-        Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                // independence & non-independence (bare + braced forms via separate names)
+                indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
+                nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
 
-        // do-operator & d-separation
-        doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
-        dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                // do-operator & d-separation
+                doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
+                dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
 
-        // potential outcomes & notational conveniences
-        Y: ["{Y^{#1}}", 1],
-        Ya: "{Y^a}",
-        Yone: "{Y^1}",
-        Yzero: "{Y^0}",
+                // potential outcomes & notational conveniences
+                Y: ["{Y^{#1}}", 1],
+                Ya: "{Y^a}",
+                Yone: "{Y^1}",
+                Yzero: "{Y^0}",
 
-        // estimands
-        ATE: "{\\tau_{\\text{ATE}}}",
-        ATT: "{\\tau_{\\text{ATT}}}",
-        ATC: "{\\tau_{\\text{ATC}}}",
-        CATE: "{\\tau_{\\text{CATE}}}",
+                // estimands
+                ATE: "{\\tau_{\\text{ATE}}}",
+                ATT: "{\\tau_{\\text{ATT}}}",
+                ATC: "{\\tau_{\\text{ATC}}}",
+                CATE: "{\\tau_{\\text{CATE}}}",
 
-        DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
-        DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
-        DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
-        DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
+                DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
+                DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
+                DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
+                DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
 
-        // identification blocks
-        gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
-        ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
+                // identification blocks
+                gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
+                ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
 
-        // risk measures
-        RD: "{\\operatorname{RD}}",
-        OR: "{\\operatorname{OR}}",
+                // risk measures
+                RD: "{\\operatorname{RD}}",
+                OR: "{\\operatorname{OR}}",
 
-        // optimization operators
-        argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
-        argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
+                // optimization operators
+                argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
+                argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
+            }
+        }
+    };
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
       }
     }
-  };
+  }
+}
+window.Quarto = {
+  typesetMath
+};
 </script>
-
 
 <link rel="stylesheet" href="assets/styles/css/home.css">
 <meta property="og:title" content="Appendix – Introduction to Causal Inference">
@@ -178,7 +240,7 @@ MathJax = {
 <meta property="og:site_name" content="Introduction to Causal Inference">
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -347,6 +409,9 @@ MathJax = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./assets/images/icon.png" alt="" class="navbar-logo">
+    </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Introduction to Causal Inference</span>
     </a>
@@ -356,15 +421,26 @@ MathJax = {
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="./index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./syllabus/syllabus-final.html"> 
-<span class="menu-text">Syllabus</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Syllabus</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
+        <li>
+    <a class="dropdown-item" href="./syllabus/syllabus-final.pdf">
+ <span class="dropdown-text">PDF</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./syllabus/syllabus-final.html">
+ <span class="dropdown-text">HTML</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./syllabus/schedule.html"> 
 <span class="menu-text">Schedule</span></a>
@@ -374,22 +450,12 @@ MathJax = {
 <span class="menu-text">Lecture Notes</span></a>
   </li>  
   <li class="nav-item">
-    <span class="nav-link">
-<span class="menu-text">Readings</span>
-    </span>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./home_readings.html"> 
-<span class="menu-text">STAT 579 • Weekly Readings &amp; Critique Hub</span></a>
-  </li>  
-  <li class="nav-item">
-    <span class="nav-link">
-<span class="menu-text">Project</span>
-    </span>
+<span class="menu-text">Readings</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./home_project.html"> 
-<span class="menu-text">Final Project Overview</span></a>
+<span class="menu-text">Project</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./home_assignments.html"> 
@@ -399,6 +465,8 @@ MathJax = {
     <a class="nav-link" href="./r_help.html"> 
 <span class="menu-text">R Help</span></a>
   </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
@@ -416,7 +484,7 @@ MathJax = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendix</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Weekly Readings</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -426,7 +494,7 @@ MathJax = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Appendix</h1>
+      <h1 class="title">Weekly Readings</h1>
             <p class="subtitle lead">Additional Resources and Help</p>
                       </div>
   </div>
@@ -451,14 +519,14 @@ MathJax = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">July 12, 2025</p>
+        <p class="date">7/12/2025</p>
       </div>
     </div>
     
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">August 19, 2025</p>
+        <p class="date-modified">last-modified</p>
       </div>
     </div>
       
@@ -467,18 +535,18 @@ MathJax = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Overview</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
@@ -488,7 +556,7 @@ MathJax = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Syllabus</span></a>
+ <span class="menu-text">Syllabus (PDF)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -501,13 +569,13 @@ MathJax = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Materials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./home_lectures.html" class="sidebar-item-text sidebar-link">
@@ -515,21 +583,15 @@ MathJax = {
   </div>
 </li>
           <li class="sidebar-item">
- <span class="menu-text">Readings</span>
-  </li>
-          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./home_readings.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">STAT 579 • Weekly Readings &amp; Critique Hub</span></a>
+ <span class="menu-text">Readings</span></a>
   </div>
 </li>
           <li class="sidebar-item">
- <span class="menu-text">Project</span>
-  </li>
-          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./home_project.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Final Project Overview</span></a>
+ <span class="menu-text">Project</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -542,13 +604,13 @@ MathJax = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">R Code and Datasets</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./r_help.html" class="sidebar-item-text sidebar-link">
@@ -574,6 +636,9 @@ MathJax = {
   <li><a href="#software-tools-and-resources" id="toc-software-tools-and-resources" class="nav-link" data-scroll-target="#software-tools-and-resources">Software Tools and Resources</a>
   <ul class="collapse">
   <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources">Additional Resources</a></li>
+  <li><a href="#part-i-foundations-of-causal-inference" id="toc-part-i-foundations-of-causal-inference" class="nav-link" data-scroll-target="#part-i-foundations-of-causal-inference"><strong>Part I: Foundations of Causal Inference</strong></a></li>
+  <li><a href="#part-ii-estimation-methods" id="toc-part-ii-estimation-methods" class="nav-link" data-scroll-target="#part-ii-estimation-methods"><strong>Part II: Estimation Methods</strong></a></li>
+  <li><a href="#part-iii-advanced-topics-applications" id="toc-part-iii-advanced-topics-applications" class="nav-link" data-scroll-target="#part-iii-advanced-topics-applications"><strong>Part III: Advanced Topics &amp; Applications</strong></a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/home_appendix.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -640,8 +705,521 @@ MathJax = {
 </ul>
 
 
+<p>TBA</p>
+<!-- # Course Content - STAT 440/540
+
+This page organizes the key course materials, including lecture notes, assignments, supplemental readings, and important resources.  
+
+## Course Syllabus
+
+The course syllabus contains **all essential details** about the course structure, policies, assignments, and exam dates.  
+
+- 📄 [Download Full Course Syllabus (PDF)](https://Data-Wise.github.io/regression/syllabus/syllabus-final.pdf) 
+- Important: **You must read the syllabus carefully**, as it contains critical information not available elsewhere.  
+
+## Lecture Notes
+
+Lecture notes and slides will be posted on the **Course GitHub Page** in **HTML format**.  
+
+- 📚 [Access Lecture Notes](https://Data-Wise.github.io/regression/syllabus/lectures)  
+  - _Note: GitHub Pages may cache content. Refresh your browser if the notes appear outdated._  
+    - To refresh, use:  
+      - **Ctrl + Shift + R** (Windows/Linux)  
+      - **Cmd + Shift + R** (Mac)  
+
+## Course Schedule
+
+The course schedule provides a week-by-week breakdown of topics, reading assignments, and due dates.  
+
+- 📅 [View Course Schedule](https://Data-Wise.github.io/regression/syllabus/schedule)  
+
+
+## Assignments
+
+Assignments will be posted on Canvas as well as on the course website on the [Assignments](home_assignments.qmd) page. All the assignments must be submitted via Canvas. All assignments require the use of the **Quarto template** provided.  
+
+- 🔗 [Quarto Template](https://github.com/course-page-url/template)  
+
+## Supplemental Readings
+
+Supplemental readings will be provided as needed. Public domain readings will be posted on the [Contents](home_contents.qmd) page.  
+
+- 🔗 [Access Supplemental Readings on Canvas](https://canvasinfo.unm.edu/readings)  
+
+_Note: Some readings may not be shared due to copyright restrictions._  
+
+## Software Tools and Resources
+
+To complete assignments and analyses, you will need access to R and related tools.  
+
+- **R Installation:** [Download R](https://cran.r-project.org/)  
+- **RStudio IDE:** [Download RStudio](https://www.rstudio.com/products/rstudio/download/)  
+- **VS Code IDE:** [Download VS Code](https://code.visualstudio.com/)  
+
+### Additional Resources 
+
+- Quarto Documentation: [Learn Quarto](https://quarto.org/docs/)  
+- R Tutorials: [R Basics for Beginners](https://r4ds.had.co.nz/)  
+
+# R Code and Data Files from the Textbook -->
+<p>This page provides a detailed week-by-week schedule for STAT 579. Readings should be completed <em>before</em> the first class of the week.</p>
+<ul>
+<li><strong>HR:</strong> Hernán, M. A., &amp; Robins, J. M. (2024). <em>Causal Inference: What If</em>.</li>
+<li><strong>Neal:</strong> Neal, B. (2020). <em>Introduction to Causal Inference</em>.</li>
+<li><strong>Cunningham:</strong> Cunningham, S. (2021). <em>Causal Inference: The Mixtape</em>.</li>
+<li><strong>VanderWeele:</strong> VanderWeele, T. J. (2015). <em>Explanation in Causal Inference</em>.</li>
+</ul>
+</section>
+<section id="part-i-foundations-of-causal-inference" class="level3">
+<h3 class="anchored" data-anchor-id="part-i-foundations-of-causal-inference"><strong>Part I: Foundations of Causal Inference</strong></h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Week</th>
+<th style="text-align: left;">Dates</th>
+<th style="text-align: left;">Core Topic</th>
+<th style="text-align: left;">Primary Readings</th>
+<th style="text-align: left;">Optional Reading (Cunningham)</th>
+<th style="text-align: left;">Project Connection</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>1</strong></td>
+<td style="text-align: left;">Aug 19, 21</td>
+<td style="text-align: left;"><a href="./lectures/week-1_what_is_causal_effect.html">What is a Causal Effect?</a></td>
+<td style="text-align: left;"><strong>HR:</strong> Ch. 1–2; <strong>Neal:</strong> Ch. 1–2</td>
+<td style="text-align: left;">Ch. 2: Potential Outcomes</td>
+<td style="text-align: left;">Define your causal question.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>2</strong></td>
+<td style="text-align: left;">Aug 26, 28</td>
+<td style="text-align: left;"><a href="./lectures/week-2_DAG.html">DAGs &amp; Assumption Transparency</a></td>
+<td style="text-align: left;"><strong>Neal:</strong> Ch. 3; <strong>HR:</strong> Ch. 6</td>
+<td style="text-align: left;">Ch. 3: Directed Acyclic Graphs</td>
+<td style="text-align: left;">Draw a preliminary DAG.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>3</strong></td>
+<td style="text-align: left;">Sep 2, 4</td>
+<td style="text-align: left;"><a href="./lectures/week-03_exchangeability_positivity.html">Exchangeability, Positivity</a></td>
+<td style="text-align: left;"><strong>HR:</strong> Ch. 7; <strong>Neal:</strong> Ch. 4</td>
+<td style="text-align: left;">Ch. 4: Regression</td>
+<td style="text-align: left;">Identify assumptions for your causal model.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>4</strong></td>
+<td style="text-align: left;">Sep 9, 11</td>
+<td style="text-align: left;"><a href="./lectures/week-3_confounding_selection_bias_colliders.html">Bias (Confounding, Selection)</a></td>
+<td style="text-align: left;"><strong>HR:</strong> Ch. 8–9</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">Consider biases in your dataset.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="part-ii-estimation-methods" class="level3">
+<h3 class="anchored" data-anchor-id="part-ii-estimation-methods"><strong>Part II: Estimation Methods</strong></h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Week</th>
+<th style="text-align: left;">Dates</th>
+<th style="text-align: left;">Core Topic</th>
+<th style="text-align: left;">Primary Readings</th>
+<th style="text-align: left;">Optional Reading (Cunningham)</th>
+<th style="text-align: left;">Project Connection</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>5</strong></td>
+<td style="text-align: left;">Sep 16, 18</td>
+<td style="text-align: left;"><a href="lectures/week-5_propensity_scores-rev2.qmd">Propensity Scores</a></td>
+<td style="text-align: left;"><strong>HR:</strong> Ch. 12–13; <strong>Neal:</strong> Ch. 7</td>
+<td style="text-align: left;">Ch. 5: Matching &amp; Subclassification</td>
+<td style="text-align: left;">Select adjustment strategy.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>6</strong></td>
+<td style="text-align: left;">Sep 23, 25</td>
+<td style="text-align: left;"><a href="lectures/week-6_IPTW-rev2.qmd">IPTW &amp; MSMs</a></td>
+<td style="text-align: left;"><strong>HR:</strong> Ch. 15; <strong>Neal:</strong> Ch. 7.5–7.6</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">Evaluate MSM relevance.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>7</strong></td>
+<td style="text-align: left;">Sep 30, Oct 2</td>
+<td style="text-align: left;"><a href="lectures/week-7_g-computation-rev2.qmd">G-computation</a></td>
+<td style="text-align: left;"><strong>HR:</strong> Ch. 20–21</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">Explore g-methods.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>8</strong></td>
+<td style="text-align: left;">Oct 7</td>
+<td style="text-align: left;"><a href="lectures/week-8_IV-rev2.qmd">Instrumental Variables</a></td>
+<td style="text-align: left;"><strong>HR:</strong> Ch. 16; <strong>Neal:</strong> Ch. 9</td>
+<td style="text-align: left;">Ch. 8: Instrumental Variables</td>
+<td style="text-align: left;">Assess natural experiments.</td>
+</tr>
+</tbody>
+</table>
+<p><em><strong>Note:</strong> UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.</em></p>
+</section>
+<section id="part-iii-advanced-topics-applications" class="level3">
+<h3 class="anchored" data-anchor-id="part-iii-advanced-topics-applications"><strong>Part III: Advanced Topics &amp; Applications</strong></h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Week</th>
+<th style="text-align: left;">Dates</th>
+<th style="text-align: left;">Core Topic</th>
+<th style="text-align: left;">Primary Readings</th>
+<th style="text-align: left;">Project Connection</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>9</strong></td>
+<td style="text-align: left;">Oct 14, 16</td>
+<td style="text-align: left;"><a href="lectures/week-9_effect_modification-rev2.qmd">Effect Modification</a></td>
+<td style="text-align: left;"><strong>HR:</strong> Ch. 4–5; <strong>Neal:</strong> Ch. 10</td>
+<td style="text-align: left;"><strong>Milestone: Project Proposal Due.</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>10</strong></td>
+<td style="text-align: left;">Oct 21, 23</td>
+<td style="text-align: left;"><a href="lectures/week-10_mediation-rev2.qmd">Mediation I (Foundations)</a></td>
+<td style="text-align: left;"><strong>VanderWeele:</strong> Ch. 1–2; <strong>Neal:</strong> Ch. 14</td>
+<td style="text-align: left;">Refine DAG with mediators.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>11</strong></td>
+<td style="text-align: left;">Oct 28, 30</td>
+<td style="text-align: left;"><a href="lectures/week-11_mediation-rev2.qmd">Mediation II (Application)</a></td>
+<td style="text-align: left;"><strong>VanderWeele:</strong> Ch. 3; <strong>HR:</strong> Ch. 23</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>12</strong></td>
+<td style="text-align: left;">Nov 4, 6</td>
+<td style="text-align: left;"><a href="lectures/week-12_sensitivity_analysis-rev2.qmd">Sensitivity Analysis</a></td>
+<td style="text-align: left;"><strong>Neal:</strong> Ch. 8; <strong>HR:</strong> Ch. 14</td>
+<td style="text-align: left;">Plan robustness checks.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>13</strong></td>
+<td style="text-align: left;">Nov 11, 13</td>
+<td style="text-align: left;"><a href="lectures/week-13_target_trial-rev2.qmd">Target Trial Emulation</a></td>
+<td style="text-align: left;"><strong>HR:</strong> Ch. 22</td>
+<td style="text-align: left;">Reframe project as a trial.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>14</strong></td>
+<td style="text-align: left;">Nov 18, 20</td>
+<td style="text-align: left;"><strong>Final Presentations</strong></td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">Present your findings.</td>
+</tr>
+</tbody>
+</table>
+<p><em><strong>Note:</strong> Thanksgiving Break is Nov 27-28.</em></p>
+<hr>
+<p><strong>Finals Week (Dec 8–13):</strong> Final Project Paper Due.</p>
 </section>
 </section>
+<div class="cell">
+<section id="stat-579-final-project-the-target-trial-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="stat-579-final-project-the-target-trial-challenge">STAT 579 Final Project: The Target Trial Challenge</h2>
+<p>Welcome to the capstone experience for STAT 579! This project is where theory becomes practice. You will move beyond textbook exercises to tackle a real-world causal question from start to finish, applying the rigorous principles of modern causal inference to a topic that matters to you.</p>
+<p>The challenge? To design and emulate a perfect experiment—a <strong>target trial</strong>—that you wish had been conducted, using the messy, observational data we so often have in the real world.</p>
+<section id="the-guiding-philosophy-think-like-a-trialist" class="level3">
+<h3 class="anchored" data-anchor-id="the-guiding-philosophy-think-like-a-trialist">The Guiding Philosophy: Think Like a Trialist</h3>
+<p>At the heart of this project is the <strong>Target Trial Emulation</strong> framework. Why? Because it provides a powerful and structured way to approach causal inference with observational data.</p>
+<blockquote class="blockquote">
+<p>Imagine you are a detective arriving at a crime scene. You cannot rewind time to see what happened, but you can use the evidence available to reconstruct the most likely sequence of events.</p>
+<p>Similarly, we cannot go back in time to run the perfect randomized trial. Instead, we act as “data detectives.” We start by carefully designing the protocol for the ideal experiment we <em>wish</em> we could have run. Then, we use our observational data and causal methods to reconstruct, or <strong>emulate</strong>, that trial as closely as possible. This disciplined process illuminates our assumptions and strengthens our causal claims.</p>
+</blockquote>
+</section>
+<section id="your-research-journey-from-question-to-conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="your-research-journey-from-question-to-conclusion">Your Research Journey: From Question to Conclusion 🗺️</h3>
+<p>This project will unfold over the semester, with milestones designed to keep you on track. Your journey will follow four key stages:</p>
+<ol type="1">
+<li><strong>Formulate a Precise Causal Question (Weeks 1-3):</strong> It all starts here. You will identify a compelling causal question and use a DAG to map out your assumptions about the world. What effect do you want to measure? What are the key players (confounders, mediators)?</li>
+<li><strong>Design the Ideal Trial (Weeks 4-8):</strong> You will write the “protocol” for your hypothetical target trial. Who would be eligible? What are the exact treatment strategies being compared? How would you measure the outcome? This blueprint is your North Star.</li>
+<li><strong>Emulate the Trial &amp; Estimate the Effect (Weeks 9-12):</strong> This is where you connect your ideal protocol to your chosen dataset. You will apply one or more of the sophisticated methods from our course—like <strong>propensity score weighting</strong> or <strong>g-computation</strong>—to estimate the causal effect, carefully checking that your assumptions (like positivity) hold.</li>
+<li><strong>Assess Robustness &amp; Interpret (Weeks 13-14):</strong> A causal claim is only as strong as its assumptions. You will conduct <strong>sensitivity analyses</strong> (e.g., calculating an E-value) to see how fragile your results are to potential unmeasured confounding. Finally, you will present your findings and their real-world implications.</li>
+</ol>
+</section>
+<section id="skills-you-will-master" class="level3">
+<h3 class="anchored" data-anchor-id="skills-you-will-master">Skills You Will Master</h3>
+<p>By completing this project, you will build and demonstrate a portfolio of in-demand skills:</p>
+<ul>
+<li><strong>Causal Reasoning:</strong> Translating a real-world problem into a formal causal question with a supporting DAG.</li>
+<li><strong>Study Design:</strong> Specifying and emulating a target trial protocol.</li>
+<li><strong>Modern Estimation:</strong> Implementing methods like IPW, matching, or g-computation in R.</li>
+<li><strong>Assumption Diagnostics:</strong> Assessing positivity, covariate balance, and model fit.</li>
+<li><strong>Robustness Checking:</strong> Quantifying the potential impact of unmeasured confounding through sensitivity analysis.</li>
+<li><strong>Scientific Communication:</strong> Presenting your causal findings clearly and honestly in both written and oral formats.</li>
+</ul>
+</section>
+<section id="lets-get-started" class="level3">
+<h3 class="anchored" data-anchor-id="lets-get-started">Let’s Get Started</h3>
+<p>Your first task is the most exciting one: <strong>find a question that you are genuinely curious about.</strong> Dive into the literature in your field, explore public datasets, or consider a causal puzzle from your own research.</p>
+<ul>
+<li><a href="./project/target_trial_tutorial.html">Target Trail Emulation Tutorial</a></li>
+<li><a href="./project/project_guidelines-rev1.html">View Full Project Guidelines &amp; Deliverables</a></li>
+<li><a href="./project/project_schedule.html">Project Schedule</a></li>
+<li><a href="./project/data_resources.html">Explore Potential Public Datasets</a> <!-- - [**Schedule a Meeting During Office Hours**](project/office_hours.html) --></li>
+</ul>
+<p>This project is a marathon, not a sprint. Start early, ask questions, and embrace the challenge of thinking causally. I look forward to seeing what you discover.</p>
+<!-- # STAT 579 • Weekly Readings & Critique Hub -->
+<p><em>Applied Causal Inference • Fall 2025</em></p>
+<p>Welcome! This is your one‑stop index for weekly papers, critique guidelines (“goodies”), reusable templates, and submission logistics. Everything below is designed to keep us assumption‑centric, identification‑first, and replication‑ready.</p>
+</section>
+</section>
+<section id="quick-navigation" class="level2">
+<h2 class="anchored" data-anchor-id="quick-navigation">Quick Navigation</h2>
+<ul>
+<li><a href="#schedule-at-a-glance">Schedule at a Glance</a></li>
+<li><a href="#critique-deliverables--deadlines">Critique Deliverables &amp; Deadlines</a></li>
+<li><a href="#how-to-write-a-great-critique">How to Write a Great Critique</a></li>
+<li><a href="#templates--checklists">Templates &amp; Checklists</a></li>
+<li><a href="#starter-r-snippets">Starter R Snippets</a></li>
+<li><a href="#evaluation-rubric">Evaluation Rubric</a></li>
+<li><a href="#helpful-resources">Helpful Resources</a></li>
+<li><a href="#submission-logistics">Submission Logistics</a></li>
+</ul>
+</section>
+<section id="schedule-at-a-glance" class="level2">
+<h2 class="anchored" data-anchor-id="schedule-at-a-glance">Schedule at a Glance</h2>
+<ul>
+<li><p><strong>Week 1</strong> — Instructor demo (no submissions)</p></li>
+<li><p><strong>Week 2 — DAGs &amp; Assumption Transparency</strong> Pearl (1995) <em>Biometrika</em>. Focus: d‑separation, backdoor sets, DAG as data‑generating story.</p></li>
+<li><p><strong>Week 3 — Exchangeability, Positivity, Consistency</strong> Rubin (1974) <em>JEP</em>. Focus: <span class="math inline">\(Y^1,Y^0\)</span>, SUTVA, exchangeability vs.&nbsp;design.</p></li>
+<li><p><strong>Week 4 — Confounding, Selection, Measurement Bias</strong> Hernán, Hernández‑Díaz, &amp; Robins (2004) <em>Epidemiology</em>. Focus: collider/selection bias, loss to follow‑up as conditioning.</p></li>
+<li><p><strong>Week 5 — Propensity Scores</strong> Rosenbaum &amp; Rubin (1983) <em>Biometrika</em>. Focus: balancing score, overlap, matching/stratification/weighting.</p></li>
+<li><p><strong>Week 6 — IPTW, MSMs, DR</strong> Robins, Hernán, &amp; Brumback (2000) <em>Epidemiology</em>. Focus: time‑varying confounding, stabilized weights, pseudo‑populations.</p></li>
+<li><p><strong>Week 7 — G‑computation</strong> Snowden, Rose, &amp; Mortimer (2011) <em>AJE</em>. Focus: standardization via outcome modeling vs.&nbsp;IPTW.</p></li>
+<li><p><strong>Week 8 — Instrumental Variables</strong> Angrist, Imbens, &amp; Rubin (1996) <em>JASA</em>. Focus: IV assumptions, LATE, monotonicity, principal strata.</p></li>
+<li><p><strong>Week 9 — Effect Modification</strong> Yusuf et al.&nbsp;(1991) <em>JAMA</em>. Focus: pre‑specification, multiplicity, tests of interaction.</p></li>
+<li><p><strong>Week 10 — Mediation I (Foundations)</strong> Pearl (2014) <em>Psychological Methods</em>. Focus: CDE vs.&nbsp;NDE/NIE, mediation formulae and assumptions.</p></li>
+<li><p><strong>Week 11 — Mediation II &amp; Principal Stratification</strong> Imai, Keele, &amp; Tingley (2010) <em>Psychological Methods</em>. Focus: sequential ignorability, software, sensitivity.</p></li>
+<li><p><strong>Week 12 — Sensitivity Analysis</strong> VanderWeele &amp; Ding (2017) <em>Ann Intern Med</em>. Focus: E‑value interpretation/limits.</p></li>
+<li><p><strong>Week 13 — Target Trial Emulation</strong> Hernán &amp; Robins (2016) <em>AJE</em>. Focus: 7 components, time zero, immortal time, assignment procedure.</p></li>
+</ul>
+</section>
+<section id="critique-deliverables-deadlines" class="level2">
+<h2 class="anchored" data-anchor-id="critique-deliverables-deadlines">Critique Deliverables &amp; Deadlines</h2>
+<ul>
+<li><strong>What to submit each week (Weeks 2–13):</strong>
+<ul>
+<li><strong>2‑page critique</strong> (max 900 words, not counting figures/refs)</li>
+<li><strong>One-page DAG</strong> with minimal sufficient adjustment set(s) highlighted</li>
+<li><strong>Assumption log</strong> (bullet list) + <strong>robustness plan</strong> (≤10 bullets)</li>
+<li><strong>Reproducible appendix</strong> (R code or pseudocode) for at least one key diagnostic (balance, overlap, weight diagnostics, or a small sensitivity calc)</li>
+</ul></li>
+<li><strong>When:</strong> <strong>Mondays 11:59 pm MT</strong> (the night before our Tue class)</li>
+<li><strong>Where:</strong> Canvas → “Weekly Paper Critique — Week X”</li>
+<li><strong>Collaboration:</strong> Discuss ideas freely; write/code <strong>your own</strong> submission.</li>
+</ul>
+</section>
+<section id="how-to-write-a-great-critique" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-write-a-great-critique">How to Write a Great Critique</h2>
+<p>Use our <strong>Assumption‑Centric 4‑Step</strong>:</p>
+<ul>
+<li><p><strong>Study Design → Causal Question</strong></p>
+<ul>
+<li>State the estimand (e.g., <span class="math inline">\(ATE\)</span>, <span class="math inline">\(ATT\)</span>, <span class="math inline">\(LATE\)</span>, NDE/NIE).</li>
+<li>Write the target trial version in one paragraph (eligibility, treatment strategies, time zero, outcome, follow‑up, causal contrast).</li>
+</ul></li>
+<li><p><strong>Method Selection → Identification</strong></p>
+<ul>
+<li>Draw the DAG; list <strong>minimal backdoor</strong> sets (if applicable).</li>
+<li>If IV/mediation/MSM, write assumptions explicitly (relevance, independence, exclusion; sequential ignorability; positivity; consistency; no interference).</li>
+<li>Note any <strong>positivity risks</strong> (sparse cells/extreme propensities).</li>
+</ul></li>
+<li><p><strong>Assumption Validation → Diagnostics</strong></p>
+<ul>
+<li><strong>Exchangeability:</strong> covariate balance &amp; overlap plots; placebo/negative controls (if available).</li>
+<li><strong>Positivity:</strong> common support figures, weight distribution summaries (mean/sd/skew, max).</li>
+<li><strong>Modeling:</strong> mis‑specification checks, flexible learners where helpful.</li>
+<li><strong>Sensitivity:</strong> E‑values; IV falsification tests; Rosenbaum bounds; alternative specs.</li>
+</ul></li>
+<li><p><strong>Interpretation → Uncertainty Communication</strong></p>
+<ul>
+<li>Interpret the <strong>causal</strong> estimand with audience‑appropriate language; flag scope (population, time).</li>
+<li>State where violations would flip conclusions.</li>
+<li>Offer at least <strong>one</strong> alternative method that could triangulate the main claim.</li>
+</ul></li>
+</ul>
+</section>
+<section id="templates-checklists" class="level2">
+<h2 class="anchored" data-anchor-id="templates-checklists">Templates &amp; Checklists</h2>
+<section id="a-2page-critique-template-copypaste" class="level3">
+<h3 class="anchored" data-anchor-id="a-2page-critique-template-copypaste">A) 2‑Page Critique Template (copy/paste)</h3>
+<ul>
+<li><strong>Title:</strong> Week X — [Paper Title] — STAT 579 Critique</li>
+<li><strong>Causal Question &amp; Estimand (≤120 words):</strong> …</li>
+<li><strong>Target Trial (≤120 words):</strong> Eligibility; treatment strategies; time zero; outcome; follow‑up; causal contrast.</li>
+<li><strong>DAG (figure):</strong> include nodes and arrows; highlight chosen adjustment set.</li>
+<li><strong>Identification Plan (≤150 words):</strong> backdoor/IV/mediation/MSM rationale.</li>
+<li><strong>Diagnostics (bullets):</strong> balance/overlap; weight quality; model checks.</li>
+<li><strong>Sensitivity (bullets):</strong> E‑value or alternative; what violation would overturn results.</li>
+<li><strong>Interpretation (≤120 words):</strong> estimand in plain language; limitations; - generalizability.</li>
+<li><strong>Repro Appendix:</strong> code or pseudocode for one diagnostic.</li>
+</ul>
+</section>
+<section id="b-dag-checklist-quick-yesno" class="level3">
+<h3 class="anchored" data-anchor-id="b-dag-checklist-quick-yesno">B) DAG Checklist (quick yes/no)</h3>
+<ul class="task-list">
+<li><label><input type="checkbox">All pre‑treatment common causes included?</label></li>
+<li><label><input type="checkbox">No conditioning on colliders or their descendants?</label></li>
+<li><label><input type="checkbox">If time‑varying confounders exist, did you avoid “adjusting them away” in outcome models (favor MSM/IPTW)?</label></li>
+<li><label><input type="checkbox">Is the <strong>minimal</strong> sufficient set clearly highlighted?</label></li>
+<li><label><input type="checkbox">Are measurement error nodes (if suspected) represented?</label></li>
+</ul>
+</section>
+<section id="c-positivity-weight-quality" class="level3">
+<h3 class="anchored" data-anchor-id="c-positivity-weight-quality">C) Positivity &amp; Weight Quality</h3>
+<ul>
+<li>Report: % with <span class="math inline">\(\hat e(X)\in[0.1,0.9]\)</span>; histogram/density; stabilized weight mean≈1, sd small, max reasonable (&lt;10 suggested for weekly demos).</li>
+<li>If violations: restrict support, coarsen covariates, or switch method (e.g., g‑comp/TMLE).</li>
+</ul>
+</section>
+<section id="d-sensitivity-menu-pick-1" class="level3">
+<h3 class="anchored" data-anchor-id="d-sensitivity-menu-pick-1">D) Sensitivity Menu (pick ≥1)</h3>
+<ul>
+<li><strong>E‑value</strong> for point &amp; CI limit</li>
+<li><strong>Rosenbaum bounds</strong> (binary outcomes)</li>
+<li><strong>Placebo/negative control</strong> (if plausible)</li>
+<li><strong>IV falsification</strong> (balance on observables; over‑id tests with caution)</li>
+<li><strong>Sequential ignorability stress tests</strong> (mediation)</li>
+</ul>
+</section>
+</section>
+<section id="starter-r-snippets" class="level2">
+<h2 class="anchored" data-anchor-id="starter-r-snippets">Starter R Snippets</h2>
+<p><strong>Propensity, Overlap, and Balance</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WeightIt); <span class="fu">library</span>(cobalt)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">weightit</span>(A <span class="sc">~</span> X1<span class="sc">+</span>X2<span class="sc">+</span>X3, <span class="at">data=</span>df, <span class="at">method=</span><span class="st">"ps"</span>, <span class="at">estimand=</span><span class="st">"ATE"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(<span class="fu">bal.tab</span>(w), <span class="at">thresholds=</span><span class="fu">c</span>(<span class="at">m=</span>.<span class="dv">1</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(w<span class="sc">$</span>weights)  <span class="co"># check mean≈1 (if stabilized), max, skew</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>IPTW for MSM (stabilized)</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>num <span class="ot">&lt;-</span> <span class="fu">glm</span>(A <span class="sc">~</span> L0, <span class="at">family=</span>binomial, <span class="at">data=</span>df)      <span class="co"># numerator model (coarse)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>den <span class="ot">&lt;-</span> <span class="fu">glm</span>(A <span class="sc">~</span> L0<span class="sc">+</span>L1, <span class="at">family=</span>binomial, <span class="at">data=</span>df)   <span class="co"># denominator model</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sw  <span class="ot">&lt;-</span> <span class="fu">predict</span>(num, <span class="at">type=</span><span class="st">"response"</span>)<span class="sc">/</span><span class="fu">predict</span>(den, <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>msm <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A, <span class="at">weights=</span>sw, <span class="at">data=</span>df)            <span class="co"># simple MSM</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>G‑computation (parametric)</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mY <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> X1 <span class="sc">+</span> X2, <span class="at">family=</span>gaussian, <span class="at">data=</span>df)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mu1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">predict</span>(mY, <span class="at">newdata=</span><span class="fu">transform</span>(df, <span class="at">A=</span><span class="dv">1</span>), <span class="at">type=</span><span class="st">"response"</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">predict</span>(mY, <span class="at">newdata=</span><span class="fu">transform</span>(df, <span class="at">A=</span><span class="dv">0</span>), <span class="at">type=</span><span class="st">"response"</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>ATE <span class="ot">&lt;-</span> mu1 <span class="sc">-</span> mu0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Mediation (NDE/NIE via <code>mediation</code>)</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mediation)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mM <span class="ot">&lt;-</span> <span class="fu">glm</span>(M <span class="sc">~</span> A <span class="sc">+</span> X, <span class="at">family=</span>binomial, <span class="at">data=</span>df)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>mY <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> M <span class="sc">+</span> X, <span class="at">family=</span>binomial, <span class="at">data=</span>df)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>med <span class="ot">&lt;-</span> <span class="fu">mediate</span>(mM, mY, <span class="at">treat=</span><span class="st">"A"</span>, <span class="at">mediator=</span><span class="st">"M"</span>, <span class="at">sims=</span><span class="dv">1000</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(med)  <span class="co"># NDE/NIE under sequential ignorability</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>E‑value (risk ratio)</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(EValue)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">evalue.RR</span>(<span class="at">est=</span><span class="fl">2.5</span>, <span class="at">lo=</span><span class="fl">1.8</span>, <span class="at">hi=</span><span class="fl">3.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="evaluation-rubric" class="level2">
+<h2 class="anchored" data-anchor-id="evaluation-rubric">Evaluation Rubric</h2>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 40%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dimension</th>
+<th style="text-align: right;">Points</th>
+<th>What “Excellent” Looks Like</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Causal question &amp; estimand clarity</td>
+<td style="text-align: right;">10</td>
+<td>Precise estimand; clean target‑trial description</td>
+</tr>
+<tr class="even">
+<td>DAG &amp; identification</td>
+<td style="text-align: right;">25</td>
+<td>Correct minimal set; no collider adjustment; right method for the structure</td>
+</tr>
+<tr class="odd">
+<td>Diagnostics</td>
+<td style="text-align: right;">20</td>
+<td>Balance, overlap, weight quality, model checks shown clearly</td>
+</tr>
+<tr class="even">
+<td>Sensitivity</td>
+<td style="text-align: right;">15</td>
+<td>At least one appropriate sensitivity tool; interprets what strength is needed to overturn</td>
+</tr>
+<tr class="odd">
+<td>Interpretation &amp; uncertainty</td>
+<td style="text-align: right;">15</td>
+<td>Plain‑language, scope noted; limitations tied to assumptions</td>
+</tr>
+<tr class="even">
+<td>Reproducibility appendix</td>
+<td style="text-align: right;">10</td>
+<td>Runs or is plausibly runnable; shows key diagnostic</td>
+</tr>
+<tr class="odd">
+<td>Writing &amp; figures</td>
+<td style="text-align: right;">5</td>
+<td>Clear, concise, well‑labeled</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Late policy:</strong> −10% per day (course policy).</p>
+</section>
+<section id="helpful-resources" class="level2">
+<h2 class="anchored" data-anchor-id="helpful-resources">Helpful Resources</h2>
+<ul>
+<li><strong>Open textbooks (free):</strong>
+<ul>
+<li>Hernán &amp; Robins, <em>What If</em> — target trials, MSM/IPTW, g‑methods</li>
+<li>Neal, <em>Introduction to Causal Inference</em> — DAGs, backdoor, IPW/DR</li>
+<li>Pearl, Glymour, &amp; Jewell, <em>Causal Inference in Statistics: A Primer</em> — backdoor/frontdoor, SCM intuition</li>
+<li>VanderWeele, <em>Explanation in Causal Inference</em> — mediation &amp; interaction (foundational)</li>
+<li>Wager, <em>STATS 361 Notes</em> — DR/AIPW, IV/LATE, heterogeneity</li>
+</ul></li>
+<li><strong>R packages:</strong> <code>dagitty</code>, <code>ggdag</code>, <code>MatchIt</code>, <code>WeightIt</code>, <code>cobalt</code>, <code>ipw</code>, <code>twang</code>, <code>ivreg</code>, <code>mediation</code>, <code>EValue</code>, <code>tmle3</code></li>
+<li><strong>Diagnostic expectations per topic:</strong>
+<ul>
+<li><strong>PS/Matching (Week 5):</strong> SMDs &lt; 0.1; overlap plots; matched sample description</li>
+<li><strong>MSM/IPTW (Week 6):</strong> stabilized weight moments; truncation sensitivity</li>
+<li><strong>G‑comp (Week 7):</strong> flexible outcome model; residual checks; alt link funcs</li>
+<li><strong>IV (Week 8):</strong> 3 assumptions stated; first‑stage strength; monotonicity rationale; LATE interpretation</li>
+<li><strong>Mediation (Weeks 10–11):</strong> explicit sequential ignorability; cross‑world cautions; sensitivity param(s)</li>
+<li><strong>Sensitivity (Week 12):</strong> E‑value prose for non‑statisticians; limits acknowledged</li>
+<li><strong>Target trial (Week 13):</strong> 7 components table; immortal time avoidance; assignment emulation plan</li>
+</ul></li>
+</ul>
+<hr>
+</section>
+<section id="submission-logistics" class="level2">
+<h2 class="anchored" data-anchor-id="submission-logistics">Submission Logistics</h2>
+<ul>
+<li><strong>File names:</strong> <code>Wk##_Lastname_Firstname.pdf</code> (+ optional <code>.R</code> or <code>.qmd</code>)</li>
+<li><strong>Figures:</strong> readable in grayscale; include captions; axes labeled</li>
+<li><strong>Reproducibility:</strong> seed set; simulated data OK but mark clearly; no PHI/sensitive data</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Next Development Phase</strong> Based on this index page, I recommend: 1. <strong>Publish a “Critique Gallery”</strong> with anonymized exemplary submissions to reinforce <em>Assumption Validation</em> and model diagnostics. 2. <strong>Add a mini “Method‑of‑the‑Week” card</strong> (e.g., IPTW pitfalls, IV monotonicity) to address the <strong>key assumption</strong> for that method with a 6‑line checklist. 3. <strong>Release a tiny Quarto template</strong> that pre‑loads the critique skeleton, DAG chunk, and R boilerplate to develop <strong>reproducible reporting skills</strong>. <em>Rationale</em>: Exemplars + just‑in‑time assumption prompts + turnkey reproducibility directly support our course outcomes on transparency, identification‑first thinking, and robust, defensible causal claims.</p>
+</blockquote>
+</section>
+</div>
 
 </main> <!-- /main -->
 <!-- filepath: /Users/dt/Library/CloudStorage/Dropbox/Teaching/DOE/assets/includes/footer.html -->

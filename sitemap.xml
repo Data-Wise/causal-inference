@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/index.html</loc>
-    <lastmod>2025-08-19T15:14:30.974Z</lastmod>
+    <lastmod>2025-08-20T18:12:25.544Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/assignment schedule.html</loc>
@@ -18,11 +18,11 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-2_DAG.html</loc>
-    <lastmod>2025-07-31T17:37:52.131Z</lastmod>
+    <lastmod>2025-08-13T17:15:24.000Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-1_Gold_standard.html</loc>
-    <lastmod>2025-07-31T19:56:03.018Z</lastmod>
+    <lastmod>2025-08-20T20:17:41.532Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-4_potential_outcomes-rev1.html</loc>
@@ -30,11 +30,11 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-1_what_is_causal_effect.html</loc>
-    <lastmod>2025-08-07T00:40:03.379Z</lastmod>
+    <lastmod>2025-08-20T20:21:11.714Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/syllabus/syllabus-final.html</loc>
-    <lastmod>2025-08-19T15:36:59.654Z</lastmod>
+    <lastmod>2025-08-21T01:44:04.002Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-4_potential_outcomes.html</loc>
@@ -46,7 +46,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-3_confounding_identification-rev1.html</loc>
-    <lastmod>2025-08-07T00:56:04.024Z</lastmod>
+    <lastmod>2025-08-20T19:43:01.332Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-5_modeling_confounding_adjustment.html</loc>
@@ -54,7 +54,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-3_confounding_identification.html</loc>
-    <lastmod>2025-08-05T05:45:03.642Z</lastmod>
+    <lastmod>2025-08-20T19:06:04.138Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_assignments.html</loc>
@@ -70,19 +70,19 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/syllabus/schedule.html</loc>
-    <lastmod>2025-08-19T05:27:57.553Z</lastmod>
+    <lastmod>2025-08-20T19:45:33.331Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/readings/weekly_paper_critique_schedule.html</loc>
-    <lastmod>2025-08-19T05:41:53.692Z</lastmod>
+    <lastmod>2025-08-19T05:41:50.000Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/readings/weekly_paper_critique_templates.html</loc>
-    <lastmod>2025-08-19T06:27:25.723Z</lastmod>
+    <lastmod>2025-08-19T06:25:24.000Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/project_rubric.html</loc>
-    <lastmod>2025-08-19T06:31:23.053Z</lastmod>
+    <lastmod>2025-08-19T06:31:20.000Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/writing_critique_guidlines.html</loc>
@@ -94,7 +94,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_lectures.html</loc>
-    <lastmod>2025-08-19T15:14:43.002Z</lastmod>
+    <lastmod>2025-08-20T20:25:59.890Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-1_Gold_standard-rev2.html</loc>
@@ -106,6 +106,42 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_appendix.html</loc>
-    <lastmod>2025-08-19T15:15:14.195Z</lastmod>
+    <lastmod>2025-07-12T21:59:52.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/lectures/notations-rev1.html</loc>
+    <lastmod>2025-08-20T17:00:30.992Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/lectures/week-03_exchangeability_positivity.html</loc>
+    <lastmod>2025-08-20T20:32:24.981Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/lectures/week-5_propensity_score.html</loc>
+    <lastmod>2025-07-27T20:18:01.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/lectures/week-3_confounding_selection_bias_colliders.html</loc>
+    <lastmod>2025-08-20T18:50:29.087Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/project/project_guidelines-rev1.html</loc>
+    <lastmod>2025-08-19T04:19:45.840Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/project/project_schedule.html</loc>
+    <lastmod>2025-08-19T04:07:12.248Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/project/data_resources.html</loc>
+    <lastmod>2025-08-19T04:32:54.788Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/project/project_guidelines.html</loc>
+    <lastmod>2025-08-19T03:49:06.262Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/project/target_trial_tutorial.html</loc>
+    <lastmod>2025-08-19T04:24:28.000Z</lastmod>
   </url>
 </urlset>

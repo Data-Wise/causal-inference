@@ -60,13 +60,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../assets/images/favicon.ico" rel="icon">
+<link href="../assets/images/icon.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -78,9 +77,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-ab86f13fa607618020e3f7de5041b3a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -109,103 +108,103 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 <script>
-MathJax = {
-  tex: {
-    macros: {
-        RR: "{\\mathbb{R}}",
-        NN: "{\\mathbb{N}}",
-        QQ: "{\\mathbb{Q}}",
-        ZZ: "{\\mathbb{Z}}",
-        PP: "{\\mathbb{P}}",
-        // expectation & probability
-        E: ["{\\EE\\left[ #1 \\right]}", 1],
-        Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
-        EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
-        EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
-        EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
-        Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
-        ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
-        ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
-        ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
-        Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
-        ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
-        ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
-        ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
-        ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
-        ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
-        // operators (both lower & upper case)
-        var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
-        Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
-        cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
-        Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
-        cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
-        Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
-        logit: "{\\operatorname{logit}}",
-        expit: "{\\operatorname{expit}}", // inverse logit
-        sgn: "{\\operatorname{sgn}}",
-        EE: "{\\operatorname{\\mathbb{E}}}",
-        pr: "{\\operatorname{\\mathbb{P}}}",
+    MathJax = {
+        tex: {
+            macros: {
+                RR: "{\\mathbb{R}}",
+                NN: "{\\mathbb{N}}",
+                QQ: "{\\mathbb{Q}}",
+                ZZ: "{\\mathbb{Z}}",
+                PP: "{\\mathbb{P}}",
+                // expectation & probability
+                E: ["{\\EE\\left[ #1 \\right]}", 1],
+                Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
+                EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
+                EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
+                EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
+                Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
+                ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
+                Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
+                ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
+                ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
+                ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
+                ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
+                // operators (both lower & upper case)
+                var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
+                Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
+                cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
+                Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
+                cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
+                Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
+                logit: "{\\operatorname{logit}}",
+                expit: "{\\operatorname{expit}}", // inverse logit
+                sgn: "{\\operatorname{sgn}}",
+                EE: "{\\operatorname{\\mathbb{E}}}",
+                pr: "{\\operatorname{\\mathbb{P}}}",
 
-        // vector & basic constructs
-        vect: ["{\\mathbf{#1}}", 1],
-        abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
-        norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
-        ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
+                // vector & basic constructs
+                vect: ["{\\mathbf{#1}}", 1],
+                abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
+                norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
+                ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
 
-        // indicator variants
-        indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
-        ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
-        I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                // indicator variants
+                indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
+                ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
 
-        // independence & non-independence (bare + braced forms via separate names)
-        indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
-        Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
-        nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
-        Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
-        notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
-        Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                // independence & non-independence (bare + braced forms via separate names)
+                indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
+                nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
 
-        // do-operator & d-separation
-        doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
-        dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                // do-operator & d-separation
+                doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
+                dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
 
-        // potential outcomes & notational conveniences
-        Y: ["{Y^{#1}}", 1],
-        Ya: "{Y^a}",
-        Yone: "{Y^1}",
-        Yzero: "{Y^0}",
+                // potential outcomes & notational conveniences
+                Y: ["{Y^{#1}}", 1],
+                Ya: "{Y^a}",
+                Yone: "{Y^1}",
+                Yzero: "{Y^0}",
 
-        // estimands
-        ATE: "{\\tau_{\\text{ATE}}}",
-        ATT: "{\\tau_{\\text{ATT}}}",
-        ATC: "{\\tau_{\\text{ATC}}}",
-        CATE: "{\\tau_{\\text{CATE}}}",
+                // estimands
+                ATE: "{\\tau_{\\text{ATE}}}",
+                ATT: "{\\tau_{\\text{ATT}}}",
+                ATC: "{\\tau_{\\text{ATC}}}",
+                CATE: "{\\tau_{\\text{CATE}}}",
 
-        DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
-        DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
-        DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
-        DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
+                DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
+                DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
+                DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
+                DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
 
-        // identification blocks
-        gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
-        ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
+                // identification blocks
+                gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
+                ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
 
-        // risk measures
-        RD: "{\\operatorname{RD}}",
-        OR: "{\\operatorname{OR}}",
+                // risk measures
+                RD: "{\\operatorname{RD}}",
+                OR: "{\\operatorname{OR}}",
 
-        // optimization operators
-        argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
-        argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
-      }
-    }
-  };
+                // optimization operators
+                argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
+                argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
+            }
+        }
+    };
 </script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -241,7 +240,7 @@ window.Quarto = {
 <meta property="og:site_name" content="Introduction to Causal Inference">
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -410,6 +409,9 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo">
+    </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Introduction to Causal Inference</span>
     </a>
@@ -419,17 +421,28 @@ window.Quarto = {
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../syllabus/syllabus-final.pdf"> 
-<span class="menu-text">Syllabus</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Syllabus</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.pdf">
+ <span class="dropdown-text">PDF</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.html">
+ <span class="dropdown-text">HTML</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
-    <a class="nav-link" href="../syllabus/schedule.pdf"> 
+    <a class="nav-link" href="../syllabus/schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
@@ -437,22 +450,12 @@ window.Quarto = {
 <span class="menu-text">Lecture Notes</span></a>
   </li>  
   <li class="nav-item">
-    <span class="nav-link">
-<span class="menu-text">Readings</span>
-    </span>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="../home_readings.html"> 
-<span class="menu-text">Weekly Readings</span></a>
-  </li>  
-  <li class="nav-item">
-    <span class="nav-link">
-<span class="menu-text">Project</span>
-    </span>
+<span class="menu-text">Readings</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../home_project.html"> 
-<span class="menu-text">Final Project Overview</span></a>
+<span class="menu-text">Project</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../home_assignments.html"> 
@@ -462,6 +465,8 @@ window.Quarto = {
     <a class="nav-link" href="../r_help.html"> 
 <span class="menu-text">R Help</span></a>
   </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
@@ -513,7 +518,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Aug-06-2025</p>
+        <p class="date">Aug-20-2025</p>
       </div>
     </div>
     
@@ -523,18 +528,18 @@ window.Quarto = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Overview</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
@@ -544,12 +549,12 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Syllabus</span></a>
+ <span class="menu-text">Syllabus (PDF)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../syllabus/schedule.pdf" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Schedule</span></a>
   </div>
 </li>
@@ -557,13 +562,13 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Materials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
@@ -571,21 +576,15 @@ window.Quarto = {
   </div>
 </li>
           <li class="sidebar-item">
- <span class="menu-text">Readings</span>
-  </li>
-          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../home_readings.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Weekly Readings</span></a>
+ <span class="menu-text">Readings</span></a>
   </div>
 </li>
           <li class="sidebar-item">
- <span class="menu-text">Project</span>
-  </li>
-          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../home_project.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Final Project Overview</span></a>
+ <span class="menu-text">Project</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -598,13 +597,13 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">R Code and Datasets</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../r_help.html" class="sidebar-item-text sidebar-link">
@@ -639,7 +638,7 @@ window.Quarto = {
   <li><a href="#knowledge-check" id="toc-knowledge-check" class="nav-link" data-scroll-target="#knowledge-check">Knowledge Check</a></li>
   <li><a href="#reflective-prompt" id="toc-reflective-prompt" class="nav-link" data-scroll-target="#reflective-prompt">Reflective Prompt</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-3_confounding_identification-rev1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-3_confounding_identification-rev1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-3_confounding_identification-rev1.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -719,7 +718,7 @@ Y^a \indep A \mid \vect{Z}
 <h2 class="anchored" data-anchor-id="the-criterion-stated-formally">The Criterion Stated Formally</h2>
 <p>A set of variables <span class="math inline">\(\vect{Z}\)</span> satisfies the backdoor criterion relative to an exposure <span class="math inline">\(A\)</span> and an outcome <span class="math inline">\(Y\)</span> if:</p>
 <ol type="1">
-<li><strong>No node in <span class="math inline">\(\vect{Z}\)</span> is a descendant of <span class="math inline">\(A\)</span></strong>. This prevents us from adjusting for mediators, which would block the causal effect.</li>
+<li><strong>No node in</strong> <span class="math inline">\(\vect{Z}\)</span> is a descendant of <span class="math inline">\(A\)</span>. This prevents us from adjusting for mediators, which would block the causal effect.</li>
 <li><span class="math inline">\(\vect{Z}\)</span> <strong>blocks every path</strong> between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> that has an arrow pointing into <span class="math inline">\(A\)</span>.</li>
 </ol>
 <p>A path is blocked if it contains either:</p>
@@ -757,7 +756,7 @@ Y^a \indep A \mid \vect{Z}
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;"><strong>Young (<span class="math inline">\(Z=0\)</span>)</strong></td>
+<td style="text-align: center;"><strong>Young (</strong><span class="math inline">\(Z=0\)</span>)</td>
 <td style="text-align: center;"><span class="math inline">\(A=1\)</span></td>
 <td style="text-align: center;">10</td>
 <td style="text-align: center;">40</td>
@@ -769,7 +768,7 @@ Y^a \indep A \mid \vect{Z}
 <td style="text-align: center;">20</td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;"><strong>Old (<span class="math inline">\(Z=1\)</span>)</strong></td>
+<td style="text-align: center;"><strong>Old (</strong><span class="math inline">\(Z=1\)</span>)</td>
 <td style="text-align: center;"><span class="math inline">\(A=1\)</span></td>
 <td style="text-align: center;">40</td>
 <td style="text-align: center;">60</td>
@@ -791,8 +790,8 @@ Y^a \indep A \mid \vect{Z}
 </ul></li>
 <li><strong>Conditional Effects</strong>: We calculate the risk difference within each stratum of the confounder <span class="math inline">\(Z\)</span>.
 <ul>
-<li><strong>Young Group (<span class="math inline">\(Z=0\)</span>)</strong>: Risk difference is <span class="math inline">\(25% - 25% = 0%\)</span>.</li>
-<li><strong>Old Group (<span class="math inline">\(Z=1\)</span>)</strong>: Risk difference is <span class="math inline">\(66.7% - 25% \approx 41.7%\)</span>.</li>
+<li><strong>Young Group (</strong><span class="math inline">\(Z=0\)</span>): Risk difference is <span class="math inline">\(25% - 25% = 0%\)</span>.</li>
+<li><strong>Old Group (</strong><span class="math inline">\(Z=1\)</span>): Risk difference is <span class="math inline">\(66.7% - 25% \approx 41.7%\)</span>.</li>
 </ul></li>
 <li><strong>Adjusted Estimate (Standardization)</strong>: To get the Average Treatment Effect (ATE), we average the conditional effects across the marginal distribution of the confounder <span class="math inline">\(Z\)</span>. The formula is:</li>
 </ol>

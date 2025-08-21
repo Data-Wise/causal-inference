@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>The Gold Standard: Randomized Experiments &amp; Potential Outcomes – Introduction to Causal Inference</title>
+<title>The Causal Question – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,52 +21,16 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../assets/images/favicon.ico" rel="icon">
+<link href="../assets/images/icon.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -78,9 +42,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-ab86f13fa607618020e3f7de5041b3a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -109,103 +73,103 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 <script>
-MathJax = {
-  tex: {
-    macros: {
-        RR: "{\\mathbb{R}}",
-        NN: "{\\mathbb{N}}",
-        QQ: "{\\mathbb{Q}}",
-        ZZ: "{\\mathbb{Z}}",
-        PP: "{\\mathbb{P}}",
-        // expectation & probability
-        E: ["{\\EE\\left[ #1 \\right]}", 1],
-        Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
-        EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
-        EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
-        EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
-        Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
-        ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
-        ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
-        ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
-        Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
-        ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
-        ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
-        ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
-        ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
-        ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
-        // operators (both lower & upper case)
-        var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
-        Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
-        cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
-        Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
-        cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
-        Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
-        logit: "{\\operatorname{logit}}",
-        expit: "{\\operatorname{expit}}", // inverse logit
-        sgn: "{\\operatorname{sgn}}",
-        EE: "{\\operatorname{\\mathbb{E}}}",
-        pr: "{\\operatorname{\\mathbb{P}}}",
+    MathJax = {
+        tex: {
+            macros: {
+                RR: "{\\mathbb{R}}",
+                NN: "{\\mathbb{N}}",
+                QQ: "{\\mathbb{Q}}",
+                ZZ: "{\\mathbb{Z}}",
+                PP: "{\\mathbb{P}}",
+                // expectation & probability
+                E: ["{\\EE\\left[ #1 \\right]}", 1],
+                Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
+                EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
+                EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
+                EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
+                Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
+                ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
+                Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
+                ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
+                ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
+                ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
+                ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
+                // operators (both lower & upper case)
+                var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
+                Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
+                cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
+                Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
+                cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
+                Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
+                logit: "{\\operatorname{logit}}",
+                expit: "{\\operatorname{expit}}", // inverse logit
+                sgn: "{\\operatorname{sgn}}",
+                EE: "{\\operatorname{\\mathbb{E}}}",
+                pr: "{\\operatorname{\\mathbb{P}}}",
 
-        // vector & basic constructs
-        vect: ["{\\mathbf{#1}}", 1],
-        abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
-        norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
-        ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
+                // vector & basic constructs
+                vect: ["{\\mathbf{#1}}", 1],
+                abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
+                norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
+                ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
 
-        // indicator variants
-        indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
-        ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
-        I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                // indicator variants
+                indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
+                ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
 
-        // independence & non-independence (bare + braced forms via separate names)
-        indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
-        Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
-        nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
-        Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
-        notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
-        Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                // independence & non-independence (bare + braced forms via separate names)
+                indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
+                nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
 
-        // do-operator & d-separation
-        doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
-        dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                // do-operator & d-separation
+                doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
+                dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
 
-        // potential outcomes & notational conveniences
-        Y: ["{Y^{#1}}", 1],
-        Ya: "{Y^a}",
-        Yone: "{Y^1}",
-        Yzero: "{Y^0}",
+                // potential outcomes & notational conveniences
+                Y: ["{Y^{#1}}", 1],
+                Ya: "{Y^a}",
+                Yone: "{Y^1}",
+                Yzero: "{Y^0}",
 
-        // estimands
-        ATE: "{\\tau_{\\text{ATE}}}",
-        ATT: "{\\tau_{\\text{ATT}}}",
-        ATC: "{\\tau_{\\text{ATC}}}",
-        CATE: "{\\tau_{\\text{CATE}}}",
+                // estimands
+                ATE: "{\\tau_{\\text{ATE}}}",
+                ATT: "{\\tau_{\\text{ATT}}}",
+                ATC: "{\\tau_{\\text{ATC}}}",
+                CATE: "{\\tau_{\\text{CATE}}}",
 
-        DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
-        DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
-        DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
-        DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
+                DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
+                DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
+                DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
+                DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
 
-        // identification blocks
-        gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
-        ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
+                // identification blocks
+                gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
+                ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
 
-        // risk measures
-        RD: "{\\operatorname{RD}}",
-        OR: "{\\operatorname{OR}}",
+                // risk measures
+                RD: "{\\operatorname{RD}}",
+                OR: "{\\operatorname{OR}}",
 
-        // optimization operators
-        argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
-        argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
-      }
-    }
-  };
+                // optimization operators
+                argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
+                argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
+            }
+        }
+    };
 </script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -235,13 +199,12 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../assets/styles/css/home.css">
-<meta property="og:title" content="The Gold Standard: Randomized Experiments &amp; Potential Outcomes – Introduction to Causal Inference">
-<meta property="og:description" content="Introduction to Causal Inference">
+<meta property="og:title" content="The Causal Question – Introduction to Causal Inference">
 <meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -410,6 +373,9 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo">
+    </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Introduction to Causal Inference</span>
     </a>
@@ -419,17 +385,28 @@ window.Quarto = {
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../syllabus/syllabus-final.pdf"> 
-<span class="menu-text">Syllabus</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Syllabus</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.pdf">
+ <span class="dropdown-text">PDF</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.html">
+ <span class="dropdown-text">HTML</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
-    <a class="nav-link" href="../syllabus/schedule.pdf"> 
+    <a class="nav-link" href="../syllabus/schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
@@ -437,22 +414,12 @@ window.Quarto = {
 <span class="menu-text">Lecture Notes</span></a>
   </li>  
   <li class="nav-item">
-    <span class="nav-link">
-<span class="menu-text">Readings</span>
-    </span>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="../home_readings.html"> 
-<span class="menu-text">Weekly Readings</span></a>
-  </li>  
-  <li class="nav-item">
-    <span class="nav-link">
-<span class="menu-text">Project</span>
-    </span>
+<span class="menu-text">Readings</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../home_project.html"> 
-<span class="menu-text">Final Project Overview</span></a>
+<span class="menu-text">Project</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../home_assignments.html"> 
@@ -462,6 +429,8 @@ window.Quarto = {
     <a class="nav-link" href="../r_help.html"> 
 <span class="menu-text">R Help</span></a>
   </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
@@ -479,7 +448,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">The Gold Standard: Randomized Experiments &amp; Potential Outcomes</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">The Causal Question</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -489,7 +458,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">The Gold Standard: Randomized Experiments &amp; Potential Outcomes</h1>
+      <h1 class="title">The Causal Question</h1>
                       </div>
   </div>
     
@@ -513,7 +482,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Jul-31-2025</p>
+        <p class="date">Aug-20-2025</p>
       </div>
     </div>
     
@@ -523,18 +492,18 @@ window.Quarto = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Overview</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
@@ -544,12 +513,12 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Syllabus</span></a>
+ <span class="menu-text">Syllabus (PDF)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../syllabus/schedule.pdf" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Schedule</span></a>
   </div>
 </li>
@@ -557,13 +526,13 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Materials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
@@ -571,21 +540,15 @@ window.Quarto = {
   </div>
 </li>
           <li class="sidebar-item">
- <span class="menu-text">Readings</span>
-  </li>
-          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../home_readings.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Weekly Readings</span></a>
+ <span class="menu-text">Readings</span></a>
   </div>
 </li>
           <li class="sidebar-item">
- <span class="menu-text">Project</span>
-  </li>
-          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../home_project.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Final Project Overview</span></a>
+ <span class="menu-text">Project</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -598,13 +561,13 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">R Code and Datasets</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../r_help.html" class="sidebar-item-text sidebar-link">
@@ -623,36 +586,40 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
+  <li><a href="#week-1-what-is-a-causal-effect" id="toc-week-1-what-is-a-causal-effect" class="nav-link active" data-scroll-target="#week-1-what-is-a-causal-effect">Week 1: What is a Causal Effect?</a>
   <ul class="collapse">
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#motivation-learning-objectives" id="toc-motivation-learning-objectives" class="nav-link" data-scroll-target="#motivation-learning-objectives">🎯 Motivation &amp; Learning Objectives</a></li>
+  <li><a href="#the-potential-outcomes-framework" id="toc-the-potential-outcomes-framework" class="nav-link" data-scroll-target="#the-potential-outcomes-framework">🔬 1. The Potential Outcomes Framework</a>
+  <ul class="collapse">
+  <li><a href="#motivation-intuition" id="toc-motivation-intuition" class="nav-link" data-scroll-target="#motivation-intuition">Motivation &amp; Intuition</a></li>
   </ul></li>
-  <li><a href="#part-1-the-language-of-causality-tuesday-session" id="toc-part-1-the-language-of-causality-tuesday-session" class="nav-link" data-scroll-target="#part-1-the-language-of-causality-tuesday-session">Part 1: The Language of Causality (Tuesday Session)</a>
+  <li><a href="#the-fundamental-problem-of-causal-inference" id="toc-the-fundamental-problem-of-causal-inference" class="nav-link" data-scroll-target="#the-fundamental-problem-of-causal-inference">💥 2. The Fundamental Problem of Causal Inference</a>
   <ul class="collapse">
-  <li><a href="#the-fundamental-problem-of-causal-inference" id="toc-the-fundamental-problem-of-causal-inference" class="nav-link" data-scroll-target="#the-fundamental-problem-of-causal-inference">The Fundamental Problem of Causal Inference</a></li>
-  <li><a href="#clarifying-the-concept-the-two-paths-analogy" id="toc-clarifying-the-concept-the-two-paths-analogy" class="nav-link" data-scroll-target="#clarifying-the-concept-the-two-paths-analogy">🧠 Clarifying The Concept: The Two Paths Analogy</a></li>
-  <li><a href="#the-potential-outcomes-framework" id="toc-the-potential-outcomes-framework" class="nav-link" data-scroll-target="#the-potential-outcomes-framework">The Potential Outcomes Framework</a></li>
-  <li><a href="#the-individual-causal-effect-tau_i" id="toc-the-individual-causal-effect-tau_i" class="nav-link" data-scroll-target="#the-individual-causal-effect-tau_i">The Individual Causal Effect (<span class="math inline">\(\tau_i\)</span>)</a></li>
-  <li><a href="#example-a-hypothetical-drug-trial-gods-eye-view" id="toc-example-a-hypothetical-drug-trial-gods-eye-view" class="nav-link" data-scroll-target="#example-a-hypothetical-drug-trial-gods-eye-view">✅ Example: A Hypothetical Drug Trial (“God’s-eye View”)</a></li>
-  <li><a href="#from-individuals-to-populations-the-average-treatment-effect-ate" id="toc-from-individuals-to-populations-the-average-treatment-effect-ate" class="nav-link" data-scroll-target="#from-individuals-to-populations-the-average-treatment-effect-ate">From Individuals to Populations: The Average Treatment Effect (ATE)</a></li>
-  <li><a href="#key-assumption-sutva" id="toc-key-assumption-sutva" class="nav-link" data-scroll-target="#key-assumption-sutva">📌 Key Assumption: SUTVA</a></li>
+  <li><a href="#motivation-intuition-1" id="toc-motivation-intuition-1" class="nav-link" data-scroll-target="#motivation-intuition-1">Motivation &amp; Intuition</a></li>
   </ul></li>
-  <li><a href="#part-2-the-power-of-randomization-thursday-session" id="toc-part-2-the-power-of-randomization-thursday-session" class="nav-link" data-scroll-target="#part-2-the-power-of-randomization-thursday-session">Part 2: The Power of Randomization (Thursday Session)</a>
+  <li><a href="#from-individual-to-average-effects" id="toc-from-individual-to-average-effects" class="nav-link" data-scroll-target="#from-individual-to-average-effects">🌍 3. From Individual to Average Effects</a>
   <ul class="collapse">
-  <li><a href="#from-gods-eye-view-to-reality" id="toc-from-gods-eye-view-to-reality" class="nav-link" data-scroll-target="#from-gods-eye-view-to-reality">From “God’s-eye View” To Reality</a></li>
-  <li><a href="#selection-bias-the-arch-nemesis-of-causal-inference" id="toc-selection-bias-the-arch-nemesis-of-causal-inference" class="nav-link" data-scroll-target="#selection-bias-the-arch-nemesis-of-causal-inference">Selection Bias: The Arch-Nemesis of Causal Inference</a></li>
-  <li><a href="#randomization-to-the-rescue" id="toc-randomization-to-the-rescue" class="nav-link" data-scroll-target="#randomization-to-the-rescue">Randomization To the Rescue</a></li>
-  <li><a href="#estimation-and-lab-preview" id="toc-estimation-and-lab-preview" class="nav-link" data-scroll-target="#estimation-and-lab-preview">Estimation And Lab Preview</a></li>
-  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">❓ Check Your Understanding</a></li>
+  <li><a href="#motivation-the-statistical-solution" id="toc-motivation-the-statistical-solution" class="nav-link" data-scroll-target="#motivation-the-statistical-solution">Motivation &amp; The Statistical Solution</a></li>
+  <li><a href="#hand-calculated-example-the-divine-view" id="toc-hand-calculated-example-the-divine-view" class="nav-link" data-scroll-target="#hand-calculated-example-the-divine-view">Hand-Calculated Example: The Divine View</a></li>
   </ul></li>
-  <li><a href="#appendix-advanced-statistical-derivations-and-theory" id="toc-appendix-advanced-statistical-derivations-and-theory" class="nav-link" data-scroll-target="#appendix-advanced-statistical-derivations-and-theory">📚 Appendix: Advanced Statistical Derivations and Theory</a>
+  <li><a href="#the-gold-standard-randomized-controlled-trials-rcts" id="toc-the-gold-standard-randomized-controlled-trials-rcts" class="nav-link" data-scroll-target="#the-gold-standard-randomized-controlled-trials-rcts">✨ 4. The Gold Standard: Randomized Controlled Trials (RCTs)</a>
   <ul class="collapse">
-  <li><a href="#topic-1-formal-proof-of-unbiasedness-of-the-ate-estimator" id="toc-topic-1-formal-proof-of-unbiasedness-of-the-ate-estimator" class="nav-link" data-scroll-target="#topic-1-formal-proof-of-unbiasedness-of-the-ate-estimator">📕 Topic 1: Formal Proof of Unbiasedness of the ATE Estimator</a></li>
-  <li><a href="#topic-2-variance-of-the-ate-estimator" id="toc-topic-2-variance-of-the-ate-estimator" class="nav-link" data-scroll-target="#topic-2-variance-of-the-ate-estimator">📕 Topic 2: Variance of the ATE Estimator</a></li>
-  <li><a href="#topic-3-equivalence-of-difference-in-means-and-simple-regression" id="toc-topic-3-equivalence-of-difference-in-means-and-simple-regression" class="nav-link" data-scroll-target="#topic-3-equivalence-of-difference-in-means-and-simple-regression">📕 Topic 3: Equivalence of Difference-in-Means and Simple Regression</a></li>
+  <li><a href="#motivation-intuition-2" id="toc-motivation-intuition-2" class="nav-link" data-scroll-target="#motivation-intuition-2">Motivation &amp; Intuition</a></li>
+  </ul></li>
+  <li><a href="#observational-data-the-problem-of-confounding" id="toc-observational-data-the-problem-of-confounding" class="nav-link" data-scroll-target="#observational-data-the-problem-of-confounding">🚧 5. Observational Data &amp; The Problem of Confounding</a>
+  <ul class="collapse">
+  <li><a href="#motivation-intuition-3" id="toc-motivation-intuition-3" class="nav-link" data-scroll-target="#motivation-intuition-3">Motivation &amp; Intuition</a></li>
+  <li><a href="#hand-calculated-example-the-mortal-view" id="toc-hand-calculated-example-the-mortal-view" class="nav-link" data-scroll-target="#hand-calculated-example-the-mortal-view">Hand-Calculated Example: The Mortal View</a></li>
+  </ul></li>
+  <li><a href="#sutva-the-rules-of-the-game" id="toc-sutva-the-rules-of-the-game" class="nav-link" data-scroll-target="#sutva-the-rules-of-the-game">💡 6. SUTVA: The Rules of the Game</a></li>
+  <li><a href="#appendix-advanced-statistical-derivations" id="toc-appendix-advanced-statistical-derivations" class="nav-link" data-scroll-target="#appendix-advanced-statistical-derivations">📚 Appendix: Advanced Statistical Derivations</a>
+  <ul class="collapse">
+  <li><a href="#derivation-decomposing-association-into-causation-and-bias" id="toc-derivation-decomposing-association-into-causation-and-bias" class="nav-link" data-scroll-target="#derivation-decomposing-association-into-causation-and-bias">Derivation: Decomposing Association into Causation and Bias</a></li>
+  <li><a href="#hand-calculated-example-of-the-decomposition" id="toc-hand-calculated-example-of-the-decomposition" class="nav-link" data-scroll-target="#hand-calculated-example-of-the-decomposition">Hand-Calculated Example of the Decomposition</a></li>
+  </ul></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-1_Gold_standard.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-1_Gold_standard.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-1_Gold_standard.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -662,410 +629,367 @@ window.Quarto = {
 
 
 
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Welcome to STAT 579! This week, we begin our journey by establishing the fundamental principles of causal inference. Our goal is to move beyond mere association (“A is correlated with B”) to make credible claims about causation (“A <em>causes</em> B”). To do this, we need a precise language and a rigorous framework.</p>
-<p>This module introduces the Potential Outcomes framework, which is the bedrock of modern causal inference. We will then explore why the Randomized Controlled Trial (RCT) is considered the “gold standard” design for answering causal questions and how it elegantly solves the most significant challenge in the field.</p>
-<section id="learning-objectives" class="level3">
-<h3 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h3>
-<p>By the end of this week, you will be able to:</p>
+<section id="week-1-what-is-a-causal-effect" class="level1">
+<h1>Week 1: What is a Causal Effect?</h1>
+<section id="motivation-learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="motivation-learning-objectives">🎯 Motivation &amp; Learning Objectives</h2>
+<p>Welcome to STAT 579! We begin our journey by tackling the most fundamental question of all: <em>what exactly is a causal effect?</em> It seems simple, but defining it with precision is the critical first step for every method we’ll learn.</p>
+<p>Imagine you are a public health official. You observe that cities with higher numbers of public parks have lower rates of adult depression. Should you spend millions of dollars building new parks to improve mental health? Is the association <strong>causal</strong>, or could it be that healthier, wealthier people tend to live in cities that can afford more parks (<strong>confounding</strong>)? This is the kind of high-stakes question causal inference is designed to answer.</p>
+<p>By the end of this module, you will be able to:</p>
 <ol type="1">
-<li>Define a causal effect for an individual and a population using the Potential Outcomes framework.</li>
-<li>Explain the “Fundamental Problem of Causal Inference” and its implications.</li>
-<li>Articulate the two components of the Stable Unit Treatment Value Assumption (SUTVA) and identify potential violations.</li>
-<li>Prove why randomization allows the difference-in-means to be an unbiased estimator of the Average Treatment Effect (ATE).</li>
-<li>Calculate an estimated ATE from data and connect it to the output of both a t-test and a simple linear regression model in R.</li>
+<li><strong>Define</strong> a causal effect rigorously using the <strong>Potential Outcomes framework</strong>.</li>
+<li><strong>Explain</strong> the <strong>“Fundamental Problem of Causal Inference”</strong> as a missing data problem.</li>
+<li><strong>Articulate</strong> the crucial role of the <strong>Stable Unit Treatment Value Assumption (SUTVA)</strong>.</li>
+<li><strong>Justify</strong> why <strong>Randomized Controlled Trials (RCTs)</strong> are a powerful tool for overcoming the fundamental problem.</li>
+<li><strong>Distinguish</strong> between <strong>association</strong>, <strong>causation</strong>, and <strong>confounding</strong>, and identify selection bias as the key obstacle in observational data.</li>
 </ol>
+<hr>
 </section>
-</section>
-<section id="part-1-the-language-of-causality-tuesday-session" class="level2">
-<h2 class="anchored" data-anchor-id="part-1-the-language-of-causality-tuesday-session">Part 1: The Language of Causality (Tuesday Session)</h2>
-<section id="the-fundamental-problem-of-causal-inference" class="level3">
-<h3 class="anchored" data-anchor-id="the-fundamental-problem-of-causal-inference">The Fundamental Problem of Causal Inference</h3>
-<p>The central challenge of causal inference can be stated simply: we can never observe an individual’s outcome under both treatment and control at the same time. For any person, we see what happened, but we can never see what <em>would have happened</em> under a different choice. This unobservable outcome is known as the counterfactual.</p>
-<p>Causal inference, therefore, is a scientific approach to dealing with a missing data problem. For every individual, at least one potential outcome is missing.</p>
-</section>
-<section id="clarifying-the-concept-the-two-paths-analogy" class="level3">
-<h3 class="anchored" data-anchor-id="clarifying-the-concept-the-two-paths-analogy">🧠 Clarifying The Concept: The Two Paths Analogy</h3>
-<blockquote class="blockquote">
-<p>Imagine you are a doctor with a patient who has high blood pressure. You stand at a fork in the road for their treatment plan. Path A is to prescribe a new drug. Path B is to prescribe a placebo. You can only choose one path. If you choose the drug (Path A), you will observe their blood pressure in a month. But you will never know what their blood pressure <em>would have been</em> had you chosen the placebo (Path B) at that same moment. That un-chosen path represents the counterfactual. The core task of causal inference is to find rigorous ways to compare the destinations of Path A and Path B, even though no single patient can ever travel both.</p>
-</blockquote>
-</section>
-<section id="the-potential-outcomes-framework" class="level3">
-<h3 class="anchored" data-anchor-id="the-potential-outcomes-framework">The Potential Outcomes Framework</h3>
-<p>To reason about these two paths, we use the Potential Outcomes framework (also called the Neyman-Rubin Causal Model). Let’s establish our notation for a simple scenario with a binary treatment.</p>
+<section id="the-potential-outcomes-framework" class="level2">
+<h2 class="anchored" data-anchor-id="the-potential-outcomes-framework">🔬 1. The Potential Outcomes Framework</h2>
+<section id="motivation-intuition" class="level3">
+<h3 class="anchored" data-anchor-id="motivation-intuition">Motivation &amp; Intuition</h3>
+<p>To move from vague “what if” questions to formal analysis, we need a language to describe the unobserved. The <strong>Potential Outcomes Framework</strong> provides this language. The core idea is that for any treatment or exposure, there are multiple “potential worlds” that could occur for each individual.</p>
+<p>Let’s consider a simple binary treatment, <span class="math inline">\(A\)</span>. For any individual <span class="math inline">\(i\)</span>, <span class="math inline">\(A_i=1\)</span> if they receive the treatment and <span class="math inline">\(A_i=0\)</span> if they receive the control. We imagine that for each individual, two <strong>potential outcomes</strong> exist <em>simultaneously</em> as fixed attributes, even before treatment is assigned.</p>
 <ul>
-<li>Unit <span class="math inline">\(i\)</span>: An individual in our study (e.g., a patient, a person, a school).</li>
-<li>Treatment <span class="math inline">\(Z_i\)</span>: A binary variable, where <span class="math inline">\(Z_i=1\)</span> if unit <span class="math inline">\(i\)</span> receives the treatment and <span class="math inline">\(Z_i=0\)</span> if unit <span class="math inline">\(i\)</span> receives the control.</li>
-<li>Potential Outcomes <span class="math inline">\(Y_i(1)\)</span> and <span class="math inline">\(Y_i(0)\)</span>: These are the pre-existing, latent outcomes for unit <span class="math inline">\(i\)</span> under both possible scenarios.
-<ul>
-<li><span class="math inline">\(Y_i(1)\)</span>: The outcome for unit <span class="math inline">\(i\)</span> if they were to receive the treatment (<span class="math inline">\(Z=1\)</span>).</li>
-<li><span class="math inline">\(Y_i(0)\)</span>: The outcome for unit <span class="math inline">\(i\)</span> if they were to receive the control (<span class="math inline">\(Z=0\)</span>).</li>
-</ul></li>
+<li><span class="math inline">\(Y_i^1\)</span>: The outcome for individual <span class="math inline">\(i\)</span> <strong>if they were to be exposed</strong> to the treatment (<span class="math inline">\(A=1\)</span>).</li>
+<li><span class="math inline">\(Y_i^0\)</span>: The outcome for individual <span class="math inline">\(i\)</span> <strong>if they were to be exposed</strong> to the control (<span class="math inline">\(A=0\)</span>).</li>
 </ul>
-<p>For any given individual, both <span class="math inline">\(Y_i(1)\)</span> and <span class="math inline">\(Y_i(0)\)</span> are assumed to exist before any treatment is actually assigned.</p>
-</section>
-<section id="the-individual-causal-effect-tau_i" class="level3">
-<h3 class="anchored" data-anchor-id="the-individual-causal-effect-tau_i">The Individual Causal Effect (<span class="math inline">\(\tau_i\)</span>)</h3>
-<p>The individual causal effect (<span class="math inline">\(\tau_i\)</span>, or “tau”) is the difference between these two potential outcomes for a single unit:</p>
+<p>These are also called <strong>counterfactuals</strong> because once a treatment is given, one of them will be counter-to-fact.</p>
+<img src="week-1_Gold_standard_files/mediabag/cd726ede2c71e7a78e20643f9dd5aa5b0d8a4213.svg" class="img-fluid">
+<p>With this, we can define the <strong>Individual Causal Effect (ICE)</strong> for person <span class="math inline">\(i\)</span> as:</p>
 <p><span class="math display">\[
-\tau_i = Y_i(1) - Y_i(0)
+\tau_i = Y_i^1 - Y_i^0
 \]</span></p>
-<p>Because of the Fundamental Problem, we can never observe <span class="math inline">\(\tau_i\)</span> for any individual. We can only observe one of the two potential outcomes. The observed outcome, <span class="math inline">\(Y_i\)</span>, is linked to the potential outcomes through the treatment assignment <span class="math inline">\(Z_i\)</span>:</p>
+<hr>
+</section>
+</section>
+<section id="the-fundamental-problem-of-causal-inference" class="level2">
+<h2 class="anchored" data-anchor-id="the-fundamental-problem-of-causal-inference">💥 2. The Fundamental Problem of Causal Inference</h2>
+<section id="motivation-intuition-1" class="level3">
+<h3 class="anchored" data-anchor-id="motivation-intuition-1">Motivation &amp; Intuition</h3>
+<p>The core challenge of our field is that we can only live in one world at a time. Once a person receives a treatment, we can’t see what would have happened to them on the exact same day, at the exact same time, had they not received it. That alternate reality is lost to us.</p>
+<p>For any individual, we can only ever observe <strong>one</strong> of their potential outcomes. The other is forever hidden. We can formalize this with a “switching equation” that links the potential outcomes to the single <strong>observed outcome</strong>, <span class="math inline">\(Y_i\)</span>:</p>
 <p><span class="math display">\[
-Y_i = Z_i \cdot Y_i(1) + (1-Z_i) \cdot Y_i(0)
+Y_i = A_i Y_i^1 + (1 - A_i) Y_i^0
 \]</span></p>
-<p>This is a compact way to say that if <span class="math inline">\(Z_i=1\)</span>, we observe <span class="math inline">\(Y_i(1)\)</span>; if <span class="math inline">\(Z_i=0\)</span>, we observe <span class="math inline">\(Y_i(0)\)</span>.</p>
+<p>This means causal inference is fundamentally a <strong>missing data problem</strong>. Half the data in our ideal dataset is always missing.</p>
+<img src="week-1_Gold_standard_files/mediabag/d7ef481055c9f1fc45cd2b1f90a7511557dce4b4.svg" class="img-fluid">
+<section id="concept-check" class="level4 callout-question">
+<h4 class="anchored" data-anchor-id="concept-check">🤔 Concept Check</h4>
+<p>A researcher measures a patient’s cholesterol, gives them a new drug for 6 months, and measures it again. The researcher claims the change in cholesterol is the causal effect. Why is this claim flawed according to the potential outcomes framework?</p>
+<p><strong>Answer</strong>: This “before-and-after” comparison is not a valid causal effect. The “before” measurement is not <span class="math inline">\(Y^0\)</span>. The potential outcome <span class="math inline">\(Y^0\)</span> is what the patient’s cholesterol <em>would have been after 6 months without the drug</em>. Over 6 months, many other things could have changed (diet, exercise, aging), so the “before” value is not a valid counterfactual.</p>
 </section>
-<section id="example-a-hypothetical-drug-trial-gods-eye-view" class="level3">
-<h3 class="anchored" data-anchor-id="example-a-hypothetical-drug-trial-gods-eye-view">✅ Example: A Hypothetical Drug Trial (“God’s-eye View”)</h3>
-<p>Let’s test a new blood pressure drug on 6 patients. Imagine we have a “God’s-eye view” and can see all potential outcomes (in mmHg).</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 8%">
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 41%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Patient (<span class="math inline">\(i\)</span>)</th>
-<th style="text-align: center;"><span class="math inline">\(Y_i(1)\)</span> <br> (Outcome if Treated)</th>
-<th style="text-align: center;"><span class="math inline">\(Y_i(0)\)</span> <br> (Outcome if Control)</th>
-<th style="text-align: center;"><span class="math inline">\(\tau_i = Y_i(1) - Y_i(0)\)</span> <br> (Individual Causal Effect)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: center;">130</td>
-<td style="text-align: center;">145</td>
-<td style="text-align: center;">-15</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: center;">125</td>
-<td style="text-align: center;">130</td>
-<td style="text-align: center;">-5</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: center;">140</td>
-<td style="text-align: center;">150</td>
-<td style="text-align: center;">-10</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: center;">135</td>
-<td style="text-align: center;">155</td>
-<td style="text-align: center;">-20</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">5</td>
-<td style="text-align: center;">150</td>
-<td style="text-align: center;">155</td>
-<td style="text-align: center;">-5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">6</td>
-<td style="text-align: center;">140</td>
-<td style="text-align: center;">145</td>
-<td style="text-align: center;">-5</td>
-</tr>
-</tbody>
-</table>
-<p>From this complete data, we can see the true causal effect for each person. But in reality, we can’t see this full table.</p>
+<hr>
 </section>
-<section id="from-individuals-to-populations-the-average-treatment-effect-ate" class="level3">
-<h3 class="anchored" data-anchor-id="from-individuals-to-populations-the-average-treatment-effect-ate">From Individuals to Populations: The Average Treatment Effect (ATE)</h3>
-<p>Since we cannot access <span class="math inline">\(\tau_i\)</span>, we shift our goal to a more feasible target: the Average Treatment Effect (ATE). The ATE is the average of the individual causal effects across our population of interest.</p>
+</section>
+<section id="from-individual-to-average-effects" class="level2">
+<h2 class="anchored" data-anchor-id="from-individual-to-average-effects">🌍 3. From Individual to Average Effects</h2>
+<section id="motivation-the-statistical-solution" class="level3">
+<h3 class="anchored" data-anchor-id="motivation-the-statistical-solution">Motivation &amp; The Statistical Solution</h3>
+<p>Since we can’t see the ICE, we aim for a more modest but achievable goal: estimating the <strong>Average Treatment Effect (ATE)</strong>.</p>
 <p><span class="math display">\[
-\text{ATE} = E[\tau_i] = E[Y_i(1) - Y_i(0)]
+\text{ATE} = \mathbb{E}[Y^1 - Y^0]
 \]</span></p>
-<p>By the linearity of expectation, a fundamental rule in probability, we can rewrite this as:</p>
-<p><span class="math display">\[
-\text{ATE} = E[Y_i(1)] - E[Y_i(0)]
-\]</span></p>
-<p>Using our “God’s-eye view” data, the true ATE is:</p>
-<ul>
-<li><span class="math inline">\(E[Y(1)] = (130 + 125 + 140 + 135 + 150 + 140) / 6 = 136.67\)</span></li>
-<li><span class="math inline">\(E[Y(0)] = (145 + 130 + 150 + 155 + 155 + 145) / 6 = 146.67\)</span></li>
-<li>True ATE = <span class="math inline">\(136.67 - 146.67 = \mathbf{-10.0}\)</span> mmHg</li>
-</ul>
+<p>The ATE tells us the average effect of the treatment across an entire population.</p>
 </section>
-<section id="key-assumption-sutva" class="level3">
-<h3 class="anchored" data-anchor-id="key-assumption-sutva">📌 Key Assumption: SUTVA</h3>
-<p>The entire Potential Outcomes framework rests on the Stable Unit Treatment Value Assumption (SUTVA). This is a crucial assumption we make in almost all causal analyses. SUTVA has two parts:</p>
-<ol type="1">
-<li><p>No Interference: The potential outcomes for one unit are unaffected by the treatment assignment of other units.</p>
-<ul>
-<li>Public Health Example: In a vaccine trial, if vaccinating person A reduces the chance that person B (in the placebo group) gets the flu, then person B’s outcome has been “interfered” with by person A’s treatment. This violates the no-interference assumption. These are often called “spillover” effects.</li>
-</ul></li>
-<li><p>Consistency (or “One Version of Treatment”): For a unit <span class="math inline">\(i\)</span> who received treatment <span class="math inline">\(Z_i=z\)</span>, their observed outcome <span class="math inline">\(Y_i\)</span> is equal to their potential outcome <span class="math inline">\(Y_i(z)\)</span>. This implies that there is only one “version” of the treatment.</p>
-<ul>
-<li>Public Health Example: A therapy program is the “treatment.” If some therapists are far more effective than others, then a patient’s outcome depends not just on getting therapy (<span class="math inline">\(Z=1\)</span>), but on <em>which therapist</em> they got. In this case, there are multiple versions of the treatment, and the consistency assumption may be violated.</li>
-</ul></li>
-</ol>
-</section>
-</section>
-<section id="part-2-the-power-of-randomization-thursday-session" class="level2">
-<h2 class="anchored" data-anchor-id="part-2-the-power-of-randomization-thursday-session">Part 2: The Power of Randomization (Thursday Session)</h2>
-<section id="from-gods-eye-view-to-reality" class="level3">
-<h3 class="anchored" data-anchor-id="from-gods-eye-view-to-reality">From “God’s-eye View” To Reality</h3>
-<p>In a real study, we must assign treatments. Suppose we randomly assign patients 1, 3, 5 to the drug (<span class="math inline">\(Z=1\)</span>) and patients 2, 4, 6 to the placebo (<span class="math inline">\(Z=0\)</span>). The data we actually collect would look like this:</p>
+<section id="hand-calculated-example-the-divine-view" class="level3">
+<h3 class="anchored" data-anchor-id="hand-calculated-example-the-divine-view">Hand-Calculated Example: The Divine View</h3>
+<p>Imagine we are gods and can see the full potential outcomes for a population of 10 people. The outcome <span class="math inline">\(Y\)</span> is “days of sickness,” so lower is better.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
-<col style="width: 14%">
-<col style="width: 14%">
-<col style="width: 21%">
-<col style="width: 21%">
-<col style="width: 15%">
+<col style="width: 31%">
+<col style="width: 35%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Patient (<span class="math inline">\(i\)</span>)</th>
-<th style="text-align: center;"><span class="math inline">\(Z_i\)</span> (Assigned)</th>
-<th style="text-align: center;"><span class="math inline">\(Y_i\)</span> (Observed)</th>
-<th style="text-align: center;"><em>What we see: <span class="math inline">\(Y_i(1)\)</span></em></th>
-<th style="text-align: center;"><em>What we see: <span class="math inline">\(Y_i(0)\)</span></em></th>
-<th style="text-align: left;"><em>What is missing</em></th>
+<th style="text-align: center;">Person (i)</th>
+<th style="text-align: center;"><span class="math inline">\(Y_i^1\)</span> (Sickness if Treated)</th>
+<th style="text-align: center;"><span class="math inline">\(Y_i^0\)</span> (Sickness if not Treated)</th>
+<th style="text-align: center;">True ICE (<span class="math inline">\(\tau_i\)</span>)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: center;">1 (Drug)</td>
-<td style="text-align: center;">130</td>
-<td style="text-align: center;">130</td>
-<td style="text-align: center;"></td>
-<td style="text-align: left;"><span class="math inline">\(Y_1(0) = 145\)</span></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">-2</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: center;">0 (Placebo)</td>
-<td style="text-align: center;">130</td>
-<td style="text-align: center;"></td>
-<td style="text-align: center;">130</td>
-<td style="text-align: left;"><span class="math inline">\(Y_2(1) = 125\)</span></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">-2</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: center;">1 (Drug)</td>
-<td style="text-align: center;">140</td>
-<td style="text-align: center;">140</td>
-<td style="text-align: center;"></td>
-<td style="text-align: left;"><span class="math inline">\(Y_3(0) = 150\)</span></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">-2</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: center;">0 (Placebo)</td>
-<td style="text-align: center;">155</td>
-<td style="text-align: center;"></td>
-<td style="text-align: center;">155</td>
-<td style="text-align: left;"><span class="math inline">\(Y_4(1) = 135\)</span></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">-2</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">5</td>
-<td style="text-align: center;">1 (Drug)</td>
-<td style="text-align: center;">150</td>
-<td style="text-align: center;">150</td>
-<td style="text-align: center;"></td>
-<td style="text-align: left;"><span class="math inline">\(Y_5(0) = 155\)</span></td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">-2</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">6</td>
-<td style="text-align: center;">0 (Placebo)</td>
-<td style="text-align: center;">145</td>
-<td style="text-align: center;"></td>
-<td style="text-align: center;">145</td>
-<td style="text-align: left;"><span class="math inline">\(Y_6(1) = 140\)</span></td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">-2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">-2</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">-2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">-2</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">-2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>Average</strong></td>
+<td style="text-align: center;"><strong>5.5</strong></td>
+<td style="text-align: center;"><strong>7.5</strong></td>
+<td style="text-align: center;"><strong>-2.0</strong></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="selection-bias-the-arch-nemesis-of-causal-inference" class="level3">
-<h3 class="anchored" data-anchor-id="selection-bias-the-arch-nemesis-of-causal-inference">Selection Bias: The Arch-Nemesis of Causal Inference</h3>
-<p>The simplest way to estimate the effect is to compare the average outcomes in the two groups. But is this comparison valid? Let’s decompose the “naïve” difference in means:</p>
-<p><span class="math display">\[
-\underbrace{E[Y | Z=1] - E[Y | Z=0]}_{\text{Naïve Difference}} = \underbrace{E[Y(1) | Z=1] - E[Y(0) | Z=0]}_{\text{What we can calculate}}
-\]</span></p>
-<p>Through a small algebraic trick (see Appendix), we can rewrite this as:</p>
-<p><span class="math display">\[
-\text{Naïve Difference} = \underbrace{E[Y(1) - Y(0) | Z=1]}_{\text{ATT}} + \underbrace{\{E[Y(0) | Z=1] - E[Y(0) | Z=0]\}}_{\text{Selection Bias}}
-\]</span></p>
-<p>where ATT is the Average Treatment Effect on the Treated.</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Selection Bias
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Selection Bias is the systematic difference in baseline potential outcomes (<span class="math inline">\(Y(0)\)</span>) between the group that receives treatment and the group that does not. In observational studies, this is almost always present. For example, sicker patients may be more likely to seek out a new treatment, meaning the treated group was less healthy to begin with. This bias will distort our estimate of the causal effect.</p>
-</div>
-</div>
-</section>
-<section id="randomization-to-the-rescue" class="level3">
-<h3 class="anchored" data-anchor-id="randomization-to-the-rescue">Randomization To the Rescue</h3>
-<p>This is where the magic of the Randomized Controlled Trial (RCT) comes in. By randomly assigning the treatment <span class="math inline">\(Z\)</span>, we sever any systematic link between the treatment and the potential outcomes. On average, the group that gets the treatment is identical to the group that gets the control on <em>all</em> baseline characteristics, both observed and unobserved.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Theorem: Independence by Randomization
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>In an ideal RCT, the treatment assignment <span class="math inline">\(Z\)</span> is statistically independent of the potential outcomes <span class="math inline">\((Y(1), Y(0))\)</span>. We write this as:</p>
-<p><span class="math display">\[
-(Y(1), Y(0)) \perp Z
-\]</span></p>
-<p>This implies that the expectation of a potential outcome is the same regardless of which group you look at:</p>
-<ul>
-<li><span class="math inline">\(E[Y(0) | Z=1] = E[Y(0) | Z=0] = E[Y(0)]\)</span></li>
-<li><span class="math inline">\(E[Y(1) | Z=1] = E[Y(1) | Z=0] = E[Y(1)]\)</span></li>
-</ul>
-</div>
-</div>
-<p>Because of this property, the selection bias term becomes zero:</p>
-<p><span class="math display">\[
-\text{Selection Bias} = E[Y(0) | Z=1] - E[Y(0) | Z=0] = 0
-\]</span></p>
-<p>And our decomposition simplifies beautifully:</p>
-<p><span class="math display">\[
-E[Y | Z=1] - E[Y | Z=0] = E[Y(1)] - E[Y(0)] = \text{ATE}
-\]</span></p>
-<p>This proves that in an RCT, the simple difference in observed means is an unbiased estimator of the Average Treatment Effect.</p>
-</section>
-<section id="estimation-and-lab-preview" class="level3">
-<h3 class="anchored" data-anchor-id="estimation-and-lab-preview">Estimation And Lab Preview</h3>
-<p>Our estimator for the ATE, denoted <span class="math inline">\(\hat{\tau}_{ATE}\)</span>, is the sample difference-in-means:</p>
-<p><span class="math display">\[
-\hat{\tau}_{ATE} = \bar{Y}_{Z=1} - \bar{Y}_{Z=0}
-\]</span></p>
-<p>✅ Example: Estimating the ATE from Observed Data</p>
-<p>Using our observed data:</p>
-<ul>
-<li>Treated Group (<span class="math inline">\(Z=1\)</span>): {130, 140, 150}. Mean <span class="math inline">\(\bar{Y}_1 = 140.0\)</span>.</li>
-<li>Control Group (<span class="math inline">\(Z=0\)</span>): {130, 155, 145}. Mean <span class="math inline">\(\bar{Y}_0 = 143.33\)</span>.</li>
-</ul>
-<p>Our estimate is:</p>
-<p><span class="math display">\[
-\hat{\tau}_{ATE} = 140.0 - 143.33 = \mathbf{-3.33} \text{ mmHg}
-\]</span></p>
-<p>This estimate (-3.33) differs from the true ATE (-10.0) due to random sampling variability. Because our sample is tiny, this one particular randomization wasn’t perfectly balanced. However, the <em>procedure</em> is unbiased, meaning if we repeated this experiment many times, the average of our estimates would converge to the true value.</p>
-<p>In our lab session, we will perform these calculations in R.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data from our example</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sbp =</span> <span class="fu">c</span>(<span class="dv">130</span>, <span class="dv">140</span>, <span class="dv">150</span>, <span class="dv">130</span>, <span class="dv">155</span>, <span class="dv">145</span>),</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Manual difference-in-means</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>mean_treated <span class="ot">&lt;-</span> <span class="fu">mean</span>(df<span class="sc">$</span>sbp[df<span class="sc">$</span>treatment <span class="sc">==</span> <span class="dv">1</span>])</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>mean_control <span class="ot">&lt;-</span> <span class="fu">mean</span>(df<span class="sc">$</span>sbp[df<span class="sc">$</span>treatment <span class="sc">==</span> <span class="dv">0</span>])</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>ate_est <span class="ot">&lt;-</span> mean_treated <span class="sc">-</span> mean_control</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ate_est)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -3.333333</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Using a t-test (standard statistical procedure)</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(sbp <span class="sc">~</span> treatment, <span class="at">data =</span> df, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># The output provides the means of both groups and the difference.</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Using a linear model (regression)</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(sbp <span class="sc">~</span> treatment, <span class="at">data =</span> df)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># The coefficient for 'treatment' is our ATE estimate!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="check-your-understanding" class="level3">
-<h3 class="anchored" data-anchor-id="check-your-understanding">❓ Check Your Understanding</h3>
+<p>Let’s calculate the ATE by hand:</p>
 <ol type="1">
-<li>Question: A study on a new tutoring program allows students to sign up voluntarily. Researchers find that tutored students have higher test scores. Why is this likely not a pure causal effect? What is the likely direction of the selection bias?
-<details>
-<summary>
-Answer
-</summary>
-This is an observational study, not an RCT. Students who voluntarily sign up for tutoring are likely more motivated or have more parental support than those who do not. This means their baseline potential outcome, <span class="math inline">\(E[Y(0) | Z=1]\)</span> (what their score <em>would have been</em> without tutoring), is likely higher than the baseline for the non-tutored group, <span class="math inline">\(E[Y(0) | Z=0]\)</span>. This is positive selection bias, which makes the tutoring program appear more effective than it truly is.
-</details></li>
+<li><strong>Calculate <span class="math inline">\(\mathbb{E}[Y^1]\)</span></strong>: Sum the <span class="math inline">\(Y^1\)</span> column and divide by 10. <span class="math inline">\(\mathbb{E}[Y^1] = \frac{5+4+6+7+2+3+8+9+1+10}{10} = \frac{55}{10} = 5.5\)</span></li>
+<li><strong>Calculate <span class="math inline">\(\mathbb{E}[Y^0]\)</span></strong>: Sum the <span class="math inline">\(Y^0\)</span> column and divide by 10. <span class="math inline">\(\mathbb{E}[Y^0] = \frac{7+6+8+9+4+5+10+11+3+12}{10} = \frac{75}{10} = 7.5\)</span></li>
+<li><strong>Calculate ATE</strong>: <span class="math inline">\(\text{ATE} = \mathbb{E}[Y^1] - \mathbb{E}[Y^0] = 5.5 - 7.5 = -2.0\)</span></li>
 </ol>
-<p><br></p>
-<p>2. Question: In a study of a new fertilizer on corn fields, some fields are very large and some are small. The “treatment” is a uniform application rate (e.g., 10kg per hectare). Does this scenario potentially violate any part of SUTVA?</p>
-<details>
-<summary>
-Answer
-</summary>
-<p>This could violate the Consistency assumption (“one version of the treatment”). While the application <em>rate</em> is the same, the actual farming practices, soil quality, and other factors might differ systematically between large and small fields. If the effect of the fertilizer depends on these other factors that are bundled with the unit type, one might argue there are different “versions” of how the treatment is experienced. There is no interference mentioned.</p>
-</details>
+<p>The <strong>true ATE</strong> is -2.0 days. On average, the treatment reduces sickness by 2 days.</p>
+<hr>
 </section>
 </section>
-<section id="appendix-advanced-statistical-derivations-and-theory" class="level2">
-<h2 class="anchored" data-anchor-id="appendix-advanced-statistical-derivations-and-theory">📚 Appendix: Advanced Statistical Derivations and Theory</h2>
-<section id="topic-1-formal-proof-of-unbiasedness-of-the-ate-estimator" class="level3">
-<h3 class="anchored" data-anchor-id="topic-1-formal-proof-of-unbiasedness-of-the-ate-estimator">📕 Topic 1: Formal Proof of Unbiasedness of the ATE Estimator</h3>
-<p>Motivation: Proving that our estimator is “unbiased” is the theoretical guarantee that our estimation procedure, on average, will give us the right answer. It is the foundation for all valid inference in an RCT.</p>
-<p>Derivation: We want to show that <span class="math inline">\(E[\hat{\tau}_{ATE}] = \text{ATE}\)</span>. The estimator is <span class="math inline">\(\hat{\tau}_{ATE} = \bar{Y}_1 - \bar{Y}_0\)</span>. By linearity of expectation, <span class="math inline">\(E[\hat{\tau}_{ATE}] = E[\bar{Y}_1] - E[\bar{Y}_0]\)</span>. Let’s analyze <span class="math inline">\(E[\bar{Y}_1] = E[Y_i | Z_i=1]\)</span>.</p>
+<section id="the-gold-standard-randomized-controlled-trials-rcts" class="level2">
+<h2 class="anchored" data-anchor-id="the-gold-standard-randomized-controlled-trials-rcts">✨ 4. The Gold Standard: Randomized Controlled Trials (RCTs)</h2>
+<section id="motivation-intuition-2" class="level3">
+<h3 class="anchored" data-anchor-id="motivation-intuition-2">Motivation &amp; Intuition</h3>
+<p>How can we estimate the ATE if we are mortals and can’t see the full table? In an <strong>RCT</strong>, we randomly assign people to treatment or control. Randomization acts like a great equalizer: it ensures that, on average, the group that gets the treatment is no different from the group that doesn’t on all baseline characteristics. This property is called <strong>exchangeability</strong>.</p>
+<p>Randomization makes the treatment assignment <span class="math inline">\(A\)</span> statistically independent of the potential outcomes <span class="math inline">\({Y^1, Y^0}\)</span>:</p>
 <p><span class="math display">\[
-\begin{aligned}
-E[Y_i | Z_i=1] &amp;= E[Z_i Y_i(1) + (1-Z_i)Y_i(0) | Z_i=1] &amp; &amp; \text{1. Substitute for } Y_i \
-&amp;= E[1 \cdot Y_i(1) + (1-1)Y_i(0) | Z_i=1] &amp; &amp; \text{2. Plug in } Z_i=1 \
-&amp;= E[Y_i(1) | Z_i=1] &amp; &amp; \text{3. Simplify} \
-&amp;= E[Y_i(1)] &amp; &amp; \text{4. By independence from randomization}
-\end{aligned}
+A \indep \{Y^1, Y^0\}
 \]</span></p>
-<p>Similarly, <span class="math inline">\(E[\bar{Y}_0] = E[Y_i | Z_i=0] = E[Y_i(0)]\)</span>. Therefore, <span class="math display">\[
-E[\hat{\tau}_{ATE}] = E[Y_i(1)] - E[Y_i(0)] = \text{ATE}
+<p>Because of this, the mean of the observed outcomes in the treated group is a good estimate for the population mean of <span class="math inline">\(Y^1\)</span>, and likewise for the control group and <span class="math inline">\(Y^0\)</span>.</p>
+<p><span class="math display">\[
+\mathbb{E}[Y \mid A=1] - \mathbb{E}[Y \mid A=0] = \mathbb{E}[Y^1] - \mathbb{E}[Y^0] = \text{ATE}
 \]</span></p>
-<p>The proof is complete. The key step (4) relies entirely on randomization making treatment assignment independent of potential outcomes.</p>
+<hr>
 </section>
-<section id="topic-2-variance-of-the-ate-estimator" class="level3">
-<h3 class="anchored" data-anchor-id="topic-2-variance-of-the-ate-estimator">📕 Topic 2: Variance of the ATE Estimator</h3>
-<p>Motivation: Unbiasedness tells us our aim is correct, but variance tells us about our precision. We need the variance to calculate standard errors and confidence intervals, which communicate the uncertainty in our estimate.</p>
-<p>Derivation: The variance of our estimator is <span class="math inline">\(Var(\hat{\tau}_{ATE}) = Var(\bar{Y}_1 - \bar{Y}_0)\)</span>. Because the treatment and control groups are independent samples, the variance of the difference is the sum of the variances:</p>
+</section>
+<section id="observational-data-the-problem-of-confounding" class="level2">
+<h2 class="anchored" data-anchor-id="observational-data-the-problem-of-confounding">🚧 5. Observational Data &amp; The Problem of Confounding</h2>
+<section id="motivation-intuition-3" class="level3">
+<h3 class="anchored" data-anchor-id="motivation-intuition-3">Motivation &amp; Intuition</h3>
+<p>Most of the time in public health, we can’t randomize. People choose their own exposures. This is <strong>observational data</strong>. In this setting, the treated and untreated groups are often not exchangeable. The reasons someone <em>chooses</em> a treatment might be linked to the outcome. This is called <strong>confounding</strong>. A <strong>confounder</strong> is a pre-treatment variable that is a common cause of both the treatment and the outcome.</p>
+<img src="week-1_Gold_standard_files/mediabag/c931a2dc4dd0fd0a6ff7e5abd3621e43af382579.svg" class="img-fluid">
+<p>When confounding exists, the simple difference in means is no longer the ATE. It is merely a measure of <strong>association</strong>, and it is biased.</p>
 <p><span class="math display">\[
-Var(\hat{\tau}_{ATE}) = Var(\bar{Y}_1) + Var(\bar{Y}_0)
+\text{Association} = \mathbb{E}[Y \mid A=1] - \mathbb{E}[Y \mid A=0] \neq \text{ATE}
 \]</span></p>
-<p>For the sample mean of the treated group, <span class="math inline">\(Var(\bar{Y}_1) = \frac{Var(Y_i | Z_i=1)}{n_1} = \frac{\sigma^2_1}{n_1}\)</span>. Similarly, <span class="math inline">\(Var(\bar{Y}_0) = \frac{\sigma^2_0}{n_0}\)</span>.</p>
-<p>So, the true variance of the estimator is:</p>
-<p><span class="math display">\[
-Var(\hat{\tau}_{ATE}) = \frac{\sigma^2_1}{n_1} + \frac{\sigma^2_0}{n_0}
-\]</span></p>
-<p>In practice, we don’t know the true population variances <span class="math inline">\(\sigma^2_1\)</span> and <span class="math inline">\(\sigma^2_0\)</span>. We estimate them using the sample variances from our data, <span class="math inline">\(S^2_1\)</span> and <span class="math inline">\(S^2_0\)</span>. The estimated variance is: <span class="math display">\[
-\widehat{Var}(\hat{\tau}_{ATE}) = \frac{S^2_1}{n_1} + \frac{S^2_0}{n_0}
-\]</span></p>
-<p>The Standard Error (SE) is the square root of this estimated variance: <span class="math inline">\(SE(\hat{\tau}_{ATE}) = \sqrt{\frac{S^2_1}{n_1} + \frac{S^2_0}{n_0}}\)</span>.</p>
-<p>✅ Worked Example:</p>
-<p>From our observed data:</p>
+</section>
+<section id="hand-calculated-example-the-mortal-view" class="level3">
+<h3 class="anchored" data-anchor-id="hand-calculated-example-the-mortal-view">Hand-Calculated Example: The Mortal View</h3>
+<p>Let’s return to our population of 10 people. But now, we are mortals and see only the observed data. Let’s assume that sicker people are more likely to seek treatment.</p>
 <ul>
-<li>Treated Group {130, 140, 150}: <span class="math inline">\(n_1=3\)</span>, Sample Variance <span class="math inline">\(S^2_1 = \frac{(130-140)^2 + (140-140)^2 + (150-140)^2}{3-1} = 100\)</span>.</li>
-<li>Control Group {130, 155, 145}: <span class="math inline">\(n_0=3\)</span>, Sample Variance <span class="math inline">\(S^2_0 = \frac{(130-143.33)^2 + (155-143.33)^2 + (145-143.33)^2}{3-1} \approx 175\)</span>.</li>
+<li>The 5 individuals with the worst potential health (<span class="math inline">\(Y^0 \ge 8\)</span>) all seek treatment (<span class="math inline">\(A=1\)</span>).</li>
+<li>The 5 individuals with the best potential health (<span class="math inline">\(Y^0 &lt; 8\)</span>) do not get treatment (<span class="math inline">\(A=0\)</span>).</li>
 </ul>
-<p><span class="math inline">\(\widehat{Var}(\hat{\tau}_{ATE}) = \frac{100}{3} + \frac{175}{3} \approx 33.33 + 58.33 = 91.66\)</span></p>
-<p><span class="math inline">\(SE(\hat{\tau}_{ATE}) = \sqrt{91.66} \approx \mathbf{9.57}\)</span></p>
+<p>Here is the <strong>observed data</strong> we would see:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Person (i)</th>
+<th style="text-align: center;"><span class="math inline">\(A_i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(Y^1_i\)</span> (Unseen)</th>
+<th style="text-align: center;"><span class="math inline">\(Y^0_i\)</span> (Unseen)</th>
+<th style="text-align: center;">Observed <span class="math inline">\(Y_i\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">?</td>
+<td style="text-align: center;">10</td>
+</tr>
+</tbody>
+</table>
+<p>Let’s calculate the naive associational difference by hand:</p>
+<ol type="1">
+<li><strong>Calculate Mean in Treated</strong>: Sum the <code>Observed Y</code> for those with <span class="math inline">\(A=1\)</span> and divide by 5. <span class="math inline">\(\mathbb{E}[Y \mid A=1] = \frac{6+7+8+9+10}{5} = \frac{40}{5} = 8.0\)</span></li>
+<li><strong>Calculate Mean in Untreated</strong>: Sum the <code>Observed Y</code> for those with <span class="math inline">\(A=0\)</span> and divide by 5. <span class="math inline">\(\mathbb{E}[Y \mid A=0] = \frac{7+6+4+5+3}{5} = \frac{25}{5} = 5.0\)</span></li>
+<li><strong>Calculate Associational Difference</strong>: <span class="math inline">\(\text{Association} = 8.0 - 5.0 = +3.0\)</span></li>
+</ol>
+<p>The naive analysis suggests the treatment <strong>increases</strong> sickness by 3 days, when we know from our “divine view” that it <strong>decreases</strong> it by 2 days. This is the impact of confounding! The methods in this course are all about finding ways to adjust for this bias.</p>
+<hr>
 </section>
-<section id="topic-3-equivalence-of-difference-in-means-and-simple-regression" class="level3">
-<h3 class="anchored" data-anchor-id="topic-3-equivalence-of-difference-in-means-and-simple-regression">📕 Topic 3: Equivalence of Difference-in-Means and Simple Regression</h3>
-<p>Motivation: This proof provides a critical link between the simple, non-parametric approach of comparing means and the more flexible framework of linear regression. It shows that for the simplest case, they are identical, justifying our use of regression to estimate causal effects.</p>
-<p>Derivation: Consider the simple linear regression model <span class="math inline">\(Y_i = \beta_0 + \beta_1 Z_i + \epsilon_i\)</span>, where <span class="math inline">\(Z_i \in {0, 1}\)</span>. The OLS estimator for <span class="math inline">\(\beta_1\)</span> is <span class="math inline">\(\hat{\beta}_1 = \frac{Cov(Z, Y)}{Var(Z)}\)</span>. Let <span class="math inline">\(p = n_1/N\)</span> be the proportion treated.</p>
+</section>
+<section id="sutva-the-rules-of-the-game" class="level2">
+<h2 class="anchored" data-anchor-id="sutva-the-rules-of-the-game">💡 6. SUTVA: The Rules of the Game</h2>
+<p>All of this reasoning rests on a foundational assumption: the <strong>Stable Unit Treatment Value Assumption (SUTVA)</strong>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Two Pillars of SUTVA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p><strong>No Interference</strong>: One person’s treatment status does not affect another person’s outcome.</p>
 <ul>
-<li>Variance of Z: <span class="math inline">\(Var(Z) = E[Z^2] - (E[Z])^2 = p - p^2 = p(1-p)\)</span>.</li>
-<li>Covariance of Z and Y: <span class="math inline">\(Cov(Z, Y) = E[ZY] - E[Z]E[Y]\)</span>.</li>
-<li><span class="math inline">\(E[ZY] = E[Y|Z=1]P(Z=1) + E[Y|Z=0]P(Z=0) = \bar{Y}_1 \cdot p + \bar{Y}_0 \cdot 0 = p\bar{Y}_1\)</span>.</li>
-<li><span class="math inline">\(E[Y] = \bar{Y}_1 \cdot p + \bar{Y}_0 \cdot (1-p)\)</span>.</li>
-<li><span class="math inline">\(Cov(Z, Y) = p\bar{Y}_1 - p(\bar{Y}_1 p + \bar{Y}_0 (1-p)) = p\bar{Y}_1 - p^2\bar{Y}_1 - p(1-p)\bar{Y}_0 = p(1-p)\bar{Y}_1 - p(1-p)\bar{Y}_0 = p(1-p)(\bar{Y}_1 - \bar{Y}_0)\)</span>.</li>
-</ul>
-<p>Now, we compute the ratio:</p>
+<li><strong>Violation Example</strong>: In a vaccine study, if my neighbor gets vaccinated, my chance of getting sick (<span class="math inline">\(Y_i^0\)</span>) might decrease. My outcome is affected by their treatment.</li>
+</ul></li>
+<li><p><strong>Consistency</strong>: An individual’s observed outcome under their actual treatment is the same as their potential outcome under that treatment.</p>
+<ul>
+<li><strong>Violation Example</strong>: If the treatment is “exercise,” it’s ill-defined. One person might jog, another might lift weights. These are different versions of the treatment, each with its own potential outcome. Consistency requires a well-defined intervention.</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+<section id="appendix-advanced-statistical-derivations" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-advanced-statistical-derivations">📚 Appendix: Advanced Statistical Derivations</h2>
+<section id="derivation-decomposing-association-into-causation-and-bias" class="level3">
+<h3 class="anchored" data-anchor-id="derivation-decomposing-association-into-causation-and-bias">Derivation: Decomposing Association into Causation and Bias</h3>
+<p><strong>Motivation</strong>: Let’s formally prove why the associational difference was so wrong in our hand-calculated example. We can decompose it into the true causal effect and bias terms.</p>
+<p>The associational difference is <span class="math inline">\(\Delta = \mathbb{E}[Y \mid A=1] - \mathbb{E}[Y \mid A=0]\)</span>.</p>
+<p>By consistency, we can write this as <span class="math inline">\(\Delta = \mathbb{E}[Y^1 \mid A=1] - \mathbb{E}[Y^0 \mid A=0]\)</span>.</p>
+<p>Now, we add and subtract <span class="math inline">\(\mathbb{E}[Y^0 \mid A=1]\)</span>:</p>
 <p><span class="math display">\[
-\hat{\beta}_1 = \frac{p(1-p)(\bar{Y}_1 - \bar{Y}_0)}{p(1-p)} = \bar{Y}_1 - \bar{Y}_0
+\Delta = \underbrace{\left( \mathbb{E}[Y^1 \mid A=1] - \mathbb{E}[Y^0 \mid A=1] \right)}_{\text{Term 1: ATT}} + \underbrace{\left( \mathbb{E}[Y^0 \mid A=1] - \mathbb{E}[Y^0 \mid A=0] \right)}_{\text{Term 2: Selection Bias}}
 \]</span></p>
-<p>This shows that the OLS estimate of the slope coefficient for a binary regressor is exactly the difference in the sample means between the group where <span class="math inline">\(Z=1\)</span> and the group where <span class="math inline">\(Z=0\)</span>.</p>
+<ul>
+<li><strong>Term 1</strong> is the <strong>Average Treatment effect on the Treated (ATT)</strong>. A real causal effect, but only for the treated subgroup.</li>
+<li><strong>Term 2</strong> is <strong>Selection Bias</strong>. It compares the baseline health (<span class="math inline">\(Y^0\)</span>) of the treated group to the baseline health of the control group. If they’re different to start, this term is non-zero.</li>
+</ul>
+</section>
+<section id="hand-calculated-example-of-the-decomposition" class="level3">
+<h3 class="anchored" data-anchor-id="hand-calculated-example-of-the-decomposition">Hand-Calculated Example of the Decomposition</h3>
+<p>Let’s use our 10-person example to calculate these terms from the “divine” table.</p>
+<ol type="1">
+<li><p><strong>Calculate ATT</strong>: We need the average causal effect just for the 5 people who got treated (Persons 3, 4, 7, 8, 10).</p>
+<ul>
+<li>Their <span class="math inline">\(Y^1\)</span> values are (6, 7, 8, 9, 10). Mean = 8.0.</li>
+<li>Their <span class="math inline">\(Y^0\)</span> values are (8, 9, 10, 11, 12). Mean = 10.0.</li>
+<li><strong>ATT</strong> = <span class="math inline">\(8.0 - 10.0 = -2.0\)</span>. (In this case, the effect is constant, so ATT = ATE).</li>
+</ul></li>
+<li><p><strong>Calculate Selection Bias</strong>: We compare the baseline health (<span class="math inline">\(Y^0\)</span>) of the treated vs.&nbsp;the untreated.</p>
+<ul>
+<li>The treated group’s <span class="math inline">\(Y^0\)</span> values are (8, 9, 10, 11, 12). Mean <span class="math inline">\(\mathbb{E}[Y^0 \mid A=1] = 10.0\)</span>.</li>
+<li>The untreated group’s <span class="math inline">\(Y^0\)</span> values are (7, 6, 4, 5, 3). Mean <span class="math inline">\(\mathbb{E}[Y^0 \mid A=0] = 5.0\)</span>.</li>
+<li><strong>Selection Bias</strong> = <span class="math inline">\(10.0 - 5.0 = +5.0\)</span>.</li>
+</ul></li>
+<li><p><strong>Put it together</strong>: <span class="math inline">\(\text{Association} = \text{ATT} + \text{Selection Bias}\)</span> <span class="math inline">\(+3.0 = -2.0 + 5.0\)</span></p></li>
+</ol>
+<p>This confirms our formula! Our observed association of +3.0 was a combination of the true causal effect of -2.0 and a large selection bias of +5.0 because the sicker group selected into treatment.</p>
 
 
+</section>
 </section>
 </section>
 
