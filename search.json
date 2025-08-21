@@ -4,12 +4,7 @@
     "href": "index.html",
     "title": "STAT 579: Applied Causal Inference",
     "section": "",
-    "text": "Access UNM Canvas",
-    "crumbs": [
-      "Home",
-      "Course Overview",
-      "Home"
-    ]
+    "text": "Access UNM Canvas"
   },
   {
     "objectID": "index.html#welcome-to-stat-579-causality-awaits.",
@@ -28,12 +23,7 @@
     "href": "index.html#course-overview",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Overview",
-    "text": "Course Overview\nThis graduate-level seminar introduces the theory and application of causal inference, with a strong emphasis on biostatistical and epidemiological contexts. The course builds from conceptual foundations and core assumptions to modern estimation methods for causal effects, emphasizing target trial emulation as a unifying framework.\nKey frameworks and tools include:\n\nPotential Outcomes Framework & SUTVA\nDirected Acyclic Graphs (DAGs)\nPropensity Scores, IPW, and Doubly Robust Methods\nInstrumental Variables\nMediation Analysis (NDE/NIE)\nMarginal Structural Models (MSMs)\nSensitivity Analysis\n\n\nInstructor’s Approach\nCausal inference is not just a toolbox—it’s a rigorous way of thinking about cause and effect. We will prioritize:\n\nPrecise causal questions (not just statistical associations).\nTransparency of assumptions (via DAGs and formal notation).\nIdentification before estimation (thinking carefully about what is learnable from data).\nCritical robustness assessment (sensitivity, replication, target trial framing).",
-    "crumbs": [
-      "Home",
-      "Course Overview",
-      "Home"
-    ]
+    "text": "Course Overview\nThis graduate-level seminar introduces the theory and application of causal inference, with a strong emphasis on biostatistical and epidemiological contexts. The course builds from conceptual foundations and core assumptions to modern estimation methods for causal effects, emphasizing target trial emulation as a unifying framework.\nKey frameworks and tools include:\n\nPotential Outcomes Framework & SUTVA\nDirected Acyclic Graphs (DAGs)\nPropensity Scores, IPW, and Doubly Robust Methods\nInstrumental Variables\nMediation Analysis (NDE/NIE)\nMarginal Structural Models (MSMs)\nSensitivity Analysis\n\n\nInstructor’s Approach\nCausal inference is not just a toolbox—it’s a rigorous way of thinking about cause and effect. We will prioritize:\n\nPrecise causal questions (not just statistical associations).\nTransparency of assumptions (via DAGs and formal notation).\nIdentification before estimation (thinking carefully about what is learnable from data).\nCritical robustness assessment (sensitivity, replication, target trial framing)."
   },
   {
     "objectID": "assignment schedule.html",
@@ -495,56 +485,104 @@
     "href": "syllabus/syllabus-final.html",
     "title": "STAT 579: Applied Causal Inference",
     "section": "",
-    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM"
+    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#instructor-logistics",
     "href": "syllabus/syllabus-final.html#instructor-logistics",
     "title": "STAT 579: Applied Causal Inference",
     "section": "",
-    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM"
+    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#course-overview",
     "href": "syllabus/syllabus-final.html#course-overview",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Overview",
-    "text": "Course Overview\nThis graduate-level seminar introduces the theory and application of causal inference, with a strong emphasis on biostatistical and epidemiological contexts. The course builds from conceptual foundations and core assumptions to modern estimation methods for causal effects, emphasizing target trial emulation as a unifying framework.\nKey frameworks and tools include:\n\nPotential Outcomes Framework & SUTVA\nDirected Acyclic Graphs (DAGs)\nPropensity Scores, IPW, and Doubly Robust Methods\nInstrumental Variables\nMediation Analysis (NDE/NIE)\nMarginal Structural Models (MSMs)\nSensitivity Analysis\n\n\nInstructor’s Approach\nCausal inference is not just a toolbox—it’s a rigorous way of thinking about cause and effect. We will prioritize:\n\nPrecise causal questions (not just statistical associations).\nTransparency of assumptions (via DAGs and formal notation).\nIdentification before estimation (thinking carefully about what is learnable from data).\nCritical robustness assessment (sensitivity, replication, target trial framing)."
+    "text": "Course Overview\nThis graduate-level seminar introduces the theory and application of causal inference, with a strong emphasis on biostatistical and epidemiological contexts. The course builds from conceptual foundations and core assumptions to modern estimation methods for causal effects, emphasizing target trial emulation as a unifying framework.\nKey frameworks and tools include:\n\nPotential Outcomes Framework & SUTVA\nDirected Acyclic Graphs (DAGs)\nPropensity Scores, IPW, and Doubly Robust Methods\nInstrumental Variables\nMediation Analysis (NDE/NIE)\nMarginal Structural Models (MSMs)\nSensitivity Analysis\n\n\nInstructor’s Approach\nCausal inference is not just a toolbox—it’s a rigorous way of thinking about cause and effect. We will prioritize:\n\nPrecise causal questions (not just statistical associations).\nTransparency of assumptions (via DAGs and formal notation).\nIdentification before estimation (thinking carefully about what is learnable from data).\nCritical robustness assessment (sensitivity, replication, target trial framing).",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#learning-objectives",
     "href": "syllabus/syllabus-final.html#learning-objectives",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Learning Objectives",
-    "text": "Learning Objectives\nBy the end of the course, students will be able to:\n\nFormulate and distinguish causal from associational questions.\nRepresent assumptions using DAGs and counterfactual notation.\nEvaluate and apply key assumptions (SUTVA, exchangeability, positivity).\nImplement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).\nDecompose effects via mediation analysis.\nConduct sensitivity analyses for unmeasured confounding.\nFrame observational studies as target trial emulations.\nCritically evaluate causal claims in the literature."
+    "text": "Learning Objectives\nBy the end of the course, students will be able to:\n\nFormulate and distinguish causal from associational questions.\nRepresent assumptions using DAGs and counterfactual notation.\nEvaluate and apply key assumptions (SUTVA, exchangeability, positivity).\nImplement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).\nDecompose effects via mediation analysis.\nConduct sensitivity analyses for unmeasured confounding.\nFrame observational studies as target trial emulations.\nCritically evaluate causal claims in the literature.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#assessment-and-grading",
     "href": "syllabus/syllabus-final.html#assessment-and-grading",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Assessment and Grading",
-    "text": "Assessment and Grading\n\n\n\n\n\n\n\n\n\nComponent\nWeight\n\\(\\qquad \\qquad \\textrm{Description}\\)\n\n\n\n\nWeekly Concept Checks\n10%\n\\(\\qquad\\) Short, low-stakes exercises on assumptions, DAGs, and interpretation.\n\n\nProblem Sets (3–4 sets)\n25%\n\\(\\qquad\\) Analytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).\n\n\nPaper Critique & Discussion Lead\n20%\n\\(\\qquad\\) Each student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.\n\n\nFinal Project\n35%\n\\(\\qquad\\) Independent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.\n\n\nFinal Presentation\n10%\n\\(\\qquad\\) 15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results."
+    "text": "Assessment and Grading\n\n\n\n\n\n\n\n\n\nComponent\nWeight\n\\(\\qquad \\qquad \\textrm{Description}\\)\n\n\n\n\nWeekly Concept Checks\n10%\n\\(\\qquad\\) Short, low-stakes exercises on assumptions, DAGs, and interpretation.\n\n\nProblem Sets (3–4 sets)\n25%\n\\(\\qquad\\) Analytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).\n\n\nPaper Critique & Discussion Lead\n20%\n\\(\\qquad\\) Each student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.\n\n\nFinal Project\n35%\n\\(\\qquad\\) Independent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.\n\n\nFinal Presentation\n10%\n\\(\\qquad\\) 15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#course-materials",
     "href": "syllabus/syllabus-final.html#course-materials",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Materials",
-    "text": "Course Materials\n\nRequired (Freely Available Online)\n\nHernán, M. A., & Robins, J. M. (2024). Causal Inference: What If. Chapman & Hall/CRC. https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/\nNeal, B. (2020). Introduction to Causal Inference. https://www.bradyneal.com/causal-inference-course\n\n\n\nRecommended\n\nCunningham, S. (2021). Causal Inference: The Mixtape. Yale University Press. URL: https://mixtape.scunning.com\nVanderWeele, T. J. (2015). Explanation in Causal Inference. Oxford University Press, 2015. (Excellent resource specifically for mediation).\nPearl J, Glymour M, Jewell NP. Causal Inference in Statistics: A Primer. Wiley, 2016. (Primer is a more accessible introduction to Pearl’s framework). Focuses heavily on DAGs and structural causal models.\nImbens GW, Rubin DB. Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction. Cambridge University Press, 2015. (Focuses heavily on the potential outcomes framework and design-based inference).\n\n\n\nSoftware\n\nRequired: R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue."
+    "text": "Course Materials\n\nRequired (Freely Available Online)\n\nHernán, M. A., & Robins, J. M. (2024). Causal Inference: What If. Chapman & Hall/CRC. https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/\nNeal, B. (2020). Introduction to Causal Inference. https://www.bradyneal.com/causal-inference-course\n\n\n\nRecommended\n\nCunningham, S. (2021). Causal Inference: The Mixtape. Yale University Press. URL: https://mixtape.scunning.com\nVanderWeele, T. J. (2015). Explanation in Causal Inference. Oxford University Press, 2015. (Excellent resource specifically for mediation).\nPearl J, Glymour M, Jewell NP. Causal Inference in Statistics: A Primer. Wiley, 2016. (Primer is a more accessible introduction to Pearl’s framework). Focuses heavily on DAGs and structural causal models.\nImbens GW, Rubin DB. Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction. Cambridge University Press, 2015. (Focuses heavily on the potential outcomes framework and design-based inference).\n\n\n\nSoftware\n\nRequired: R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#course-schedule-14-weeks",
     "href": "syllabus/syllabus-final.html#course-schedule-14-weeks",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Schedule (14 Weeks)",
-    "text": "Course Schedule (14 Weeks)\n\nPart I: Foundations\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n1\nAug 19, 21\nWhat is a Causal Effect? Counterfactuals & SUTVA\nHR Ch. 1–2; Neal Ch. 1–2\nDefine your causal question\nInstructor-led demo critique (introducing assignment expectations)\n\n\n2\nAug 26, 28\nDAGs & Assumption Transparency\nNeal Ch. 3; HR Ch. 6\nDraw a preliminary DAG\nStudent critique\n\n\n3\nSep 2, 4\nExchangeability, Positivity, Consistency\nHR Ch. 7; Neal Ch. 4\nIdentify assumptions for your DAG\nStudent critique\n\n\n4\nSep 9, 11\nConfounding, Selection, Measurement Bias\nHR Ch. 8–9\nConsider biases in your dataset\nStudent critique\n\n\n\n\n\nPart II: Estimation Methods\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n5\nSep 16, 18\nPropensity Scores (matching, weighting)\nHR Ch. 12–13; Neal Ch. 7\nSelect adjustment strategy\nStudent critique\n\n\n6\nSep 23, 25\nIPTW, MSMs, Doubly Robust Estimators\nHR Ch. 15; Neal Ch. 7.5–7.6\nEvaluate MSM relevance\nStudent critique\n\n\n7\nSep 30, Oct 2\nG-computation\nHR Ch. 20–21\nExplore g-methods for your project\nStudent critique\n\n\n8\nOct 7\nInstrumental Variables\nHR Ch. 16; Neal Ch. 9\nAssess natural experiments\nStudent critique\n\n\n\nNote: UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.\n\n\nPart III: Advanced Topics & Applications\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n9\nOct 14, 16\nEffect Modification\nHR Ch. 4–5; Neal Ch. 10\nProject Proposal Due\nStudent critique\n\n\n10\nOct 21, 23\nMediation Analysis I (Foundations)\nVanderWeele Ch. 1–2; Neal Ch. 14\nRefine DAG with mediators\nStudent critique\n\n\n11\nOct 28, 30\nMediation II & Principal Stratification\nVanderWeele Ch. 3; HR Ch. 23\n-\nStudent critique\n\n\n12\nNov 4, 6\nSensitivity Analysis\nNeal Ch. 8; HR Ch. 14\nPlan robustness checks\nStudent critique\n\n\n13\nNov 11, 13\nTarget Trial Emulation\nHR Ch. 22\nReframe project as trial\nStudent critique\n\n\n14\nNov 18, 20\nFinal Presentations\n–\nPresent findings\n–\n\n\n\nNote: Thanksgiving Break is Nov 27-28.\nFinals Week (Dec 8–13): Final Project Paper Due."
+    "text": "Course Schedule (14 Weeks)\n\nPart I: Foundations\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n1\nAug 19, 21\nWhat is a Causal Effect? Counterfactuals & SUTVA\nHR Ch. 1–2; Neal Ch. 1–2\nDefine your causal question\nInstructor-led demo critique (introducing assignment expectations)\n\n\n2\nAug 26, 28\nDAGs & Assumption Transparency\nNeal Ch. 3; HR Ch. 6\nDraw a preliminary DAG\nStudent critique\n\n\n3\nSep 2, 4\nExchangeability, Positivity, Consistency\nHR Ch. 7; Neal Ch. 4\nIdentify assumptions for your DAG\nStudent critique\n\n\n4\nSep 9, 11\nConfounding, Selection, Measurement Bias\nHR Ch. 8–9\nConsider biases in your dataset\nStudent critique\n\n\n\n\n\nPart II: Estimation Methods\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n5\nSep 16, 18\nPropensity Scores (matching, weighting)\nHR Ch. 12–13; Neal Ch. 7\nSelect adjustment strategy\nStudent critique\n\n\n6\nSep 23, 25\nIPTW, MSMs, Doubly Robust Estimators\nHR Ch. 15; Neal Ch. 7.5–7.6\nEvaluate MSM relevance\nStudent critique\n\n\n7\nSep 30, Oct 2\nG-computation\nHR Ch. 20–21\nExplore g-methods for your project\nStudent critique\n\n\n8\nOct 7\nInstrumental Variables\nHR Ch. 16; Neal Ch. 9\nAssess natural experiments\nStudent critique\n\n\n\nNote: UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.\n\n\nPart III: Advanced Topics & Applications\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n9\nOct 14, 16\nEffect Modification\nHR Ch. 4–5; Neal Ch. 10\nProject Proposal Due\nStudent critique\n\n\n10\nOct 21, 23\nMediation Analysis I (Foundations)\nVanderWeele Ch. 1–2; Neal Ch. 14\nRefine DAG with mediators\nStudent critique\n\n\n11\nOct 28, 30\nMediation II & Principal Stratification\nVanderWeele Ch. 3; HR Ch. 23\n-\nStudent critique\n\n\n12\nNov 4, 6\nSensitivity Analysis\nNeal Ch. 8; HR Ch. 14\nPlan robustness checks\nStudent critique\n\n\n13\nNov 11, 13\nTarget Trial Emulation\nHR Ch. 22\nReframe project as trial\nStudent critique\n\n\n14\nNov 18, 20\nFinal Presentations\n–\nPresent findings\n–\n\n\n\nNote: Thanksgiving Break is Nov 27-28.\nFinals Week (Dec 8–13): Final Project Paper Due.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#course-policies",
     "href": "syllabus/syllabus-final.html#course-policies",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Policies",
-    "text": "Course Policies\n\nLate Work: Deadlines are firm. Late work will be penalized 10% per day unless a prior arrangement is made for a documented emergency.\nAcademic Integrity: Collaboration on ideas is encouraged, but all submitted work must be your own.\nParticipation & Respect: Active, inclusive, and evidence-based dialogue is expected.\nAccessibility: Students requiring accommodations should contact the Accessibility Resource Center and provide the instructor with an official letter."
+    "text": "Course Policies\n\nLate Work: Deadlines are firm. Late work will be penalized 10% per day unless a prior arrangement is made for a documented emergency.\nAcademic Integrity: Collaboration on ideas is encouraged, but all submitted work must be your own.\nParticipation & Respect: Active, inclusive, and evidence-based dialogue is expected.\nAccessibility: Students requiring accommodations should contact the Accessibility Resource Center and provide the instructor with an official letter.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "lectures/week-4_potential_outcomes.html",
@@ -985,12 +1023,7 @@
     "href": "index.html#learning-objectives",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Learning Objectives",
-    "text": "Learning Objectives\nBy the end of the course, students will be able to:\n\nFormulate and distinguish causal from associational questions.\nRepresent assumptions using DAGs and counterfactual notation.\nEvaluate and apply key assumptions (SUTVA, exchangeability, positivity).\nImplement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).\nDecompose effects via mediation analysis.\nConduct sensitivity analyses for unmeasured confounding.\nFrame observational studies as target trial emulations.\nCritically evaluate causal claims in the literature.",
-    "crumbs": [
-      "Home",
-      "Course Overview",
-      "Home"
-    ]
+    "text": "Learning Objectives\nBy the end of the course, students will be able to:\n\nFormulate and distinguish causal from associational questions.\nRepresent assumptions using DAGs and counterfactual notation.\nEvaluate and apply key assumptions (SUTVA, exchangeability, positivity).\nImplement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).\nDecompose effects via mediation analysis.\nConduct sensitivity analyses for unmeasured confounding.\nFrame observational studies as target trial emulations.\nCritically evaluate causal claims in the literature."
   },
   {
     "objectID": "index.html#assessment-strategy",
@@ -2021,24 +2054,14 @@
     "href": "index.html#assessment-and-grading",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Assessment and Grading",
-    "text": "Assessment and Grading\n\n\n\n\n\n\n\n\n\nComponent\nWeight\nDescription\n\n\n\n\nWeekly Concept Checks\n10%\nShort, low-stakes exercises on assumptions, DAGs, and interpretation.\n\n\nProblem Sets (3–4 sets)\n25%\nAnalytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).\n\n\nPaper Critique & Discussion Lead\n20%\nEach student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.\n\n\nFinal Project\n35%\nIndependent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.\n\n\nFinal Presentation\n10%\n15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results.",
-    "crumbs": [
-      "Home",
-      "Course Overview",
-      "Home"
-    ]
+    "text": "Assessment and Grading\n\n\n\n\n\n\n\n\n\nComponent\nWeight\nDescription\n\n\n\n\nWeekly Concept Checks\n10%\nShort, low-stakes exercises on assumptions, DAGs, and interpretation.\n\n\nProblem Sets (3–4 sets)\n25%\nAnalytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).\n\n\nPaper Critique & Discussion Lead\n20%\nEach student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.\n\n\nFinal Project\n35%\nIndependent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.\n\n\nFinal Presentation\n10%\n15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results."
   },
   {
     "objectID": "index.html#course-materials",
     "href": "index.html#course-materials",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Materials",
-    "text": "Course Materials\n\nRequired (Freely Available Online)\n\nHernán, M. A., & Robins, J. M. (2024). Causal Inference: What If.\nNeal, B. (2020). Introduction to Causal Inference.\n\n\n\nRecommended\n\nCunningham, S. (2021). Causal Inference: The Mixtape.\nVanderWeele, T. J. (2015). Explanation in Causal Inference.\nPearl, J., Glymour, M., & Jewell, N. (2016). Causal Inference in Statistics: A Primer.\nImbens, G. W., & Rubin, D. B. (2015). Causal Inference for Statistics, Social, and Biomedical Sciences.\nMorgan, S. L., & Winship, C. (2015). Counterfactuals and Causal Inference.\n\n\n\nSoftware\n\nRequired: R and RStudio (or VS Code). Students should have intermediate R proficiency.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue, tmle3, grf, DoubleML.\n\n\n\n\nKey Notes for Students\n\nPaper Critique & Discussion Lead (20%): Each student is responsible for one session. Deliverables include:\n\nDAG reconstruction of the paper’s causal assumptions.\nAssumptions table (exchangeability, positivity, SUTVA, consistency).\nReplication/robustness plan — how would you replicate or stress-test the findings?\nDiscussion facilitation with prepared questions for peers.",
-    "crumbs": [
-      "Home",
-      "Course Overview",
-      "Home"
-    ]
+    "text": "Course Materials\n\nRequired (Freely Available Online)\n\nHernán, M. A., & Robins, J. M. (2024). Causal Inference: What If.\nNeal, B. (2020). Introduction to Causal Inference.\n\n\n\nRecommended\n\nCunningham, S. (2021). Causal Inference: The Mixtape.\nVanderWeele, T. J. (2015). Explanation in Causal Inference.\nPearl, J., Glymour, M., & Jewell, N. (2016). Causal Inference in Statistics: A Primer.\nImbens, G. W., & Rubin, D. B. (2015). Causal Inference for Statistics, Social, and Biomedical Sciences.\nMorgan, S. L., & Winship, C. (2015). Counterfactuals and Causal Inference.\n\n\n\nSoftware\n\nRequired: R and RStudio (or VS Code). Students should have intermediate R proficiency.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue, tmle3, grf, DoubleML.\n\n\n\n\nKey Notes for Students\n\nPaper Critique & Discussion Lead (20%): Each student is responsible for one session. Deliverables include:\n\nDAG reconstruction of the paper’s causal assumptions.\nAssumptions table (exchangeability, positivity, SUTVA, consistency).\nReplication/robustness plan — how would you replicate or stress-test the findings?\nDiscussion facilitation with prepared questions for peers."
   },
   {
     "objectID": "index.html#course-schedule-14-weeks",
@@ -2057,12 +2080,7 @@
     "href": "index.html#course-policies",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Policies",
-    "text": "Course Policies\n\nLate Work: Deadlines are firm; 10% penalty/day unless prior arrangement for documented emergencies.\nAcademic Integrity: Collaboration on ideas is encouraged, but submitted work must be your own.\nParticipation & Respect: Active, inclusive, evidence-based dialogue is expected.\nAccessibility: Contact Accessibility Resource Center for accommodations.",
-    "crumbs": [
-      "Home",
-      "Course Overview",
-      "Home"
-    ]
+    "text": "Course Policies\n\nLate Work: Deadlines are firm; 10% penalty/day unless prior arrangement for documented emergencies.\nAcademic Integrity: Collaboration on ideas is encouraged, but submitted work must be your own.\nParticipation & Respect: Active, inclusive, evidence-based dialogue is expected.\nAccessibility: Contact Accessibility Resource Center for accommodations."
   },
   {
     "objectID": "index.html#important-course-links",
@@ -2737,56 +2755,56 @@
   {
     "objectID": "project/project_schedule.html",
     "href": "project/project_schedule.html",
-    "title": "STAT 579: Detailed Final Project Schedule",
+    "title": "Final Project Schedule",
     "section": "",
     "text": "This document provides a detailed timeline for your final project. The goal is to break the project into manageable steps and ensure you are making steady progress. Following this schedule will help you produce a more thoughtful and rigorous final product."
   },
   {
     "objectID": "project/project_schedule.html#part-i-foundations-weeks-1-4",
     "href": "project/project_schedule.html#part-i-foundations-weeks-1-4",
-    "title": "STAT 579: Detailed Final Project Schedule",
+    "title": "Final Project Schedule",
     "section": "Part I: Foundations (Weeks 1-4)",
     "text": "Part I: Foundations (Weeks 1-4)\nThe focus of this part is on defining a strong, feasible causal question and building the theoretical foundation for your analysis.\n\nWeek 1: The Causal Question\n\nProject Focus: Brainstorming and selecting a topic.\nConnection to Course: We are defining what a causal effect is. Your task is to find one you want to estimate.\nSuggested Tasks:\n\nExplore the Data Resources page and other sources.\nDo a quick literature search to see if your potential questions are novel and feasible.\n\nDeliverable: Post 2-3 potential causal questions to the “Week 1: Project Brainstorming” discussion board on Canvas.\n\n\n\nWeek 2: The DAG\n\nProject Focus: Specifying your causal assumptions.\nConnection to Course: We are learning the language of DAGs. You will apply it directly to your research question.\nSuggested Tasks:\n\nSettle on a single causal question from your Week 1 list.\nDraw a preliminary DAG including your exposure, outcome, and key potential confounders.\nWrite a short paragraph justifying the nodes and arrows.\n\nDeliverable: Post an image of your DAG and your justification paragraph to the “Week 2: DAG Peer Feedback” discussion board. Provide thoughtful feedback on at least one classmate’s DAG.\n\n\n\nWeek 3: Assumptions\n\nProject Focus: Articulating your identification strategy.\nConnection to Course: We’re formalizing exchangeability, positivity, and consistency.\nSuggested Tasks:\n\nUsing your DAG, identify a sufficient adjustment set.\nConsider if these variables are available in your data. Note any critical unmeasured confounders.\n\nDeliverable: In a text entry, submit your identified adjustment set and a 1-2 sentence statement on the plausibility of positivity to the “Week 3: Assumptions Check-in” assignment (ungraded).\n\n\n\nWeek 4: Study Design\n\nProject Focus: Emulating the Target Trial.\nConnection to Course: We are discussing sources of bias. The target trial framework helps us proactively minimize them.\nSuggested Tasks:\n\nBegin drafting the protocol for your hypothetical target trial.\nFocus on Eligibility Criteria, Treatment Strategies, and Assignment Procedure.\n\nDeliverable: Post a 1-paragraph summary of your target trial’s eligibility criteria to the “Week 4: Target Trial Design” discussion board."
   },
   {
     "objectID": "project/project_schedule.html#part-ii-estimation-weeks-5-9",
     "href": "project/project_schedule.html#part-ii-estimation-weeks-5-9",
-    "title": "STAT 579: Detailed Final Project Schedule",
+    "title": "Final Project Schedule",
     "section": "Part II: Estimation (Weeks 5-9)",
     "text": "Part II: Estimation (Weeks 5-9)\nThe focus now shifts from theory to practice. You will begin implementing methods to estimate your causal effect.\n\nWeek 5: Propensity Scores\n\nProject Focus: Modeling the exposure.\nConnection to Course: We are learning about propensity scores (PS). You will now estimate them.\nSuggested Tasks:\n\nWrite the code to fit your PS model.\nGenerate diagnostic plots (e.g., histograms or density plots) to check for overlap.\n\nDeliverable: Submit a PDF of your PS overlap plot to the “Week 5: PS Overlap Check-in” assignment (ungraded).\n\n\n\nWeeks 6 & 7: Weighting & G-Computation\n\nProject Focus: Estimating the causal effect.\nConnection to Course: We are covering IPTW and G-computation.\nSuggested Tasks:\n\nCalculate inverse probability of treatment weights (IPTW).\nCheck for covariate balance after weighting using a Love plot from the cobalt package.\nUse the weights to get a preliminary estimate of the average treatment effect.\n\nDeliverable: Submit a PDF of your covariate balance (Love) plot to the “Week 7: Covariate Balance Check-in” assignment (ungraded).\n\n\n\nWeek 8: Instrumental Variables\n\nProject Focus: Project proposal refinement.\nConnection to Course: Understanding IV helps you think critically about confounding.\nSuggested Tasks:\n\nConsolidate your causal question, DAG, target trial protocol, and proposed methods into a single document.\nDraft all sections of the proposal.\n\nDeliverable: This is a dedicated work week. No deliverable is due as you prepare the proposal.\n\n\n\nWeek 9: Effect Modification\n\nProject Focus: Proposal Submission.\nConnection to Course: Thinking about heterogeneity may inform your project’s secondary aims.\nSuggested Tasks:\n\nFinalize and polish your proposal document.\n\nDeliverable: Submit your final Project Proposal PDF to the “Project Proposal” assignment on Canvas (Graded)."
   },
   {
     "objectID": "project/project_schedule.html#part-iii-refinement-reporting-weeks-10-14",
     "href": "project/project_schedule.html#part-iii-refinement-reporting-weeks-10-14",
-    "title": "STAT 579: Detailed Final Project Schedule",
+    "title": "Final Project Schedule",
     "section": "Part III: Refinement & Reporting (Weeks 10-14)",
     "text": "Part III: Refinement & Reporting (Weeks 10-14)\nThe final part is about ensuring your results are robust, interpreting them correctly, and communicating them effectively.\n\nWeeks 10 & 11: Mediation\n\nProject Focus: Writing the Methods and Results sections.\nConnection to Course: Thinking about mediation helps refine your causal pathways.\nSuggested Tasks:\n\nWrite a full draft of your paper’s Methods and Results sections.\nCreate your “Table 1” and all figures.\n\nDeliverable: This is a dedicated work week for writing. No deliverable is due.\n\n\n\nWeek 12: Sensitivity Analysis\n\nProject Focus: Assessing robustness.\nConnection to Course: Direct application of sensitivity analysis techniques.\nSuggested Tasks:\n\nCalculate an E-value for your primary finding.\nWrite up the sensitivity analysis portion of your paper.\n\nDeliverable: Post your main effect estimate and its corresponding E-value, along with a 1-sentence interpretation, to the “Week 12: E-value Check-in” discussion board.\n\n\n\nWeek 13: Target Trial Emulation\n\nProject Focus: Finalizing the paper and presentation.\nConnection to Course: A synthesis of the target trial framework.\nSuggested Tasks:\n\nWrite the Introduction and Discussion sections of your paper.\nCreate the slides for your final presentation and practice your timing.\n\nDeliverable: Submit your presentation slides (PDF or PPTX) to the “Week 13: Presentation Slides” assignment (ungraded) so they are ready for next week.\n\n\n\nWeek 14: Final Presentations\n\nProject Focus: Communicating your research.\nDeliverable: In-class project presentations (Graded).\n\n\n\nFinals Week\n\nProject Focus: Final revisions.\nSuggested Tasks:\n\nIncorporate feedback from your presentation.\nProofread and format your paper carefully.\n\nDeliverable: Submit your Final Paper PDF to the “Final Paper” assignment on Canvas (Graded)."
   },
   {
     "objectID": "project/data_resources.html",
     "href": "project/data_resources.html",
-    "title": "STAT 579: Data Exploration for Your Final Project",
+    "title": "Data Exploration for Your Final Project",
     "section": "",
     "text": "Welcome to the data exploration hub for your final project. Finding the right dataset is arguably the most important step in a successful causal inference study. A good dataset doesn’t just have interesting variables; it must have the right structure to allow for the emulation of a target trial.\nThis page provides you with two things: a powerful tool for searching broadly and a curated list of datasets that are known to be well-suited for this kind of work."
   },
   {
     "objectID": "project/data_resources.html#the-go-to-tool-google-dataset-search",
     "href": "project/data_resources.html#the-go-to-tool-google-dataset-search",
-    "title": "STAT 579: Data Exploration for Your Final Project",
+    "title": "Data Exploration for Your Final Project",
     "section": "The Go-To Tool: Google Dataset Search",
     "text": "The Go-To Tool: Google Dataset Search\nThink of this as Google Scholar, but for data. The Google Dataset Search engine indexes thousands of data repositories from around the world. It is the best place to start when you have a specific topic in mind.\nLaunch Google Dataset Search \n\nTips for Effective Searching\nWhen searching, use keywords that describe the structure of the data you need, not just the topic. Good causal inference requires data where time is well-defined.\n\nCombine your topic (e.g., “cancer”, “education”, “air pollution”) with structural keywords like:\n“longitudinal study”\n“cohort study”\n“prospective data”\n“panel data”\n“linked mortality data”"
   },
   {
     "objectID": "project/data_resources.html#curated-datasets-for-target-trial-emulation",
     "href": "project/data_resources.html#curated-datasets-for-target-trial-emulation",
-    "title": "STAT 579: Data Exploration for Your Final Project",
+    "title": "Data Exploration for Your Final Project",
     "section": "Curated Datasets for Target Trial Emulation",
     "text": "Curated Datasets for Target Trial Emulation\nNot all datasets are created equal. The best datasets for TTE are longitudinal cohort studies, where a group of people is enrolled at a baseline point in time and followed forward. This structure allows us to properly define eligibility, measure confounders before treatment, and follow individuals for the outcome.\nHere are a few high-quality, publicly-available datasets that are exceptionally well-suited for your project.\n\nFramingham Heart Study\n\nWhy it’s great for TTE: This is the archetypal prospective cohort study. A cohort of residents from Framingham, MA, was enrolled in 1948 and has been followed ever since. It contains detailed baseline measurements of potential confounders (e.g., smoking, cholesterol, blood pressure) and tracks cardiovascular outcomes over many decades. It’s a perfect dataset for emulating a trial of an intervention (e.g., lifestyle change, medication) on heart disease.\nAccess: Data is available to researchers through a proposal process. Visit the Framingham Heart Study Website.\n\n\n\nMIMIC-IV (Medical Information Mart for Intensive Care)\n\nWhy it’s great for TTE: This database of ICU admissions contains high-resolution, time-stamped data. This is critical because you can precisely define time zero (e.g., time of admission, time of a specific diagnosis). Treatments (medications, ventilators) and outcomes are all logged with precise timing, allowing you to emulate a trial of a clinical intervention in a critical care setting and avoid biases like immortal time bias.\nAccess: Requires completion of a human subjects research training course. Visit the MIMIC-IV Website.\n\n\n\nAdd Health (The National Longitudinal Study of Adolescent to Adult Health)\n\nWhy it’s great for TTE: This is a classic longitudinal cohort. A representative sample of U.S. adolescents was enrolled in 1994-95 and has been followed into adulthood. This is ideal for questions where the “treatment” occurs in adolescence (e.g., participation in sports, a specific educational program) and the outcome occurs in adulthood (e.g., income, health status). The baseline wave contains rich data on potential confounders (family background, school environment, etc.).\nAccess: Public-use data is readily available. Visit the Add Health Website.\n\n\n\nNHANES (National Health and Nutrition Examination Survey) with Linked Mortality Data\n\nWhy it’s great for TTE: By itself, NHANES is a series of cross-sectional surveys. However, participants can be linked to the National Death Index. This transforms the dataset into a prospective cohort study. You can use the rich survey data at baseline (diet, lab values, lifestyle) to define eligibility and measure confounders. You can then emulate a trial where the outcome is long-term mortality.\nAccess: Data is publicly available from the CDC. Visit the NHANES Website."
   },
   {
     "objectID": "project/data_resources.html#checklist-for-evaluating-a-dataset",
     "href": "project/data_resources.html#checklist-for-evaluating-a-dataset",
-    "title": "STAT 579: Data Exploration for Your Final Project",
+    "title": "Data Exploration for Your Final Project",
     "section": "✅ Checklist for Evaluating a Dataset",
     "text": "✅ Checklist for Evaluating a Dataset\nWhen you find a dataset that looks promising, use this checklist to assess its suitability for a Target Trial Emulation project.\n\nCan you define a clear time zero? Is there a variable that marks the start of follow-up for all individuals (e.g., date of enrollment, date of diagnosis, start of the school year)?\nAre confounders measured at or before time zero? The fundamental requirement for confounding control is that your covariates are measured before the treatment is assigned.\nIs the exposure/treatment variable well-defined? Can you clearly determine who is “treated” and “untreated” based on the data?\nIs the outcome measured after time zero? The dataset must have follow-up data to ascertain the outcome after the intervention.\nIs the follow-up period long enough? Is there sufficient time between treatment and outcome for a causal effect to plausibly occur?\n\nIf you can answer “yes” to these questions, you likely have a strong candidate dataset for your project."
   },
@@ -2795,14 +2813,26 @@
     "href": "project/project_guidelines.html",
     "title": "Introduction to Causal Inference",
     "section": "",
-    "text": "The final project requires you to conduct an independent research project to answer a specific causal question using observational data. The central organizing framework for this project is the emulation of a hypothetical pragmatic randomized trial (a “target trial”) that, if conducted, would answer your question of interest.\nYour primary goal is to use the methods from this course to:\n\nFormulate a precise causal question.\nSpecify the protocol of the ideal target trial.\nEmulate that trial using an appropriate observational dataset.\nEstimate the causal effect using one or more modern methods (e.g., IPW, G-computation).\nCritically assess the validity of your assumptions and the robustness of your findings.\n\nThis process forces us to be transparent about our assumptions and moves us from simply “analyzing data” to rigorously pursuing a causal truth.\n\n\n\nThe project is divided into three key deliverables, aligned with the course schedule:\n\n\n\nDeliverable\nDue Date\nWeight\n\n\n\n\nProject Proposal\nWeek 9 (Oct 14/16)\n10%\n\n\nFinal Paper\nFinals Week (Dec 8-13)\n25%\n\n\nFinal Presentation\nWeek 14 (Nov 18/20)\n10%\n\n\n\n\n\n\n\n\nThe proposal should be a 2-3 page document that clearly outlines your planned research. It serves as a blueprint to ensure your project is well-defined and feasible. It must include the following sections:\n\nCausal Question: State your research question in a single, clear sentence. It must be a causal question (i.e., involving an intervention or exposure) and not merely associational.\nScientific Background & Motivation: Briefly (1-2 paragraphs) explain the public health or scientific relevance of your question. Why is this important to know? Cite 2-3 key references.\nData Source: Identify the observational dataset you will use. Describe the source of the data (e.g., NHANES, MIMIC-IV, a dataset from your own research) and the key variables available (exposure, outcome, and confounders).\nPreliminary DAG: Draw a Directed Acyclic Graph (DAG) representing your current understanding of the causal relationships between the exposure, outcome, and key covariates. Briefly justify the arrows (or lack thereof).\nProposed Causal Method(s): State the primary causal method you intend to use to estimate the effect (e.g., propensity score weighting, g-computation). Briefly explain why this method is appropriate for your question and data structure.\n\n\n\n\nThe final paper should be written in the style of a quantitative research article (approx. 10-12 pages, double-spaced, excluding appendices). It must contain the following sections:\n\nAbstract: A concise summary ( &lt; 250 words) of your question, methods, key findings, and conclusion.\nIntroduction: Motivate the causal question with background literature and state the specific objectives of your study.\nMethods: This is the most critical section. It should be organized as follows:\n\nTarget Trial Protocol: Explicitly define the seven key components of your ideal pragmatic trial (Eligibility Criteria, Treatment Strategies, Assignment Procedure, Follow-up Period, Outcome, Causal Contrasts, and Analysis Plan).\nObservational Data & Emulation: Describe the observational data source and detail how you operationalized each component of the target trial protocol using this data. Justify any deviations from the ideal trial.\nCausal Assumptions & Identification: Present your final DAG. Formally state your key identifying assumptions (e.g., exchangeability, positivity, consistency) in the context of your specific variables. Explain which variables you must adjust for to achieve conditional exchangeability based on your DAG.\nStatistical Analysis: Describe the implementation of your chosen estimation method(s) in detail. For example, if using IPW, specify the model used to estimate propensity scores and describe the diagnostics you performed to check for positivity and covariate balance (e.g., using tables and plots from the cobalt package).\nSensitivity Analysis: State the plan for sensitivity analysis (e.g., using E-values, or re-running the analysis under different assumptions) to assess the robustness of your findings to potential unmeasured confounding.\n\nResults: Present your findings clearly.\n\nStart with a description of your study population (a “Table 1”).\nShow diagnostics (e.g., covariate balance plots before and after weighting/matching).\nReport your main causal effect estimate(s) with 95% confidence intervals.\nReport the results of your sensitivity analyses.\n\nDiscussion: Interpret your findings in the context of the existing literature. Critically evaluate the limitations of your study, focusing on the plausibility of the key causal assumptions you made. Discuss the scientific or public health implications of your results.\nConclusion: Briefly summarize your findings and their importance.\nAppendices (Optional but Recommended): Include supplementary materials like R code.\n\n\n\n\nThis will be a 12-minute presentation followed by a 3-minute Q&A, simulating a conference presentation. You should use slides to present a condensed version of your paper. The focus should be on:\n\nClearly stating the causal question.\nPresenting the DAG and defending your causal assumptions.\nBriefly explaining your target trial emulation and methods.\nPresenting and interpreting the primary causal effect estimate and sensitivity analysis.\nSuccinctly discussing the key limitations and implications.\n\n\n\n\n\nYou have the freedom to choose any topic, provided it asks a causal question and can be addressed with available observational data. I strongly encourage you to select a topic that genuinely interests you, perhaps one related to your primary field of research.\nExcellent sources for publicly available data include:\n\nClinical/Epidemiological: MIMIC-IV database (critical care), NHANES (nutrition and health), Add Health (adolescent health).\nSocial Sciences: Panel Study of Income Dynamics (PSID), National Longitudinal Surveys (NLS).\nYour Own Research: You are welcome and encouraged to use data from your own work. This project can serve as a rigorous causal analysis for one of your dissertation chapters or a manuscript.\n\nBegin searching for a research question and dataset as early as possible. The process of defining the question and understanding the data is often the most challenging part of the project."
+    "text": "The final project requires you to conduct an independent research project to answer a specific causal question using observational data. The central organizing framework for this project is the emulation of a hypothetical pragmatic randomized trial (a “target trial”) that, if conducted, would answer your question of interest.\nYour primary goal is to use the methods from this course to:\n\nFormulate a precise causal question.\nSpecify the protocol of the ideal target trial.\nEmulate that trial using an appropriate observational dataset.\nEstimate the causal effect using one or more modern methods (e.g., IPW, G-computation).\nCritically assess the validity of your assumptions and the robustness of your findings.\n\nThis process forces us to be transparent about our assumptions and moves us from simply “analyzing data” to rigorously pursuing a causal truth.\n\n\n\nThe project is divided into three key deliverables, aligned with the course schedule:\n\n\n\nDeliverable\nDue Date\nWeight\n\n\n\n\nProject Proposal\nWeek 9 (Oct 14/16)\n10%\n\n\nFinal Paper\nFinals Week (Dec 8-13)\n25%\n\n\nFinal Presentation\nWeek 14 (Nov 18/20)\n10%\n\n\n\n\n\n\n\n\nThe proposal should be a 2-3 page document that clearly outlines your planned research. It serves as a blueprint to ensure your project is well-defined and feasible. It must include the following sections:\n\nCausal Question: State your research question in a single, clear sentence. It must be a causal question (i.e., involving an intervention or exposure) and not merely associational.\nScientific Background & Motivation: Briefly (1-2 paragraphs) explain the public health or scientific relevance of your question. Why is this important to know? Cite 2-3 key references.\nData Source: Identify the observational dataset you will use. Describe the source of the data (e.g., NHANES, MIMIC-IV, a dataset from your own research) and the key variables available (exposure, outcome, and confounders).\nPreliminary DAG: Draw a Directed Acyclic Graph (DAG) representing your current understanding of the causal relationships between the exposure, outcome, and key covariates. Briefly justify the arrows (or lack thereof).\nProposed Causal Method(s): State the primary causal method you intend to use to estimate the effect (e.g., propensity score weighting, g-computation). Briefly explain why this method is appropriate for your question and data structure.\n\n\n\n\nThe final paper should be written in the style of a quantitative research article (approx. 10-12 pages, double-spaced, excluding appendices). It must contain the following sections:\n\nAbstract: A concise summary ( &lt; 250 words) of your question, methods, key findings, and conclusion.\nIntroduction: Motivate the causal question with background literature and state the specific objectives of your study.\nMethods: This is the most critical section. It should be organized as follows:\n\nTarget Trial Protocol: Explicitly define the seven key components of your ideal pragmatic trial (Eligibility Criteria, Treatment Strategies, Assignment Procedure, Follow-up Period, Outcome, Causal Contrasts, and Analysis Plan).\nObservational Data & Emulation: Describe the observational data source and detail how you operationalized each component of the target trial protocol using this data. Justify any deviations from the ideal trial.\nCausal Assumptions & Identification: Present your final DAG. Formally state your key identifying assumptions (e.g., exchangeability, positivity, consistency) in the context of your specific variables. Explain which variables you must adjust for to achieve conditional exchangeability based on your DAG.\nStatistical Analysis: Describe the implementation of your chosen estimation method(s) in detail. For example, if using IPW, specify the model used to estimate propensity scores and describe the diagnostics you performed to check for positivity and covariate balance (e.g., using tables and plots from the cobalt package).\nSensitivity Analysis: State the plan for sensitivity analysis (e.g., using E-values, or re-running the analysis under different assumptions) to assess the robustness of your findings to potential unmeasured confounding.\n\nResults: Present your findings clearly.\n\nStart with a description of your study population (a “Table 1”).\nShow diagnostics (e.g., covariate balance plots before and after weighting/matching).\nReport your main causal effect estimate(s) with 95% confidence intervals.\nReport the results of your sensitivity analyses.\n\nDiscussion: Interpret your findings in the context of the existing literature. Critically evaluate the limitations of your study, focusing on the plausibility of the key causal assumptions you made. Discuss the scientific or public health implications of your results.\nConclusion: Briefly summarize your findings and their importance.\nAppendices (Optional but Recommended): Include supplementary materials like R code.\n\n\n\n\nThis will be a 12-minute presentation followed by a 3-minute Q&A, simulating a conference presentation. You should use slides to present a condensed version of your paper. The focus should be on:\n\nClearly stating the causal question.\nPresenting the DAG and defending your causal assumptions.\nBriefly explaining your target trial emulation and methods.\nPresenting and interpreting the primary causal effect estimate and sensitivity analysis.\nSuccinctly discussing the key limitations and implications.\n\n\n\n\n\nYou have the freedom to choose any topic, provided it asks a causal question and can be addressed with available observational data. I strongly encourage you to select a topic that genuinely interests you, perhaps one related to your primary field of research.\nExcellent sources for publicly available data include:\n\nClinical/Epidemiological: MIMIC-IV database (critical care), NHANES (nutrition and health), Add Health (adolescent health).\nSocial Sciences: Panel Study of Income Dynamics (PSID), National Longitudinal Surveys (NLS).\nYour Own Research: You are welcome and encouraged to use data from your own work. This project can serve as a rigorous causal analysis for one of your dissertation chapters or a manuscript.\n\nBegin searching for a research question and dataset as early as possible. The process of defining the question and understanding the data is often the most challenging part of the project.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Projects",
+      "STAT 579: Applied Causal Inference – Final Project Guidelines"
+    ]
   },
   {
     "objectID": "project/project_guidelines.html#stat-579-applied-causal-inference-final-project-guidelines",
     "href": "project/project_guidelines.html#stat-579-applied-causal-inference-final-project-guidelines",
     "title": "Introduction to Causal Inference",
     "section": "",
-    "text": "The final project requires you to conduct an independent research project to answer a specific causal question using observational data. The central organizing framework for this project is the emulation of a hypothetical pragmatic randomized trial (a “target trial”) that, if conducted, would answer your question of interest.\nYour primary goal is to use the methods from this course to:\n\nFormulate a precise causal question.\nSpecify the protocol of the ideal target trial.\nEmulate that trial using an appropriate observational dataset.\nEstimate the causal effect using one or more modern methods (e.g., IPW, G-computation).\nCritically assess the validity of your assumptions and the robustness of your findings.\n\nThis process forces us to be transparent about our assumptions and moves us from simply “analyzing data” to rigorously pursuing a causal truth.\n\n\n\nThe project is divided into three key deliverables, aligned with the course schedule:\n\n\n\nDeliverable\nDue Date\nWeight\n\n\n\n\nProject Proposal\nWeek 9 (Oct 14/16)\n10%\n\n\nFinal Paper\nFinals Week (Dec 8-13)\n25%\n\n\nFinal Presentation\nWeek 14 (Nov 18/20)\n10%\n\n\n\n\n\n\n\n\nThe proposal should be a 2-3 page document that clearly outlines your planned research. It serves as a blueprint to ensure your project is well-defined and feasible. It must include the following sections:\n\nCausal Question: State your research question in a single, clear sentence. It must be a causal question (i.e., involving an intervention or exposure) and not merely associational.\nScientific Background & Motivation: Briefly (1-2 paragraphs) explain the public health or scientific relevance of your question. Why is this important to know? Cite 2-3 key references.\nData Source: Identify the observational dataset you will use. Describe the source of the data (e.g., NHANES, MIMIC-IV, a dataset from your own research) and the key variables available (exposure, outcome, and confounders).\nPreliminary DAG: Draw a Directed Acyclic Graph (DAG) representing your current understanding of the causal relationships between the exposure, outcome, and key covariates. Briefly justify the arrows (or lack thereof).\nProposed Causal Method(s): State the primary causal method you intend to use to estimate the effect (e.g., propensity score weighting, g-computation). Briefly explain why this method is appropriate for your question and data structure.\n\n\n\n\nThe final paper should be written in the style of a quantitative research article (approx. 10-12 pages, double-spaced, excluding appendices). It must contain the following sections:\n\nAbstract: A concise summary ( &lt; 250 words) of your question, methods, key findings, and conclusion.\nIntroduction: Motivate the causal question with background literature and state the specific objectives of your study.\nMethods: This is the most critical section. It should be organized as follows:\n\nTarget Trial Protocol: Explicitly define the seven key components of your ideal pragmatic trial (Eligibility Criteria, Treatment Strategies, Assignment Procedure, Follow-up Period, Outcome, Causal Contrasts, and Analysis Plan).\nObservational Data & Emulation: Describe the observational data source and detail how you operationalized each component of the target trial protocol using this data. Justify any deviations from the ideal trial.\nCausal Assumptions & Identification: Present your final DAG. Formally state your key identifying assumptions (e.g., exchangeability, positivity, consistency) in the context of your specific variables. Explain which variables you must adjust for to achieve conditional exchangeability based on your DAG.\nStatistical Analysis: Describe the implementation of your chosen estimation method(s) in detail. For example, if using IPW, specify the model used to estimate propensity scores and describe the diagnostics you performed to check for positivity and covariate balance (e.g., using tables and plots from the cobalt package).\nSensitivity Analysis: State the plan for sensitivity analysis (e.g., using E-values, or re-running the analysis under different assumptions) to assess the robustness of your findings to potential unmeasured confounding.\n\nResults: Present your findings clearly.\n\nStart with a description of your study population (a “Table 1”).\nShow diagnostics (e.g., covariate balance plots before and after weighting/matching).\nReport your main causal effect estimate(s) with 95% confidence intervals.\nReport the results of your sensitivity analyses.\n\nDiscussion: Interpret your findings in the context of the existing literature. Critically evaluate the limitations of your study, focusing on the plausibility of the key causal assumptions you made. Discuss the scientific or public health implications of your results.\nConclusion: Briefly summarize your findings and their importance.\nAppendices (Optional but Recommended): Include supplementary materials like R code.\n\n\n\n\nThis will be a 12-minute presentation followed by a 3-minute Q&A, simulating a conference presentation. You should use slides to present a condensed version of your paper. The focus should be on:\n\nClearly stating the causal question.\nPresenting the DAG and defending your causal assumptions.\nBriefly explaining your target trial emulation and methods.\nPresenting and interpreting the primary causal effect estimate and sensitivity analysis.\nSuccinctly discussing the key limitations and implications.\n\n\n\n\n\nYou have the freedom to choose any topic, provided it asks a causal question and can be addressed with available observational data. I strongly encourage you to select a topic that genuinely interests you, perhaps one related to your primary field of research.\nExcellent sources for publicly available data include:\n\nClinical/Epidemiological: MIMIC-IV database (critical care), NHANES (nutrition and health), Add Health (adolescent health).\nSocial Sciences: Panel Study of Income Dynamics (PSID), National Longitudinal Surveys (NLS).\nYour Own Research: You are welcome and encouraged to use data from your own work. This project can serve as a rigorous causal analysis for one of your dissertation chapters or a manuscript.\n\nBegin searching for a research question and dataset as early as possible. The process of defining the question and understanding the data is often the most challenging part of the project."
+    "text": "The final project requires you to conduct an independent research project to answer a specific causal question using observational data. The central organizing framework for this project is the emulation of a hypothetical pragmatic randomized trial (a “target trial”) that, if conducted, would answer your question of interest.\nYour primary goal is to use the methods from this course to:\n\nFormulate a precise causal question.\nSpecify the protocol of the ideal target trial.\nEmulate that trial using an appropriate observational dataset.\nEstimate the causal effect using one or more modern methods (e.g., IPW, G-computation).\nCritically assess the validity of your assumptions and the robustness of your findings.\n\nThis process forces us to be transparent about our assumptions and moves us from simply “analyzing data” to rigorously pursuing a causal truth.\n\n\n\nThe project is divided into three key deliverables, aligned with the course schedule:\n\n\n\nDeliverable\nDue Date\nWeight\n\n\n\n\nProject Proposal\nWeek 9 (Oct 14/16)\n10%\n\n\nFinal Paper\nFinals Week (Dec 8-13)\n25%\n\n\nFinal Presentation\nWeek 14 (Nov 18/20)\n10%\n\n\n\n\n\n\n\n\nThe proposal should be a 2-3 page document that clearly outlines your planned research. It serves as a blueprint to ensure your project is well-defined and feasible. It must include the following sections:\n\nCausal Question: State your research question in a single, clear sentence. It must be a causal question (i.e., involving an intervention or exposure) and not merely associational.\nScientific Background & Motivation: Briefly (1-2 paragraphs) explain the public health or scientific relevance of your question. Why is this important to know? Cite 2-3 key references.\nData Source: Identify the observational dataset you will use. Describe the source of the data (e.g., NHANES, MIMIC-IV, a dataset from your own research) and the key variables available (exposure, outcome, and confounders).\nPreliminary DAG: Draw a Directed Acyclic Graph (DAG) representing your current understanding of the causal relationships between the exposure, outcome, and key covariates. Briefly justify the arrows (or lack thereof).\nProposed Causal Method(s): State the primary causal method you intend to use to estimate the effect (e.g., propensity score weighting, g-computation). Briefly explain why this method is appropriate for your question and data structure.\n\n\n\n\nThe final paper should be written in the style of a quantitative research article (approx. 10-12 pages, double-spaced, excluding appendices). It must contain the following sections:\n\nAbstract: A concise summary ( &lt; 250 words) of your question, methods, key findings, and conclusion.\nIntroduction: Motivate the causal question with background literature and state the specific objectives of your study.\nMethods: This is the most critical section. It should be organized as follows:\n\nTarget Trial Protocol: Explicitly define the seven key components of your ideal pragmatic trial (Eligibility Criteria, Treatment Strategies, Assignment Procedure, Follow-up Period, Outcome, Causal Contrasts, and Analysis Plan).\nObservational Data & Emulation: Describe the observational data source and detail how you operationalized each component of the target trial protocol using this data. Justify any deviations from the ideal trial.\nCausal Assumptions & Identification: Present your final DAG. Formally state your key identifying assumptions (e.g., exchangeability, positivity, consistency) in the context of your specific variables. Explain which variables you must adjust for to achieve conditional exchangeability based on your DAG.\nStatistical Analysis: Describe the implementation of your chosen estimation method(s) in detail. For example, if using IPW, specify the model used to estimate propensity scores and describe the diagnostics you performed to check for positivity and covariate balance (e.g., using tables and plots from the cobalt package).\nSensitivity Analysis: State the plan for sensitivity analysis (e.g., using E-values, or re-running the analysis under different assumptions) to assess the robustness of your findings to potential unmeasured confounding.\n\nResults: Present your findings clearly.\n\nStart with a description of your study population (a “Table 1”).\nShow diagnostics (e.g., covariate balance plots before and after weighting/matching).\nReport your main causal effect estimate(s) with 95% confidence intervals.\nReport the results of your sensitivity analyses.\n\nDiscussion: Interpret your findings in the context of the existing literature. Critically evaluate the limitations of your study, focusing on the plausibility of the key causal assumptions you made. Discuss the scientific or public health implications of your results.\nConclusion: Briefly summarize your findings and their importance.\nAppendices (Optional but Recommended): Include supplementary materials like R code.\n\n\n\n\nThis will be a 12-minute presentation followed by a 3-minute Q&A, simulating a conference presentation. You should use slides to present a condensed version of your paper. The focus should be on:\n\nClearly stating the causal question.\nPresenting the DAG and defending your causal assumptions.\nBriefly explaining your target trial emulation and methods.\nPresenting and interpreting the primary causal effect estimate and sensitivity analysis.\nSuccinctly discussing the key limitations and implications.\n\n\n\n\n\nYou have the freedom to choose any topic, provided it asks a causal question and can be addressed with available observational data. I strongly encourage you to select a topic that genuinely interests you, perhaps one related to your primary field of research.\nExcellent sources for publicly available data include:\n\nClinical/Epidemiological: MIMIC-IV database (critical care), NHANES (nutrition and health), Add Health (adolescent health).\nSocial Sciences: Panel Study of Income Dynamics (PSID), National Longitudinal Surveys (NLS).\nYour Own Research: You are welcome and encouraged to use data from your own work. This project can serve as a rigorous causal analysis for one of your dissertation chapters or a manuscript.\n\nBegin searching for a research question and dataset as early as possible. The process of defining the question and understanding the data is often the most challenging part of the project.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Projects",
+      "STAT 579: Applied Causal Inference – Final Project Guidelines"
+    ]
   },
   {
     "objectID": "project/target_trial_tutorial.html",
@@ -2852,5 +2882,89 @@
     "title": "STAT 579: Applied Causal Inference",
     "section": "Recommended",
     "text": "Recommended\n\nCunningham, S. (2021). Causal Inference: The Mixtape. Yale University Press. doi: https://doi.org/10.2307/j.ctv1c29t27. URL: https://mixtape.scunning.com\nVanderWeele, T. J. (2015). Explanation in Causal Inference. Oxford University Press, 2015. (Excellent resource specifically for mediation).\nPearl J, Glymour M, Jewell NP. Causal Inference in Statistics: A Primer. Wiley, 2016. (Primer is a more accessible introduction to Pearl’s framework). Focuses heavily on DAGs and structural causal models.\nImbens GW, Rubin DB. Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction. Cambridge University Press, 2015. (Focuses heavily on the potential outcomes framework and design-based inference).\n\n@hernan2020causalwhatif\n\n\n\n\nSoftware\n\nRequired: R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue."
+  },
+  {
+    "objectID": "readings/index.html",
+    "href": "readings/index.html",
+    "title": "Readings",
+    "section": "",
+    "text": "Order By\n      Default\n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nTitle\n\n\n\nCategories\n\n\n\n\n\n\n\n\nHow to Write a Great Critique\n\n\n \n\n\n\n\n\n\nReflection 1: Template for Critiquing Weekly Papers\n\n\n \n\n\n\n\n\n\nWeekly Paper Critique Schedule\n\n\n \n\n\n\n\n\n\nNo matching items",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Readings"
+    ]
+  },
+  {
+    "objectID": "project/index.html",
+    "href": "project/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Order By\n      Default\n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nTitle\n\n\n\nCategories\n\n\n\n\n\n\n\n\nData Exploration for Your Final Project\n\n\n \n\n\n\n\n\n\nFinal Project Rubric & Instructor Checklist\n\n\n \n\n\n\n\n\n\nFinal Project Schedule\n\n\n \n\n\n\n\n\n\nSTAT 579: Applied Causal Inference\n\n\n \n\n\n\n\n\n\nTarget Trial Emulation (TTE) vs Just Analyzing the Data\n\n\n \n\n\n\n\n\n\nNo matching items",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Project"
+    ]
+  },
+  {
+    "objectID": "r_help.html",
+    "href": "r_help.html",
+    "title": "R Tutorial",
+    "section": "",
+    "text": "Welcome to the R Help and Tutorial Section. This resource organizes R help files into structured categories based on Subjects, Topics, and implementation through R Base and Packages.\n\n\n\nBelow are the available subjects and their corresponding topics. Select a topic to view detailed help pages.\n\n\n\nData Manipulation\n\nCreating Data Frames\nWorking with Factors\nSubsetting Data\nData Transformation and Wrangling\n\nData Visualization\n\nBase R Graphics\nggplot2 Basics\n\nStatistical Analysis\n\nHypothesis Testing\nRegression\nANOVA\n\nProgramming with R\n\nControl Structures\nWriting Functions\nDebugging\n\n\n\n\n\n\n\n\n\n\nBase R Plotting\nCustomizing Plots\n\n\n\n\n\nt-Test\nLinear Regression\nANOVA\n\n\n\n\n\nControl Structures\nWriting Functions\nDebugging\n\n\n\n\n\n\n\n\n\ndplyr\ntidyr\n\n\n\n\n\nggplot2 \n\n\n\n\n\nemmeans\nmultcomp\npwr\n\n\n\n\n\n\n\n\nHome\nAppendix",
+    "crumbs": [
+      "Home",
+      "R Code and Datasets",
+      "R Help"
+    ]
+  },
+  {
+    "objectID": "r_help.html#r-subjects-topics",
+    "href": "r_help.html#r-subjects-topics",
+    "title": "R Tutorial",
+    "section": "",
+    "text": "Below are the available subjects and their corresponding topics. Select a topic to view detailed help pages.\n\n\n\nData Manipulation\n\nCreating Data Frames\nWorking with Factors\nSubsetting Data\nData Transformation and Wrangling\n\nData Visualization\n\nBase R Graphics\nggplot2 Basics\n\nStatistical Analysis\n\nHypothesis Testing\nRegression\nANOVA\n\nProgramming with R\n\nControl Structures\nWriting Functions\nDebugging",
+    "crumbs": [
+      "Home",
+      "R Code and Datasets",
+      "R Help"
+    ]
+  },
+  {
+    "objectID": "r_help.html#r-base-functions",
+    "href": "r_help.html#r-base-functions",
+    "title": "R Tutorial",
+    "section": "",
+    "text": "Base R Plotting\nCustomizing Plots\n\n\n\n\n\nt-Test\nLinear Regression\nANOVA\n\n\n\n\n\nControl Structures\nWriting Functions\nDebugging",
+    "crumbs": [
+      "Home",
+      "R Code and Datasets",
+      "R Help"
+    ]
+  },
+  {
+    "objectID": "r_help.html#r-packages",
+    "href": "r_help.html#r-packages",
+    "title": "R Tutorial",
+    "section": "",
+    "text": "dplyr\ntidyr\n\n\n\n\n\nggplot2 \n\n\n\n\n\nemmeans\nmultcomp\npwr",
+    "crumbs": [
+      "Home",
+      "R Code and Datasets",
+      "R Help"
+    ]
+  },
+  {
+    "objectID": "r_help.html#navigation",
+    "href": "r_help.html#navigation",
+    "title": "R Tutorial",
+    "section": "",
+    "text": "Home\nAppendix",
+    "crumbs": [
+      "Home",
+      "R Code and Datasets",
+      "R Help"
+    ]
   }
 ]
