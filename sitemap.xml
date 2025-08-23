@@ -30,11 +30,11 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-1_what_is_causal_effect.html</loc>
-    <lastmod>2025-08-20T20:21:11.714Z</lastmod>
+    <lastmod>2025-08-23T00:06:31.713Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/syllabus/syllabus-final.html</loc>
-    <lastmod>2025-08-21T01:44:04.002Z</lastmod>
+    <lastmod>2025-08-22T20:47:40.081Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-4_potential_outcomes.html</loc>
@@ -62,7 +62,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_readings.html</loc>
-    <lastmod>2025-08-19T15:24:48.388Z</lastmod>
+    <lastmod>2025-08-23T19:58:40.223Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_project.html</loc>
@@ -74,7 +74,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/readings/weekly_paper_critique_schedule.html</loc>
-    <lastmod>2025-08-21T03:57:22.961Z</lastmod>
+    <lastmod>2025-08-23T19:58:31.001Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/readings/weekly_paper_critique_templates.html</loc>
@@ -138,7 +138,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/project_guidelines.html</loc>
-    <lastmod>2025-08-19T03:49:06.262Z</lastmod>
+    <lastmod>2025-08-23T19:55:57.219Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/project/target_trial_tutorial.html</loc>
@@ -158,6 +158,18 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/readings/how_to_read_technocal_paper.html</loc>
+    <lastmod>2025-08-21T04:28:11.987Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/slides/week-1_what_is_causal_effect.html</loc>
+    <lastmod>2025-08-21T15:35:16.557Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/readings/templates_rubric.html</loc>
+    <lastmod>2025-08-23T19:49:58.420Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/readings/how_to_read_technical_paper.html</loc>
     <lastmod>2025-08-21T04:28:11.987Z</lastmod>
   </url>
 </urlset>

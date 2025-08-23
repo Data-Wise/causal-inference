@@ -21,41 +21,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -203,35 +168,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="assets/styles/css/home.css">
 <meta property="og:title" content="Appendix – Introduction to Causal Inference">
@@ -450,11 +386,11 @@ window.Quarto = {
 <span class="menu-text">Lecture Notes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./project/index.html"> 
+    <a class="nav-link" href="./project/project_guidelines.html"> 
 <span class="menu-text">Project</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./readings/index.html"> 
+    <a class="nav-link" href="./home_readings.html"> 
 <span class="menu-text">Readings</span></a>
   </li>  
   <li class="nav-item">
@@ -484,7 +420,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Weekly Readings</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Readings &amp; Critique Hub</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -494,7 +430,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Weekly Readings</h1>
+      <h1 class="title">Readings &amp; Critique Hub</h1>
             <p class="subtitle lead">Additional Resources and Help</p>
                       </div>
   </div>
@@ -606,14 +542,17 @@ window.Quarto = {
   </div>
 </li>
           <li class="sidebar-item">
+ <span class="menu-text">Project</span>
+  </li>
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./project/index.html" class="sidebar-item-text sidebar-link">
+  <a href="./project/project_guidelines.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Project</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./readings/index.html" class="sidebar-item-text sidebar-link">
+  <a href="./home_readings.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Readings</span></a>
   </div>
 </li>
@@ -988,253 +927,160 @@ To complete assignments and analyses, you will need access to R and related tool
 <p>Your first task is the most exciting one: <strong>find a question that you are genuinely curious about.</strong> Dive into the literature in your field, explore public datasets, or consider a causal puzzle from your own research.</p>
 <ul>
 <li><a href="./project/target_trial_tutorial.html">Target Trail Emulation Tutorial</a></li>
-<li><a href="./project/project_guidelines-rev1.html">View Full Project Guidelines &amp; Deliverables</a></li>
+<li><a href="project/project_guidelines-rev1.qmd">View Full Project Guidelines &amp; Deliverables</a></li>
 <li><a href="./project/project_schedule.html">Project Schedule</a></li>
 <li><a href="./project/data_resources.html">Explore Potential Public Datasets</a> <!-- - [**Schedule a Meeting During Office Hours**](project/office_hours.html) --></li>
 </ul>
 <p>This project is a marathon, not a sprint. Start early, ask questions, and embrace the challenge of thinking causally. I look forward to seeing what you discover.</p>
-<!-- # STAT 579 • Weekly Readings & Critique Hub -->
-<p><em>Applied Causal Inference • Fall 2025</em></p>
-<p>Welcome! This is your one‑stop index for weekly papers, critique guidelines (“goodies”), reusable templates, and submission logistics. Everything below is designed to keep us assumption‑centric, identification‑first, and replication‑ready.</p>
+<p>Welcome! This page is your central navigation point for everything related to our weekly paper critiques. The ability to critically read, synthesize, and question the primary literature is the single most important skill you will develop in this course.</p>
+<!-- Our approach is built on a "Trifecta" model where we engage with each topic through three lenses: the modern textbook summary (**The Map** 🗺️), a foundational methodological paper (**The Journal** 🧭), and a real-world application (**The Expedition** ⛰️). -->
 </section>
 </section>
-<section id="quick-navigation" class="level2">
-<h2 class="anchored" data-anchor-id="quick-navigation">Quick Navigation</h2>
-<ul>
-<li><a href="#schedule-at-a-glance">Schedule at a Glance</a></li>
-<li><a href="#critique-deliverables--deadlines">Critique Deliverables &amp; Deadlines</a></li>
-<li><a href="#how-to-write-a-great-critique">How to Write a Great Critique</a></li>
-<li><a href="#templates--checklists">Templates &amp; Checklists</a></li>
-<li><a href="#starter-r-snippets">Starter R Snippets</a></li>
-<li><a href="#evaluation-rubric">Evaluation Rubric</a></li>
-<li><a href="#helpful-resources">Helpful Resources</a></li>
-<li><a href="#submission-logistics">Submission Logistics</a></li>
-</ul>
-</section>
-<section id="schedule-at-a-glance" class="level2">
-<h2 class="anchored" data-anchor-id="schedule-at-a-glance">Schedule at a Glance</h2>
-<ul>
-<li><p><strong>Week 1</strong> — Instructor demo (no submissions)</p></li>
-<li><p><strong>Week 2 — DAGs &amp; Assumption Transparency</strong> Pearl (1995) <em>Biometrika</em>. Focus: d‑separation, backdoor sets, DAG as data‑generating story.</p></li>
-<li><p><strong>Week 3 — Exchangeability, Positivity, Consistency</strong> Rubin (1974) <em>JEP</em>. Focus: <span class="math inline">\(Y^1,Y^0\)</span>, SUTVA, exchangeability vs.&nbsp;design.</p></li>
-<li><p><strong>Week 4 — Confounding, Selection, Measurement Bias</strong> Hernán, Hernández‑Díaz, &amp; Robins (2004) <em>Epidemiology</em>. Focus: collider/selection bias, loss to follow‑up as conditioning.</p></li>
-<li><p><strong>Week 5 — Propensity Scores</strong> Rosenbaum &amp; Rubin (1983) <em>Biometrika</em>. Focus: balancing score, overlap, matching/stratification/weighting.</p></li>
-<li><p><strong>Week 6 — IPTW, MSMs, DR</strong> Robins, Hernán, &amp; Brumback (2000) <em>Epidemiology</em>. Focus: time‑varying confounding, stabilized weights, pseudo‑populations.</p></li>
-<li><p><strong>Week 7 — G‑computation</strong> Snowden, Rose, &amp; Mortimer (2011) <em>AJE</em>. Focus: standardization via outcome modeling vs.&nbsp;IPTW.</p></li>
-<li><p><strong>Week 8 — Instrumental Variables</strong> Angrist, Imbens, &amp; Rubin (1996) <em>JASA</em>. Focus: IV assumptions, LATE, monotonicity, principal strata.</p></li>
-<li><p><strong>Week 9 — Effect Modification</strong> Yusuf et al.&nbsp;(1991) <em>JAMA</em>. Focus: pre‑specification, multiplicity, tests of interaction.</p></li>
-<li><p><strong>Week 10 — Mediation I (Foundations)</strong> Pearl (2014) <em>Psychological Methods</em>. Focus: CDE vs.&nbsp;NDE/NIE, mediation formulae and assumptions.</p></li>
-<li><p><strong>Week 11 — Mediation II &amp; Principal Stratification</strong> Imai, Keele, &amp; Tingley (2010) <em>Psychological Methods</em>. Focus: sequential ignorability, software, sensitivity.</p></li>
-<li><p><strong>Week 12 — Sensitivity Analysis</strong> VanderWeele &amp; Ding (2017) <em>Ann Intern Med</em>. Focus: E‑value interpretation/limits.</p></li>
-<li><p><strong>Week 13 — Target Trial Emulation</strong> Hernán &amp; Robins (2016) <em>AJE</em>. Focus: 7 components, time zero, immortal time, assignment procedure.</p></li>
-</ul>
-</section>
-<section id="critique-deliverables-deadlines" class="level2">
-<h2 class="anchored" data-anchor-id="critique-deliverables-deadlines">Critique Deliverables &amp; Deadlines</h2>
-<ul>
-<li><strong>What to submit each week (Weeks 2–13):</strong>
-<ul>
-<li><strong>2‑page critique</strong> (max 900 words, not counting figures/refs)</li>
-<li><strong>One-page DAG</strong> with minimal sufficient adjustment set(s) highlighted</li>
-<li><strong>Assumption log</strong> (bullet list) + <strong>robustness plan</strong> (≤10 bullets)</li>
-<li><strong>Reproducible appendix</strong> (R code or pseudocode) for at least one key diagnostic (balance, overlap, weight diagnostics, or a small sensitivity calc)</li>
-</ul></li>
-<li><strong>When:</strong> <strong>Mondays 11:59 pm MT</strong> (the night before our Tue class)</li>
-<li><strong>Where:</strong> Canvas → “Weekly Paper Critique — Week X”</li>
-<li><strong>Collaboration:</strong> Discuss ideas freely; write/code <strong>your own</strong> submission.</li>
-</ul>
-</section>
-<section id="how-to-write-a-great-critique" class="level2">
-<h2 class="anchored" data-anchor-id="how-to-write-a-great-critique">How to Write a Great Critique</h2>
-<p>Use our <strong>Assumption‑Centric 4‑Step</strong>:</p>
-<ul>
-<li><p><strong>Study Design → Causal Question</strong></p>
-<ul>
-<li>State the estimand (e.g., <span class="math inline">\(ATE\)</span>, <span class="math inline">\(ATT\)</span>, <span class="math inline">\(LATE\)</span>, NDE/NIE).</li>
-<li>Write the target trial version in one paragraph (eligibility, treatment strategies, time zero, outcome, follow‑up, causal contrast).</li>
-</ul></li>
-<li><p><strong>Method Selection → Identification</strong></p>
-<ul>
-<li>Draw the DAG; list <strong>minimal backdoor</strong> sets (if applicable).</li>
-<li>If IV/mediation/MSM, write assumptions explicitly (relevance, independence, exclusion; sequential ignorability; positivity; consistency; no interference).</li>
-<li>Note any <strong>positivity risks</strong> (sparse cells/extreme propensities).</li>
-</ul></li>
-<li><p><strong>Assumption Validation → Diagnostics</strong></p>
-<ul>
-<li><strong>Exchangeability:</strong> covariate balance &amp; overlap plots; placebo/negative controls (if available).</li>
-<li><strong>Positivity:</strong> common support figures, weight distribution summaries (mean/sd/skew, max).</li>
-<li><strong>Modeling:</strong> mis‑specification checks, flexible learners where helpful.</li>
-<li><strong>Sensitivity:</strong> E‑values; IV falsification tests; Rosenbaum bounds; alternative specs.</li>
-</ul></li>
-<li><p><strong>Interpretation → Uncertainty Communication</strong></p>
-<ul>
-<li>Interpret the <strong>causal</strong> estimand with audience‑appropriate language; flag scope (population, time).</li>
-<li>State where violations would flip conclusions.</li>
-<li>Offer at least <strong>one</strong> alternative method that could triangulate the main claim.</li>
-</ul></li>
-</ul>
-</section>
-<section id="templates-checklists" class="level2">
-<h2 class="anchored" data-anchor-id="templates-checklists">Templates &amp; Checklists</h2>
-<section id="a-2page-critique-template-copypaste" class="level3">
-<h3 class="anchored" data-anchor-id="a-2page-critique-template-copypaste">A) 2‑Page Critique Template (copy/paste)</h3>
-<ul>
-<li><strong>Title:</strong> Week X — [Paper Title] — STAT 579 Critique</li>
-<li><strong>Causal Question &amp; Estimand (≤120 words):</strong> …</li>
-<li><strong>Target Trial (≤120 words):</strong> Eligibility; treatment strategies; time zero; outcome; follow‑up; causal contrast.</li>
-<li><strong>DAG (figure):</strong> include nodes and arrows; highlight chosen adjustment set.</li>
-<li><strong>Identification Plan (≤150 words):</strong> backdoor/IV/mediation/MSM rationale.</li>
-<li><strong>Diagnostics (bullets):</strong> balance/overlap; weight quality; model checks.</li>
-<li><strong>Sensitivity (bullets):</strong> E‑value or alternative; what violation would overturn results.</li>
-<li><strong>Interpretation (≤120 words):</strong> estimand in plain language; limitations; - generalizability.</li>
-<li><strong>Repro Appendix:</strong> code or pseudocode for one diagnostic.</li>
-</ul>
-</section>
-<section id="b-dag-checklist-quick-yesno" class="level3">
-<h3 class="anchored" data-anchor-id="b-dag-checklist-quick-yesno">B) DAG Checklist (quick yes/no)</h3>
-<ul class="task-list">
-<li><label><input type="checkbox">All pre‑treatment common causes included?</label></li>
-<li><label><input type="checkbox">No conditioning on colliders or their descendants?</label></li>
-<li><label><input type="checkbox">If time‑varying confounders exist, did you avoid “adjusting them away” in outcome models (favor MSM/IPTW)?</label></li>
-<li><label><input type="checkbox">Is the <strong>minimal</strong> sufficient set clearly highlighted?</label></li>
-<li><label><input type="checkbox">Are measurement error nodes (if suspected) represented?</label></li>
-</ul>
-</section>
-<section id="c-positivity-weight-quality" class="level3">
-<h3 class="anchored" data-anchor-id="c-positivity-weight-quality">C) Positivity &amp; Weight Quality</h3>
-<ul>
-<li>Report: % with <span class="math inline">\(\hat e(X)\in[0.1,0.9]\)</span>; histogram/density; stabilized weight mean≈1, sd small, max reasonable (&lt;10 suggested for weekly demos).</li>
-<li>If violations: restrict support, coarsen covariates, or switch method (e.g., g‑comp/TMLE).</li>
-</ul>
-</section>
-<section id="d-sensitivity-menu-pick-1" class="level3">
-<h3 class="anchored" data-anchor-id="d-sensitivity-menu-pick-1">D) Sensitivity Menu (pick ≥1)</h3>
-<ul>
-<li><strong>E‑value</strong> for point &amp; CI limit</li>
-<li><strong>Rosenbaum bounds</strong> (binary outcomes)</li>
-<li><strong>Placebo/negative control</strong> (if plausible)</li>
-<li><strong>IV falsification</strong> (balance on observables; over‑id tests with caution)</li>
-<li><strong>Sequential ignorability stress tests</strong> (mediation)</li>
-</ul>
-</section>
-</section>
-<section id="starter-r-snippets" class="level2">
-<h2 class="anchored" data-anchor-id="starter-r-snippets">Starter R Snippets</h2>
-<p><strong>Propensity, Overlap, and Balance</strong></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WeightIt); <span class="fu">library</span>(cobalt)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">weightit</span>(A <span class="sc">~</span> X1<span class="sc">+</span>X2<span class="sc">+</span>X3, <span class="at">data=</span>df, <span class="at">method=</span><span class="st">"ps"</span>, <span class="at">estimand=</span><span class="st">"ATE"</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(<span class="fu">bal.tab</span>(w), <span class="at">thresholds=</span><span class="fu">c</span>(<span class="at">m=</span>.<span class="dv">1</span>))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(w<span class="sc">$</span>weights)  <span class="co"># check mean≈1 (if stabilized), max, skew</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>IPTW for MSM (stabilized)</strong></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>num <span class="ot">&lt;-</span> <span class="fu">glm</span>(A <span class="sc">~</span> L0, <span class="at">family=</span>binomial, <span class="at">data=</span>df)      <span class="co"># numerator model (coarse)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>den <span class="ot">&lt;-</span> <span class="fu">glm</span>(A <span class="sc">~</span> L0<span class="sc">+</span>L1, <span class="at">family=</span>binomial, <span class="at">data=</span>df)   <span class="co"># denominator model</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sw  <span class="ot">&lt;-</span> <span class="fu">predict</span>(num, <span class="at">type=</span><span class="st">"response"</span>)<span class="sc">/</span><span class="fu">predict</span>(den, <span class="at">type=</span><span class="st">"response"</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>msm <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A, <span class="at">weights=</span>sw, <span class="at">data=</span>df)            <span class="co"># simple MSM</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>G‑computation (parametric)</strong></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mY <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> X1 <span class="sc">+</span> X2, <span class="at">family=</span>gaussian, <span class="at">data=</span>df)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mu1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">predict</span>(mY, <span class="at">newdata=</span><span class="fu">transform</span>(df, <span class="at">A=</span><span class="dv">1</span>), <span class="at">type=</span><span class="st">"response"</span>))</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">predict</span>(mY, <span class="at">newdata=</span><span class="fu">transform</span>(df, <span class="at">A=</span><span class="dv">0</span>), <span class="at">type=</span><span class="st">"response"</span>))</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>ATE <span class="ot">&lt;-</span> mu1 <span class="sc">-</span> mu0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Mediation (NDE/NIE via <code>mediation</code>)</strong></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mediation)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mM <span class="ot">&lt;-</span> <span class="fu">glm</span>(M <span class="sc">~</span> A <span class="sc">+</span> X, <span class="at">family=</span>binomial, <span class="at">data=</span>df)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>mY <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> M <span class="sc">+</span> X, <span class="at">family=</span>binomial, <span class="at">data=</span>df)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>med <span class="ot">&lt;-</span> <span class="fu">mediate</span>(mM, mY, <span class="at">treat=</span><span class="st">"A"</span>, <span class="at">mediator=</span><span class="st">"M"</span>, <span class="at">sims=</span><span class="dv">1000</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(med)  <span class="co"># NDE/NIE under sequential ignorability</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>E‑value (risk ratio)</strong></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(EValue)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">evalue.RR</span>(<span class="at">est=</span><span class="fl">2.5</span>, <span class="at">lo=</span><span class="fl">1.8</span>, <span class="at">hi=</span><span class="fl">3.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="evaluation-rubric" class="level2">
-<h2 class="anchored" data-anchor-id="evaluation-rubric">Evaluation Rubric</h2>
+<section id="core-resources-navigation" class="level2">
+<h2 class="anchored" data-anchor-id="core-resources-navigation">📍 Core Resources &amp; Navigation</h2>
+<p>Everything you need for the weekly critiques can be accessed from the links below.</p>
 <table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 30%">
-<col style="width: 40%">
-<col style="width: 30%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Dimension</th>
-<th style="text-align: right;">Points</th>
-<th>What “Excellent” Looks Like</th>
+<th style="text-align: left;">Resource</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Causal question &amp; estimand clarity</td>
-<td style="text-align: right;">10</td>
-<td>Precise estimand; clean target‑trial description</td>
+<td style="text-align: left;">📜 <a href="./readings/weekly_paper_critique_schedule.html"><strong>Weekly Readings Schedule</strong></a></td>
+<td style="text-align: left;">The complete week-by-week schedule of all required readings, including mapped textbook chapters, foundational papers, and case studies.</td>
 </tr>
 <tr class="even">
-<td>DAG &amp; identification</td>
-<td style="text-align: right;">25</td>
-<td>Correct minimal set; no collider adjustment; right method for the structure</td>
+<td style="text-align: left;">🧐 <a href="./readings/how_to_read_technical_paper.html"><strong>How to Read a Technical Paper</strong></a></td>
+<td style="text-align: left;"><strong>(Start Here!)</strong> A step-by-step guide on how to approach dense, theoretical papers without getting lost in the proofs.</td>
 </tr>
 <tr class="odd">
-<td>Diagnostics</td>
-<td style="text-align: right;">20</td>
-<td>Balance, overlap, weight quality, model checks shown clearly</td>
+<td style="text-align: left;">✍️ <a href="./readings/writing_critique_guidlines.html"><strong>Writing Critique Guidelines</strong></a></td>
+<td style="text-align: left;">A detailed guide on how to structure your analysis of a foundational paper, focusing on its logic, assumptions, and impact.</td>
 </tr>
 <tr class="even">
-<td>Sensitivity</td>
-<td style="text-align: right;">15</td>
-<td>At least one appropriate sensitivity tool; interprets what strength is needed to overturn</td>
-</tr>
-<tr class="odd">
-<td>Interpretation &amp; uncertainty</td>
-<td style="text-align: right;">15</td>
-<td>Plain‑language, scope noted; limitations tied to assumptions</td>
-</tr>
-<tr class="even">
-<td>Reproducibility appendix</td>
-<td style="text-align: right;">10</td>
-<td>Runs or is plausibly runnable; shows key diagnostic</td>
-</tr>
-<tr class="odd">
-<td>Writing &amp; figures</td>
-<td style="text-align: right;">5</td>
-<td>Clear, concise, well‑labeled</td>
+<td style="text-align: left;">✅ <a href="./readings/templates_rubric.html"><strong>Templates, Checklists &amp; Rubric</strong></a></td>
+<td style="text-align: left;">Access the critique template and the official grading rubric.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Late policy:</strong> −10% per day (course policy).</p>
 </section>
-<section id="helpful-resources" class="level2">
-<h2 class="anchored" data-anchor-id="helpful-resources">Helpful Resources</h2>
-<ul>
-<li><strong>Open textbooks (free):</strong>
-<ul>
-<li>Hernán &amp; Robins, <em>What If</em> — target trials, MSM/IPTW, g‑methods</li>
-<li>Neal, <em>Introduction to Causal Inference</em> — DAGs, backdoor, IPW/DR</li>
-<li>Pearl, Glymour, &amp; Jewell, <em>Causal Inference in Statistics: A Primer</em> — backdoor/frontdoor, SCM intuition</li>
-<li>VanderWeele, <em>Explanation in Causal Inference</em> — mediation &amp; interaction (foundational)</li>
-<li>Wager, <em>STATS 361 Notes</em> — DR/AIPW, IV/LATE, heterogeneity</li>
-</ul></li>
-<li><strong>R packages:</strong> <code>dagitty</code>, <code>ggdag</code>, <code>MatchIt</code>, <code>WeightIt</code>, <code>cobalt</code>, <code>ipw</code>, <code>twang</code>, <code>ivreg</code>, <code>mediation</code>, <code>EValue</code>, <code>tmle3</code></li>
-<li><strong>Diagnostic expectations per topic:</strong>
-<ul>
-<li><strong>PS/Matching (Week 5):</strong> SMDs &lt; 0.1; overlap plots; matched sample description</li>
-<li><strong>MSM/IPTW (Week 6):</strong> stabilized weight moments; truncation sensitivity</li>
-<li><strong>G‑comp (Week 7):</strong> flexible outcome model; residual checks; alt link funcs</li>
-<li><strong>IV (Week 8):</strong> 3 assumptions stated; first‑stage strength; monotonicity rationale; LATE interpretation</li>
-<li><strong>Mediation (Weeks 10–11):</strong> explicit sequential ignorability; cross‑world cautions; sensitivity param(s)</li>
-<li><strong>Sensitivity (Week 12):</strong> E‑value prose for non‑statisticians; limits acknowledged</li>
-<li><strong>Target trial (Week 13):</strong> 7 components table; immortal time avoidance; assignment emulation plan</li>
-</ul></li>
-</ul>
-<hr>
+<section id="weekly-readings-student-leaders" class="level2">
+<h2 class="anchored" data-anchor-id="weekly-readings-student-leaders">🗓️ Weekly Readings &amp; Student Leaders</h2>
+<p>Each week, the assigned <strong>Student Leader</strong> will select <strong>one</strong> paper for the class to read and critique by Thursday of the prior week.</p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Week</th>
+<th style="text-align: left;">Topic</th>
+<th style="text-align: left;">Paper Option (Classic / Modern)</th>
+<th style="text-align: left;">Student Leader</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>3</strong></td>
+<td style="text-align: left;">Exchangeability, Positivity, Consistency</td>
+<td style="text-align: left;">Holland (1986) / Hernán (2018)</td>
+<td style="text-align: left;">GA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>4</strong></td>
+<td style="text-align: left;">Confounding &amp; Selection Bias</td>
+<td style="text-align: left;">Hernán et al.&nbsp;(2004) / Cole &amp; Hernán (2002)</td>
+<td style="text-align: left;">DB</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>5</strong></td>
+<td style="text-align: left;">Propensity Scores</td>
+<td style="text-align: left;">Rosenbaum &amp; Rubin (1983) / Austin (2011)</td>
+<td style="text-align: left;">CB</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>6</strong></td>
+<td style="text-align: left;">IPTW &amp; Marginal Structural Models</td>
+<td style="text-align: left;">Robins et al.&nbsp;(2000) / Cole &amp; Hernán (2008)</td>
+<td style="text-align: left;">CG</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>7</strong></td>
+<td style="text-align: left;">G-computation &amp; TMLE</td>
+<td style="text-align: left;">Robins (1986) / Petersen &amp; van der Laan (2014)</td>
+<td style="text-align: left;">AK</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>8</strong></td>
+<td style="text-align: left;">Instrumental Variables</td>
+<td style="text-align: left;">Angrist (1990) / Angrist &amp; Pischke (2010)</td>
+<td style="text-align: left;">EK</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>9</strong></td>
+<td style="text-align: left;">Effect Modification &amp; Interaction</td>
+<td style="text-align: left;">Rothman (1974) / VanderWeele (2019)</td>
+<td style="text-align: left;">EL</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>10</strong></td>
+<td style="text-align: left;">Mediation I (Foundations)</td>
+<td style="text-align: left;">Baron &amp; Kenny (1986) / Imai et al.&nbsp;(2010)</td>
+<td style="text-align: left;">GM</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>11</strong></td>
+<td style="text-align: left;">Mediation II &amp; Principal Stratification</td>
+<td style="text-align: left;">Robins &amp; Greenland (1992) / Daniel et al.&nbsp;(2015)</td>
+<td style="text-align: left;">KMG</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>12</strong></td>
+<td style="text-align: left;">Sensitivity Analysis</td>
+<td style="text-align: left;">Rosenbaum (1987) / VanderWeele &amp; Ding (2017)</td>
+<td style="text-align: left;">MS</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>13</strong></td>
+<td style="text-align: left;">Target Trial Emulation</td>
+<td style="text-align: left;">Robins (1987) / Hernán et al.&nbsp;(2008)</td>
+<td style="text-align: left;">HZ</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="submission-logistics" class="level2">
-<h2 class="anchored" data-anchor-id="submission-logistics">Submission Logistics</h2>
+<section id="roles-responsibilities" class="level2">
+<h2 class="anchored" data-anchor-id="roles-responsibilities">🎓 Roles &amp; Responsibilities</h2>
+<section id="discussion-leader" class="level4">
+<h4 class="anchored" data-anchor-id="discussion-leader">🧑‍🏫 Discussion Leader</h4>
+<ol type="1">
+<li><strong>Submit Paper Choice:</strong> Email your selected paper to the instructor by <strong>Thursday of the week prior</strong> to your assigned week.</li>
+<li><strong>Post Discussion Starter:</strong> Post your discussion starter in the weekly Canvas thread by <strong>Sunday at 11:59 pm</strong>. It must include:
 <ul>
-<li><strong>File names:</strong> <code>Wk##_Lastname_Firstname.pdf</code> (+ optional <code>.R</code> or <code>.qmd</code>)</li>
-<li><strong>Figures:</strong> readable in grayscale; include captions; axes labeled</li>
-<li><strong>Reproducibility:</strong> seed set; simulated data OK but mark clearly; no PHI/sensitive data</li>
-</ul>
-<blockquote class="blockquote">
-<p><strong>Next Development Phase</strong> Based on this index page, I recommend: 1. <strong>Publish a “Critique Gallery”</strong> with anonymized exemplary submissions to reinforce <em>Assumption Validation</em> and model diagnostics. 2. <strong>Add a mini “Method‑of‑the‑Week” card</strong> (e.g., IPTW pitfalls, IV monotonicity) to address the <strong>key assumption</strong> for that method with a 6‑line checklist. 3. <strong>Release a tiny Quarto template</strong> that pre‑loads the critique skeleton, DAG chunk, and R boilerplate to develop <strong>reproducible reporting skills</strong>. <em>Rationale</em>: Exemplars + just‑in‑time assumption prompts + turnkey reproducibility directly support our course outcomes on transparency, identification‑first thinking, and robust, defensible causal claims.</p>
-</blockquote>
+<li>A ~300-word summary of the paper.</li>
+<li>Your answers to the three guiding questions from the <a href="./readings/weekly_paper_critique_schedule.html">Weekly Readings Schedule</a>.</li>
+<li>A key takeaway from the paper.</li>
+</ul></li>
+<li><strong>Lead In-Class Discussion:</strong> Be prepared to lead the in-class discussion on Tuesday.</li>
+</ol>
+</section>
+<section id="all-other-students" class="level4">
+<h4 class="anchored" data-anchor-id="all-other-students">✍️ All Other Students</h4>
+<ol type="1">
+<li><strong>Read:</strong> Read the paper selected by the Discussion Leader.</li>
+<li><strong>Post Critique:</strong> Post your critique in the weekly Canvas thread by <strong>Monday at 11:59 pm</strong>. It must include:
+<ul>
+<li>A brief summary of the paper.</li>
+<li>Your answers to the three guiding questions from the <a href="./readings/weekly_paper_critique_schedule.html">Weekly Readings Schedule</a>.</li>
+<li>A personal takeaway from the paper.</li>
+</ul></li>
+</ol>
+</section>
 </section>
 </div>
 

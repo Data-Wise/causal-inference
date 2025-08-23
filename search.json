@@ -560,7 +560,7 @@
     "href": "syllabus/syllabus-final.html#course-materials",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Materials",
-    "text": "Course Materials\n\nRequired (Freely Available Online)\n\nHernán, M. A., & Robins, J. M. (2024). Causal Inference: What If. Chapman & Hall/CRC. https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/\nNeal, B. (2020). Introduction to Causal Inference. https://www.bradyneal.com/causal-inference-course\n\n\n\nRecommended\n\nCunningham, S. (2021). Causal Inference: The Mixtape. Yale University Press. URL: https://mixtape.scunning.com\nVanderWeele, T. J. (2015). Explanation in Causal Inference. Oxford University Press, 2015. (Excellent resource specifically for mediation).\nPearl J, Glymour M, Jewell NP. Causal Inference in Statistics: A Primer. Wiley, 2016. (Primer is a more accessible introduction to Pearl’s framework). Focuses heavily on DAGs and structural causal models.\nImbens GW, Rubin DB. Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction. Cambridge University Press, 2015. (Focuses heavily on the potential outcomes framework and design-based inference).\n\n\n\nSoftware\n\nRequired: R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue.",
+    "text": "Course Materials\n\nRequired (Freely Available Online)\n\nHernán, M. A., & Robins, J. M. (2024). Causal Inference: What If. Chapman & Hall/CRC. https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/\nNeal, B. (2020). Introduction to Causal Inference. https://www.bradyneal.com/causal-inference-course\n\n\n\nRecommended\n\nHuntington-Klein, N. (n.d.). The Effect: An Introduction to Research Design and Causality | The Effect. Retrieved August 22, 2025, from https://theeffectbook.net/\nBarrett, M., McGowan, L. D., & Gerke, T. (2025, August 21). Causal Inference in R. https://www.r-causal.org/\nCunningham, S. (2021). Causal Inference: The Mixtape. Yale University Press. URL: https://mixtape.scunning.com\nVanderWeele, T. J. (2015). Explanation in Causal Inference. Oxford University Press, 2015. (Excellent resource specifically for mediation).\nPearl J, Glymour M, Jewell NP. Causal Inference in Statistics: A Primer. Wiley, 2016. (Primer is a more accessible introduction to Pearl’s framework). Focuses heavily on DAGs and structural causal models.\nImbens GW, Rubin DB. Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction. Cambridge University Press, 2015. (Focuses heavily on the potential outcomes framework and design-based inference).\n\n\n\nSoftware\n\nRequired: R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue.",
     "crumbs": [
       "Home",
       "Course Overview",
@@ -1067,13 +1067,13 @@
   {
     "objectID": "home_readings.html",
     "href": "home_readings.html",
-    "title": "Weekly Readings",
+    "title": "Readings & Critique Hub",
     "section": "",
-    "text": "Applied Causal Inference • Fall 2025\nWelcome! This is your one‑stop index for weekly papers, critique guidelines (“goodies”), reusable templates, and submission logistics. Everything below is designed to keep us assumption‑centric, identification‑first, and replication‑ready.",
+    "text": "Welcome! This page is your central navigation point for everything related to our weekly paper critiques. The ability to critically read, synthesize, and question the primary literature is the single most important skill you will develop in this course.",
     "crumbs": [
       "Home",
       "Course Materials",
-      "Weekly Readings"
+      "Readings"
     ]
   },
   {
@@ -1913,21 +1913,21 @@
   {
     "objectID": "home_appendix.html",
     "href": "home_appendix.html",
-    "title": "Weekly Readings",
+    "title": "Readings & Critique Hub",
     "section": "",
-    "text": "This appendix provides supplementary resources and support materials to help you succeed in the course.\nSTAT 579 Final Project: The Target Trial Challenge\nWelcome to the capstone experience for STAT 579! This project is where theory becomes practice. You will move beyond textbook exercises to tackle a real-world causal question from start to finish, applying the rigorous principles of modern causal inference to a topic that matters to you.\nThe challenge? To design and emulate a perfect experiment—a target trial—that you wish had been conducted, using the messy, observational data we so often have in the real world.\n\nThe Guiding Philosophy: Think Like a Trialist\nAt the heart of this project is the Target Trial Emulation framework. Why? Because it provides a powerful and structured way to approach causal inference with observational data.\n\nImagine you are a detective arriving at a crime scene. You cannot rewind time to see what happened, but you can use the evidence available to reconstruct the most likely sequence of events.\nSimilarly, we cannot go back in time to run the perfect randomized trial. Instead, we act as “data detectives.” We start by carefully designing the protocol for the ideal experiment we wish we could have run. Then, we use our observational data and causal methods to reconstruct, or emulate, that trial as closely as possible. This disciplined process illuminates our assumptions and strengthens our causal claims.\n\n\n\nYour Research Journey: From Question to Conclusion 🗺️\nThis project will unfold over the semester, with milestones designed to keep you on track. Your journey will follow four key stages:\n\nFormulate a Precise Causal Question (Weeks 1-3): It all starts here. You will identify a compelling causal question and use a DAG to map out your assumptions about the world. What effect do you want to measure? What are the key players (confounders, mediators)?\nDesign the Ideal Trial (Weeks 4-8): You will write the “protocol” for your hypothetical target trial. Who would be eligible? What are the exact treatment strategies being compared? How would you measure the outcome? This blueprint is your North Star.\nEmulate the Trial & Estimate the Effect (Weeks 9-12): This is where you connect your ideal protocol to your chosen dataset. You will apply one or more of the sophisticated methods from our course—like propensity score weighting or g-computation—to estimate the causal effect, carefully checking that your assumptions (like positivity) hold.\nAssess Robustness & Interpret (Weeks 13-14): A causal claim is only as strong as its assumptions. You will conduct sensitivity analyses (e.g., calculating an E-value) to see how fragile your results are to potential unmeasured confounding. Finally, you will present your findings and their real-world implications.\n\n\n\nSkills You Will Master\nBy completing this project, you will build and demonstrate a portfolio of in-demand skills:\n\nCausal Reasoning: Translating a real-world problem into a formal causal question with a supporting DAG.\nStudy Design: Specifying and emulating a target trial protocol.\nModern Estimation: Implementing methods like IPW, matching, or g-computation in R.\nAssumption Diagnostics: Assessing positivity, covariate balance, and model fit.\nRobustness Checking: Quantifying the potential impact of unmeasured confounding through sensitivity analysis.\nScientific Communication: Presenting your causal findings clearly and honestly in both written and oral formats.\n\n\n\nLet’s Get Started\nYour first task is the most exciting one: find a question that you are genuinely curious about. Dive into the literature in your field, explore public datasets, or consider a causal puzzle from your own research.\n\nTarget Trail Emulation Tutorial\nView Full Project Guidelines & Deliverables\nProject Schedule\nExplore Potential Public Datasets \n\nThis project is a marathon, not a sprint. Start early, ask questions, and embrace the challenge of thinking causally. I look forward to seeing what you discover.\n\nApplied Causal Inference • Fall 2025\nWelcome! This is your one‑stop index for weekly papers, critique guidelines (“goodies”), reusable templates, and submission logistics. Everything below is designed to keep us assumption‑centric, identification‑first, and replication‑ready.\n\n\n\nQuick Navigation\n\nSchedule at a Glance\nCritique Deliverables & Deadlines\nHow to Write a Great Critique\nTemplates & Checklists\nStarter R Snippets\nEvaluation Rubric\nHelpful Resources\nSubmission Logistics\n\n\n\nSchedule at a Glance\n\nWeek 1 — Instructor demo (no submissions)\nWeek 2 — DAGs & Assumption Transparency Pearl (1995) Biometrika. Focus: d‑separation, backdoor sets, DAG as data‑generating story.\nWeek 3 — Exchangeability, Positivity, Consistency Rubin (1974) JEP. Focus: \\(Y^1,Y^0\\), SUTVA, exchangeability vs. design.\nWeek 4 — Confounding, Selection, Measurement Bias Hernán, Hernández‑Díaz, & Robins (2004) Epidemiology. Focus: collider/selection bias, loss to follow‑up as conditioning.\nWeek 5 — Propensity Scores Rosenbaum & Rubin (1983) Biometrika. Focus: balancing score, overlap, matching/stratification/weighting.\nWeek 6 — IPTW, MSMs, DR Robins, Hernán, & Brumback (2000) Epidemiology. Focus: time‑varying confounding, stabilized weights, pseudo‑populations.\nWeek 7 — G‑computation Snowden, Rose, & Mortimer (2011) AJE. Focus: standardization via outcome modeling vs. IPTW.\nWeek 8 — Instrumental Variables Angrist, Imbens, & Rubin (1996) JASA. Focus: IV assumptions, LATE, monotonicity, principal strata.\nWeek 9 — Effect Modification Yusuf et al. (1991) JAMA. Focus: pre‑specification, multiplicity, tests of interaction.\nWeek 10 — Mediation I (Foundations) Pearl (2014) Psychological Methods. Focus: CDE vs. NDE/NIE, mediation formulae and assumptions.\nWeek 11 — Mediation II & Principal Stratification Imai, Keele, & Tingley (2010) Psychological Methods. Focus: sequential ignorability, software, sensitivity.\nWeek 12 — Sensitivity Analysis VanderWeele & Ding (2017) Ann Intern Med. Focus: E‑value interpretation/limits.\nWeek 13 — Target Trial Emulation Hernán & Robins (2016) AJE. Focus: 7 components, time zero, immortal time, assignment procedure.\n\n\n\nCritique Deliverables & Deadlines\n\nWhat to submit each week (Weeks 2–13):\n\n2‑page critique (max 900 words, not counting figures/refs)\nOne-page DAG with minimal sufficient adjustment set(s) highlighted\nAssumption log (bullet list) + robustness plan (≤10 bullets)\nReproducible appendix (R code or pseudocode) for at least one key diagnostic (balance, overlap, weight diagnostics, or a small sensitivity calc)\n\nWhen: Mondays 11:59 pm MT (the night before our Tue class)\nWhere: Canvas → “Weekly Paper Critique — Week X”\nCollaboration: Discuss ideas freely; write/code your own submission.\n\n\n\nHow to Write a Great Critique\nUse our Assumption‑Centric 4‑Step:\n\nStudy Design → Causal Question\n\nState the estimand (e.g., \\(ATE\\), \\(ATT\\), \\(LATE\\), NDE/NIE).\nWrite the target trial version in one paragraph (eligibility, treatment strategies, time zero, outcome, follow‑up, causal contrast).\n\nMethod Selection → Identification\n\nDraw the DAG; list minimal backdoor sets (if applicable).\nIf IV/mediation/MSM, write assumptions explicitly (relevance, independence, exclusion; sequential ignorability; positivity; consistency; no interference).\nNote any positivity risks (sparse cells/extreme propensities).\n\nAssumption Validation → Diagnostics\n\nExchangeability: covariate balance & overlap plots; placebo/negative controls (if available).\nPositivity: common support figures, weight distribution summaries (mean/sd/skew, max).\nModeling: mis‑specification checks, flexible learners where helpful.\nSensitivity: E‑values; IV falsification tests; Rosenbaum bounds; alternative specs.\n\nInterpretation → Uncertainty Communication\n\nInterpret the causal estimand with audience‑appropriate language; flag scope (population, time).\nState where violations would flip conclusions.\nOffer at least one alternative method that could triangulate the main claim.\n\n\n\n\nTemplates & Checklists\n\nA) 2‑Page Critique Template (copy/paste)\n\nTitle: Week X — [Paper Title] — STAT 579 Critique\nCausal Question & Estimand (≤120 words): …\nTarget Trial (≤120 words): Eligibility; treatment strategies; time zero; outcome; follow‑up; causal contrast.\nDAG (figure): include nodes and arrows; highlight chosen adjustment set.\nIdentification Plan (≤150 words): backdoor/IV/mediation/MSM rationale.\nDiagnostics (bullets): balance/overlap; weight quality; model checks.\nSensitivity (bullets): E‑value or alternative; what violation would overturn results.\nInterpretation (≤120 words): estimand in plain language; limitations; - generalizability.\nRepro Appendix: code or pseudocode for one diagnostic.\n\n\n\nB) DAG Checklist (quick yes/no)\n\nAll pre‑treatment common causes included?\nNo conditioning on colliders or their descendants?\nIf time‑varying confounders exist, did you avoid “adjusting them away” in outcome models (favor MSM/IPTW)?\nIs the minimal sufficient set clearly highlighted?\nAre measurement error nodes (if suspected) represented?\n\n\n\nC) Positivity & Weight Quality\n\nReport: % with \\(\\hat e(X)\\in[0.1,0.9]\\); histogram/density; stabilized weight mean≈1, sd small, max reasonable (&lt;10 suggested for weekly demos).\nIf violations: restrict support, coarsen covariates, or switch method (e.g., g‑comp/TMLE).\n\n\n\nD) Sensitivity Menu (pick ≥1)\n\nE‑value for point & CI limit\nRosenbaum bounds (binary outcomes)\nPlacebo/negative control (if plausible)\nIV falsification (balance on observables; over‑id tests with caution)\nSequential ignorability stress tests (mediation)\n\n\n\n\nStarter R Snippets\nPropensity, Overlap, and Balance\nlibrary(WeightIt); library(cobalt)\nw &lt;- weightit(A ~ X1+X2+X3, data=df, method=\"ps\", estimand=\"ATE\")\nlove.plot(bal.tab(w), thresholds=c(m=.1))\nsummary(w$weights)  # check mean≈1 (if stabilized), max, skew\nIPTW for MSM (stabilized)\nnum &lt;- glm(A ~ L0, family=binomial, data=df)      # numerator model (coarse)\nden &lt;- glm(A ~ L0+L1, family=binomial, data=df)   # denominator model\nsw  &lt;- predict(num, type=\"response\")/predict(den, type=\"response\")\nmsm &lt;- glm(Y ~ A, weights=sw, data=df)            # simple MSM\nG‑computation (parametric)\nmY &lt;- glm(Y ~ A + X1 + X2, family=gaussian, data=df)\nmu1 &lt;- mean(predict(mY, newdata=transform(df, A=1), type=\"response\"))\nmu0 &lt;- mean(predict(mY, newdata=transform(df, A=0), type=\"response\"))\nATE &lt;- mu1 - mu0\nMediation (NDE/NIE via mediation)\nlibrary(mediation)\nmM &lt;- glm(M ~ A + X, family=binomial, data=df)\nmY &lt;- glm(Y ~ A + M + X, family=binomial, data=df)\nmed &lt;- mediate(mM, mY, treat=\"A\", mediator=\"M\", sims=1000)\nsummary(med)  # NDE/NIE under sequential ignorability\nE‑value (risk ratio)\nlibrary(EValue)\nevalue.RR(est=2.5, lo=1.8, hi=3.4)\n\n\nEvaluation Rubric\n\n\n\n\n\n\n\n\nDimension\nPoints\nWhat “Excellent” Looks Like\n\n\n\n\nCausal question & estimand clarity\n10\nPrecise estimand; clean target‑trial description\n\n\nDAG & identification\n25\nCorrect minimal set; no collider adjustment; right method for the structure\n\n\nDiagnostics\n20\nBalance, overlap, weight quality, model checks shown clearly\n\n\nSensitivity\n15\nAt least one appropriate sensitivity tool; interprets what strength is needed to overturn\n\n\nInterpretation & uncertainty\n15\nPlain‑language, scope noted; limitations tied to assumptions\n\n\nReproducibility appendix\n10\nRuns or is plausibly runnable; shows key diagnostic\n\n\nWriting & figures\n5\nClear, concise, well‑labeled\n\n\n\nLate policy: −10% per day (course policy).\n\n\nHelpful Resources\n\nOpen textbooks (free):\n\nHernán & Robins, What If — target trials, MSM/IPTW, g‑methods\nNeal, Introduction to Causal Inference — DAGs, backdoor, IPW/DR\nPearl, Glymour, & Jewell, Causal Inference in Statistics: A Primer — backdoor/frontdoor, SCM intuition\nVanderWeele, Explanation in Causal Inference — mediation & interaction (foundational)\nWager, STATS 361 Notes — DR/AIPW, IV/LATE, heterogeneity\n\nR packages: dagitty, ggdag, MatchIt, WeightIt, cobalt, ipw, twang, ivreg, mediation, EValue, tmle3\nDiagnostic expectations per topic:\n\nPS/Matching (Week 5): SMDs &lt; 0.1; overlap plots; matched sample description\nMSM/IPTW (Week 6): stabilized weight moments; truncation sensitivity\nG‑comp (Week 7): flexible outcome model; residual checks; alt link funcs\nIV (Week 8): 3 assumptions stated; first‑stage strength; monotonicity rationale; LATE interpretation\nMediation (Weeks 10–11): explicit sequential ignorability; cross‑world cautions; sensitivity param(s)\nSensitivity (Week 12): E‑value prose for non‑statisticians; limits acknowledged\nTarget trial (Week 13): 7 components table; immortal time avoidance; assignment emulation plan\n\n\n\n\n\nSubmission Logistics\n\nFile names: Wk##_Lastname_Firstname.pdf (+ optional .R or .qmd)\nFigures: readable in grayscale; include captions; axes labeled\nReproducibility: seed set; simulated data OK but mark clearly; no PHI/sensitive data\n\n\nNext Development Phase Based on this index page, I recommend: 1. Publish a “Critique Gallery” with anonymized exemplary submissions to reinforce Assumption Validation and model diagnostics. 2. Add a mini “Method‑of‑the‑Week” card (e.g., IPTW pitfalls, IV monotonicity) to address the key assumption for that method with a 6‑line checklist. 3. Release a tiny Quarto template that pre‑loads the critique skeleton, DAG chunk, and R boilerplate to develop reproducible reporting skills. Rationale: Exemplars + just‑in‑time assumption prompts + turnkey reproducibility directly support our course outcomes on transparency, identification‑first thinking, and robust, defensible causal claims."
+    "text": "This appendix provides supplementary resources and support materials to help you succeed in the course.\nSTAT 579 Final Project: The Target Trial Challenge\nWelcome to the capstone experience for STAT 579! This project is where theory becomes practice. You will move beyond textbook exercises to tackle a real-world causal question from start to finish, applying the rigorous principles of modern causal inference to a topic that matters to you.\nThe challenge? To design and emulate a perfect experiment—a target trial—that you wish had been conducted, using the messy, observational data we so often have in the real world.\n\nThe Guiding Philosophy: Think Like a Trialist\nAt the heart of this project is the Target Trial Emulation framework. Why? Because it provides a powerful and structured way to approach causal inference with observational data.\n\nImagine you are a detective arriving at a crime scene. You cannot rewind time to see what happened, but you can use the evidence available to reconstruct the most likely sequence of events.\nSimilarly, we cannot go back in time to run the perfect randomized trial. Instead, we act as “data detectives.” We start by carefully designing the protocol for the ideal experiment we wish we could have run. Then, we use our observational data and causal methods to reconstruct, or emulate, that trial as closely as possible. This disciplined process illuminates our assumptions and strengthens our causal claims.\n\n\n\nYour Research Journey: From Question to Conclusion 🗺️\nThis project will unfold over the semester, with milestones designed to keep you on track. Your journey will follow four key stages:\n\nFormulate a Precise Causal Question (Weeks 1-3): It all starts here. You will identify a compelling causal question and use a DAG to map out your assumptions about the world. What effect do you want to measure? What are the key players (confounders, mediators)?\nDesign the Ideal Trial (Weeks 4-8): You will write the “protocol” for your hypothetical target trial. Who would be eligible? What are the exact treatment strategies being compared? How would you measure the outcome? This blueprint is your North Star.\nEmulate the Trial & Estimate the Effect (Weeks 9-12): This is where you connect your ideal protocol to your chosen dataset. You will apply one or more of the sophisticated methods from our course—like propensity score weighting or g-computation—to estimate the causal effect, carefully checking that your assumptions (like positivity) hold.\nAssess Robustness & Interpret (Weeks 13-14): A causal claim is only as strong as its assumptions. You will conduct sensitivity analyses (e.g., calculating an E-value) to see how fragile your results are to potential unmeasured confounding. Finally, you will present your findings and their real-world implications.\n\n\n\nSkills You Will Master\nBy completing this project, you will build and demonstrate a portfolio of in-demand skills:\n\nCausal Reasoning: Translating a real-world problem into a formal causal question with a supporting DAG.\nStudy Design: Specifying and emulating a target trial protocol.\nModern Estimation: Implementing methods like IPW, matching, or g-computation in R.\nAssumption Diagnostics: Assessing positivity, covariate balance, and model fit.\nRobustness Checking: Quantifying the potential impact of unmeasured confounding through sensitivity analysis.\nScientific Communication: Presenting your causal findings clearly and honestly in both written and oral formats.\n\n\n\nLet’s Get Started\nYour first task is the most exciting one: find a question that you are genuinely curious about. Dive into the literature in your field, explore public datasets, or consider a causal puzzle from your own research.\n\nTarget Trail Emulation Tutorial\nView Full Project Guidelines & Deliverables\nProject Schedule\nExplore Potential Public Datasets \n\nThis project is a marathon, not a sprint. Start early, ask questions, and embrace the challenge of thinking causally. I look forward to seeing what you discover.\nWelcome! This page is your central navigation point for everything related to our weekly paper critiques. The ability to critically read, synthesize, and question the primary literature is the single most important skill you will develop in this course.\n\n\n\n\n📍 Core Resources & Navigation\nEverything you need for the weekly critiques can be accessed from the links below.\n\n\n\nResource\nDescription\n\n\n\n\n📜 Weekly Readings Schedule\nThe complete week-by-week schedule of all required readings, including mapped textbook chapters, foundational papers, and case studies.\n\n\n🧐 How to Read a Technical Paper\n(Start Here!) A step-by-step guide on how to approach dense, theoretical papers without getting lost in the proofs.\n\n\n✍️ Writing Critique Guidelines\nA detailed guide on how to structure your analysis of a foundational paper, focusing on its logic, assumptions, and impact.\n\n\n✅ Templates, Checklists & Rubric\nAccess the critique template and the official grading rubric.\n\n\n\n\n\n🗓️ Weekly Readings & Student Leaders\nEach week, the assigned Student Leader will select one paper for the class to read and critique by Thursday of the prior week.\n\n\n\n\n\n\n\n\n\nWeek\nTopic\nPaper Option (Classic / Modern)\nStudent Leader\n\n\n\n\n3\nExchangeability, Positivity, Consistency\nHolland (1986) / Hernán (2018)\nGA\n\n\n4\nConfounding & Selection Bias\nHernán et al. (2004) / Cole & Hernán (2002)\nDB\n\n\n5\nPropensity Scores\nRosenbaum & Rubin (1983) / Austin (2011)\nCB\n\n\n6\nIPTW & Marginal Structural Models\nRobins et al. (2000) / Cole & Hernán (2008)\nCG\n\n\n7\nG-computation & TMLE\nRobins (1986) / Petersen & van der Laan (2014)\nAK\n\n\n8\nInstrumental Variables\nAngrist (1990) / Angrist & Pischke (2010)\nEK\n\n\n9\nEffect Modification & Interaction\nRothman (1974) / VanderWeele (2019)\nEL\n\n\n10\nMediation I (Foundations)\nBaron & Kenny (1986) / Imai et al. (2010)\nGM\n\n\n11\nMediation II & Principal Stratification\nRobins & Greenland (1992) / Daniel et al. (2015)\nKMG\n\n\n12\nSensitivity Analysis\nRosenbaum (1987) / VanderWeele & Ding (2017)\nMS\n\n\n13\nTarget Trial Emulation\nRobins (1987) / Hernán et al. (2008)\nHZ\n\n\n\n\n\n🎓 Roles & Responsibilities\n\n🧑‍🏫 Discussion Leader\n\nSubmit Paper Choice: Email your selected paper to the instructor by Thursday of the week prior to your assigned week.\nPost Discussion Starter: Post your discussion starter in the weekly Canvas thread by Sunday at 11:59 pm. It must include:\n\nA ~300-word summary of the paper.\nYour answers to the three guiding questions from the Weekly Readings Schedule.\nA key takeaway from the paper.\n\nLead In-Class Discussion: Be prepared to lead the in-class discussion on Tuesday.\n\n\n\n✍️ All Other Students\n\nRead: Read the paper selected by the Discussion Leader.\nPost Critique: Post your critique in the weekly Canvas thread by Monday at 11:59 pm. It must include:\n\nA brief summary of the paper.\nYour answers to the three guiding questions from the Weekly Readings Schedule.\nA personal takeaway from the paper."
   },
   {
     "objectID": "home_appendix.html#r-help-and-documentation",
     "href": "home_appendix.html#r-help-and-documentation",
-    "title": "Weekly Readings",
+    "title": "Readings & Critique Hub",
     "section": "R Help and Documentation",
     "text": "R Help and Documentation\nFor the whole list of R functions and packages, refer to the R help Page for the Course.\n\nR Functions and Packages Provided by the Instructor\nThe following resources will provide you with a comprehensive understanding of R functions and packages used in the course.\n\nR Subjects and Topics:\n\nSubjects and Topics\nR Base Functions\nR Packages\n\nOnline R Help:\n\nCRAN R Documentation\nRStudio Cheat Sheets\n\nVideo Tutorials:\n\nR Programming for Beginners (YouTube)"
   },
   {
     "objectID": "home_appendix.html#software-tools-and-resources",
     "href": "home_appendix.html#software-tools-and-resources",
-    "title": "Weekly Readings",
+    "title": "Readings & Critique Hub",
     "section": "Software Tools and Resources",
     "text": "Software Tools and Resources\nTo complete assignments and analyses, you will need access to R and related tools.\n\nR Installation: Download R\n\nRStudio IDE: Download RStudio\n\nVS Code IDE: Download VS Code\nPositron IDE: Positron\n\n\nAdditional Resources\n\nQuarto Documentation: Learn Quarto\nR for Data Science: R4DS Book\nOnline R Help:\n\nCRAN R Documentation\nRStudio Cheat Sheets\n\nVideo Tutorials:\n\nR Programming for Beginners (YouTube)\n\n\n\n\nTBA\n\nThis page provides a detailed week-by-week schedule for STAT 579. Readings should be completed before the first class of the week.\n\nHR: Hernán, M. A., & Robins, J. M. (2024). Causal Inference: What If.\nNeal: Neal, B. (2020). Introduction to Causal Inference.\nCunningham: Cunningham, S. (2021). Causal Inference: The Mixtape.\nVanderWeele: VanderWeele, T. J. (2015). Explanation in Causal Inference.\n\n\n\nPart I: Foundations of Causal Inference\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nOptional Reading (Cunningham)\nProject Connection\n\n\n\n\n1\nAug 19, 21\nWhat is a Causal Effect?\nHR: Ch. 1–2; Neal: Ch. 1–2\nCh. 2: Potential Outcomes\nDefine your causal question.\n\n\n2\nAug 26, 28\nDAGs & Assumption Transparency\nNeal: Ch. 3; HR: Ch. 6\nCh. 3: Directed Acyclic Graphs\nDraw a preliminary DAG.\n\n\n3\nSep 2, 4\nExchangeability, Positivity\nHR: Ch. 7; Neal: Ch. 4\nCh. 4: Regression\nIdentify assumptions for your causal model.\n\n\n4\nSep 9, 11\nBias (Confounding, Selection)\nHR: Ch. 8–9\n-\nConsider biases in your dataset.\n\n\n\n\n\nPart II: Estimation Methods\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nOptional Reading (Cunningham)\nProject Connection\n\n\n\n\n5\nSep 16, 18\nPropensity Scores\nHR: Ch. 12–13; Neal: Ch. 7\nCh. 5: Matching & Subclassification\nSelect adjustment strategy.\n\n\n6\nSep 23, 25\nIPTW & MSMs\nHR: Ch. 15; Neal: Ch. 7.5–7.6\n-\nEvaluate MSM relevance.\n\n\n7\nSep 30, Oct 2\nG-computation\nHR: Ch. 20–21\n-\nExplore g-methods.\n\n\n8\nOct 7\nInstrumental Variables\nHR: Ch. 16; Neal: Ch. 9\nCh. 8: Instrumental Variables\nAssess natural experiments.\n\n\n\nNote: UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.\n\n\nPart III: Advanced Topics & Applications\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Connection\n\n\n\n\n9\nOct 14, 16\nEffect Modification\nHR: Ch. 4–5; Neal: Ch. 10\nMilestone: Project Proposal Due.\n\n\n10\nOct 21, 23\nMediation I (Foundations)\nVanderWeele: Ch. 1–2; Neal: Ch. 14\nRefine DAG with mediators.\n\n\n11\nOct 28, 30\nMediation II (Application)\nVanderWeele: Ch. 3; HR: Ch. 23\n-\n\n\n12\nNov 4, 6\nSensitivity Analysis\nNeal: Ch. 8; HR: Ch. 14\nPlan robustness checks.\n\n\n13\nNov 11, 13\nTarget Trial Emulation\nHR: Ch. 22\nReframe project as a trial.\n\n\n14\nNov 18, 20\nFinal Presentations\n-\nPresent your findings.\n\n\n\nNote: Thanksgiving Break is Nov 27-28.\n\nFinals Week (Dec 8–13): Final Project Paper Due."
   },
@@ -1997,9 +1997,9 @@
   {
     "objectID": "home_appendix.html#stat-579-final-project-the-target-trial-challenge",
     "href": "home_appendix.html#stat-579-final-project-the-target-trial-challenge",
-    "title": "Weekly Readings",
+    "title": "Readings & Critique Hub",
     "section": "STAT 579 Final Project: The Target Trial Challenge",
-    "text": "STAT 579 Final Project: The Target Trial Challenge\nWelcome to the capstone experience for STAT 579! This project is where theory becomes practice. You will move beyond textbook exercises to tackle a real-world causal question from start to finish, applying the rigorous principles of modern causal inference to a topic that matters to you.\nThe challenge? To design and emulate a perfect experiment—a target trial—that you wish had been conducted, using the messy, observational data we so often have in the real world.\n\nThe Guiding Philosophy: Think Like a Trialist\nAt the heart of this project is the Target Trial Emulation framework. Why? Because it provides a powerful and structured way to approach causal inference with observational data.\n\nImagine you are a detective arriving at a crime scene. You cannot rewind time to see what happened, but you can use the evidence available to reconstruct the most likely sequence of events.\nSimilarly, we cannot go back in time to run the perfect randomized trial. Instead, we act as “data detectives.” We start by carefully designing the protocol for the ideal experiment we wish we could have run. Then, we use our observational data and causal methods to reconstruct, or emulate, that trial as closely as possible. This disciplined process illuminates our assumptions and strengthens our causal claims.\n\n\n\nYour Research Journey: From Question to Conclusion 🗺️\nThis project will unfold over the semester, with milestones designed to keep you on track. Your journey will follow four key stages:\n\nFormulate a Precise Causal Question (Weeks 1-3): It all starts here. You will identify a compelling causal question and use a DAG to map out your assumptions about the world. What effect do you want to measure? What are the key players (confounders, mediators)?\nDesign the Ideal Trial (Weeks 4-8): You will write the “protocol” for your hypothetical target trial. Who would be eligible? What are the exact treatment strategies being compared? How would you measure the outcome? This blueprint is your North Star.\nEmulate the Trial & Estimate the Effect (Weeks 9-12): This is where you connect your ideal protocol to your chosen dataset. You will apply one or more of the sophisticated methods from our course—like propensity score weighting or g-computation—to estimate the causal effect, carefully checking that your assumptions (like positivity) hold.\nAssess Robustness & Interpret (Weeks 13-14): A causal claim is only as strong as its assumptions. You will conduct sensitivity analyses (e.g., calculating an E-value) to see how fragile your results are to potential unmeasured confounding. Finally, you will present your findings and their real-world implications.\n\n\n\nSkills You Will Master\nBy completing this project, you will build and demonstrate a portfolio of in-demand skills:\n\nCausal Reasoning: Translating a real-world problem into a formal causal question with a supporting DAG.\nStudy Design: Specifying and emulating a target trial protocol.\nModern Estimation: Implementing methods like IPW, matching, or g-computation in R.\nAssumption Diagnostics: Assessing positivity, covariate balance, and model fit.\nRobustness Checking: Quantifying the potential impact of unmeasured confounding through sensitivity analysis.\nScientific Communication: Presenting your causal findings clearly and honestly in both written and oral formats.\n\n\n\nLet’s Get Started\nYour first task is the most exciting one: find a question that you are genuinely curious about. Dive into the literature in your field, explore public datasets, or consider a causal puzzle from your own research.\n\nTarget Trail Emulation Tutorial\nView Full Project Guidelines & Deliverables\nProject Schedule\nExplore Potential Public Datasets \n\nThis project is a marathon, not a sprint. Start early, ask questions, and embrace the challenge of thinking causally. I look forward to seeing what you discover.\n\nApplied Causal Inference • Fall 2025\nWelcome! This is your one‑stop index for weekly papers, critique guidelines (“goodies”), reusable templates, and submission logistics. Everything below is designed to keep us assumption‑centric, identification‑first, and replication‑ready."
+    "text": "STAT 579 Final Project: The Target Trial Challenge\nWelcome to the capstone experience for STAT 579! This project is where theory becomes practice. You will move beyond textbook exercises to tackle a real-world causal question from start to finish, applying the rigorous principles of modern causal inference to a topic that matters to you.\nThe challenge? To design and emulate a perfect experiment—a target trial—that you wish had been conducted, using the messy, observational data we so often have in the real world.\n\nThe Guiding Philosophy: Think Like a Trialist\nAt the heart of this project is the Target Trial Emulation framework. Why? Because it provides a powerful and structured way to approach causal inference with observational data.\n\nImagine you are a detective arriving at a crime scene. You cannot rewind time to see what happened, but you can use the evidence available to reconstruct the most likely sequence of events.\nSimilarly, we cannot go back in time to run the perfect randomized trial. Instead, we act as “data detectives.” We start by carefully designing the protocol for the ideal experiment we wish we could have run. Then, we use our observational data and causal methods to reconstruct, or emulate, that trial as closely as possible. This disciplined process illuminates our assumptions and strengthens our causal claims.\n\n\n\nYour Research Journey: From Question to Conclusion 🗺️\nThis project will unfold over the semester, with milestones designed to keep you on track. Your journey will follow four key stages:\n\nFormulate a Precise Causal Question (Weeks 1-3): It all starts here. You will identify a compelling causal question and use a DAG to map out your assumptions about the world. What effect do you want to measure? What are the key players (confounders, mediators)?\nDesign the Ideal Trial (Weeks 4-8): You will write the “protocol” for your hypothetical target trial. Who would be eligible? What are the exact treatment strategies being compared? How would you measure the outcome? This blueprint is your North Star.\nEmulate the Trial & Estimate the Effect (Weeks 9-12): This is where you connect your ideal protocol to your chosen dataset. You will apply one or more of the sophisticated methods from our course—like propensity score weighting or g-computation—to estimate the causal effect, carefully checking that your assumptions (like positivity) hold.\nAssess Robustness & Interpret (Weeks 13-14): A causal claim is only as strong as its assumptions. You will conduct sensitivity analyses (e.g., calculating an E-value) to see how fragile your results are to potential unmeasured confounding. Finally, you will present your findings and their real-world implications.\n\n\n\nSkills You Will Master\nBy completing this project, you will build and demonstrate a portfolio of in-demand skills:\n\nCausal Reasoning: Translating a real-world problem into a formal causal question with a supporting DAG.\nStudy Design: Specifying and emulating a target trial protocol.\nModern Estimation: Implementing methods like IPW, matching, or g-computation in R.\nAssumption Diagnostics: Assessing positivity, covariate balance, and model fit.\nRobustness Checking: Quantifying the potential impact of unmeasured confounding through sensitivity analysis.\nScientific Communication: Presenting your causal findings clearly and honestly in both written and oral formats.\n\n\n\nLet’s Get Started\nYour first task is the most exciting one: find a question that you are genuinely curious about. Dive into the literature in your field, explore public datasets, or consider a causal puzzle from your own research.\n\nTarget Trail Emulation Tutorial\nView Full Project Guidelines & Deliverables\nProject Schedule\nExplore Potential Public Datasets \n\nThis project is a marathon, not a sprint. Start early, ask questions, and embrace the challenge of thinking causally. I look forward to seeing what you discover.\nWelcome! This page is your central navigation point for everything related to our weekly paper critiques. The ability to critically read, synthesize, and question the primary literature is the single most important skill you will develop in this course."
   },
   {
     "objectID": "home_appendix.html#quick-navigation",
@@ -2841,14 +2841,13 @@
   {
     "objectID": "project/project_guidelines.html",
     "href": "project/project_guidelines.html",
-    "title": "Introduction to Causal Inference",
+    "title": "Overall Project Guidelines",
     "section": "",
-    "text": "The final project requires you to conduct an independent research project to answer a specific causal question using observational data. The central organizing framework for this project is the emulation of a hypothetical pragmatic randomized trial (a “target trial”) that, if conducted, would answer your question of interest.\nYour primary goal is to use the methods from this course to:\n\nFormulate a precise causal question.\nSpecify the protocol of the ideal target trial.\nEmulate that trial using an appropriate observational dataset.\nEstimate the causal effect using one or more modern methods (e.g., IPW, G-computation).\nCritically assess the validity of your assumptions and the robustness of your findings.\n\nThis process forces us to be transparent about our assumptions and moves us from simply “analyzing data” to rigorously pursuing a causal truth.\n\n\n\nThe project is divided into three key deliverables, aligned with the course schedule:\n\n\n\nDeliverable\nDue Date\nWeight\n\n\n\n\nProject Proposal\nWeek 9 (Oct 14/16)\n10%\n\n\nFinal Paper\nFinals Week (Dec 8-13)\n25%\n\n\nFinal Presentation\nWeek 14 (Nov 18/20)\n10%\n\n\n\n\n\n\n\n\nThe proposal should be a 2-3 page document that clearly outlines your planned research. It serves as a blueprint to ensure your project is well-defined and feasible. It must include the following sections:\n\nCausal Question: State your research question in a single, clear sentence. It must be a causal question (i.e., involving an intervention or exposure) and not merely associational.\nScientific Background & Motivation: Briefly (1-2 paragraphs) explain the public health or scientific relevance of your question. Why is this important to know? Cite 2-3 key references.\nData Source: Identify the observational dataset you will use. Describe the source of the data (e.g., NHANES, MIMIC-IV, a dataset from your own research) and the key variables available (exposure, outcome, and confounders).\nPreliminary DAG: Draw a Directed Acyclic Graph (DAG) representing your current understanding of the causal relationships between the exposure, outcome, and key covariates. Briefly justify the arrows (or lack thereof).\nProposed Causal Method(s): State the primary causal method you intend to use to estimate the effect (e.g., propensity score weighting, g-computation). Briefly explain why this method is appropriate for your question and data structure.\n\n\n\n\nThe final paper should be written in the style of a quantitative research article (approx. 10-12 pages, double-spaced, excluding appendices). It must contain the following sections:\n\nAbstract: A concise summary ( &lt; 250 words) of your question, methods, key findings, and conclusion.\nIntroduction: Motivate the causal question with background literature and state the specific objectives of your study.\nMethods: This is the most critical section. It should be organized as follows:\n\nTarget Trial Protocol: Explicitly define the seven key components of your ideal pragmatic trial (Eligibility Criteria, Treatment Strategies, Assignment Procedure, Follow-up Period, Outcome, Causal Contrasts, and Analysis Plan).\nObservational Data & Emulation: Describe the observational data source and detail how you operationalized each component of the target trial protocol using this data. Justify any deviations from the ideal trial.\nCausal Assumptions & Identification: Present your final DAG. Formally state your key identifying assumptions (e.g., exchangeability, positivity, consistency) in the context of your specific variables. Explain which variables you must adjust for to achieve conditional exchangeability based on your DAG.\nStatistical Analysis: Describe the implementation of your chosen estimation method(s) in detail. For example, if using IPW, specify the model used to estimate propensity scores and describe the diagnostics you performed to check for positivity and covariate balance (e.g., using tables and plots from the cobalt package).\nSensitivity Analysis: State the plan for sensitivity analysis (e.g., using E-values, or re-running the analysis under different assumptions) to assess the robustness of your findings to potential unmeasured confounding.\n\nResults: Present your findings clearly.\n\nStart with a description of your study population (a “Table 1”).\nShow diagnostics (e.g., covariate balance plots before and after weighting/matching).\nReport your main causal effect estimate(s) with 95% confidence intervals.\nReport the results of your sensitivity analyses.\n\nDiscussion: Interpret your findings in the context of the existing literature. Critically evaluate the limitations of your study, focusing on the plausibility of the key causal assumptions you made. Discuss the scientific or public health implications of your results.\nConclusion: Briefly summarize your findings and their importance.\nAppendices (Optional but Recommended): Include supplementary materials like R code.\n\n\n\n\nThis will be a 12-minute presentation followed by a 3-minute Q&A, simulating a conference presentation. You should use slides to present a condensed version of your paper. The focus should be on:\n\nClearly stating the causal question.\nPresenting the DAG and defending your causal assumptions.\nBriefly explaining your target trial emulation and methods.\nPresenting and interpreting the primary causal effect estimate and sensitivity analysis.\nSuccinctly discussing the key limitations and implications.\n\n\n\n\n\nYou have the freedom to choose any topic, provided it asks a causal question and can be addressed with available observational data. I strongly encourage you to select a topic that genuinely interests you, perhaps one related to your primary field of research.\nExcellent sources for publicly available data include:\n\nClinical/Epidemiological: MIMIC-IV database (critical care), NHANES (nutrition and health), Add Health (adolescent health).\nSocial Sciences: Panel Study of Income Dynamics (PSID), National Longitudinal Surveys (NLS).\nYour Own Research: You are welcome and encouraged to use data from your own work. This project can serve as a rigorous causal analysis for one of your dissertation chapters or a manuscript.\n\nBegin searching for a research question and dataset as early as possible. The process of defining the question and understanding the data is often the most challenging part of the project.",
+    "text": "Framed as a Target Trial Emulation",
     "crumbs": [
       "Home",
       "Course Materials",
-      "Projects",
-      "STAT 579: Applied Causal Inference – Final Project Guidelines"
+      "Project"
     ]
   },
   {
@@ -2918,12 +2917,7 @@
     "href": "readings/index.html",
     "title": "Readings",
     "section": "",
-    "text": "Order By\n      Default\n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nTitle\n\n\n\nCategories\n\n\n\n\n\n\n\n\nHow To Read a Statistical Paper\n\n\n \n\n\n\n\n\n\nHow to Write a Great Critique\n\n\n \n\n\n\n\n\n\nWeekly Paper Critique Schedule\n\n\n \n\n\n\n\n\n\nNo matching items",
-    "crumbs": [
-      "Home",
-      "Course Materials",
-      "Readings"
-    ]
+    "text": "Order By\n      Default\n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nTitle\n\n\n\nCategories\n\n\n\n\n\n\n\n\nHow To Read a Statistical Paper\n\n\n \n\n\n\n\n\n\nHow to Write a Great Critique\n\n\n \n\n\n\n\n\n\nInstructions for Weekly Critiques\n\n\n \n\n\n\n\n\n\nWeekly Paper Critique Schedule\n\n\n \n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "project/index.html",
@@ -3101,5 +3095,472 @@
     "title": "How To Read a Statistical Paper",
     "section": "Example Application: The Feynman Technique for Week 5 (Rosenbaum & Rubin, 1983)",
     "text": "Example Application: The Feynman Technique for Week 5 (Rosenbaum & Rubin, 1983)\nAfter reading the paper, your Feynman explanation might look like this:\n\nProblem: In observational studies, people who get a treatment are different from those who don’t across many variables (confounders). Trying to adjust for all of them in a single regression model is complicated and non-transparent.\nSolution: They proposed the propensity score—the probability of getting treated given your set of covariates. They proved you only need to adjust for this single number to remove bias from all observed confounders.\nLogic: The propensity score has a “balancing property.” At any given value of the score, the distribution of the covariates is the same between the treated and untreated groups, just like in a randomized experiment.\nAssumptions: This only works if you’ve measured all the important confounders (unconfoundedness) and if there are both treated and untreated people at every level of the propensity score (positivity/overlap). Unconfoundedness is a huge, untestable assumption.\nImpact: This revolutionized observational research by creating a two-step process: first, focus on study design by creating balanced groups, and only then, perform the outcome analysis. Its biggest limitation is that it does nothing to solve the problem of unmeasured confounders."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#seminar-norms",
+    "href": "slides/week-1_what_is_causal_effect.html#seminar-norms",
+    "title": "Introduction to Causal Inference",
+    "section": "Seminar Norms",
+    "text": "Seminar Norms\n\nLearn by reasoning together\nEveryone participates\nMistakes are useful\nFocus on evidence and assumptions\n\n\n⏱ 2–3 min\nFrame norms: active discussion, participation.\nAsk: “What other ground rules help us learn?”\nTransition → objectives."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#learning-objectives-2-min",
+    "href": "slides/week-1_what_is_causal_effect.html#learning-objectives-2-min",
+    "title": "Introduction to Causal Inference",
+    "section": "Learning Objectives (⏱ 2 min)",
+    "text": "Learning Objectives (⏱ 2 min)\nYou will be able to:\n\nDefine potential outcomes \\(Y^1, Y^0\\)\n\nExplain the Fundamental Problem\n\nDistinguish association vs causation\n\nDescribe SUTVA and RCT logic\n\nApply to a toy dataset\n\n\nKeep objectives visible. Remind: “By end, you should handle causal questions precisely.”"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#retrieval-warm-up",
+    "href": "slides/week-1_what_is_causal_effect.html#retrieval-warm-up",
+    "title": "Introduction to Causal Inference",
+    "section": "Retrieval Warm-up",
+    "text": "Retrieval Warm-up\nThink–Pair–Share (⏱ 3 min):\n\nWhat does it mean to say “smoking causes lung cancer”?\n\nWhat evidence makes you confident it’s causal?\n\n\nCorrect answers: temporal ordering, confounding ruled out, mechanism.\nMisconception: “Because they’re correlated.”\nTransition: “Let’s formalize this intuition.”"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#intuition-builder",
+    "href": "slides/week-1_what_is_causal_effect.html#intuition-builder",
+    "title": "Introduction to Causal Inference",
+    "section": "Intuition Builder",
+    "text": "Intuition Builder\nExample: More city parks → less depression.\n\nShould we invest in new parks?\n\nOr could healthier cities just afford them?\n\n\nPoll: “Raise hand—who thinks causal?”\nScaffold: link to confounding.\nTransition: “We need a framework.”"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#potential-outcomes-framework",
+    "href": "slides/week-1_what_is_causal_effect.html#potential-outcomes-framework",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Potential Outcomes Framework",
+    "text": "Potential Outcomes Framework\nFor each unit \\(i\\):\n\n\\(Y_i^{(1)}\\): Outcome if treated\n\n\\(Y_i^{(0)}\\): Outcome if not treated\n\nIndividual causal effect:\n\\[\\tau_i = Y_i^{(1)} - Y_i^{(0)}\\]"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#the-fundamental-problem",
+    "href": "slides/week-1_what_is_causal_effect.html#the-fundamental-problem",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "The Fundamental Problem",
+    "text": "The Fundamental Problem\n⚠️ Only one potential outcome observed:\n- If treated: observe \\(Y^{(1)}\\).\n- If not treated: observe \\(Y^{(0)}\\).\nThis is the Fundamental Problem of Causal Inference."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#from-individual-to-average-effects",
+    "href": "slides/week-1_what_is_causal_effect.html#from-individual-to-average-effects",
+    "title": "Introduction to Causal Inference",
+    "section": "From Individual to Average Effects",
+    "text": "From Individual to Average Effects\nAverage Treatment Effect (ATE):\n\\[\nATE = \\mathbb{E}[Y^1 - Y^0]\n\\]\nToy population (days sick):\n\n\n\nPerson\n\\(Y^1\\)\n\\(Y^0\\)\n\\(\\tau_i\\)\n\n\n\n\n1\n5\n7\n–2\n\n\n2\n4\n6\n–2\n\n\n3\n6\n8\n–2\n\n\n…\n…\n…\n…\n\n\n10\n10\n12\n–2\n\n\n\n\n\\(\\mathbb{E}[Y^1] = 5.5\\)\n\n\\(\\mathbb{E}[Y^0] = 7.5\\)\n\nATE = –2 days\n\n\nWalk through calc step by step.\nAsk: “What does negative mean here?” (Treatment reduces sickness).\nTransition: “But we can’t see both columns in real life.”"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#randomized-controlled-trials-rcts",
+    "href": "slides/week-1_what_is_causal_effect.html#randomized-controlled-trials-rcts",
+    "title": "Introduction to Causal Inference",
+    "section": "Randomized Controlled Trials (RCTs)",
+    "text": "Randomized Controlled Trials (RCTs)\n\nRandomization → exchangeability\n\n\\(A \\perp \\{Y^1, Y^0\\}\\)\n\nThen:\n\n\\[\n\\mathbb{E}[Y|A=1] - \\mathbb{E}[Y|A=0] = ATE\n\\]\n\nAsk: “Why does randomization solve the missing counterfactual?”\nCorrect: balances groups on average.\nMisconception: “Guarantees identical groups.” Clarify: only in expectation."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#observational-data-and-confounding",
+    "href": "slides/week-1_what_is_causal_effect.html#observational-data-and-confounding",
+    "title": "Introduction to Causal Inference",
+    "section": "Observational Data and Confounding",
+    "text": "Observational Data and Confounding\nWithout randomization:\n\nTreatment linked to baseline risk\n\nBias enters the naïve estimate\n\nToy example (sicker patients self-select treatment):\n\n\n\nPerson\nA\nObserved Y\n\n\n\n\n1\n1\n6\n\n\n2\n1\n7\n\n\n3\n1\n8\n\n\n4\n0\n5\n\n\n5\n0\n6\n\n\n6\n0\n4\n\n\n\nNaïve diff = +1 → suggests harm, but true effect was –2.\n\nAsk: “Why does it look harmful?”\nCorrect: confounding.\nCheckpoint: “What variable might be a confounder here?” (Baseline health)."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#sutva",
+    "href": "slides/week-1_what_is_causal_effect.html#sutva",
+    "title": "Introduction to Causal Inference",
+    "section": "SUTVA",
+    "text": "SUTVA\nTwo pillars:\n\nNo interference (my treatment doesn’t affect your outcome)\n\nConsistency (treatment well-defined)\n\nExamples:\n\nHerd immunity → violation of no interference\n\n“Exercise” intervention → violation of consistency\n\n\nAsk: “What’s a likely violation in your field?”\nExpected: herd immunity, peer effects."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#dataset-practice-paper-and-pencil",
+    "href": "slides/week-1_what_is_causal_effect.html#dataset-practice-paper-and-pencil",
+    "title": "Introduction to Causal Inference",
+    "section": "Dataset Practice (paper-and-pencil)",
+    "text": "Dataset Practice (paper-and-pencil)\n\n\n\nID\nA\nY\n\n\n\n\n1\n1\n4\n\n\n2\n1\n6\n\n\n3\n1\n7\n\n\n4\n0\n5\n\n\n5\n0\n8\n\n\n6\n0\n9\n\n\n\nTask: Compute mean(Y|A=1) – mean(Y|A=0).\n\nWork in pairs, ⏱ 3 min.\nAnswer: Treated mean 5.7, Control mean 7.3, Diff = –1.6.\nTransition: “Now link to identification tools.”"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#identification-checklist",
+    "href": "slides/week-1_what_is_causal_effect.html#identification-checklist",
+    "title": "Introduction to Causal Inference",
+    "section": "Identification Checklist",
+    "text": "Identification Checklist\n\nDefine treatment clearly\n\nState potential outcomes\n\nCheck SUTVA\n\nMap confounders with DAG\n\nAssess ignorability or use design-based methods\n\n\nScaffold: “Every method we learn connects to this checklist.”"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#r-lab-overview",
+    "href": "slides/week-1_what_is_causal_effect.html#r-lab-overview",
+    "title": "Introduction to Causal Inference",
+    "section": "R Lab Overview",
+    "text": "R Lab Overview\nWe will:\n\nSimulate RCT vs confounded data\n\nCompute naïve vs adjusted effects\n\nVisualize with DAGs\n\n\n⏱ 2–3 min overview.\nTransition: setup code."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#r-lab-setup",
+    "href": "slides/week-1_what_is_causal_effect.html#r-lab-setup",
+    "title": "Introduction to Causal Inference",
+    "section": "R Lab: Setup",
+    "text": "R Lab: Setup\n\nlibrary(tidyverse)\nlibrary(ggdag)\nset.seed(579)\n\n\nConfirm packages load."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#task-1-simulate-rct",
+    "href": "slides/week-1_what_is_causal_effect.html#task-1-simulate-rct",
+    "title": "Introduction to Causal Inference",
+    "section": "Task 1: Simulate RCT",
+    "text": "Task 1: Simulate RCT\n\nn &lt;- 200\nx &lt;- rnorm(n)\ntreat &lt;- rbinom(n, 1, 0.5)\ny0 &lt;- 5 + x + rnorm(n)\ny1 &lt;- y0 - 2\ny &lt;- ifelse(treat == 1, y1, y0)\n\ntibble(treat, y) |&gt;\n    group_by(treat) |&gt;\n    summarise(mean_y = mean(y))\n\n\n  \n\n\n\n\nExpected: treated ≈ 2 lower.\nAsk: “Why unbiased here?” Answer: randomization."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#task-2-confounded-assignment",
+    "href": "slides/week-1_what_is_causal_effect.html#task-2-confounded-assignment",
+    "title": "Introduction to Causal Inference",
+    "section": "Task 2: Confounded Assignment",
+    "text": "Task 2: Confounded Assignment\n\nps &lt;- plogis(-0.5 + 1.2 * x)\ntreat_conf &lt;- rbinom(n, 1, ps)\ny_conf &lt;- ifelse(treat_conf == 1, y1, y0)\n\ntibble(treat_conf, y_conf) |&gt;\n    group_by(treat_conf) |&gt;\n    summarise(mean_y = mean(y_conf))\n\n\n  \n\n\n\n\nExpected: treated group looks worse.\nAsk: “Why biased?” Answer: confounding by x."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#task-3-regression-adjustment",
+    "href": "slides/week-1_what_is_causal_effect.html#task-3-regression-adjustment",
+    "title": "Introduction to Causal Inference",
+    "section": "Task 3: Regression Adjustment",
+    "text": "Task 3: Regression Adjustment\n\nfit &lt;- lm(y_conf ~ treat_conf + x)\nsummary(fit)$coef\n\n             Estimate Std. Error   t value      Pr(&gt;|t|)\n(Intercept)  4.998410 0.08922459  56.02055 5.538030e-123\ntreat_conf  -2.009704 0.15753375 -12.75729  1.454882e-27\nx            1.057851 0.07446432  14.20614  5.357397e-32\n\n\n\nCoefficient on treat_conf ≈ –2.\nAsk: “What assumption do we rely on?” Answer: conditional ignorability."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#wrap-up",
+    "href": "slides/week-1_what_is_causal_effect.html#wrap-up",
+    "title": "Introduction to Causal Inference",
+    "section": "Wrap-up",
+    "text": "Wrap-up\nKey takeaways:\n\nPotential outcomes define causal effects\n\nCounterfactuals are missing\n\nATE is our target\n\nRCTs identify ATE\n\nObservational data need adjustment\n\nSUTVA is foundational\n\n\nRecap; highlight connection between math and practice."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#reflection",
+    "href": "slides/week-1_what_is_causal_effect.html#reflection",
+    "title": "Introduction to Causal Inference",
+    "section": "Reflection",
+    "text": "Reflection\nWrite 1 min:\n\nA treatment of interest\n\nDefine \\(Y^1, Y^0\\)\n\nWhich assumption worries you most?\n\n\nCollect or discuss in pairs.\nTransition: preview next seminar."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#next-steps",
+    "href": "slides/week-1_what_is_causal_effect.html#next-steps",
+    "title": "Introduction to Causal Inference",
+    "section": "Next Steps",
+    "text": "Next Steps\n\nRead Hernán & Robins Ch. 1–2\n\nBring a causal question from your field\n\nNext: DAGs and assumption transparency\n\n\nPreview future. End with encouragement."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#learning-objectives",
+    "href": "slides/week-1_what_is_causal_effect.html#learning-objectives",
+    "title": "Introduction to Causal Inference",
+    "section": "Learning Objectives",
+    "text": "Learning Objectives\nYou will be able to:\n\nDefine potential outcomes \\(Y^1, Y^0\\)\n\nExplain the Fundamental Problem\n\nDistinguish association vs causation\n\nDescribe SUTVA and RCT logic\n\nApply to a toy dataset\n\n\nKeep objectives visible. Remind: “By end, you should handle causal questions precisely.”"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#why-causality",
+    "href": "slides/week-1_what_is_causal_effect.html#why-causality",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Why Causality?",
+    "text": "Why Causality?\nCorrelation is not causation.\nWe ask: Does X cause Y?\nExamples:\n\nDoes ☕ coffee cause longer life?\nDoes 💊 a drug lower blood pressure?\nDoes 📚 tutoring improve exam scores?\nDoes 💵 raising the minimum wage increase unemployment?"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#warm-up-poll",
+    "href": "slides/week-1_what_is_causal_effect.html#warm-up-poll",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Warm-Up Poll",
+    "text": "Warm-Up Poll\nClaim:\n&gt; “Coffee drinkers live longer.”\n\nAgree ☑️\n\nDisagree ❌\n\nNot sure 🤔\n\n👉 Think–Pair–Share:\nWhat other factors might explain this?"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#spurious-correlation",
+    "href": "slides/week-1_what_is_causal_effect.html#spurious-correlation",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Spurious Correlation",
+    "text": "Spurious Correlation\nIce cream sales ↑\nShark attacks ↑\n🦈 Do ice creams cause shark attacks?\n👉 Lurking variable? (Answer: temperature/season)"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#motivating-cases",
+    "href": "slides/week-1_what_is_causal_effect.html#motivating-cases",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Motivating Cases",
+    "text": "Motivating Cases\n\nMedicine: New drug → blood pressure?\n\nEducation: Tutoring → exam scores?\n\nEconomics: Minimum wage → unemployment?\n\n👉 What kind of study would convince you?"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#concept-check-1",
+    "href": "slides/week-1_what_is_causal_effect.html#concept-check-1",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Concept Check 1",
+    "text": "Concept Check 1\nWhich statement is true?\nA. We can always observe both \\(Y^{(1)}\\) and \\(Y^{(0)}\\).\nB. The causal effect is \\(Y^{(1)} + Y^{(0)}\\).\nC. The causal effect is the difference \\(Y^{(1)} - Y^{(0)}\\).\nD. Potential outcomes are irrelevant.\n👉 Discuss and vote."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#example-tutoring-program",
+    "href": "slides/week-1_what_is_causal_effect.html#example-tutoring-program",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Example: Tutoring Program",
+    "text": "Example: Tutoring Program\n\n\n\n\n\n\n\n\n\nStudent\n\\(Y^{(1)}\\) With Tutoring\n\\(Y^{(0)}\\) Without Tutoring\nEffect\n\n\n\n\nSarah\n85\n80\n+5\n\n\nAlex\n78\n?\n???\n\n\nJamie\n?\n82\n???\n\n\n\n👉 Which values are counterfactual?"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#scaffolding-activity",
+    "href": "slides/week-1_what_is_causal_effect.html#scaffolding-activity",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Scaffolding Activity",
+    "text": "Scaffolding Activity\nTreatment: attending today’s lecture\nOutcome: knowledge tomorrow\nWrite down for yourself:\n- \\(Y^{(1)}\\) = outcome if you attended.\n- \\(Y^{(0)}\\) = outcome if you skipped.\n👉 Which do you observe?"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#average-causal-effect-ace",
+    "href": "slides/week-1_what_is_causal_effect.html#average-causal-effect-ace",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Average Causal Effect (ACE)",
+    "text": "Average Causal Effect (ACE)\nWe usually care about the population average:\n\\[ACE = \\mathbb{E}[Y^{(1)} - Y^{(0)}]\\]\nBut we cannot see both potential outcomes → need assumptions."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#concept-check-2",
+    "href": "slides/week-1_what_is_causal_effect.html#concept-check-2",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Concept Check 2",
+    "text": "Concept Check 2\nIf we only observe one outcome per person, how can we estimate ACE?\nA. We can’t — causal inference is impossible.\nB. Use averages across groups, under assumptions.\nC. Guess the missing outcomes.\nD. Average observed outcomes with missing values.\n👉 Small group discussion."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#key-assumptions",
+    "href": "slides/week-1_what_is_causal_effect.html#key-assumptions",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Key Assumptions",
+    "text": "Key Assumptions\n1. SUTVA\n\nOutcomes not affected by others’ treatment.\nNo hidden versions of treatment.\n\nExample: My test score ≠ influenced by your tutoring.\nViolation: Herd immunity in vaccines."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#sutva-violations",
+    "href": "slides/week-1_what_is_causal_effect.html#sutva-violations",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "SUTVA Violations",
+    "text": "SUTVA Violations\n\nInterference: Peer effects in education (your study group matters).\n\nHidden versions: Drug dose differences, not accounted for.\n\n👉 Class prompt: What other fields violate SUTVA?"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#dag-illustration",
+    "href": "slides/week-1_what_is_causal_effect.html#dag-illustration",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "DAG Illustration",
+    "text": "DAG Illustration\n\nlibrary(ggdag)\ndag &lt;- dagify(\n    Y ~ T + H,\n    T ~ H,\n    exposure = \"T\",\n    outcome = \"Y\"\n)\nggdag(dag, text = FALSE) + theme_void()\n\n\nConfounding path: Health → Treatment, Health → Outcome."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#concept-check-3",
+    "href": "slides/week-1_what_is_causal_effect.html#concept-check-3",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Concept Check 3",
+    "text": "Concept Check 3\nWhich DAG adjustment recovers causality?\nA. Adjust for Treatment only.\nB. Adjust for Outcome only.\nC. Adjust for Health (confounder).\nD. No adjustment needed."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#worked-example-rct",
+    "href": "slides/week-1_what_is_causal_effect.html#worked-example-rct",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Worked Example: RCT",
+    "text": "Worked Example: RCT\n\n100 patients randomized: Drug vs Placebo.\n\nRandomization balances confounders.\n\n\\[\nACE = \\mathbb{E}[Y^{(1)}] - \\mathbb{E}[Y^{(0)}]\n\\]\n✅ Ignorability holds by design."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#worked-example-observational-study",
+    "href": "slides/week-1_what_is_causal_effect.html#worked-example-observational-study",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Worked Example: Observational Study",
+    "text": "Worked Example: Observational Study\nPatients self-select treatment.\n\nHealthier → more likely to take drug.\n\nBias introduced.\n\n👉 Brainstorm: Which covariates to adjust for?"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#extended-example-vaccine-trial",
+    "href": "slides/week-1_what_is_causal_effect.html#extended-example-vaccine-trial",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Extended Example: Vaccine Trial",
+    "text": "Extended Example: Vaccine Trial\nTreatment: vaccination.\nOutcome: illness.\nCounterfactual: what if unvaccinated?\n⚠️ Violation: My outcome depends on whether others are vaccinated. (Herd immunity → SUTVA fails)"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#nuance-ace-vs-ate-vs-att",
+    "href": "slides/week-1_what_is_causal_effect.html#nuance-ace-vs-ate-vs-att",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Nuance: ACE Vs ATE Vs ATT",
+    "text": "Nuance: ACE Vs ATE Vs ATT\n\nACE / ATE: Average treatment effect, entire population.\n\nATT: Effect on the treated.\n\nATC: Effect on the controls.\n\n👉 Ask: In policy, which is most relevant?"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#common-misconceptions",
+    "href": "slides/week-1_what_is_causal_effect.html#common-misconceptions",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Common Misconceptions",
+    "text": "Common Misconceptions\n❌ We can observe both potential outcomes.\n✅ Only one observed per unit.\n❌ Association = causation.\n✅ Confounding & bias distort.\n❌ RCTs are always possible.\n✅ Often infeasible → rely on observational designs."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#practice-quiz",
+    "href": "slides/week-1_what_is_causal_effect.html#practice-quiz",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Practice Quiz",
+    "text": "Practice Quiz\n\nWhat is the Fundamental Problem?\n\nState one SUTVA violation.\n\nWhy does randomization solve ignorability?\n\nWhat does ATT mean?"
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#summary",
+    "href": "slides/week-1_what_is_causal_effect.html#summary",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Summary",
+    "text": "Summary\n\nPotential outcomes: \\(Y^{(1)}, Y^{(0)}\\).\n\nFundamental problem: missing counterfactuals.\n\nAssumptions: SUTVA & Ignorability.\n\nRCTs: solve confounding by design.\n\nObservational: need adjustment."
+  },
+  {
+    "objectID": "slides/week-1_what_is_causal_effect.html#exit-ticket",
+    "href": "slides/week-1_what_is_causal_effect.html#exit-ticket",
+    "title": "Introduction to Causal Inference & the Potential Outcomes Framework",
+    "section": "Exit Ticket",
+    "text": "Exit Ticket\nDesign a causal study:\n\nDefine treatment.\n\nWrite \\(Y^{(1)}, Y^{(0)}\\).\n\nIdentify assumptions.\n\nState which effect (ATE, ATT, ATC) matters.\n\n👉 Share with your group."
+  },
+  {
+    "objectID": "home_readings.html#core-resources-navigation",
+    "href": "home_readings.html#core-resources-navigation",
+    "title": "Readings & Critique Hub",
+    "section": "📍 Core Resources & Navigation",
+    "text": "📍 Core Resources & Navigation\nEverything you need for the weekly critiques can be accessed from the links below.\n\n\n\nResource\nDescription\n\n\n\n\n📜 Weekly Readings Schedule\nThe complete week-by-week schedule of all required readings, including mapped textbook chapters, foundational papers, and case studies.\n\n\n🧐 How to Read a Technical Paper\n(Start Here!) A step-by-step guide on how to approach dense, theoretical papers without getting lost in the proofs.\n\n\n✍️ Writing Critique Guidelines\nA detailed guide on how to structure your analysis of a foundational paper, focusing on its logic, assumptions, and impact.\n\n\n✅ Templates, Checklists & Rubric\nAccess the critique template and the official grading rubric.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Readings"
+    ]
+  },
+  {
+    "objectID": "home_readings.html#weekly-readings-student-leaders",
+    "href": "home_readings.html#weekly-readings-student-leaders",
+    "title": "Readings & Critique Hub",
+    "section": "🗓️ Weekly Readings & Student Leaders",
+    "text": "🗓️ Weekly Readings & Student Leaders\nEach week, the assigned Student Leader will select one paper for the class to read and critique by Thursday of the prior week.\n\n\n\n\n\n\n\n\n\nWeek\nTopic\nPaper Option (Classic / Modern)\nStudent Leader\n\n\n\n\n3\nExchangeability, Positivity, Consistency\nHolland (1986) / Hernán (2018)\nGA\n\n\n4\nConfounding & Selection Bias\nHernán et al. (2004) / Cole & Hernán (2002)\nDB\n\n\n5\nPropensity Scores\nRosenbaum & Rubin (1983) / Austin (2011)\nCB\n\n\n6\nIPTW & Marginal Structural Models\nRobins et al. (2000) / Cole & Hernán (2008)\nCG\n\n\n7\nG-computation & TMLE\nRobins (1986) / Petersen & van der Laan (2014)\nAK\n\n\n8\nInstrumental Variables\nAngrist (1990) / Angrist & Pischke (2010)\nEK\n\n\n9\nEffect Modification & Interaction\nRothman (1974) / VanderWeele (2019)\nEL\n\n\n10\nMediation I (Foundations)\nBaron & Kenny (1986) / Imai et al. (2010)\nGM\n\n\n11\nMediation II & Principal Stratification\nRobins & Greenland (1992) / Daniel et al. (2015)\nKMG\n\n\n12\nSensitivity Analysis\nRosenbaum (1987) / VanderWeele & Ding (2017)\nMS\n\n\n13\nTarget Trial Emulation\nRobins (1987) / Hernán et al. (2008)\nHZ",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Readings"
+    ]
+  },
+  {
+    "objectID": "home_readings.html#roles-responsibilities",
+    "href": "home_readings.html#roles-responsibilities",
+    "title": "Readings & Critique Hub",
+    "section": "🎓 Roles & Responsibilities",
+    "text": "🎓 Roles & Responsibilities\n\n🧑‍🏫 Discussion Leader\n\nSubmit Paper Choice: Email your selected paper to the instructor by Thursday of the week prior to your assigned week.\nPost Discussion Starter: Post your discussion starter in the weekly Canvas thread by Sunday at 11:59 pm. It must include:\n\nA ~300-word summary of the paper.\nYour answers to the three guiding questions from the Weekly Readings Schedule.\nA key takeaway from the paper.\n\nLead In-Class Discussion: Be prepared to lead the in-class discussion on Tuesday.\n\n\n\n✍️ All Other Students\n\nRead: Read the paper selected by the Discussion Leader.\nPost Critique: Post your critique in the weekly Canvas thread by Monday at 11:59 pm. It must include:\n\nA brief summary of the paper.\nYour answers to the three guiding questions from the Weekly Readings Schedule.\nA personal takeaway from the paper.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Readings"
+    ]
+  },
+  {
+    "objectID": "readings/templates_rubric.html",
+    "href": "readings/templates_rubric.html",
+    "title": "Instructions for Weekly Critiques",
+    "section": "",
+    "text": "Your primary task each week is to provide thoughtful, well-reasoned answers to the three guiding questions for your chosen paper. This assignment is not about finding flaws; it’s about engaging deeply with the core concepts and demonstrating your understanding.\nYour critique should be structured using the provided template. The goal is clarity, critical thinking, and conciseness."
+  },
+  {
+    "objectID": "readings/templates_rubric.html#instructions-for-weekly-critiques",
+    "href": "readings/templates_rubric.html#instructions-for-weekly-critiques",
+    "title": "Instructions for Weekly Critiques",
+    "section": "",
+    "text": "Your primary task each week is to provide thoughtful, well-reasoned answers to the three guiding questions for your chosen paper. This assignment is not about finding flaws; it’s about engaging deeply with the core concepts and demonstrating your understanding.\nYour critique should be structured using the provided template. The goal is clarity, critical thinking, and conciseness."
+  },
+  {
+    "objectID": "readings/templates_rubric.html#critique-templates",
+    "href": "readings/templates_rubric.html#critique-templates",
+    "title": "Instructions for Weekly Critiques",
+    "section": "📝 Critique Templates",
+    "text": "📝 Critique Templates\nUse the appropriate Quarto/Markdown template below for your weekly posts on Canvas. This structure ensures you address all required components clearly.\n\nA) Template for the Discussion Leader\nSubject: Week [##] Discussion Starter: [Paper Author(s) & Year]\nSummary (~300 words): Provide a concise summary of the paper’s core argument.\n\nWhat was the central problem the authors were trying to solve?\nWhat was their key insight or proposed solution?\nHow does this paper fit into our course’s narrative?\n\nAnswers to Guiding Questions:\n\nYour thoughtful and comprehensive answer to the first guiding question for the paper. Aim for depth and clarity.\nYour thoughtful and comprehensive answer to the second guiding question.\nYour thoughtful and comprehensive answer to the third guiding question.\n\nTakeaway & Discussion Prompt: Conclude with the single most important takeaway from this paper. Then, pose one open-ended question to your classmates to stimulate discussion.\n\n\nB) Template for All Other Students\nSubject: Critique: [Paper Author(s) & Year]\nBrief Takeaway (1-2 sentences): Start with your single most important takeaway from the paper. What did you find most surprising, useful, or problematic?\nAnswers to Guiding Questions:\n\nYour thoughtful and direct answer to the first guiding question for the paper.\nYour thoughtful and direct answer to the second guiding question.\nYour thoughtful and direct answer to the third guiding question."
+  },
+  {
+    "objectID": "readings/how_to_read_technical_paper.html",
+    "href": "readings/how_to_read_technical_paper.html",
+    "title": "How To Read a Statistical Paper",
+    "section": "",
+    "text": "The goal when reading a methodological paper is not to memorize every formula but to build a robust mental model of the author’s argument. You want to understand the problem they solved, the logic of their solution, the assumptions required for it to work, and its ultimate impact. This active, model-building approach is far more effective than passive reading.\nWe will use a Three-Pass Approach designed to manage cognitive load and build your understanding from a scaffold to a fully-formed structure."
+  },
+  {
+    "objectID": "readings/how_to_read_technical_paper.html#pass-1-the-birds-eye-view-building-the-scaffold-15-minutes",
+    "href": "readings/how_to_read_technical_paper.html#pass-1-the-birds-eye-view-building-the-scaffold-15-minutes",
+    "title": "How To Read a Statistical Paper",
+    "section": "Pass 1: The Bird’s-Eye View – Building the Scaffold (15 Minutes) 🗺️",
+    "text": "Pass 1: The Bird’s-Eye View – Building the Scaffold (15 Minutes) 🗺️\nDon’t start by reading page one. Your first goal is to create a mental “map” of the paper’s purpose and structure. This provides a scaffold for your brain to hang the details on later, which significantly reduces cognitive load.\n\nRead the Abstract, Introduction, and Conclusion First: Read these three sections carefully. At the end of this step, you should be able to answer, in simple terms:\n\nThe Problem: What specific challenge or gap in knowledge existed before this paper was written?\nThe Solution: What is the main idea, method, or framework this paper proposes?\nThe Claim: What do the authors claim is the primary impact or takeaway of their work?\n\nScan the Section Headings: Look at the structure of the paper. How do the authors build their argument from the problem to the solution?\nExamine Figures and Conceptual Tables: Look at any diagrams (like DAGs), charts, or conceptual tables. Read their captions. These often contain the most important ideas in a condensed, visual format.\n\nAt the end of this pass, you shouldn’t understand the details, but you should have a clear sense of the paper’s story."
+  },
+  {
+    "objectID": "readings/how_to_read_technical_paper.html#pass-2-the-deep-dive-adding-the-bricks-with-active-recall-1-2-hours",
+    "href": "readings/how_to_read_technical_paper.html#pass-2-the-deep-dive-adding-the-bricks-with-active-recall-1-2-hours",
+    "title": "How To Read a Statistical Paper",
+    "section": "Pass 2: The Deep Dive – Adding the Bricks with Active Recall (1-2 Hours) 🧱",
+    "text": "Pass 2: The Deep Dive – Adding the Bricks with Active Recall (1-2 Hours) 🧱\nNow, read the paper from start to finish, but with an active, questioning mindset. Your goal is to deconstruct the argument, not just consume it.\n\n“Translate” the Math: When you encounter a block of equations, your goal is not to re-derive the proofs. Instead, focus on the English sentences before and after the math. Your task is to translate the mathematical statement into a conceptual one. For example, when you see the formula for the propensity score, you should translate it in your notes as: “This is the probability of getting the treatment, given the measured covariates L.”\nFocus on the Assumptions: For causal inference papers, assumptions are the most important part. They are the weak points of any argument. When an assumption is stated (e.g., “unconfoundedness,” “exclusion restriction”), stop and ask:\n\nWhat does this assumption mean conceptually?\nWhy is it necessary for the author’s argument to work?\nIs this assumption testable? If not, in what real-world scenarios might it be plausible or implausible?\n\nEngage in Active Recall: After reading each major section, stop, look away from the page, and ask yourself: “What was the single most important point of that section?” Try to summarize it in one or two sentences, either in your head or in your notes. This act of forcing your brain to retrieve the information is far more powerful for learning than passively re-reading the text."
+  },
+  {
+    "objectID": "readings/how_to_read_technical_paper.html#pass-3-the-feynman-technique-solidifying-understanding-30-minutes",
+    "href": "readings/how_to_read_technical_paper.html#pass-3-the-feynman-technique-solidifying-understanding-30-minutes",
+    "title": "How To Read a Statistical Paper",
+    "section": "Pass 3: The Feynman Technique – Solidifying Understanding (30 Minutes) ✍️",
+    "text": "Pass 3: The Feynman Technique – Solidifying Understanding (30 Minutes) ✍️\nYou only truly understand something when you can explain it simply. This final pass solidifies your mental model and reveals any remaining gaps in your knowledge.\n\nPut the paper away. Open a blank document or grab a piece of paper.\nExplain the paper to an imaginary first-year graduate student. Your explanation must clearly and simply answer the following five questions:\n\nWhat was the central problem the authors were trying to solve?\nWhat was their key insight or proposed solution?\nIn simple terms, what is the core logic for why their solution works?\nWhat are the 1-3 critical assumptions it relies on to be valid?\nWhat is the single biggest limitation or most important implication of this work?\n\n\nIf you get stuck or find yourself using jargon you can’t define, you’ve found the edge of your understanding. Go back to the paper and focus specifically on that part. This technique is the most efficient way to build deep, lasting comprehension."
+  },
+  {
+    "objectID": "readings/how_to_read_technical_paper.html#example-application-the-feynman-technique-for-week-5-rosenbaum-rubin-1983",
+    "href": "readings/how_to_read_technical_paper.html#example-application-the-feynman-technique-for-week-5-rosenbaum-rubin-1983",
+    "title": "How To Read a Statistical Paper",
+    "section": "Example Application: The Feynman Technique for Week 5 (Rosenbaum & Rubin, 1983)",
+    "text": "Example Application: The Feynman Technique for Week 5 (Rosenbaum & Rubin, 1983)\nAfter reading the paper, your Feynman explanation might look like this:\n\nProblem: In observational studies, people who get a treatment are different from those who don’t across many variables (confounders). Trying to adjust for all of them in a single regression model is complicated and non-transparent.\nSolution: They proposed the propensity score—the probability of getting treated given your set of covariates. They proved you only need to adjust for this single number to remove bias from all observed confounders.\nLogic: The propensity score has a “balancing property.” At any given value of the score, the distribution of the covariates is the same between the treated and untreated groups, just like in a randomized experiment.\nAssumptions: This only works if you’ve measured all the important confounders (unconfoundedness) and if there are both treated and untreated people at every level of the propensity score (positivity/overlap). Unconfoundedness is a huge, untestable assumption.\nImpact: This revolutionized observational research by creating a two-step process: first, focus on study design by creating balanced groups, and only then, perform the outcome analysis. Its biggest limitation is that it does nothing to solve the problem of unmeasured confounders."
+  },
+  {
+    "objectID": "project/project_guidelines.html#purpose",
+    "href": "project/project_guidelines.html#purpose",
+    "title": "Overall Project Guidelines",
+    "section": "Purpose",
+    "text": "Purpose\nThe final project is designed to integrate conceptual, methodological, and applied skills in causal inference. Students will pose and answer a causal question using real or simulated data, grounding their analysis in the target trial emulation framework.\nThe project should demonstrate:\n\nClear articulation of a STAT 579 Final Project Guidelinesusal estimand (not just a statistical parameter).\nCareful identification strategy with explicit assumptions.\nImplementation of at least one modern estimation method (e.g., IPW, matching, IV, MSM).\nCritical sensitivity checks and interpretation within a real-world context.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Project"
+    ]
+  },
+  {
+    "objectID": "project/project_guidelines.html#timeline-deliverables",
+    "href": "project/project_guidelines.html#timeline-deliverables",
+    "title": "Overall Project Guidelines",
+    "section": "Timeline & Deliverables",
+    "text": "Timeline & Deliverables\n\nWeek 1–2: Causal Question Definition\n\nSubmit a 1–2 paragraph causal question relevant to biostatistics, epidemiology, or social/biomedical sciences.\nInclude justification of why the question is causal (not associational).\n\nWeek 3–4: Preliminary DAG\n\nProvide a directed acyclic graph (using dagitty or ggdag).\nState which paths must be blocked for identification.\nIdentify potential sources of bias (confounding, selection, measurement error).\n\nWeek 5–6: Identification Strategy\n\nExplicitly state whether exchangeability, positivity, SUTVA, and consistency are plausible.\nDescribe your strategy: backdoor adjustment, IV, MSM, or mediation.\n\nWeek 9: Project Proposal (10% of course grade)\n\n3–5 pages.\nElements:\n\nResearch question & target trial specification (eligibility, treatment strategies, follow-up, outcome).\nDAG & assumptions.\nIdentification strategy.\nPlanned data source (public dataset, your own research, or simulation).\nAnticipated challenges.\n\n\nWeeks 10–13: Analysis\n\nImplement at least one causal method (e.g., IPW, g-computation, IV, mediation, MSM).\nProvide R code and output with clear interpretation.\nConduct diagnostics (balance checks, overlap, weak instrument tests, model fit).\nPerform at least one sensitivity analysis (e.g., E-values, Rosenbaum bounds, tipr).\n\nWeek 14: Presentation (10%)\n\n12–15 minutes, conference-style.\nEmphasize assumptions, robustness, and substantive conclusions—not just technical detail.\n\nFinal Paper (25%) – Due Finals Week\n\n~12–15 pages, structured as a research article:\n\nIntroduction: Causal question and motivation.\nTarget Trial Protocol: Eligibility, treatment, follow-up, outcome, causal estimand.\nAssumptions & Identification: DAG, assumptions, strategy.\nMethods: Data source, causal methods used, software.\nResults: Estimates, sensitivity analyses, robustness checks.\nDiscussion: Interpretation, limitations, implications.\nAppendix: R code (clean, annotated).",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Project"
+    ]
+  },
+  {
+    "objectID": "project/project_guidelines.html#detailed-instructions",
+    "href": "project/project_guidelines.html#detailed-instructions",
+    "title": "Overall Project Guidelines",
+    "section": "Detailed Instructions",
+    "text": "Detailed Instructions\n\nStep 1: Choosing a Question\n\nPrefer health, social, or biomedical contexts (e.g., effect of smoking on lung cancer, impact of job training on income, role of diet on heart disease).\nThe question must be causal, not descriptive.\n\nBad: “What factors are associated with depression?”\nGood: “What is the effect of exercise on reducing depression severity?”\n\n\n\n\nStep 2: DAG Construction\n\nMust use dagitty or ggdag.\nInclude confounders, colliders, mediators, and selection mechanisms.\nExplicitly identify adjustment set(s) and whether positivity holds.\n\n\n\nStep 3: Identification & Assumptions\n\nAddress the three pillars:\n\nExchangeability (unconfoundedness, or IV/exclusion restriction justification).\nPositivity (overlap diagnostics, trimming if needed).\nConsistency & SUTVA (intervention is well-defined).\n\n\n\n\nStep 4: Method Implementation\n\nChoose a method appropriate to your design:\n\nBackdoor adjustment: matching, stratification, regression, IPW.\nIV: LATE, 2SLS.\nMediation: NDE/NIE decomposition.\nMSM: time-varying exposures.\n\nUse R packages: MatchIt, WeightIt, ivreg, mediation, EValue, tipr.\n\n\n\nStep 5: Sensitivity Analysis\n\nRequired to evaluate robustness. Options:\n\nE-value.\nRosenbaum bounds.\nSimulated confounding (tipr).\n\n\n\n\nStep 6: Writing & Presentation\n\nClarity of assumptions is more important than fancy methods.\nDiscussion must explicitly state: “If assumption X fails, my estimate is biased because…”",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Project"
+    ]
+  },
+  {
+    "objectID": "project/project_guidelines.html#evaluation-criteria",
+    "href": "project/project_guidelines.html#evaluation-criteria",
+    "title": "Overall Project Guidelines",
+    "section": "Evaluation Criteria",
+    "text": "Evaluation Criteria\n\nQuestion & Relevance (10%): Is the question causal and well-motivated?\nDAG & Identification (20%): Correct, complete, and clearly explained.\nMethodology (20%): Appropriate method, correct implementation, diagnostics.\nSensitivity & Robustness (15%): At least one sensitivity analysis, well-interpreted.\nResults & Interpretation (15%): Clear, correct, cautious interpretation.\nWriting & Presentation (20%): Organization, clarity, reproducibility.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Project"
+    ]
+  },
+  {
+    "objectID": "project/project_guidelines.html#references-for-guidance",
+    "href": "project/project_guidelines.html#references-for-guidance",
+    "title": "Overall Project Guidelines",
+    "section": "References for Guidance",
+    "text": "References for Guidance\n\nHernán & Robins (2024). Causal Inference: What If.\nNeal (2020). Introduction to Causal Inference.\nImbens & Rubin (2015). Causal Inference for Statistics, Social, and Biomedical Sciences.\nBrumback (2022). Fundamentals of Causal Inference with R.\nVanderWeele (2015). Explanation in Causal Inference.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Project"
+    ]
+  },
+  {
+    "objectID": "home_appendix.html#core-resources-navigation",
+    "href": "home_appendix.html#core-resources-navigation",
+    "title": "Readings & Critique Hub",
+    "section": "📍 Core Resources & Navigation",
+    "text": "📍 Core Resources & Navigation\nEverything you need for the weekly critiques can be accessed from the links below.\n\n\n\nResource\nDescription\n\n\n\n\n📜 Weekly Readings Schedule\nThe complete week-by-week schedule of all required readings, including mapped textbook chapters, foundational papers, and case studies.\n\n\n🧐 How to Read a Technical Paper\n(Start Here!) A step-by-step guide on how to approach dense, theoretical papers without getting lost in the proofs.\n\n\n✍️ Writing Critique Guidelines\nA detailed guide on how to structure your analysis of a foundational paper, focusing on its logic, assumptions, and impact.\n\n\n✅ Templates, Checklists & Rubric\nAccess the critique template and the official grading rubric."
+  },
+  {
+    "objectID": "home_appendix.html#weekly-readings-student-leaders",
+    "href": "home_appendix.html#weekly-readings-student-leaders",
+    "title": "Readings & Critique Hub",
+    "section": "🗓️ Weekly Readings & Student Leaders",
+    "text": "🗓️ Weekly Readings & Student Leaders\nEach week, the assigned Student Leader will select one paper for the class to read and critique by Thursday of the prior week.\n\n\n\n\n\n\n\n\n\nWeek\nTopic\nPaper Option (Classic / Modern)\nStudent Leader\n\n\n\n\n3\nExchangeability, Positivity, Consistency\nHolland (1986) / Hernán (2018)\nGA\n\n\n4\nConfounding & Selection Bias\nHernán et al. (2004) / Cole & Hernán (2002)\nDB\n\n\n5\nPropensity Scores\nRosenbaum & Rubin (1983) / Austin (2011)\nCB\n\n\n6\nIPTW & Marginal Structural Models\nRobins et al. (2000) / Cole & Hernán (2008)\nCG\n\n\n7\nG-computation & TMLE\nRobins (1986) / Petersen & van der Laan (2014)\nAK\n\n\n8\nInstrumental Variables\nAngrist (1990) / Angrist & Pischke (2010)\nEK\n\n\n9\nEffect Modification & Interaction\nRothman (1974) / VanderWeele (2019)\nEL\n\n\n10\nMediation I (Foundations)\nBaron & Kenny (1986) / Imai et al. (2010)\nGM\n\n\n11\nMediation II & Principal Stratification\nRobins & Greenland (1992) / Daniel et al. (2015)\nKMG\n\n\n12\nSensitivity Analysis\nRosenbaum (1987) / VanderWeele & Ding (2017)\nMS\n\n\n13\nTarget Trial Emulation\nRobins (1987) / Hernán et al. (2008)\nHZ"
+  },
+  {
+    "objectID": "home_appendix.html#roles-responsibilities",
+    "href": "home_appendix.html#roles-responsibilities",
+    "title": "Readings & Critique Hub",
+    "section": "🎓 Roles & Responsibilities",
+    "text": "🎓 Roles & Responsibilities\n\n🧑‍🏫 Discussion Leader\n\nSubmit Paper Choice: Email your selected paper to the instructor by Thursday of the week prior to your assigned week.\nPost Discussion Starter: Post your discussion starter in the weekly Canvas thread by Sunday at 11:59 pm. It must include:\n\nA ~300-word summary of the paper.\nYour answers to the three guiding questions from the Weekly Readings Schedule.\nA key takeaway from the paper.\n\nLead In-Class Discussion: Be prepared to lead the in-class discussion on Tuesday.\n\n\n\n✍️ All Other Students\n\nRead: Read the paper selected by the Discussion Leader.\nPost Critique: Post your critique in the weekly Canvas thread by Monday at 11:59 pm. It must include:\n\nA brief summary of the paper.\nYour answers to the three guiding questions from the Weekly Readings Schedule.\nA personal takeaway from the paper."
   }
 ]

@@ -2,8 +2,9 @@
   {
     "listing": "/readings/index.html",
     "items": [
-      "/readings/how_to_read_technocal_paper.html",
+      "/readings/how_to_read_technical_paper.html",
       "/readings/writing_critique_guidlines.html",
+      "/readings/templates_rubric.html",
       "/readings/weekly_paper_critique_schedule.html"
     ]
   },

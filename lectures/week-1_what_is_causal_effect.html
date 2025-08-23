@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<head>
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
 
-<meta charset="utf-8" />
-<meta name="generator" content="quarto-1.7.33" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-
-<meta name="author" content="Davood Tofighi, Ph.D." />
+<meta name="author" content="Davood Tofighi, Ph.D.">
 
 <title>Week 1: What is a Causal Effect? – Introduction to Causal Inference</title>
 <style>
@@ -25,7 +23,28 @@ ul.task-list li input[type="checkbox"] {
 }
 </style>
 
-<!-- htmldependencies:E3FAD763 -->
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../assets/images/icon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-ab86f13fa607618020e3f7de5041b3a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -147,7 +166,7 @@ ul.task-list li input[type="checkbox"] {
         }
     };
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -179,394 +198,14 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="../assets/styles/css/home.css" />
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="Week 1: What is a Causal Effect? – Introduction to Causal Inference">
+<meta property="og:description" content="Introduction to Causal Inference">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:site_name" content="Introduction to Causal Inference">
 </head>
 
-<body>
-
-<div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
-      <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
-    <a href="/index.html" class="navbar-brand navbar-brand-logo">
-    <img src="/assets/images/icon.png" alt="" class="navbar-logo" />
-    </a>
-    <a class="navbar-brand" href="/index.html">
-    <span class="navbar-title">Introduction to Causal Inference</span>
-    </a>
-  </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-  aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation"
-  onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="/index.html"> 
-<span class="menu-text">Home</span></a>
-  </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false" >
- <span class="menu-text">Syllabus</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
-        <li>
-    <a class="dropdown-item" href="/syllabus/syllabus-final.pdf">
- <span class="dropdown-text">PDF</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="/syllabus/syllabus-final.html">
- <span class="dropdown-text">HTML</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="/syllabus/schedule.html"> 
-<span class="menu-text">Schedule</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="/home_lectures.html"> 
-<span class="menu-text">Lecture Notes</span></a>
-  </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projects" role="link" data-bs-toggle="dropdown" aria-expanded="false" >
- <span class="menu-text">Projects</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
-        <li>
-    <a class="dropdown-item" href="/project/index.html">
- <span class="dropdown-text">Projects Home</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-readings" role="link" data-bs-toggle="dropdown" aria-expanded="false" >
- <span class="menu-text">Readings</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-readings">    
-        <li>
-    <a class="dropdown-item" href="/readings/index.html">
- <span class="dropdown-text">Readings Home</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="/home_assignments.html"> 
-<span class="menu-text">Assignments</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="/r_help.html"> 
-<span class="menu-text">R Help</span></a>
-  </li>  
-</ul>
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i 
-  class="bi bi-github" 
-  role="img" 
-  aria-label="GitHub" 
->
-</i> 
-<span class="menu-text"></span></a>
-  </li>  
-</ul>
-          </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
-</div>
-      </div> <!-- /container-fluid -->
-    </nav>
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn"
-      data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" 
-      aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation"
-      onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <h1 class="quarto-secondary-nav-title no-breadcrumbs"></h1>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" role="link"
-        aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation"
-        onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-    </div>
-  </nav>
-</header>
-<!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
-<!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="sidebar-menu-container"> 
-    <ul class="list-unstyled mt-1">
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1"  role="navigation" aria-expanded="false">
- <span class="menu-text">Course Overview</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Home</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Syllabus (PDF)</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/syllabus/schedule.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Schedule</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2"  role="navigation" aria-expanded="false">
- <span class="menu-text">Course Materials</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/home_lectures.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Lecture Notes</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Projects</span></a>
-  </div>
-</li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="/project/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Projects</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/data_resources.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Data Exploration for Your Final Project</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/project_guidelines-rev1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">STAT 579: Applied Causal Inference</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/project_rubric.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Final Project Rubric & Instructor Checklist</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/project_schedule.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">STAT 579: Detailed Final Project Schedule</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/target_trial_tutorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Target Trial Emulation (TTE) vs Just Analyzing the Data</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/readings/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Readings (All)</span></a>
-  </div>
-</li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="/readings/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Readings</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/readings/weekly_paper_critique_schedule.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Weekly Paper Critique Schedule</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/readings/weekly_paper_critique_templates.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Reflection 1: Template for Critiquing Weekly Papers</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/readings/writing_critique_guidlines.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">How to Write a Great Critique</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/home_assignments.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assignments</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5"  role="navigation" aria-expanded="false">
- <span class="menu-text">Projects</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Projects Home</span></a>
-  </div>
-</li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="/project/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Projects</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/data_resources.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Data Exploration for Your Final Project</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/project_guidelines-rev1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">STAT 579: Applied Causal Inference</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/project_rubric.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Final Project Rubric & Instructor Checklist</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/project_schedule.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">STAT 579: Detailed Final Project Schedule</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/project/target_trial_tutorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Target Trial Emulation (TTE) vs Just Analyzing the Data</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7"  role="navigation" aria-expanded="false">
- <span class="menu-text">Readings</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/readings/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Readings Home</span></a>
-  </div>
-</li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="/readings/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Readings</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/readings/weekly_paper_critique_schedule.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Weekly Paper Critique Schedule</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/readings/weekly_paper_critique_templates.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Reflection 1: Template for Critiquing Weekly Papers</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/readings/writing_critique_guidlines.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">How to Write a Great Critique</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9"  role="navigation" aria-expanded="false">
- <span class="menu-text">R Code and Datasets</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="/r_help.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">R Help</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-    </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" ></div>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <div id="quarto-toc-target"></div>
-    </div>
-<!-- main -->
-<main class="content" id="quarto-document-content">
-<script id = "quarto-html-before-body" type="application/javascript">
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -730,9 +369,95 @@ window.Quarto = {
     }
   </script>
 
-
-<header id="title-block-header" class="quarto-title-block default">
-  <div class="quarto-title-banner">
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Introduction to Causal Inference</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Syllabus</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.pdf">
+ <span class="dropdown-text">PDF</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.html">
+ <span class="dropdown-text">HTML</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../syllabus/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_lectures.html"> 
+<span class="menu-text">Lecture Notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../project/index.html"> 
+<span class="menu-text">Project</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../readings/index.html"> 
+<span class="menu-text">Readings</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_assignments.html"> 
+<span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../r_help.html"> 
+<span class="menu-text">R Help</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Week 1: What is a Causal Effect?</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Week 1: What is a Causal Effect?</h1>
                       </div>
@@ -758,7 +483,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Aug-20-2025</p>
+        <p class="date">Aug-22-2025</p>
       </div>
     </div>
     
@@ -766,45 +491,161 @@ window.Quarto = {
     </div>
     
   
-  </header>
-
-<nav id="TOC" role="doc-toc">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Overview</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Syllabus</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PDF</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HTML</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schedule</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Materials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lecture Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_assignments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignments</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../project/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../readings/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">R Code and Datasets</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../r_help.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R Help</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#motivation-learning-objectives" id="toc-motivation-learning-objectives">🎯 Motivation &amp; Learning Objectives</a></li>
-  <li><a href="#the-potential-outcomes-framework" id="toc-the-potential-outcomes-framework">🔬 The Potential Outcomes Framework</a>
-  <ul>
-  <li><a href="#motivation-intuition" id="toc-motivation-intuition">Motivation &amp; Intuition</a></li>
+  <li><a href="#motivation-learning-objectives" id="toc-motivation-learning-objectives" class="nav-link active" data-scroll-target="#motivation-learning-objectives">🎯 Motivation &amp; Learning Objectives</a></li>
+  <li><a href="#the-potential-outcomes-framework" id="toc-the-potential-outcomes-framework" class="nav-link" data-scroll-target="#the-potential-outcomes-framework">🔬 The Potential Outcomes Framework</a>
+  <ul class="collapse">
+  <li><a href="#motivation-intuition" id="toc-motivation-intuition" class="nav-link" data-scroll-target="#motivation-intuition">Motivation &amp; Intuition</a></li>
   </ul></li>
-  <li><a href="#the-fundamental-problem-of-causal-inference" id="toc-the-fundamental-problem-of-causal-inference">💥 The Fundamental Problem of Causal Inference</a>
-  <ul>
-  <li><a href="#motivation-intuition-1" id="toc-motivation-intuition-1">Motivation &amp; Intuition</a></li>
+  <li><a href="#the-fundamental-problem-of-causal-inference" id="toc-the-fundamental-problem-of-causal-inference" class="nav-link" data-scroll-target="#the-fundamental-problem-of-causal-inference">💥 The Fundamental Problem of Causal Inference</a>
+  <ul class="collapse">
+  <li><a href="#motivation-intuition-1" id="toc-motivation-intuition-1" class="nav-link" data-scroll-target="#motivation-intuition-1">Motivation &amp; Intuition</a></li>
   </ul></li>
-  <li><a href="#from-individual-to-average-effects" id="toc-from-individual-to-average-effects">🌍 From Individual to Average Effects</a>
-  <ul>
-  <li><a href="#motivation-the-statistical-solution" id="toc-motivation-the-statistical-solution">Motivation &amp; The Statistical Solution</a></li>
-  <li><a href="#hand-calculated-example-the-divine-view" id="toc-hand-calculated-example-the-divine-view">Hand-Calculated Example: The Divine View</a></li>
+  <li><a href="#from-individual-to-average-effects" id="toc-from-individual-to-average-effects" class="nav-link" data-scroll-target="#from-individual-to-average-effects">🌍 From Individual to Average Effects</a>
+  <ul class="collapse">
+  <li><a href="#motivation-the-statistical-solution" id="toc-motivation-the-statistical-solution" class="nav-link" data-scroll-target="#motivation-the-statistical-solution">Motivation &amp; The Statistical Solution</a></li>
+  <li><a href="#hand-calculated-example-the-divine-view" id="toc-hand-calculated-example-the-divine-view" class="nav-link" data-scroll-target="#hand-calculated-example-the-divine-view">Hand-Calculated Example: The Divine View</a></li>
   </ul></li>
-  <li><a href="#the-gold-standard-randomized-controlled-trials-rcts" id="toc-the-gold-standard-randomized-controlled-trials-rcts">✨ 4. The Gold Standard: Randomized Controlled Trials (RCTs)</a>
-  <ul>
-  <li><a href="#motivation-intuition-2" id="toc-motivation-intuition-2">Motivation &amp; Intuition</a></li>
+  <li><a href="#the-gold-standard-randomized-controlled-trials-rcts" id="toc-the-gold-standard-randomized-controlled-trials-rcts" class="nav-link" data-scroll-target="#the-gold-standard-randomized-controlled-trials-rcts">✨ 4. The Gold Standard: Randomized Controlled Trials (RCTs)</a>
+  <ul class="collapse">
+  <li><a href="#motivation-intuition-2" id="toc-motivation-intuition-2" class="nav-link" data-scroll-target="#motivation-intuition-2">Motivation &amp; Intuition</a></li>
   </ul></li>
-  <li><a href="#observational-data-the-problem-of-confounding" id="toc-observational-data-the-problem-of-confounding">🚧 Observational Data &amp; The Problem of Confounding</a>
-  <ul>
-  <li><a href="#motivation-intuition-3" id="toc-motivation-intuition-3">Motivation &amp; Intuition</a></li>
-  <li><a href="#hand-calculated-example-the-mortal-view" id="toc-hand-calculated-example-the-mortal-view">Hand-Calculated Example: The Mortal View</a></li>
+  <li><a href="#observational-data-the-problem-of-confounding" id="toc-observational-data-the-problem-of-confounding" class="nav-link" data-scroll-target="#observational-data-the-problem-of-confounding">🚧 Observational Data &amp; The Problem of Confounding</a>
+  <ul class="collapse">
+  <li><a href="#motivation-intuition-3" id="toc-motivation-intuition-3" class="nav-link" data-scroll-target="#motivation-intuition-3">Motivation &amp; Intuition</a></li>
+  <li><a href="#hand-calculated-example-the-mortal-view" id="toc-hand-calculated-example-the-mortal-view" class="nav-link" data-scroll-target="#hand-calculated-example-the-mortal-view">Hand-Calculated Example: The Mortal View</a></li>
   </ul></li>
-  <li><a href="#sutva-the-rules-of-the-game" id="toc-sutva-the-rules-of-the-game">💡 6. SUTVA: The Rules of the Game</a></li>
-  <li><a href="#appendix-advanced-statistical-derivations" id="toc-appendix-advanced-statistical-derivations">📚 Appendix: Advanced Statistical Derivations</a>
-  <ul>
-  <li><a href="#derivation-decomposing-association-into-causation-and-bias" id="toc-derivation-decomposing-association-into-causation-and-bias">Derivation: Decomposing Association into Causation and Bias</a></li>
-  <li><a href="#hand-calculated-example-of-the-decomposition" id="toc-hand-calculated-example-of-the-decomposition">Hand-Calculated Example of the Decomposition</a></li>
+  <li><a href="#sutva-the-rules-of-the-game" id="toc-sutva-the-rules-of-the-game" class="nav-link" data-scroll-target="#sutva-the-rules-of-the-game">💡 6. SUTVA: The Rules of the Game</a></li>
+  <li><a href="#appendix-advanced-statistical-derivations" id="toc-appendix-advanced-statistical-derivations" class="nav-link" data-scroll-target="#appendix-advanced-statistical-derivations">📚 Appendix: Advanced Statistical Derivations</a>
+  <ul class="collapse">
+  <li><a href="#derivation-decomposing-association-into-causation-and-bias" id="toc-derivation-decomposing-association-into-causation-and-bias" class="nav-link" data-scroll-target="#derivation-decomposing-association-into-causation-and-bias">Derivation: Decomposing Association into Causation and Bias</a></li>
+  <li><a href="#hand-calculated-example-of-the-decomposition" id="toc-hand-calculated-example-of-the-decomposition" class="nav-link" data-scroll-target="#hand-calculated-example-of-the-decomposition">Hand-Calculated Example of the Decomposition</a></li>
   </ul></li>
   </ul>
-</nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-1_what_is_causal_effect.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-1_what_is_causal_effect.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+
 <section id="motivation-learning-objectives" class="level2">
-<h2>🎯 Motivation &amp; Learning Objectives</h2>
+<h2 class="anchored" data-anchor-id="motivation-learning-objectives">🎯 Motivation &amp; Learning Objectives</h2>
 <p>Welcome to STAT 579! We begin our journey by tackling the most fundamental question of all: <em>what exactly is a causal effect?</em> It seems simple, but defining it with precision is the critical first step for every method we’ll learn.</p>
 <p>Imagine you are a public health official. You observe that cities with higher numbers of public parks have lower rates of adult depression. Should you spend millions of dollars building new parks to improve mental health? Is the association <strong>causal</strong>, or could it be that healthier, wealthier people tend to live in cities that can afford more parks (<strong>confounding</strong>)? This is the kind of high-stakes question causal inference is designed to answer.</p>
 <p>By the end of this module, you will be able to:</p>
@@ -817,9 +658,9 @@ window.Quarto = {
 </ol>
 </section>
 <section id="the-potential-outcomes-framework" class="level2">
-<h2>🔬 The Potential Outcomes Framework</h2>
+<h2 class="anchored" data-anchor-id="the-potential-outcomes-framework">🔬 The Potential Outcomes Framework</h2>
 <section id="motivation-intuition" class="level3">
-<h3>Motivation &amp; Intuition</h3>
+<h3 class="anchored" data-anchor-id="motivation-intuition">Motivation &amp; Intuition</h3>
 <p>To move from vague “what if” questions to formal analysis, we need a language to describe the unobserved. The <strong>Potential Outcomes Framework</strong> provides this language. The core idea is that for any treatment or exposure, there are multiple “potential worlds” that could occur for each individual.</p>
 <p>Let’s consider a simple binary treatment, <span class="math inline">\(A\)</span>. For any individual <span class="math inline">\(i\)</span>, <span class="math inline">\(A_i=1\)</span> if they receive the treatment and <span class="math inline">\(A_i=0\)</span> if they receive the control. We imagine that for each individual, two <strong>potential outcomes</strong> exist <em>simultaneously</em> as fixed attributes, even before treatment is assigned.</p>
 <ul>
@@ -827,7 +668,7 @@ window.Quarto = {
 <li><span class="math inline">\(Y_i^0\)</span>: The outcome for individual <span class="math inline">\(i\)</span> <strong>if they were to be exposed</strong> to the control (<span class="math inline">\(A=0\)</span>).</li>
 </ul>
 <p>These are also called <strong>counterfactuals</strong> because once a treatment is given, one of them will be counter-to-fact.</p>
-<img src="week-1_what_is_causal_effect_files/mediabag/a08d3aa471ee83f9837e91b728a18feb0ac65710.svg" class="img-fluid" />
+<img src="week-1_what_is_causal_effect_files/mediabag/a08d3aa471ee83f9837e91b728a18feb0ac65710.svg" class="img-fluid">
 <p>With this, we can define the <strong>Individual Causal Effect (ICE)</strong> for person <span class="math inline">\(i\)</span> as:</p>
 <p><span class="math display">\[
 \tau_i = Y_i^1 - Y_i^0
@@ -835,27 +676,27 @@ window.Quarto = {
 </section>
 </section>
 <section id="the-fundamental-problem-of-causal-inference" class="level2">
-<h2>💥 The Fundamental Problem of Causal Inference</h2>
+<h2 class="anchored" data-anchor-id="the-fundamental-problem-of-causal-inference">💥 The Fundamental Problem of Causal Inference</h2>
 <section id="motivation-intuition-1" class="level3">
-<h3>Motivation &amp; Intuition</h3>
+<h3 class="anchored" data-anchor-id="motivation-intuition-1">Motivation &amp; Intuition</h3>
 <p>The core challenge of our field is that we can only live in one world at a time. Once a person receives a treatment, we can’t see what would have happened to them on the exact same day, at the exact same time, had they not received it. That alternate reality is lost to us.</p>
 <p>For any individual, we can only ever observe <strong>one</strong> of their potential outcomes. The other is forever hidden. We can formalize this with a “switching equation” that links the potential outcomes to the single <strong>observed outcome</strong>, <span class="math inline">\(Y_i\)</span>:</p>
 <p><span class="math display">\[
 Y_i = A_i Y_i^1 + (1 - A_i) Y_i^0
 \]</span></p>
 <p>This means causal inference is fundamentally a <strong>missing data problem</strong>. Half the data in our ideal dataset is always missing.</p>
-<img src="week-1_what_is_causal_effect_files/mediabag/014eef3b293e36f2ad2a9a239cad24ec9de7e2eb.svg" class="img-fluid" />
+<img src="week-1_what_is_causal_effect_files/mediabag/014eef3b293e36f2ad2a9a239cad24ec9de7e2eb.svg" class="img-fluid">
 <section id="concept-check" class="level4 callout-question">
-<h4>🤔 Concept Check</h4>
+<h4 class="anchored" data-anchor-id="concept-check">🤔 Concept Check</h4>
 <p>A researcher measures a patient’s cholesterol, gives them a new drug for 6 months, and measures it again. The researcher claims the change in cholesterol is the causal effect. Why is this claim flawed according to the potential outcomes framework?</p>
 <p><strong>Answer</strong>: This “before-and-after” comparison is not a valid causal effect. The “before” measurement is not <span class="math inline">\(Y^0\)</span>. The potential outcome <span class="math inline">\(Y^0\)</span> is what the patient’s cholesterol <em>would have been after 6 months without the drug</em>. Over 6 months, many other things could have changed (diet, exercise, aging), so the “before” value is not a valid counterfactual.</p>
 </section>
 </section>
 </section>
 <section id="from-individual-to-average-effects" class="level2">
-<h2>🌍 From Individual to Average Effects</h2>
+<h2 class="anchored" data-anchor-id="from-individual-to-average-effects">🌍 From Individual to Average Effects</h2>
 <section id="motivation-the-statistical-solution" class="level3">
-<h3>Motivation &amp; The Statistical Solution</h3>
+<h3 class="anchored" data-anchor-id="motivation-the-statistical-solution">Motivation &amp; The Statistical Solution</h3>
 <p>Since we can’t see the ICE, we aim for a more modest but achievable goal: estimating the <strong>Average Treatment Effect (ATE)</strong>.</p>
 <p><span class="math display">\[
 \text{ATE} = \mathbb{E}[Y^1 - Y^0]
@@ -863,14 +704,14 @@ Y_i = A_i Y_i^1 + (1 - A_i) Y_i^0
 <p>The ATE tells us the average effect of the treatment across an entire population.</p>
 </section>
 <section id="hand-calculated-example-the-divine-view" class="level3">
-<h3>Hand-Calculated Example: The Divine View</h3>
+<h3 class="anchored" data-anchor-id="hand-calculated-example-the-divine-view">Hand-Calculated Example: The Divine View</h3>
 <p>Imagine we are gods and can see the full potential outcomes for a population of 10 people. The outcome <span class="math inline">\(Y\)</span> is “days of sickness,” so lower is better.</p>
-<table class="caption-top">
+<table class="caption-top table">
 <colgroup>
-<col style="width: 11%" />
-<col style="width: 31%" />
-<col style="width: 35%" />
-<col style="width: 20%" />
+<col style="width: 11%">
+<col style="width: 31%">
+<col style="width: 35%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -965,9 +806,9 @@ Y_i = A_i Y_i^1 + (1 - A_i) Y_i^0
 </section>
 </section>
 <section id="the-gold-standard-randomized-controlled-trials-rcts" class="level2">
-<h2>✨ 4. The Gold Standard: Randomized Controlled Trials (RCTs)</h2>
+<h2 class="anchored" data-anchor-id="the-gold-standard-randomized-controlled-trials-rcts">✨ 4. The Gold Standard: Randomized Controlled Trials (RCTs)</h2>
 <section id="motivation-intuition-2" class="level3">
-<h3>Motivation &amp; Intuition</h3>
+<h3 class="anchored" data-anchor-id="motivation-intuition-2">Motivation &amp; Intuition</h3>
 <p>How can we estimate the ATE if we are mortals and can’t see the full table? In an <strong>RCT</strong>, we randomly assign people to treatment or control. Randomization acts like a great equalizer: it ensures that, on average, the group that gets the treatment is no different from the group that doesn’t on all baseline characteristics. This property is called <strong>exchangeability</strong>.</p>
 <p>Randomization makes the treatment assignment <span class="math inline">\(A\)</span> statistically independent of the potential outcomes <span class="math inline">\({Y^1, Y^0}\)</span>:</p>
 <p><span class="math display">\[
@@ -980,31 +821,31 @@ A \indep \{Y^1, Y^0\}
 </section>
 </section>
 <section id="observational-data-the-problem-of-confounding" class="level2">
-<h2>🚧 Observational Data &amp; The Problem of Confounding</h2>
+<h2 class="anchored" data-anchor-id="observational-data-the-problem-of-confounding">🚧 Observational Data &amp; The Problem of Confounding</h2>
 <section id="motivation-intuition-3" class="level3">
-<h3>Motivation &amp; Intuition</h3>
+<h3 class="anchored" data-anchor-id="motivation-intuition-3">Motivation &amp; Intuition</h3>
 <p>Most of the time in public health, we can’t randomize. People choose their own exposures. This is <strong>observational data</strong>. In this setting, the treated and untreated groups are often not exchangeable. The reasons someone <em>chooses</em> a treatment might be linked to the outcome. This is called <strong>confounding</strong>. A <strong>confounder</strong> is a pre-treatment variable that is a common cause of both the treatment and the outcome.</p>
-<img src="week-1_what_is_causal_effect_files/mediabag/c20833d7f4dd8f325f1fa2958919606255a8a151.svg" class="img-fluid" />
+<img src="week-1_what_is_causal_effect_files/mediabag/c20833d7f4dd8f325f1fa2958919606255a8a151.svg" class="img-fluid">
 <p>When confounding exists, the simple difference in means is no longer the ATE. It is merely a measure of <strong>association</strong>, and it is biased.</p>
 <p><span class="math display">\[
 \text{Association} = \mathbb{E}[Y \mid A=1] - \mathbb{E}[Y \mid A=0] \neq \text{ATE}
 \]</span></p>
 </section>
 <section id="hand-calculated-example-the-mortal-view" class="level3">
-<h3>Hand-Calculated Example: The Mortal View</h3>
+<h3 class="anchored" data-anchor-id="hand-calculated-example-the-mortal-view">Hand-Calculated Example: The Mortal View</h3>
 <p>Let’s return to our population of 10 people. But now, we are mortals and see only the observed data. Let’s assume that sicker people are more likely to seek treatment.</p>
 <ul>
 <li>The 5 individuals with the worst potential health (<span class="math inline">\(Y^0 \ge 8\)</span>) all seek treatment (<span class="math inline">\(A=1\)</span>).</li>
 <li>The 5 individuals with the best potential health (<span class="math inline">\(Y^0 &lt; 8\)</span>) do not get treatment (<span class="math inline">\(A=0\)</span>).</li>
 </ul>
 <p>Here is the <strong>observed data</strong> we would see:</p>
-<table class="caption-top">
+<table class="caption-top table">
 <colgroup>
-<col style="width: 16%" />
-<col style="width: 8%" />
-<col style="width: 26%" />
-<col style="width: 26%" />
-<col style="width: 22%" />
+<col style="width: 16%">
+<col style="width: 8%">
+<col style="width: 26%">
+<col style="width: 26%">
+<col style="width: 22%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1104,12 +945,12 @@ A \indep \{Y^1, Y^0\}
 </section>
 </section>
 <section id="sutva-the-rules-of-the-game" class="level2">
-<h2>💡 6. SUTVA: The Rules of the Game</h2>
+<h2 class="anchored" data-anchor-id="sutva-the-rules-of-the-game">💡 6. SUTVA: The Rules of the Game</h2>
 <p>All of this reasoning rests on a foundational assumption: the <strong>Stable Unit Treatment Value Assumption (SUTVA)</strong>.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
-<i class='callout-icon'></i>
+<i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 The Two Pillars of SUTVA
@@ -1130,9 +971,9 @@ The Two Pillars of SUTVA
 </div>
 </section>
 <section id="appendix-advanced-statistical-derivations" class="level2">
-<h2>📚 Appendix: Advanced Statistical Derivations</h2>
+<h2 class="anchored" data-anchor-id="appendix-advanced-statistical-derivations">📚 Appendix: Advanced Statistical Derivations</h2>
 <section id="derivation-decomposing-association-into-causation-and-bias" class="level3">
-<h3>Derivation: Decomposing Association into Causation and Bias</h3>
+<h3 class="anchored" data-anchor-id="derivation-decomposing-association-into-causation-and-bias">Derivation: Decomposing Association into Causation and Bias</h3>
 <p><strong>Motivation</strong>: Let’s formally prove why the associational difference was so wrong in our hand-calculated example. We can decompose it into the true causal effect and bias terms.</p>
 <p>The associational difference is <span class="math inline">\(\Delta = \mathbb{E}[Y \mid A=1] - \mathbb{E}[Y \mid A=0]\)</span>.</p>
 <p>By consistency, we can write this as <span class="math inline">\(\Delta = \mathbb{E}[Y^1 \mid A=1] - \mathbb{E}[Y^0 \mid A=0]\)</span>.</p>
@@ -1146,7 +987,7 @@ The Two Pillars of SUTVA
 </ul>
 </section>
 <section id="hand-calculated-example-of-the-decomposition" class="level3">
-<h3>Hand-Calculated Example of the Decomposition</h3>
+<h3 class="anchored" data-anchor-id="hand-calculated-example-of-the-decomposition">Hand-Calculated Example of the Decomposition</h3>
 <p>Let’s use our 10-person example to calculate these terms from the “divine” table.</p>
 <ol type="1">
 <li><strong>Calculate ATT</strong>: We need the average causal effect just for the 5 people who got treated (Persons 3, 4, 7, 8, 10).</li>
@@ -1157,7 +998,7 @@ The Two Pillars of SUTVA
 <li><strong>ATT</strong> = <span class="math inline">\(8.0 - 10.0 = -2.0\)</span>. (In this case, the effect is constant, so ATT = ATE).</li>
 </ul>
 <ol start="2" type="1">
-<li><strong>Calculate Selection Bias</strong>: We compare the baseline health (<span class="math inline">\(Y^0\)</span>) of the treated vs. the untreated.</li>
+<li><strong>Calculate Selection Bias</strong>: We compare the baseline health (<span class="math inline">\(Y^0\)</span>) of the treated vs.&nbsp;the untreated.</li>
 </ol>
 <ul>
 <li>The treated group’s <span class="math inline">\(Y^0\)</span> values are (8, 9, 10, 11, 12). Mean <span class="math inline">\(\mathbb{E}[Y^0 \mid A=1] = 10.0\)</span>.</li>
@@ -1173,12 +1014,8 @@ The Two Pillars of SUTVA
 +3.0 = -2.0 + 5.0
 \]</span></p>
 <p>This confirms our formula! Our observed association of +3.0 was a combination of the true causal effect of -2.0 and a large selection bias of +5.0 because the sicker group selected into treatment.</p>
-<div id="quarto-navigation-envelope" class="hidden">
-<p><span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyLXRpdGxl">Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXItdGl0bGU=">Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMQ==">Course Overview</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9pbmRleC5odG1sSG9tZQ==">Home</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9zeWxsYWJ1cy9zeWxsYWJ1cy1maW5hbC5wZGZTeWxsYWJ1cy0oUERGKQ==">Syllabus (PDF)</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9zeWxsYWJ1cy9zY2hlZHVsZS5odG1sU2NoZWR1bGU=">Schedule</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMg==">Course Materials</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9ob21lX2xlY3R1cmVzLmh0bWxMZWN0dXJlLU5vdGVz">Lecture Notes</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9wcm9qZWN0L2luZGV4Lmh0bWxQcm9qZWN0cw==">Projects</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMw==">Projects</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9wcm9qZWN0L2RhdGFfcmVzb3VyY2VzLmh0bWxEYXRhLUV4cGxvcmF0aW9uLWZvci1Zb3VyLUZpbmFsLVByb2plY3Q=">Data Exploration for Your Final Project</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9wcm9qZWN0L3Byb2plY3RfZ3VpZGVsaW5lcy1yZXYxLmh0bWxTVEFULTU3OTotQXBwbGllZC1DYXVzYWwtSW5mZXJlbmNl">STAT 579: Applied Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9wcm9qZWN0L3Byb2plY3RfcnVicmljLmh0bWxGaW5hbC1Qcm9qZWN0LVJ1YnJpYy0mLUluc3RydWN0b3ItQ2hlY2tsaXN0">Final Project Rubric &amp; Instructor Checklist</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9wcm9qZWN0L3Byb2plY3Rfc2NoZWR1bGUuaHRtbFNUQVQtNTc5Oi1EZXRhaWxlZC1GaW5hbC1Qcm9qZWN0LVNjaGVkdWxl">STAT 579: Detailed Final Project Schedule</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9wcm9qZWN0L3RhcmdldF90cmlhbF90dXRvcmlhbC5odG1sVGFyZ2V0LVRyaWFsLUVtdWxhdGlvbi0oVFRFKS12cy1KdXN0LUFuYWx5emluZy10aGUtRGF0YQ==">Target Trial Emulation (TTE) vs Just Analyzing the Data</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9yZWFkaW5ncy9pbmRleC5odG1sUmVhZGluZ3MtKEFsbCk=">Readings (All)</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tNA==">Readings</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9yZWFkaW5ncy93ZWVrbHlfcGFwZXJfY3JpdGlxdWVfc2NoZWR1bGUuaHRtbFdlZWtseS1QYXBlci1Dcml0aXF1ZS1TY2hlZHVsZQ==">Weekly Paper Critique Schedule</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9yZWFkaW5ncy93ZWVrbHlfcGFwZXJfY3JpdGlxdWVfdGVtcGxhdGVzLmh0bWxSZWZsZWN0aW9uLTE6LVRlbXBsYXRlLWZvci1Dcml0aXF1aW5nLVdlZWtseS1QYXBlcnM=">Reflection 1: Template for Critiquing Weekly Papers</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9yZWFkaW5ncy93cml0aW5nX2NyaXRpcXVlX2d1aWRsaW5lcy5odG1sSG93LXRvLVdyaXRlLWEtR3JlYXQtQ3JpdGlxdWU=">How to Write a Great Critique</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9ob21lX2Fzc2lnbm1lbnRzLmh0bWxBc3NpZ25tZW50cw==">Assignments</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tNQ==">Projects</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9wcm9qZWN0L2luZGV4Lmh0bWxQcm9qZWN0cy1Ib21l">Projects Home</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tNg==">Projects</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tNw==">Readings</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9yZWFkaW5ncy9pbmRleC5odG1sUmVhZGluZ3MtSG9tZQ==">Readings Home</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tOA==">Readings</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tOQ==">R Code and Datasets</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9yX2hlbHAuaHRtbFItSGVscA==">R Help</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6SG9tZQ==">Home</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L2luZGV4Lmh0bWw=">/index.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6U3lsbGFidXM=">Syllabus</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6UERG">PDF</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L3N5bGxhYnVzL3N5bGxhYnVzLWZpbmFsLnBkZg==">/syllabus/syllabus-final.pdf</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6SFRNTA==">HTML</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L3N5bGxhYnVzL3N5bGxhYnVzLWZpbmFsLmh0bWw=">/syllabus/syllabus-final.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6U2NoZWR1bGU=">Schedule</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L3N5bGxhYnVzL3NjaGVkdWxlLmh0bWw=">/syllabus/schedule.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6TGVjdHVyZSBOb3Rlcw==">Lecture Notes</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L2hvbWVfbGVjdHVyZXMuaHRtbA==">/home_lectures.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6UHJvamVjdHM=">Projects</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6UHJvamVjdHMgSG9tZQ==">Projects Home</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L3Byb2plY3QvaW5kZXguaHRtbA==">/project/index.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6UmVhZGluZ3M=">Readings</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6UmVhZGluZ3MgSG9tZQ==">Readings Home</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L3JlYWRpbmdzL2luZGV4Lmh0bWw=">/readings/index.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6QXNzaWdubWVudHM=">Assignments</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L2hvbWVfYXNzaWdubWVudHMuaHRtbA==">/home_assignments.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6UiBIZWxw">R Help</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L3JfaGVscC5odG1s">/r_help.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6aHR0cHM6Ly9naXRodWIuY29tL0RhdGEtV2lzZS9jYXVzYWwtaW5mZXJlbmNl">https://github.com/Data-Wise/causal-inference</span></p>
-</div>
-<div id="quarto-meta-markdown" class="hidden">
-<p><span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW1ldGF0aXRsZQ==">Week 1: What is a Causal Effect? – Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLXR3aXR0ZXJjYXJkdGl0bGU=">Week 1: What is a Causal Effect? – Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW9nY2FyZHRpdGxl">Week 1: What is a Causal Effect? – Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW1ldGFzaXRlbmFtZQ==">Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLXR3aXR0ZXJjYXJkZGVzYw==">Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW9nY2FyZGRkZXNj">Introduction to Causal Inference</span></p>
-</div>
+
+
 </section>
 </section>
 
@@ -1195,7 +1032,7 @@ The Two Pillars of SUTVA
         document.getElementById("current-year").textContent = new Date().getFullYear();
     </script>
 </footer>
-<script id = "quarto-html-after-body" type="application/javascript">
+<script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
     if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1616,6 +1453,8 @@ The Two Pillars of SUTVA
   </script>
 </div> <!-- /content -->
 
-</body>
 
-</html>
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-1_what_is_causal_effect.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
