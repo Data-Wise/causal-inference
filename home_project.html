@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>Final Project Overview – Introduction to Causal Inference</title>
+<title>STAT 579: Final Project Hub – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,15 +25,12 @@ ul.task-list li input[type="checkbox"] {
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./home_assignments.html" rel="next">
-<link href="./home_readings.html" rel="prev">
-<link href="./assets/images/favicon.ico" rel="icon">
+<link href="./assets/images/icon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -45,9 +42,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-2e7b04a56bc37fec0e9cc360ee7378d9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-ab86f13fa607618020e3f7de5041b3a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -76,110 +73,110 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 <script>
-MathJax = {
-  tex: {
-    macros: {
-        RR: "{\\mathbb{R}}",
-        NN: "{\\mathbb{N}}",
-        QQ: "{\\mathbb{Q}}",
-        ZZ: "{\\mathbb{Z}}",
-        PP: "{\\mathbb{P}}",
-        // expectation & probability
-        E: ["{\\EE\\left[ #1 \\right]}", 1],
-        Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
-        EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
-        EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
-        EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
-        Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
-        ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
-        ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
-        ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
-        Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
-        ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
-        ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
-        ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
-        ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
-        ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
-        // operators (both lower & upper case)
-        var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
-        Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
-        cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
-        Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
-        cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
-        Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
-        logit: "{\\operatorname{logit}}",
-        expit: "{\\operatorname{expit}}", // inverse logit
-        sgn: "{\\operatorname{sgn}}",
-        EE: "{\\operatorname{\\mathbb{E}}}",
-        pr: "{\\operatorname{\\mathbb{P}}}",
+    MathJax = {
+        tex: {
+            macros: {
+                RR: "{\\mathbb{R}}",
+                NN: "{\\mathbb{N}}",
+                QQ: "{\\mathbb{Q}}",
+                ZZ: "{\\mathbb{Z}}",
+                PP: "{\\mathbb{P}}",
+                // expectation & probability
+                E: ["{\\EE\\left[ #1 \\right]}", 1],
+                Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
+                EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
+                EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
+                EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
+                Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
+                ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
+                Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
+                ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
+                ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
+                ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
+                ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
+                // operators (both lower & upper case)
+                var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
+                Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
+                cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
+                Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
+                cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
+                Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
+                logit: "{\\operatorname{logit}}",
+                expit: "{\\operatorname{expit}}", // inverse logit
+                sgn: "{\\operatorname{sgn}}",
+                EE: "{\\operatorname{\\mathbb{E}}}",
+                pr: "{\\operatorname{\\mathbb{P}}}",
 
-        // vector & basic constructs
-        vect: ["{\\mathbf{#1}}", 1],
-        abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
-        norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
-        ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
+                // vector & basic constructs
+                vect: ["{\\mathbf{#1}}", 1],
+                abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
+                norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
+                ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
 
-        // indicator variants
-        indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
-        ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
-        I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                // indicator variants
+                indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
+                ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
 
-        // independence & non-independence (bare + braced forms via separate names)
-        indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
-        Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
-        nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
-        Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
-        notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
-        Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                // independence & non-independence (bare + braced forms via separate names)
+                indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
+                nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
 
-        // do-operator & d-separation
-        doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
-        dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                // do-operator & d-separation
+                doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
+                dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
 
-        // potential outcomes & notational conveniences
-        Y: ["{Y^{#1}}", 1],
-        Ya: "{Y^a}",
-        Yone: "{Y^1}",
-        Yzero: "{Y^0}",
+                // potential outcomes & notational conveniences
+                Y: ["{Y^{#1}}", 1],
+                Ya: "{Y^a}",
+                Yone: "{Y^1}",
+                Yzero: "{Y^0}",
 
-        // estimands
-        ATE: "{\\tau_{\\text{ATE}}}",
-        ATT: "{\\tau_{\\text{ATT}}}",
-        ATC: "{\\tau_{\\text{ATC}}}",
-        CATE: "{\\tau_{\\text{CATE}}}",
+                // estimands
+                ATE: "{\\tau_{\\text{ATE}}}",
+                ATT: "{\\tau_{\\text{ATT}}}",
+                ATC: "{\\tau_{\\text{ATC}}}",
+                CATE: "{\\tau_{\\text{CATE}}}",
 
-        DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
-        DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
-        DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
-        DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
+                DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
+                DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
+                DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
+                DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
 
-        // identification blocks
-        gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
-        ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
+                // identification blocks
+                gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
+                ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
 
-        // risk measures
-        RD: "{\\operatorname{RD}}",
-        OR: "{\\operatorname{OR}}",
+                // risk measures
+                RD: "{\\operatorname{RD}}",
+                OR: "{\\operatorname{OR}}",
 
-        // optimization operators
-        argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
-        argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
-      }
-    }
-  };
+                // optimization operators
+                argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
+                argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
+            }
+        }
+    };
 </script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 
 
 <link rel="stylesheet" href="assets/styles/css/home.css">
-<meta property="og:title" content="Final Project Overview – Introduction to Causal Inference">
-<meta property="og:description" content="Introduction to Causal Inference">
+<meta property="og:title" content="STAT 579: Final Project Hub – Introduction to Causal Inference">
+<meta property="og:description" content="Your Central Resource for the Target Trial Challenge">
 <meta property="og:image" content="https://Data-Wise.github.io/causal-inference/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -348,6 +345,9 @@ MathJax = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./assets/images/icon.png" alt="" class="navbar-logo">
+    </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Introduction to Causal Inference</span>
     </a>
@@ -357,15 +357,26 @@ MathJax = {
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="./index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./syllabus/syllabus-final.html"> 
-<span class="menu-text">Syllabus</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Syllabus</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
+        <li>
+    <a class="dropdown-item" href="./syllabus/syllabus-final.pdf">
+ <span class="dropdown-text">PDF</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./syllabus/syllabus-final.html">
+ <span class="dropdown-text">HTML</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./syllabus/schedule.html"> 
 <span class="menu-text">Schedule</span></a>
@@ -375,22 +386,12 @@ MathJax = {
 <span class="menu-text">Lecture Notes</span></a>
   </li>  
   <li class="nav-item">
-    <span class="nav-link">
-<span class="menu-text">Readings</span>
-    </span>
+    <a class="nav-link" href="./project/project_guidelines.html"> 
+<span class="menu-text">Project</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./home_readings.html"> 
-<span class="menu-text">STAT 579 • Weekly Readings &amp; Critique Hub</span></a>
-  </li>  
-  <li class="nav-item">
-    <span class="nav-link">
-<span class="menu-text">Project</span>
-    </span>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./home_project.html"> 
-<span class="menu-text">Final Project Overview</span></a>
+<span class="menu-text">Readings</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./home_assignments.html"> 
@@ -400,6 +401,8 @@ MathJax = {
     <a class="nav-link" href="./r_help.html"> 
 <span class="menu-text">R Help</span></a>
   </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
@@ -417,7 +420,7 @@ MathJax = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./home_lectures.html">Course Materials</a></li><li class="breadcrumb-item"><a href="./home_project.html">Final Project Overview</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">STAT 579: Final Project Hub</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -426,8 +429,9 @@ MathJax = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./home_lectures.html">Course Materials</a></li><li class="breadcrumb-item"><a href="./home_project.html">Final Project Overview</a></li></ol></nav>
-      <h1 class="title">Final Project Overview</h1>
+    <div class="quarto-title column-body">
+      <h1 class="title">STAT 579: Final Project Hub</h1>
+            <p class="subtitle lead">Your Central Resource for the Target Trial Challenge</p>
                       </div>
   </div>
     
@@ -451,7 +455,7 @@ MathJax = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Aug-19-2025</p>
+        <p class="date">Aug-23-2025</p>
       </div>
     </div>
     
@@ -461,30 +465,47 @@ MathJax = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Overview</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Home</span></a>
   </div>
 </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Syllabus</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Syllabus</span></a>
+ <span class="menu-text">PDF</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HTML</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./syllabus/schedule.html" class="sidebar-item-text sidebar-link">
@@ -495,35 +516,17 @@ MathJax = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Materials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./home_lectures.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lecture Notes</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
- <span class="menu-text">Readings</span>
-  </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./home_readings.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">STAT 579 • Weekly Readings &amp; Critique Hub</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
- <span class="menu-text">Project</span>
-  </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./home_project.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Final Project Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -532,17 +535,32 @@ MathJax = {
  <span class="menu-text">Assignments</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+ <span class="menu-text">Project</span>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./project/project_guidelines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./home_readings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readings</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
  <span class="menu-text">R Code and Datasets</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./r_help.html" class="sidebar-item-text sidebar-link">
@@ -561,13 +579,8 @@ MathJax = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#stat-579-final-project-the-target-trial-challenge" id="toc-stat-579-final-project-the-target-trial-challenge" class="nav-link active" data-scroll-target="#stat-579-final-project-the-target-trial-challenge">STAT 579 Final Project: The Target Trial Challenge</a>
-  <ul class="collapse">
-  <li><a href="#the-guiding-philosophy-think-like-a-trialist" id="toc-the-guiding-philosophy-think-like-a-trialist" class="nav-link" data-scroll-target="#the-guiding-philosophy-think-like-a-trialist">The Guiding Philosophy: Think Like a Trialist</a></li>
-  <li><a href="#your-research-journey-from-question-to-conclusion" id="toc-your-research-journey-from-question-to-conclusion" class="nav-link" data-scroll-target="#your-research-journey-from-question-to-conclusion">Your Research Journey: From Question to Conclusion 🗺️</a></li>
-  <li><a href="#skills-you-will-master" id="toc-skills-you-will-master" class="nav-link" data-scroll-target="#skills-you-will-master">Skills You Will Master</a></li>
-  <li><a href="#lets-get-started" id="toc-lets-get-started" class="nav-link" data-scroll-target="#lets-get-started">Let’s Get Started</a></li>
-  </ul></li>
+  <li><a href="#important-dates" id="toc-important-dates" class="nav-link active" data-scroll-target="#important-dates">Important Dates 🗓️</a></li>
+  <li><a href="#project-resources-links" id="toc-project-resources-links" class="nav-link" data-scroll-target="#project-resources-links">Project Resources &amp; Links 📂</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/home_project.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -579,53 +592,66 @@ MathJax = {
 
 
 
-<section id="stat-579-final-project-the-target-trial-challenge" class="level2 cell">
-<h2 class="anchored" data-anchor-id="stat-579-final-project-the-target-trial-challenge">STAT 579 Final Project: The Target Trial Challenge</h2>
-<p>Welcome to the capstone experience for STAT 579! This project is where theory becomes practice. You will move beyond textbook exercises to tackle a real-world causal question from start to finish, applying the rigorous principles of modern causal inference to a topic that matters to you.</p>
-<p>The challenge? To design and emulate a perfect experiment—a <strong>target trial</strong>—that you wish had been conducted, using the messy, observational data we so often have in the real world.</p>
-<section id="the-guiding-philosophy-think-like-a-trialist" class="level3">
-<h3 class="anchored" data-anchor-id="the-guiding-philosophy-think-like-a-trialist">The Guiding Philosophy: Think Like a Trialist</h3>
-<p>At the heart of this project is the <strong>Target Trial Emulation</strong> framework. Why? Because it provides a powerful and structured way to approach causal inference with observational data.</p>
-<blockquote class="blockquote">
-<p>Imagine you are a detective arriving at a crime scene. You cannot rewind time to see what happened, but you can use the evidence available to reconstruct the most likely sequence of events.</p>
-<p>Similarly, we cannot go back in time to run the perfect randomized trial. Instead, we act as “data detectives.” We start by carefully designing the protocol for the ideal experiment we <em>wish</em> we could have run. Then, we use our observational data and causal methods to reconstruct, or <strong>emulate</strong>, that trial as closely as possible. This disciplined process illuminates our assumptions and strengthens our causal claims.</p>
-</blockquote>
+<p>Welcome to the central hub for the STAT 579 final project. This page contains everything you need to successfully complete your target trial emulation, from initial guidelines to final grading rubrics. Please bookmark this page and refer to it often throughout the semester.</p>
+<p>The goal of this project is to give you hands-on experience in conducting a causal inference study from start to finish. You will pose a causal question, design a hypothetical “target trial” to answer it, and then use real-world observational data to emulate that trial. This process will challenge you to be rigorous, thoughtful, and transparent about your assumptions.</p>
+<section id="important-dates" class="level3">
+<h3 class="anchored" data-anchor-id="important-dates">Important Dates 🗓️</h3>
+<p>Keep these major deadlines on your calendar. A more detailed week-by-week schedule with smaller deliverables is available in the detailed schedule linked below.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Deliverable</th>
+<th style="text-align: left;">Due Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Project Proposal</strong></td>
+<td style="text-align: left;">End of Week 9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Final Presentation</strong></td>
+<td style="text-align: left;">In Class, Week 14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Final Paper</strong></td>
+<td style="text-align: left;">End of Finals Week</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="your-research-journey-from-question-to-conclusion" class="level3">
-<h3 class="anchored" data-anchor-id="your-research-journey-from-question-to-conclusion">Your Research Journey: From Question to Conclusion 🗺️</h3>
-<p>This project will unfold over the semester, with milestones designed to keep you on track. Your journey will follow four key stages:</p>
-<ol type="1">
-<li><strong>Formulate a Precise Causal Question (Weeks 1-3):</strong> It all starts here. You will identify a compelling causal question and use a DAG to map out your assumptions about the world. What effect do you want to measure? What are the key players (confounders, mediators)?</li>
-<li><strong>Design the Ideal Trial (Weeks 4-8):</strong> You will write the “protocol” for your hypothetical target trial. Who would be eligible? What are the exact treatment strategies being compared? How would you measure the outcome? This blueprint is your North Star.</li>
-<li><strong>Emulate the Trial &amp; Estimate the Effect (Weeks 9-12):</strong> This is where you connect your ideal protocol to your chosen dataset. You will apply one or more of the sophisticated methods from our course—like <strong>propensity score weighting</strong> or <strong>g-computation</strong>—to estimate the causal effect, carefully checking that your assumptions (like positivity) hold.</li>
-<li><strong>Assess Robustness &amp; Interpret (Weeks 13-14):</strong> A causal claim is only as strong as its assumptions. You will conduct <strong>sensitivity analyses</strong> (e.g., calculating an E-value) to see how fragile your results are to potential unmeasured confounding. Finally, you will present your findings and their real-world implications.</li>
-</ol>
-</section>
-<section id="skills-you-will-master" class="level3">
-<h3 class="anchored" data-anchor-id="skills-you-will-master">Skills You Will Master</h3>
-<p>By completing this project, you will build and demonstrate a portfolio of in-demand skills:</p>
+<section id="project-resources-links" class="level3">
+<h3 class="anchored" data-anchor-id="project-resources-links">Project Resources &amp; Links 📂</h3>
+<p>Here are the essential documents for your project. I recommend approaching them in the order listed.</p>
 <ul>
-<li><strong>Causal Reasoning:</strong> Translating a real-world problem into a formal causal question with a supporting DAG.</li>
-<li><strong>Study Design:</strong> Specifying and emulating a target trial protocol.</li>
-<li><strong>Modern Estimation:</strong> Implementing methods like IPW, matching, or g-computation in R.</li>
-<li><strong>Assumption Diagnostics:</strong> Assessing positivity, covariate balance, and model fit.</li>
-<li><strong>Robustness Checking:</strong> Quantifying the potential impact of unmeasured confounding through sensitivity analysis.</li>
-<li><strong>Scientific Communication:</strong> Presenting your causal findings clearly and honestly in both written and oral formats.</li>
-</ul>
-</section>
-<section id="lets-get-started" class="level3">
-<h3 class="anchored" data-anchor-id="lets-get-started">Let’s Get Started</h3>
-<p>Your first task is the most exciting one: <strong>find a question that you are genuinely curious about.</strong> Dive into the literature in your field, explore public datasets, or consider a causal puzzle from your own research.</p>
+<li><a href="./project/project_guidelines.html"><strong><code>project_guidelines.qmd</code></strong></a>
 <ul>
-<li><a href="./project/target_trial_tutorial.html">Target Trail Emulation Tutorial</a></li>
-<li><a href="./project/project_guidelines-rev1.html">View Full Project Guidelines &amp; Deliverables</a></li>
-<li><a href="./project/project_schedule.html">Project Schedule</a></li>
-<li><a href="./project/data_resources.html">Explore Potential Public Datasets</a> <!-- - [**Schedule a Meeting During Office Hours**](project/office_hours.html) --></li>
+<li><strong>Start here.</strong> This document provides a high-level overview of the project’s core objective, deliverables, and overall expectations.</li>
+</ul></li>
+<li><a href="project/project_schedule_detailed.qmd"><strong><code>project_schedule_detailed.qmd</code></strong></a>
+<ul>
+<li><strong>Your roadmap.</strong> This file breaks the project into manageable weekly tasks and deliverables, aligning your work with the course topics.</li>
+</ul></li>
+<li><a href="project/data_exploration.qmd"><strong><code>data_exploration.qmd</code></strong></a>
+<ul>
+<li><strong>Find your data.</strong> Use this page to access data search tools and a curated list of datasets that are well-suited for target trial emulation.</li>
+</ul></li>
+<li><a href="project/proposal_template.qmd"><strong><code>proposal_template.qmd</code></strong></a>
+<ul>
+<li><strong>Your proposal blueprint.</strong> A template to help you structure your project proposal, which is the first major graded deliverable.</li>
+</ul></li>
+<li><a href="project/rubric_proposal.qmd"><strong><code>rubric_proposal.qmd</code></strong></a>
+<ul>
+<li><strong>How your proposal will be graded.</strong> The detailed rubric for the project proposal.</li>
+</ul></li>
+<li><a href="project/rubric_final_paper.qmd"><strong><code>rubric_final_paper.qmd</code></strong></a>
+<ul>
+<li><strong>How your final paper will be graded.</strong> The detailed rubric for the final written report.</li>
+</ul></li>
 </ul>
-<p>This project is a marathon, not a sprint. Start early, ask questions, and embrace the challenge of thinking causally. I look forward to seeing what you discover.</p>
+<p>Good luck, and please don’t hesitate to use office hours to discuss your project ideas.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -1060,18 +1086,6 @@ MathJax = {
     }
   });
   </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="./home_readings.html" class="pagination-link" aria-label="STAT 579 • Weekly Readings &amp; Critique Hub">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">STAT 579 • Weekly Readings &amp; Critique Hub</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="./home_assignments.html" class="pagination-link" aria-label="Assignments">
-        <span class="nav-page-text">Assignments</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 
 

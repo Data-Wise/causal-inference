@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Davood Tofighi, Ph.D.">
+<meta name="author" content="[Your Name]">
 
-<title>Readings &amp; Critique Hub – Introduction to Causal Inference</title>
+<title>STAT 579: Final Project Proposal – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,29 +24,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./r_help.html" rel="next">
-<link href="./home_project.html" rel="prev">
-<link href="./assets/images/icon.png" rel="icon" type="image/png">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-ab86f13fa607618020e3f7de5041b3a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../assets/images/icon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-82cb89e673c98ae370e64cd93f2108c2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -171,186 +165,24 @@ ul.task-list li input[type="checkbox"] {
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 
 
-<link rel="stylesheet" href="assets/styles/css/home.css">
-<meta property="og:title" content="Readings &amp; Critique Hub – Introduction to Causal Inference">
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="STAT 579: Final Project Proposal – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
-<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/project/assets/images/logo-causal.png">
 <meta property="og:site_name" content="Introduction to Causal Inference">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
-    const toggleBodyColorMode = (bsSheetEl) => {
-      const mode = bsSheetEl.getAttribute("data-mode");
-      const bodyEl = window.document.querySelector("body");
-      if (mode === "dark") {
-        bodyEl.classList.add("quarto-dark");
-        bodyEl.classList.remove("quarto-light");
-      } else {
-        bodyEl.classList.add("quarto-light");
-        bodyEl.classList.remove("quarto-dark");
-      }
-    }
-    const toggleBodyColorPrimary = () => {
-      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
-      if (bsSheetEl) {
-        toggleBodyColorMode(bsSheetEl);
-      }
-    }
-    const setColorSchemeToggle = (alternate) => {
-      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-      for (let i=0; i < toggles.length; i++) {
-        const toggle = toggles[i];
-        if (toggle) {
-          if (alternate) {
-            toggle.classList.add("alternate");
-          } else {
-            toggle.classList.remove("alternate");
-          }
-        }
-      }
-    };
-    const toggleColorMode = (alternate) => {
-      // Switch the stylesheets
-      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
-      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-      manageTransitions('#quarto-margin-sidebar .nav-link', false);
-      if (alternate) {
-        // note: dark is layered on light, we don't disable primary!
-        enableStylesheet(alternateStylesheets);
-        for (const sheetNode of alternateStylesheets) {
-          if (sheetNode.id === "quarto-bootstrap") {
-            toggleBodyColorMode(sheetNode);
-          }
-        }
-      } else {
-        disableStylesheet(alternateStylesheets);
-        enableStylesheet(primaryStylesheets)
-        toggleBodyColorPrimary();
-      }
-      manageTransitions('#quarto-margin-sidebar .nav-link', true);
-      // Switch the toggles
-      setColorSchemeToggle(alternate)
-      // Hack to workaround the fact that safari doesn't
-      // properly recolor the scrollbar when toggling (#1455)
-      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-        manageTransitions("body", false);
-        window.scrollTo(0, 1);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          manageTransitions("body", true);
-        }, 40);
-      }
-    }
-    const disableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        stylesheet.rel = 'disabled-stylesheet';
-      }
-    }
-    const enableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
-          stylesheet.rel = 'stylesheet';
-        }
-      }
-    }
-    const manageTransitions = (selector, allowTransitions) => {
-      const els = window.document.querySelectorAll(selector);
-      for (let i=0; i < els.length; i++) {
-        const el = els[i];
-        if (allowTransitions) {
-          el.classList.remove('notransition');
-        } else {
-          el.classList.add('notransition');
-        }
-      }
-    }
-    const isFileUrl = () => {
-      return window.location.protocol === 'file:';
-    }
-    const hasAlternateSentinel = () => {
-      let styleSentinel = getColorSchemeSentinel();
-      if (styleSentinel !== null) {
-        return styleSentinel === "alternate";
-      } else {
-        return false;
-      }
-    }
-    const setStyleSentinel = (alternate) => {
-      const value = alternate ? "alternate" : "default";
-      if (!isFileUrl()) {
-        window.localStorage.setItem("quarto-color-scheme", value);
-      } else {
-        localAlternateSentinel = value;
-      }
-    }
-    const getColorSchemeSentinel = () => {
-      if (!isFileUrl()) {
-        const storageValue = window.localStorage.getItem("quarto-color-scheme");
-        return storageValue != null ? storageValue : localAlternateSentinel;
-      } else {
-        return localAlternateSentinel;
-      }
-    }
-    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-      let newTheme = '';
-      if(authorPrefersDark) {
-        newTheme = isAlternate ? baseTheme : alternateTheme;
-      } else {
-        newTheme = isAlternate ? alternateTheme : baseTheme;
-      }
-      const changeGiscusTheme = () => {
-        // From: https://github.com/giscus/giscus/issues/336
-        const sendMessage = (message) => {
-          const iframe = document.querySelector('iframe.giscus-frame');
-          if (!iframe) return;
-          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-        }
-        sendMessage({
-          setConfig: {
-            theme: newTheme
-          }
-        });
-      }
-      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-      if (isGiscussLoaded) {
-        changeGiscusTheme();
-      }
-    };
-    const authorPrefersDark = false;
-    const darkModeDefault = authorPrefersDark;
-      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-    // Dark / light mode switch
-    window.quartoToggleColorScheme = () => {
-      // Read the current dark / light value
-      let toAlternate = !hasAlternateSentinel();
-      toggleColorMode(toAlternate);
-      setStyleSentinel(toAlternate);
-      toggleGiscusIfUsed(toAlternate, darkModeDefault);
-      window.dispatchEvent(new Event('resize'));
-    };
-    // Switch to dark mode if need be
-    if (hasAlternateSentinel()) {
-      toggleColorMode(true);
-    } else {
-      toggleColorMode(false);
-    }
-  </script>
+<body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./assets/images/icon.png" alt="" class="navbar-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Introduction to Causal Inference</span>
     </a>
   </div>
@@ -361,7 +193,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -370,37 +202,37 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
         <li>
-    <a class="dropdown-item" href="./syllabus/syllabus-final.pdf">
+    <a class="dropdown-item" href="../syllabus/syllabus-final.pdf">
  <span class="dropdown-text">PDF</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./syllabus/syllabus-final.html">
+    <a class="dropdown-item" href="../syllabus/syllabus-final.html">
  <span class="dropdown-text">HTML</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="./syllabus/schedule.html"> 
+    <a class="nav-link" href="../syllabus/schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_lectures.html"> 
+    <a class="nav-link" href="../home_lectures.html"> 
 <span class="menu-text">Lecture Notes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_project.html"> 
+    <a class="nav-link" href="../home_project.html"> 
 <span class="menu-text">Project</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_readings.html"> 
+    <a class="nav-link" href="../home_readings.html"> 
 <span class="menu-text">Readings</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_assignments.html"> 
+    <a class="nav-link" href="../home_assignments.html"> 
 <span class="menu-text">Assignments</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./r_help.html"> 
+    <a class="nav-link" href="../r_help.html"> 
 <span class="menu-text">R Help</span></a>
   </li>  
 </ul>
@@ -422,7 +254,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./home_lectures.html">Course Materials</a></li><li class="breadcrumb-item"><a href="./home_readings.html">Readings</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">STAT 579: Final Project Proposal</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -431,32 +263,25 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./home_lectures.html">Course Materials</a></li><li class="breadcrumb-item"><a href="./home_readings.html">Readings</a></li></ol></nav>
-      <h1 class="title">Readings &amp; Critique Hub</h1>
+    <div class="quarto-title column-body">
+      <h1 class="title">STAT 579: Final Project Proposal</h1>
                       </div>
   </div>
     
-  <div class="quarto-title-meta-author">
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-heading">Affiliation</div>
-    
-      <div class="quarto-title-meta-contents">
-      <p class="author"><a href="https://Data-Wise.github.io/regression">Davood Tofighi, Ph.D.</a> <a href="mailto:dtofighi@unm.edu" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-8523-7776" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
-    </div>
-    <div class="quarto-title-meta-contents">
-          <p class="affiliation">
-              Department of Mathematics and Statistics, University of New Mexico
-            </p>
-        </div>
-    </div>
-
+  
   <div class="quarto-title-meta">
 
-        
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>[Your Name] </p>
+            </div>
+    </div>
+      
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Aug-23-2025</p>
+        <p class="date">Oct-18-2025</p>
       </div>
     </div>
     
@@ -480,7 +305,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Home</span></a>
   </div>
 </li>
@@ -495,13 +320,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
  <span class="menu-text">PDF</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">HTML</span></a>
   </div>
 </li>
@@ -509,7 +334,7 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Schedule</span></a>
   </div>
 </li>
@@ -517,34 +342,34 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Materials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_lectures.html" class="sidebar-item-text sidebar-link">
+  <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lecture Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_assignments.html" class="sidebar-item-text sidebar-link">
+  <a href="../home_assignments.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Assignments</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_project.html" class="sidebar-item-text sidebar-link">
+  <a href="../home_project.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Project</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_readings.html" class="sidebar-item-text sidebar-link active">
+  <a href="../home_readings.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Readings</span></a>
   </div>
 </li>
@@ -561,7 +386,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./r_help.html" class="sidebar-item-text sidebar-link">
+  <a href="../r_help.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">R Help</span></a>
   </div>
 </li>
@@ -577,11 +402,14 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#core-resources-navigation" id="toc-core-resources-navigation" class="nav-link active" data-scroll-target="#core-resources-navigation">📍 Core Resources &amp; Navigation</a></li>
-  <li><a href="#weekly-readings-student-leaders" id="toc-weekly-readings-student-leaders" class="nav-link" data-scroll-target="#weekly-readings-student-leaders">🗓️ Weekly Readings &amp; Student Leaders</a></li>
-  <li><a href="#roles-responsibilities" id="toc-roles-responsibilities" class="nav-link" data-scroll-target="#roles-responsibilities">🎓 Roles &amp; Responsibilities</a></li>
+  <li><a href="#the-causal-question" id="toc-the-causal-question" class="nav-link active" data-scroll-target="#the-causal-question">1. The Causal Question</a></li>
+  <li><a href="#scientific-background-and-motivation" id="toc-scientific-background-and-motivation" class="nav-link" data-scroll-target="#scientific-background-and-motivation">2. Scientific Background and Motivation</a></li>
+  <li><a href="#data-source" id="toc-data-source" class="nav-link" data-scroll-target="#data-source">3. Data Source</a></li>
+  <li><a href="#preliminary-causal-model-dag" id="toc-preliminary-causal-model-dag" class="nav-link" data-scroll-target="#preliminary-causal-model-dag">4. Preliminary Causal Model (DAG)</a></li>
+  <li><a href="#target-trial-emulation-protocol" id="toc-target-trial-emulation-protocol" class="nav-link" data-scroll-target="#target-trial-emulation-protocol">5. Target Trial Emulation Protocol</a></li>
+  <li><a href="#proposed-causal-methods" id="toc-proposed-causal-methods" class="nav-link" data-scroll-target="#proposed-causal-methods">6. Proposed Causal Method(s)</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/home_readings.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/project/proposal_template.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="proposal_template.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -590,156 +418,49 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-
-<p>Welcome! This page is your central navigation point for everything related to our weekly paper critiques. The ability to critically read, synthesize, and question the primary literature is the single most important skill you will develop in this course.</p>
-<!-- Our approach is built on a "Trifecta" model where we engage with each topic through three lenses: the modern textbook summary (**The Map** 🗺️), a foundational methodological paper (**The Journal** 🧭), and a real-world application (**The Expedition** ⛰️). -->
-<section id="core-resources-navigation" class="level2">
-<h2 class="anchored" data-anchor-id="core-resources-navigation">📍 Core Resources &amp; Navigation</h2>
-<p>Everything you need for the weekly critiques can be accessed from the links below.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Resource</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">📜 <a href="./readings/weekly_paper_critique_schedule.html"><strong>Weekly Readings Schedule</strong></a></td>
-<td style="text-align: left;">The complete week-by-week schedule of all required readings, including mapped textbook chapters, foundational papers, and case studies.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">🧐 <a href="./readings/how_to_read_technical_paper.html"><strong>How to Read a Technical Paper</strong></a></td>
-<td style="text-align: left;"><strong>(Start Here!)</strong> A step-by-step guide on how to approach dense, theoretical papers without getting lost in the proofs.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">✍️ <a href="./readings/writing_critique_guidlines.html"><strong>Writing Critique Guidelines</strong></a></td>
-<td style="text-align: left;">A detailed guide on how to structure your analysis of a foundational paper, focusing on its logic, assumptions, and impact.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">✅ <a href="./readings/templates_rubric.html"><strong>Templates, Checklists &amp; Rubric</strong></a></td>
-<td style="text-align: left;">Access the critique template and the official grading rubric.</td>
-</tr>
-</tbody>
-</table>
+<p><em>This document serves as the proposal for the STAT 579 final project. The goal is to provide a clear, concise, and feasible plan for your target trial emulation. Please replace the instructional text (in italics) with your own content. The final proposal should be approximately 2-3 pages.</em></p>
+<section id="the-causal-question" class="level3">
+<h3 class="anchored" data-anchor-id="the-causal-question">1. The Causal Question</h3>
+<blockquote class="blockquote">
+<p><em>State your primary research question in a single, clear sentence. It must be a causal question (e.g., “What is the causal effect of X on Y?”) and not merely associational.</em></p>
+</blockquote>
 </section>
-<section id="weekly-readings-student-leaders" class="level2">
-<h2 class="anchored" data-anchor-id="weekly-readings-student-leaders">🗓️ Weekly Readings &amp; Student Leaders</h2>
-<p>Each week, the assigned <strong>Student Leader</strong> will select <strong>one</strong> paper for the class to read and critique by Thursday of the prior week.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Week</th>
-<th style="text-align: left;">Topic</th>
-<th style="text-align: left;">Paper Option (Classic / Modern)</th>
-<th style="text-align: left;">Student Leader</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>3</strong></td>
-<td style="text-align: left;">Exchangeability, Positivity, Consistency</td>
-<td style="text-align: left;">Holland (1986) / Hernán (2018)</td>
-<td style="text-align: left;">GA</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>4</strong></td>
-<td style="text-align: left;">Confounding &amp; Selection Bias</td>
-<td style="text-align: left;">Hernán et al.&nbsp;(2004) / Cole &amp; Hernán (2002)</td>
-<td style="text-align: left;">DB</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>5</strong></td>
-<td style="text-align: left;">Propensity Scores</td>
-<td style="text-align: left;">Rosenbaum &amp; Rubin (1983) / Austin (2011)</td>
-<td style="text-align: left;">CB</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>6</strong></td>
-<td style="text-align: left;">IPTW &amp; Marginal Structural Models</td>
-<td style="text-align: left;">Robins et al.&nbsp;(2000) / Cole &amp; Hernán (2008)</td>
-<td style="text-align: left;">CG</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>7</strong></td>
-<td style="text-align: left;">G-computation &amp; TMLE</td>
-<td style="text-align: left;">Robins (1986) / Petersen &amp; van der Laan (2014)</td>
-<td style="text-align: left;">AK</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>8</strong></td>
-<td style="text-align: left;">Instrumental Variables</td>
-<td style="text-align: left;">Angrist (1990) / Angrist &amp; Pischke (2010)</td>
-<td style="text-align: left;">EK</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>9</strong></td>
-<td style="text-align: left;">Effect Modification &amp; Interaction</td>
-<td style="text-align: left;">Rothman (1974) / VanderWeele (2019)</td>
-<td style="text-align: left;">EL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>10</strong></td>
-<td style="text-align: left;">Mediation I (Foundations)</td>
-<td style="text-align: left;">Baron &amp; Kenny (1986) / Imai et al.&nbsp;(2010)</td>
-<td style="text-align: left;">GM</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>11</strong></td>
-<td style="text-align: left;">Mediation II &amp; Principal Stratification</td>
-<td style="text-align: left;">Robins &amp; Greenland (1992) / Daniel et al.&nbsp;(2015)</td>
-<td style="text-align: left;">KMG</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>12</strong></td>
-<td style="text-align: left;">Sensitivity Analysis</td>
-<td style="text-align: left;">Rosenbaum (1987) / VanderWeele &amp; Ding (2017)</td>
-<td style="text-align: left;">MS</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>13</strong></td>
-<td style="text-align: left;">Target Trial Emulation</td>
-<td style="text-align: left;">Robins (1987) / Hernán et al.&nbsp;(2008)</td>
-<td style="text-align: left;">HZ</td>
-</tr>
-</tbody>
-</table>
+<section id="scientific-background-and-motivation" class="level3">
+<h3 class="anchored" data-anchor-id="scientific-background-and-motivation">2. Scientific Background and Motivation</h3>
+<blockquote class="blockquote">
+<p><em>In 1-2 paragraphs, explain the public health or scientific relevance of your question. Why is this an important question to answer? What is already known on the topic? Briefly cite 2-3 key references that motivate your study.</em></p>
+</blockquote>
 </section>
-<section id="roles-responsibilities" class="level2">
-<h2 class="anchored" data-anchor-id="roles-responsibilities">🎓 Roles &amp; Responsibilities</h2>
-<section id="discussion-leader" class="level4">
-<h4 class="anchored" data-anchor-id="discussion-leader">🧑‍🏫 Discussion Leader</h4>
-<ol type="1">
-<li><strong>Submit Paper Choice:</strong> Email your selected paper to the instructor by <strong>Thursday of the week prior</strong> to your assigned week.</li>
-<li><strong>Post Discussion Starter:</strong> Post your discussion starter in the weekly Canvas thread by <strong>Sunday at 11:59 pm</strong>. It must include:
+<section id="data-source" class="level3">
+<h3 class="anchored" data-anchor-id="data-source">3. Data Source</h3>
+<blockquote class="blockquote">
+<p><em>Identify the observational dataset you will use. Describe the source of the data (e.g., NHANES 2017-2018 cycle, MIMIC-IV v2.0). List the key variables you plan to use for your exposure (A), outcome (Y), and the primary confounders (L) you identified in your DAG.</em></p>
+</blockquote>
+</section>
+<section id="preliminary-causal-model-dag" class="level3">
+<h3 class="anchored" data-anchor-id="preliminary-causal-model-dag">4. Preliminary Causal Model (DAG)</h3>
+<blockquote class="blockquote">
+<p><em>Insert an image of your Directed Acyclic Graph (DAG) here. The DAG should represent your current understanding of the causal relationships between the exposure, outcome, and key covariates. Below the image, provide a brief (1 paragraph) justification for the structure, explaining the most important causal pathways and confounding variables.</em></p>
+</blockquote>
+</section>
+<section id="target-trial-emulation-protocol" class="level3">
+<h3 class="anchored" data-anchor-id="target-trial-emulation-protocol">5. Target Trial Emulation Protocol</h3>
+<blockquote class="blockquote">
+<p><em>Briefly outline the key components of your target trial protocol. You can do this in a bulleted list. This does not need to be exhaustive at this stage, but it should be specific.</em></p>
 <ul>
-<li>A ~300-word summary of the paper.</li>
-<li>Your answers to the three guiding questions from the <a href="./readings/weekly_paper_critique_schedule.html">Weekly Readings Schedule</a>.</li>
-<li>A key takeaway from the paper.</li>
-</ul></li>
-<li><strong>Lead In-Class Discussion:</strong> Be prepared to lead the in-class discussion on Tuesday.</li>
-</ol>
+<li><strong>Eligibility Criteria:</strong> <em>e.g., “Adults aged 40-75 with no prior history of CVD.”</em></li>
+<li><strong>Treatment Strategies:</strong> <em>e.g., “Initiate a statin within 30 days of the index date” vs.&nbsp;“Do not initiate a statin.”</em></li>
+<li><strong>Outcome:</strong> <em>e.g., “Incidence of myocardial infarction or stroke within 5 years of follow-up.”</em></li>
+</ul>
+</blockquote>
 </section>
-<section id="all-other-students" class="level4">
-<h4 class="anchored" data-anchor-id="all-other-students">✍️ All Other Students</h4>
-<ol type="1">
-<li><strong>Read:</strong> Read the paper selected by the Discussion Leader.</li>
-<li><strong>Post Critique:</strong> Post your critique in the weekly Canvas thread by <strong>Monday at 11:59 pm</strong>. It must include:
-<ul>
-<li>A brief summary of the paper.</li>
-<li>Your answers to the three guiding questions from the <a href="./readings/weekly_paper_critique_schedule.html">Weekly Readings Schedule</a>.</li>
-<li>A personal takeaway from the paper.</li>
-</ul></li>
-</ol>
+<section id="proposed-causal-methods" class="level3">
+<h3 class="anchored" data-anchor-id="proposed-causal-methods">6. Proposed Causal Method(s)</h3>
+<blockquote class="blockquote">
+<p><em>In one paragraph, state the primary causal method you intend to use to estimate the effect (e.g., propensity score weighting, g-computation). Briefly explain why this method is appropriate for your question and data structure. Mention any key diagnostics you plan to perform (e.g., covariate balance checks).</em></p>
+</blockquote>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -757,19 +478,6 @@ ul.task-list li input[type="checkbox"] {
 </footer>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure there is a toggle, if there isn't float one in the top right
-    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-      const a = window.document.createElement('a');
-      a.classList.add('top-right');
-      a.classList.add('quarto-color-scheme-toggle');
-      a.href = "";
-      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-      const i = window.document.createElement("i");
-      i.classList.add('bi');
-      a.appendChild(i);
-      window.document.body.appendChild(a);
-    }
-    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -1174,22 +882,10 @@ ul.task-list li input[type="checkbox"] {
     }
   });
   </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="./home_project.html" class="pagination-link" aria-label="Project">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Project</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="./r_help.html" class="pagination-link" aria-label="R Help">
-        <span class="nav-page-text">R Help</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/home_readings.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/project/proposal_template.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>
