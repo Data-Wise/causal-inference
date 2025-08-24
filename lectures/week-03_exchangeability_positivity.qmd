@@ -1,0 +1,518 @@
+---
+title: "Exchangeability & Positivity"
+---
+
+## Overview
+
+Welcome, students, to the third week of Applied Causal Inference. This week marks a pivotal transition in our course. We are moving from the controlled, idealized environment of randomized controlled trials (RCTs) into the messy, complex world of observational data. In the real world, we can't force people into treatment or control groups; they select themselves, and this selection process is rarely random.
+
+Our central challenge is this: **How can we make fair, apples-to-apples comparisons when the groups we want to compare started out as apples and oranges?**
+
+The answer lies in understanding and satisfying two foundational assumptions that form the bedrock of causal inference with observational data: **exchangeability** and **positivity**. 🧠 These concepts allow us to statistically emulate an RCT, creating a situation of "as-if randomness." We will spend this week defining these assumptions, exploring their profound implications, and learning how to use powerful graphical tools—Directed Acyclic Graphs (DAGs)—to help us meet them. Mastering these ideas is not just a theoretical exercise; it is the absolute prerequisite for any credible causal claim you will make in your future research.
+
+## Learning Objectives
+
+By the end of this module, you will be able to:
+
+1. **Define and Differentiate:** Clearly articulate the difference between unconditional exchangeability (the gift of randomization) and conditional exchangeability (the goal of observational analysis) using formal potential outcomes notation.
+2. **Explain the 'Why':** Explain in plain language why conditional exchangeability and positivity are the core, indispensable assumptions for identifying causal effects from non-randomized data.
+3. **Translate and Model:** Translate your scientific knowledge and assumptions about a real-world problem into the formal language of a Directed Acyclic Graph (DAG).
+4. **Identify and Justify:** Apply the **backdoor criterion** to a given DAG to identify a *sufficient adjustment set* of covariates and rigorously justify why this set allows for causal effect estimation.
+5. **Diagnose and Act:** Use graphical and statistical tools in R to diagnose potential violations of the positivity (overlap) assumption and propose appropriate analytical actions.
+6. **Distinguish with Precision:** Articulate the crucial conceptual distinction between **identification**—the theoretical possibility of answering a causal question under ideal assumptions—and **estimation**—the statistical process of calculating a numerical answer from finite, messy data.
+
+## R Packages
+
+We will rely on a few key packages today. The `pacman` package manager will streamline the process by loading them and installing any that are missing from your system.
+
+```{r}
+#| label: load-packages
+#| message: false
+#| warning: false
+
+# This command loads the pacman package if you have it,
+# or installs it and then loads it if you don't.
+if (!require("pacman")) {
+  install.packages("pacman")
+}
+
+# Use pacman's p_load function to load/install multiple packages at once
+pacman::p_load(
+  tidyverse, # Your go-to for data manipulation (dplyr) and plotting (ggplot2)
+  dagitty, # The engine for creating, analyzing, and reasoning with DAGs
+  ggdag, # A grammar of graphics for plotting DAGs beautifully with ggplot2
+  cobalt # A fantastic tool for checking covariate balance and overlap (positivity)
+)
+```
+
+## 1\. Comprehensive Topic Explanation
+
+Our journey begins with the fundamental problem of causal inference: we can only ever observe one potential outcome for any given individual. We see the outcome under the treatment they received, but the outcome under the treatment they *didn't* receive remains forever in a parallel universe. To bridge this gap and estimate average causal effects, we need a way to make the groups we are comparing… well, *comparable*.
+
+### From Unconditional to Conditional Exchangeability: The Core Idea
+
+Let's formalize our key concepts. Let $A$ be a binary treatment, $Y$ be the observed outcome, and $Y^a$ be the potential outcome an individual would have experienced had they received treatment level $a$.
+
+**Unconditional Exchangeability: The "Gold Standard" of RCTs**
+
+In a perfectly executed RCT, randomization ensures that the treatment and control groups are identical on average across *all* baseline characteristics—measured and unmeasured. This property is **unconditional exchangeability**.
+
+Mathematically, we write this as:
+
+$$
+ Y^a \indep A \quad \text{for all } a 
+$$
+
+  - **In Plain English:** This formula says an individual's potential outcomes ($Y^a$) are statistically independent ($\indep$) of the treatment they actually received ($A$). Knowing which group a person was randomized to gives you no information about how they would have fared under either treatment option.
+
+When this holds, the observed association is a pure measure of causation:
+
+$$
+ \underbrace{\E{Y \mid A=1} - \E{Y \mid A=0}}_{\text{Observed Association}} = \underbrace{\E{Y^1} - \E{Y^0}}_{\text{Average Causal Effect (ATE)}} 
+$$
+
+This is why RCTs are the gold standard. They give us exchangeability for free.
+
+**Conditional Exchangeability: Our Goal in Observational Studies**
+
+In observational studies, we must concede that the groups are different. Our hope is to achieve **conditional exchangeability**. We assume the groups are comparable *after we account for*, or condition on, a set of relevant covariates, which we will denote as a vector $\vect{L}$. This is the famous **"no unmeasured confounding"** assumption.
+
+Mathematically, we write this as:
+
+$$
+ Y^a \indep A \mid \vect{L} \quad \text{for all } a 
+$$
+
+  - **In Plain English:** This says that *within any specific stratum* defined by the covariates in $\vect{L}$ (e.g., among 65-year-old female non-smokers), the reason a person received the treatment is unrelated to their potential outcome. For people who are identical on $\vect{L}$, treatment assignment is "as good as random."
+
+If this critical assumption holds, we can identify the causal effect via **adjustment**. A common form is **standardization** (the g-formula), where we calculate the effect within each stratum of $\vect{L}$ and then average those effects up to the full population level [@hernan2020causalwhatif, Chapter 2].
+
+### The Backdoor Criterion: A GPS for Confounding
+
+The assumption of "no unmeasured confounding" begs the question: which variables must be in our set $\vect{L}$? Conditioning on the wrong variables can be worse than conditioning on nothing at all.
+
+This is where Directed Acyclic Graphs (DAGs) and Judea Pearl's **backdoor criterion** provide a rigorous, graphical roadmap [@Pearl2016-jc, Chapter 3].
+
+A **backdoor path** is a non-causal pathway between treatment $A$ and outcome $Y$. It's a source of confounding that creates a spurious association.
+
+::: {.callout-important}
+
+## The Backdoor Criterion 🗺️
+
+A set of variables $\vect{L}$ satisfies the backdoor criterion (and is thus a sufficient adjustment set) if two conditions are met:
+
+1. No node in $\vect{L}$ is a descendant of the treatment $A$.
+2. $\vect{L}$ blocks every backdoor path between $A$ and $Y$.
+:::
+
+If you find a set $\vect{L}$ that meets these conditions, adjusting for $\vect{L}$ is sufficient to achieve conditional exchangeability. The causal effect is then *identified* by the **adjustment formula**:
+
+$$
+ \E{Y^a} = \sum_{\vect{l}} \E{Y \mid A=a, \vect{L}=\vect{l}} \Prob{\vect{L}=\vect{l}} 
+$$
+
+  - **In Plain English:** This formula describes a three-step process:
+    1. **Stratify:** Go into each specific subgroup defined by the values of $\vect{L}=\vect{l}$.
+    2. **Compare:** Within that subgroup, calculate the average outcome among the treated ($\E{Y \mid A=a, \vect{L}=\vect{l}}$).
+    3. **Average:** Calculate a weighted average of these subgroup-specific means, where the weights are the prevalence of each subgroup ($\Prob{\vect{L}=\vect{l}}$) in the total population.
+
+### Positivity: The Assumption of Common Support
+
+There is one final, crucial assumption: **positivity**, also known as **overlap** or **common support**.
+
+::: {.callout-important}
+
+## The Positivity Assumption
+
+For every combination of covariates $\vect{L}=\vect{l}$ that exists in your population, the probability of receiving any given level of treatment must be greater than zero.
+
+$$
+ 0 < \Prob{A=a \mid \vect{L}=\vect{l}} < 1 \quad \text{for all } \vect{l} \text{ such that } \Prob{\vect{L}=\vect{l}} \neq 0 
+$$
+
+:::
+
+  - **In Plain English:** Positivity means that for any "type" of person in your study (defined by their covariates $\vect{L}$), there is at least some chance they could have received the treatment and at least some chance they could have received the control.
+  - **Why it's essential:** If positivity is violated, it means we have certain subgroups for whom we can't make a comparison because everyone in that subgroup received the same treatment. We lack the necessary "common support" to make a valid comparison and would be forced to extrapolate.
+
+-----
+
+## 2\. Intuitive Clarifications of Challenging Ideas
+
+### Analogy 1: The Confounding Coffee Shop ☕
+
+Imagine you want to know the causal effect of drinking **espresso ($A$)** on **productivity ($Y$)**. You observe that espresso drinkers are more productive. But is this causal?
+
+  - **The Backdoor Path:** You learn that your office has two types of employees: **engineers** and **marketers** (our confounder, $L$). Engineers are naturally more productive in the morning and they also happen to love espresso.
+  - **The DAG:** $L \to A$ and $L \to Y$. This creates a backdoor path: $A \leftarrow L \rightarrow Y$. "Being an engineer" is a common cause of both treatment and outcome.
+  - **Blocking the Path:** To find the true effect of espresso, you must block this backdoor path by adjusting for job type ($L$). You achieve this by comparing engineers who drink espresso to other engineers who don't, and so on. By making comparisons *within* strata of $L$, you have controlled for the confounding.
+
+### Analogy 2: The Positivity Parachute Problem 🪂
+
+Let's test the causal effect of using a **parachute ($A$)** on **survival ($Y$)**.
+
+  - **The Covariate ($\vect{L}$):** Let's define a single covariate: $L=1$ if "jumping from a plane at 10,000 feet" and $L=0$ if "standing on the ground."
+  - **The Positivity Violation:** Consider the subgroup of people where $L=1$. In this group, what is the probability of being in the control group ($A=0$, no parachute)? It's zero. $\Prob{A=0 \mid L=1} = 0$.
+  - **The Consequence:** Because there is no one in the control group for the "jumping from a plane" stratum, we have no data on the counterfactual. We cannot make a comparison. We have a complete lack of overlap.
+
+-----
+
+## 3\. Simple, Hand-Calculation Numerical Example(s)
+
+Let's investigate if a new heart medication ($A$) reduces 1-year mortality ($Y=1$). We suspect that physicians are more likely to prescribe it to sicker patients. Our confounder is disease "Severity" ($L$).
+
+**Observed Data (N=410):**
+
+|               | Medicated (A=1) | Not Medicated (A=0) | Total |
+| :------------ | :-------------: | :-----------------: | :---: |
+| Died (Y=1)      |       70        |         30          |  100  |
+| Survived (Y=0)  |      130        |        180          |  310  |
+| **Total** |     **200** |       **210** | **410** |
+
+**Step 1: Calculate the Crude (and Misleading) Association**
+The crude risk difference is:
+
+$$
+ \text{Risk Diff}_{\text{crude}} = \Prob{Y=1 \mid A=1} - \Prob{Y=1 \mid A=0} = \frac{70}{200} - \frac{30}{210} = 0.35 - 0.143 = +0.207 
+$$
+
+**Interpretation:** The crude data suggests the medication *increases* the risk of death by 20.7 percentage points. This looks like a harmful drug.
+
+**Step 2: Stratify by the Confounder, Severity ($L$)**
+Assume the population has 300 "Mild" patients ($L=0$) and 110 "Severe" patients ($L=1$).
+
+**Data for Mild Patients (L=0, N=300):**
+
+|               | Medicated (A=1) | Not Medicated (A=0) |
+| :------------ | :-------------: | :-----------------: |
+| Died (Y=1)      |       10        |         20          |
+| Survived (Y=0)  |       90        |        180          |
+| **Total** |     **100** |       **200** |
+
+**Data for Severe Patients (L=1, N=110):**
+
+|               | Medicated (A=1) | Not Medicated (A=0) |
+| :------------ | :-------------: | :-----------------: |
+| Died (Y=1)      |       60        |         10          |
+| Survived (Y=0)  |       40        |         0          |
+| **Total** |     **100** |       **10** |
+
+**Step 3: Calculate Stratum-Specific Associations**
+
+  - **Mild Patients:** $\Prob{Y=1 \mid A=1, L=0} - \Prob{Y=1 \mid A=0, L=0} = \frac{10}{100} - \frac{20}{200} = 0.10 - 0.10 = \mathbf{0.00}$
+  - **Severe Patients:** $\Prob{Y=1 \mid A=1, L=1} - \Prob{Y=1 \mid A=0, L=1} = \frac{60}{100} - \frac{10}{10} = 0.60 - 1.00 = \mathbf{-0.40}$
+
+**Interpretation:** This is Simpson's Paradox\! For mild patients, the drug has no effect. For severe patients, it is hugely beneficial, reducing mortality by 40 percentage points.
+
+**Step 4: Use Standardization to Recover the Average Causal Effect (ATE)**
+We average the stratum-specific outcomes, weighted by the prevalence of each stratum in the *overall population*. The population is $300/410 \approx 73.2\%$ Mild and $110/410 \approx 26.8\%$ Severe.
+
+  - **Standardized Risk if Everyone Treated:**
+
+$$
+\E{Y^1} = \sum_l \Prob{Y=1 \mid A=1, L=l}\Prob{L=l} = (0.10 \times 0.732) + (0.60 \times 0.268) = 0.0732 + 0.1608 = 0.234
+$$
+
+  - **Standardized Risk if No One Treated:**
+
+$$
+\E{Y^0} = \sum_l \Prob{Y=1 \mid A=0, L=l}\Prob{L=l} = (0.10 \times 0.732) + (1.00 \times 0.268) = 0.0732 + 0.268 = 0.3412
+$$
+
+  - **The Average Causal Effect (ATE):**
+
+$$
+ \text{ATE} = \E{Y^1} - \E{Y^0} = 0.234 - 0.3412 = \mathbf{-0.1072}
+$$
+
+**Final Interpretation:** After correctly adjusting for disease severity, we estimate that the medication *reduces* the risk of death by about 10.7 percentage points on average. The crude association had the wrong sign\!
+
+-----
+
+## 4\. R Code Examples & Interpretation
+
+### Part 1: Using `dagitty` to Reason About Confounding
+
+Let's model the effect of **Education ($A$)** on **Income ($Y$)**, with confounding by **Socioeconomic Status (SES)** and **Innate Ability**.
+
+**The Assumed Causal Structure (DAG):**
+
+```tikz
+\begin{tikzpicture}[
+    node distance=1.5cm and 2.5cm,
+    every node/.style={draw, rectangle, rounded corners, semithick, text centered, minimum size=1cm},
+    arrow/.style={-latex, semithick, >=stealth}
+]
+
+\node (A) at (0, 0) {$A$ (Educ)};
+\node (Y) [right=of A] {$Y$ (Income)};
+\node (SES) [above left=of A] {SES};
+\node (Ability) [below left=of A] {Ability};
+
+% Causal Path
+\draw[arrow, thick, blue] (A) -- (Y);
+
+% Backdoor Paths
+\draw[arrow, red] (SES) -- (A);
+\draw[arrow, red] (SES) -- (Y);
+\draw[arrow, red] (Ability) -- (A);
+\draw[arrow, red] (Ability) -- (Y);
+\draw[arrow, red] (SES) -- (Ability);
+
+\end{tikzpicture}
+```
+
+Now let's use `dagitty` to find our adjustment sets.
+
+```{r}
+#| label: dagitty-education
+
+edu_dag <- dagitty(
+  'dag {
+  A [exposure]
+  Y [outcome]
+  SES -> A
+  SES -> Y
+  Ability -> A
+  Ability -> Y
+  SES -> Ability
+}'
+)
+
+adjustmentSets(edu_dag, type = "all")
+```
+
+**Interpretation:** `dagitty` confirms we must adjust for the set `{Ability, SES}` to close all backdoor paths and identify the causal effect.
+
+### Part 2: Checking for Positivity in R
+
+Let's simulate data where a confounder, `age`, strongly determines who gets a `treatment`, creating a positivity problem.
+
+```{r}
+#| label: positivity-check-simulation
+
+set.seed(42)
+n_obs <- 1000
+positivity_data <- tibble(
+  age = rnorm(n_obs, mean = 65, sd = 8),
+  prob_treatment = plogis(-25 + 0.4 * age),
+  treatment = rbinom(n_obs, 1, prob_treatment),
+  outcome = rnorm(n_obs, mean = 10 + 2 * treatment + 0.5 * age, sd = 5)
+)
+```
+
+We visualize the distribution of the confounder (`age`) in each treatment group, looking for **overlap**.
+
+```{r}
+#| label: fig-positivity-violation
+#| fig-cap: "Distribution of the confounder (age) by treatment group. The severe lack of overlap indicates a practical violation of the positivity assumption."
+
+ggplot(positivity_data, aes(x = age, fill = factor(treatment))) +
+  geom_density(alpha = 0.6, color = "black") +
+  scale_fill_manual(
+    values = c("0" = "skyblue", "1" = "tomato"),
+    labels = c("Control", "Treated")
+  ) +
+  labs(
+    title = "Assessing Positivity by Visualizing Overlap",
+    subtitle = "Severe lack of common support for younger and older individuals.",
+    x = "Age (The Confounder L)",
+    y = "Density",
+    fill = "Treatment Group"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+**Interpretation:** This plot is a clear warning sign of a **positivity violation**. Below age 60, there are virtually no treated individuals. Above age 70, there are virtually no control individuals. The region of "common support" is very narrow. An analysis on the full dataset would rely on massive extrapolation.
+
+## 5\. Hands-On R Lab
+
+::: {.callout-note}
+
+## 🔬 R Lab: Does Smoking Cessation Counseling Work?
+
+**Purpose:** This lab provides hands-on practice applying the core concepts of this week: translating a causal question into a DAG, using the backdoor criterion, assessing positivity, and estimating a causal effect via standardization.
+
+**Scenario:** You are a public health analyst evaluating the effectiveness of a new smoking cessation counseling program ($A$). The outcome ($Y$) is whether a person quits smoking. You suspect that age ($\vect{L}_1$) and motivation ($\vect{L}_2$) are common causes of both enrolling in the program and successfully quitting.
+:::
+
+-----
+
+### Task 1: Draw the DAG and Find the Adjustment Set
+
+The causal assumptions are:
+
+  - Age ($\vect{L}_1$) affects Counseling ($A$) and Quitting ($Y$).
+  - Motivation ($\vect{L}_2$) affects Counseling ($A$) and Quitting ($Y$).
+  - Counseling ($A$) affects Quitting ($Y$).
+
+```{r}
+#| label: lab-dag-task
+
+lab_dag <- dagitty(
+  'dag {
+  Counseling [exposure]
+  Quit_Smoking [outcome]
+  Age
+  Motivation
+  
+  Age -> Counseling; Age -> Quit_Smoking
+  Motivation -> Counseling; Motivation -> Quit_Smoking
+  Counseling -> Quit_Smoking
+}'
+)
+
+sufficient_set <- adjustmentSets(lab_dag)
+print(sufficient_set)
+```
+
+<details\>
+
+<summary\><b\>Click for Interpretation</b\></summary\>
+
+**Interpretation:** The backdoor criterion confirms that we must adjust for the vector of confounders $\vect{L} = {\text{Age, Motivation}}$ to block all non-causal paths.
+
+</details\>
+
+-----
+
+### Task 2: Simulate the Data
+
+```{r}
+#| label: lab-simulate-data
+set.seed(123)
+n_lab <- 2000
+lab_data <- tibble(
+  age = round(rnorm(n_lab, mean = 45, sd = 12)),
+  motivation = round(runif(n_lab, 1, 10)),
+  prob_counseling = plogis(-2.5 + 0.04 * age + 0.25 * motivation),
+  counseling = rbinom(n_lab, 1, prob_counseling),
+  prob_quit = plogis(-4 + 1.5 * counseling + 0.05 * age + 0.4 * motivation),
+  quit_smoking = rbinom(n_lab, 1, prob_quit)
+)
+```
+
+-----
+
+### Task 3: Calculate the Crude (Biased) Effect
+
+```{r}
+#| label: lab-crude-effect-task
+crude_results <- lab_data |>
+  group_by(counseling) |>
+  summarise(quit_rate = mean(quit_smoking))
+crude_rd <- crude_results$quit_rate[2] - crude_results$quit_rate[1]
+cat("Crude Risk Difference (Biased):", round(crude_rd, 3))
+```
+
+**Interpretation:** The crude analysis suggests counseling increases quitting by about 23.9 percentage points. We suspect this is an overestimate due to confounding.
+
+-----
+
+### Task 4: Check for Positivity/Overlap
+
+```{r}
+#| label: fig-lab-positivity-check
+#| fig-cap: "Assessing overlap for Age and Motivation. The distributions show good common support."
+pacman::p_load(patchwork)
+p1 <- ggplot(lab_data, aes(x = age, fill = factor(counseling))) +
+  geom_density(alpha = 0.7) +
+  labs(title = "Overlap on Age", fill = "Counseled")
+p2 <- ggplot(lab_data, aes(x = motivation, fill = factor(counseling))) +
+  geom_density(alpha = 0.7) +
+  labs(title = "Overlap on Motivation", fill = "Counseled")
+p1 + p2
+```
+
+**Interpretation:** The density plots show excellent **overlap**. The positivity assumption appears to hold.
+
+-----
+
+### Task 5: Calculate the Adjusted Causal Effect via Standardization
+
+**Step A: Fit an Outcome Model**
+
+```{r}
+#| label: lab-gcomp-model-task
+outcome_model <- glm(
+  quit_smoking ~ counseling + age + motivation,
+  family = binomial(link = "logit"),
+  data = lab_data
+)
+```
+
+**Step B: Standardize to Get Potential Outcomes**
+
+```{r}
+#| label: lab-gcomp-standardize-task
+data_treat_all <- lab_data |> mutate(counseling = 1)
+data_control_all <- lab_data |> mutate(counseling = 0)
+Y1_hat <- predict(outcome_model, newdata = data_treat_all, type = "response")
+Y0_hat <- predict(outcome_model, newdata = data_control_all, type = "response")
+E_Y1 <- mean(Y1_hat)
+E_Y0 <- mean(Y0_hat)
+adjusted_ate <- E_Y1 - E_Y0
+
+cat("Standardized Risk under Treatment E[Y^1]:", round(E_Y1, 3), "\n")
+cat("Standardized Risk under Control E[Y^0]:", round(E_Y0, 3), "\n")
+cat("\nAdjusted ATE (Risk Difference):", round(adjusted_ate, 3))
+```
+
+**Interpretation:** The adjusted ATE is approximately **0.170**. This is our best estimate of the true average causal effect. It is substantially lower than our biased crude estimate of 23.9%, with the difference representing the confounding bias we have now removed.
+
+-----
+
+### Lab Reflection and Retrieval Quiz
+
+1. **Retrieval:** What are the three key assumptions we relied on to interpret our adjusted ATE of 0.170 as a causal effect?
+      - *Answer:* 1. **Conditional Exchangeability** ($Y^a \indep A \mid \vect{L}$). 2. **Positivity** ($0 < \Prob{A=a \mid \vect{L}=\vect{l}} < 1$). 3. **No Model Misspecification**.
+2. **Reflection:** What would have happened to our estimate if there was an unmeasured confounder?
+      - *Answer:* If there were an unmeasured common cause, our conditional exchangeability assumption would be violated ($Y^a \not\indep A \mid \vect{L}$). Our estimate would still be subject to residual confounding bias.
+3. **Application:** How would you explain the difference between the crude (23.9%) and adjusted (17.0%) estimates to a non-statistician?
+      - *Answer:* "Initially, it looked like the program increased quitting by 24 points. However, the people who signed up were already more motivated. After we statistically leveled the playing field to compare similar types of people, we found the program's true contribution is about 17 points. This is our more accurate estimate of its impact."
+
+## 6\. Common Pitfalls & Checks
+
+::: {.callout-warning}
+
+## The "Kitchen Sink" Fallacy 🚰
+
+A frequent error is to think "more adjustment is always better." If you control for a **collider** (a common effect), you can create bias where none existed. Your choice of adjustment variables must be deliberate and principled, guided by your causal DAG.
+
+:::
+
+::: {.callout-tip}
+
+## Always Separate Identification from Estimation
+
+1. **Identification (The 'Can I?' Stage):** A theoretical step. "Assuming infinite data and my DAG is correct, *can I* answer my causal question?" This is where you state your assumptions: $Y^a \indep A \mid \vect{L}$ and Positivity.
+2. **Estimation (The 'How Do I?' Stage):** The practical, statistical step. "Given my actual dataset, what is the best algorithm to compute the number?" Here you choose a method, like the standardization procedure we used.
+:::
+
+## 7\. Advanced Teaching Activities & Interactivity
+
+1. **Flipped Classroom: The Collider Collision**
+
+      - **Prompt:** A drug ($A$) is only available at a specialty clinic. Admission to the clinic is caused by an unmeasured genetic factor ($U_1$) and an unmeasured socioeconomic factor ($U_2$). If you analyze only patients in the clinic, have you controlled for confounding?
+      - **Learning Goal:** Students should identify that the clinic is a collider. By restricting the analysis to the clinic, they have inadvertently conditioned on it, inducing a spurious association and potentially biasing the effect estimate.
+
+2. **Problem-Based Case Study: The Post-Graduate Program**
+
+      - **Case:** A university wants to know the causal effect of its post-graduate program ($A$) on students' salaries ($Y$). They have data on undergraduate GPA and major ($\vect{L}$).
+      - **Task (in groups):** Draw a DAG, identify the adjustment set, and discuss potential positivity problems (e.g., what if no one with a low GPA was admitted?).
+
+## 8\. Appendix: Advanced Theory & Derivations
+
+### The Formal Link Between Backdoor Criterion and Potential Outcomes
+
+The backdoor criterion is the graphical representation of the statistical assumption of conditional exchangeability.
+
+1. The total statistical association between $A$ and $Y$ is the sum of information flowing along all open paths in a DAG.
+2. These paths are either **causal** (e.g., $A \to Y$) or **non-causal** (backdoor paths, e.g., $A \leftarrow \vect{L} \to Y$).
+3. The backdoor criterion provides rules for choosing a set of variables $\vect{L}$ that block all these spurious paths.
+4. When all backdoor paths are blocked by conditioning on $\vect{L}$, any remaining statistical association between $A$ and $Y$ *within strata of $\vect{L}$* must be due solely to the causal paths.
+5. Therefore, within strata, the observed association is the true causal effect: $\E{Y \mid A=a, \vect{L}=\vect{l}} = \E{Y^a \mid \vect{L}=\vect{l}}$.
+6. This is precisely the definition of conditional exchangeability, $Y^a \indep A \mid \vect{L}$.
+7. Averaging this quantity over the distribution of $\vect{L}$ (via standardization) recovers the population-averaged causal effect, $\E{Y^a}$.
+
+## References
