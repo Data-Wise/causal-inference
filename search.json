@@ -46,7 +46,12 @@
     "href": "syllabus/schedule.html",
     "title": "STAT 579: Course Schedule",
     "section": "",
-    "text": "This page provides a detailed week-by-week schedule for STAT 579. Readings should be completed before the first class of the week.\n\nHR: Hernán, M. A., & Robins, J. M. (2024). Causal Inference: What If.\nNeal: Neal, B. (2020). Introduction to Causal Inference.\nCunningham: Cunningham, S. (2021). Causal Inference: The Mixtape.\nVanderWeele: VanderWeele, T. J. (2015). Explanation in Causal Inference.\n\n\nPart I: Foundations of Causal Inference\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nOptional Reading (Cunningham)\nProject Connection\n\n\n\n\n1\nAug 19, 21\nWhat is a Causal Effect?\nHR: Ch. 1–2; Neal: Ch. 1–2\nCh. 2: Potential Outcomes\nDefine your causal question.\n\n\n2\nAug 26, 28\nDAGs & Assumption Transparency\nNeal: Ch. 3; HR: Ch. 6\nCh. 3: Directed Acyclic Graphs\nDraw a preliminary DAG.\n\n\n3\nSep 2, 4\nExchangeability, Positivity\nHR: Ch. 7; Neal: Ch. 4\nCh. 4: Regression\nIdentify assumptions for your DAG.\n\n\n4\nSep 9, 11\nBias (Confounding, Selection)\nHR: Ch. 8–9\n-\nConsider biases in your dataset.\n\n\n\n\n\nPart II: Estimation Methods\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nOptional Reading (Cunningham)\nProject Connection\n\n\n\n\n5\nSep 16, 18\nPropensity Scores\nHR: Ch. 12–13; Neal: Ch. 7\nCh. 5: Matching & Subclassification\nSelect adjustment strategy.\n\n\n6\nSep 23, 25\nIPTW & MSMs\nHR: Ch. 15; Neal: Ch. 7.5–7.6\n-\nEvaluate MSM relevance.\n\n\n7\nSep 30, Oct 2\nG-computation\nHR: Ch. 20–21\n-\nExplore g-methods.\n\n\n8\nOct 7\nInstrumental Variables\nHR: Ch. 16; Neal: Ch. 9\nCh. 8: Instrumental Variables\nAssess natural experiments.\n\n\n\nNote: UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.\n\n\nPart III: Advanced Topics & Applications\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Connection\n\n\n\n\n9\nOct 14, 16\nEffect Modification\nHR: Ch. 4–5; Neal: Ch. 10\nMilestone: Project Proposal Due.\n\n\n10\nOct 21, 23\nMediation I (Foundations)\nVanderWeele: Ch. 1–2; Neal: Ch. 14\nRefine DAG with mediators.\n\n\n11\nOct 28, 30\nMediation II (Application)\nVanderWeele: Ch. 3; HR: Ch. 23\n-\n\n\n12\nNov 4, 6\nSensitivity Analysis\nNeal: Ch. 8; HR: Ch. 14\nPlan robustness checks.\n\n\n13\nNov 11, 13\nTarget Trial Emulation\nHR: Ch. 22\nReframe project as a trial.\n\n\n14\nNov 18, 20\nFinal Presentations\n-\nPresent your findings.\n\n\n\nNote: Thanksgiving Break is Nov 27-28.\n\nFinals Week (Dec 8–13): Final Project Paper Due."
+    "text": "This page provides a detailed week-by-week schedule for STAT 579. Readings should be completed before the first class of the week.\n\nHR: Hernán, M. A., & Robins, J. M. (2024). Causal Inference: What If.\nNeal: Neal, B. (2020). Introduction to Causal Inference.\nCunningham: Cunningham, S. (2021). Causal Inference: The Mixtape.\nVanderWeele: VanderWeele, T. J. (2015). Explanation in Causal Inference.\n\n\nPart I: Foundations of Causal Inference\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nOptional Reading (Cunningham)\nProject Connection\n\n\n\n\n1\nAug 19, 21\nWhat is a Causal Effect?\nHR: Ch. 1–2; Neal: Ch. 1–2\nCh. 2: Potential Outcomes\nDefine your causal question.\n\n\n2\nAug 26, 28\nDAGs & Assumption Transparency\nNeal: Ch. 3; HR: Ch. 6\nCh. 3: Directed Acyclic Graphs\nDraw a preliminary DAG.\n\n\n3\nSep 2, 4\nExchangeability, Positivity\nHR: Ch. 7; Neal: Ch. 4\nCh. 4: Regression\nIdentify assumptions for your DAG.\n\n\n4\nSep 9, 11\nBias (Confounding, Selection)\nHR: Ch. 8–9\n-\nConsider biases in your dataset.\n\n\n\n\n\nPart II: Estimation Methods\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nOptional Reading (Cunningham)\nProject Connection\n\n\n\n\n5\nSep 16, 18\nPropensity Scores\nHR: Ch. 12–13; Neal: Ch. 7\nCh. 5: Matching & Subclassification\nSelect adjustment strategy.\n\n\n6\nSep 23, 25\nIPTW & MSMs\nHR: Ch. 15; Neal: Ch. 7.5–7.6\n-\nEvaluate MSM relevance.\n\n\n7\nSep 30, Oct 2\nG-computation\nHR: Ch. 20–21\n-\nExplore g-methods.\n\n\n8\nOct 7\nInstrumental Variables\nHR: Ch. 16; Neal: Ch. 9\nCh. 8: Instrumental Variables\nAssess natural experiments.\n\n\n\nNote: UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.\n\n\nPart III: Advanced Topics & Applications\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Connection\n\n\n\n\n9\nOct 14, 16\nEffect Modification\nHR: Ch. 4–5; Neal: Ch. 10\nMilestone: Project Proposal Due.\n\n\n10\nOct 21, 23\nMediation I (Foundations)\nVanderWeele: Ch. 1–2; Neal: Ch. 14\nRefine DAG with mediators.\n\n\n11\nOct 28, 30\nMediation II (Application)\nVanderWeele: Ch. 3; HR: Ch. 23\n-\n\n\n12\nNov 4, 6\nSensitivity Analysis\nNeal: Ch. 8; HR: Ch. 14\nPlan robustness checks.\n\n\n13\nNov 11, 13\nTarget Trial Emulation\nHR: Ch. 22\nReframe project as a trial.\n\n\n14\nNov 18, 20\nFinal Presentations\n-\nPresent your findings.\n\n\n\nNote: Thanksgiving Break is Nov 27-28.\n\nFinals Week (Dec 8–13): Final Project Paper Due.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Schedule"
+    ]
   },
   {
     "objectID": "readings/writing_critique_guidlines.html",
@@ -88,35 +93,60 @@
     "href": "r_help.html",
     "title": "R Tutorial",
     "section": "",
-    "text": "Welcome to the R Help and Tutorial Section. This resource organizes R help files into structured categories based on Subjects, Topics, and implementation through R Base and Packages.\n\n\n\nBelow are the available subjects and their corresponding topics. Select a topic to view detailed help pages.\n\n\n\nData Manipulation\n\nCreating Data Frames\nWorking with Factors\nSubsetting Data\nData Transformation and Wrangling\n\nData Visualization\n\nBase R Graphics\nggplot2 Basics\n\nStatistical Analysis\n\nHypothesis Testing\nRegression\nANOVA\n\nProgramming with R\n\nControl Structures\nWriting Functions\nDebugging\n\n\n\n\n\n\n\n\n\n\nBase R Plotting\nCustomizing Plots\n\n\n\n\n\nt-Test\nLinear Regression\nANOVA\n\n\n\n\n\nControl Structures\nWriting Functions\nDebugging\n\n\n\n\n\n\n\n\n\ndplyr\ntidyr\n\n\n\n\n\nggplot2 \n\n\n\n\n\nemmeans\nmultcomp\npwr\n\n\n\n\n\n\n\n\nHome\nAppendix"
+    "text": "Welcome to the R Help and Tutorial Section. This resource organizes R help files into structured categories based on Subjects, Topics, and implementation through R Base and Packages.\n\n\n\nBelow are the available subjects and their corresponding topics. Select a topic to view detailed help pages.\n\n\n\nData Manipulation\n\nCreating Data Frames\nWorking with Factors\nSubsetting Data\nData Transformation and Wrangling\n\nData Visualization\n\nBase R Graphics\nggplot2 Basics\n\nStatistical Analysis\n\nHypothesis Testing\nRegression\nANOVA\n\nProgramming with R\n\nControl Structures\nWriting Functions\nDebugging\n\n\n\n\n\n\n\n\n\n\nBase R Plotting\nCustomizing Plots\n\n\n\n\n\nt-Test\nLinear Regression\nANOVA\n\n\n\n\n\nControl Structures\nWriting Functions\nDebugging\n\n\n\n\n\n\n\n\n\ndplyr\ntidyr\n\n\n\n\n\nggplot2 \n\n\n\n\n\nemmeans\nmultcomp\npwr\n\n\n\n\n\n\n\n\nHome\nAppendix",
+    "crumbs": [
+      "Home",
+      "R Code and Datasets",
+      "R Help"
+    ]
   },
   {
     "objectID": "r_help.html#r-subjects-topics",
     "href": "r_help.html#r-subjects-topics",
     "title": "R Tutorial",
     "section": "",
-    "text": "Below are the available subjects and their corresponding topics. Select a topic to view detailed help pages.\n\n\n\nData Manipulation\n\nCreating Data Frames\nWorking with Factors\nSubsetting Data\nData Transformation and Wrangling\n\nData Visualization\n\nBase R Graphics\nggplot2 Basics\n\nStatistical Analysis\n\nHypothesis Testing\nRegression\nANOVA\n\nProgramming with R\n\nControl Structures\nWriting Functions\nDebugging"
+    "text": "Below are the available subjects and their corresponding topics. Select a topic to view detailed help pages.\n\n\n\nData Manipulation\n\nCreating Data Frames\nWorking with Factors\nSubsetting Data\nData Transformation and Wrangling\n\nData Visualization\n\nBase R Graphics\nggplot2 Basics\n\nStatistical Analysis\n\nHypothesis Testing\nRegression\nANOVA\n\nProgramming with R\n\nControl Structures\nWriting Functions\nDebugging",
+    "crumbs": [
+      "Home",
+      "R Code and Datasets",
+      "R Help"
+    ]
   },
   {
     "objectID": "r_help.html#r-base-functions",
     "href": "r_help.html#r-base-functions",
     "title": "R Tutorial",
     "section": "",
-    "text": "Base R Plotting\nCustomizing Plots\n\n\n\n\n\nt-Test\nLinear Regression\nANOVA\n\n\n\n\n\nControl Structures\nWriting Functions\nDebugging"
+    "text": "Base R Plotting\nCustomizing Plots\n\n\n\n\n\nt-Test\nLinear Regression\nANOVA\n\n\n\n\n\nControl Structures\nWriting Functions\nDebugging",
+    "crumbs": [
+      "Home",
+      "R Code and Datasets",
+      "R Help"
+    ]
   },
   {
     "objectID": "r_help.html#r-packages",
     "href": "r_help.html#r-packages",
     "title": "R Tutorial",
     "section": "",
-    "text": "dplyr\ntidyr\n\n\n\n\n\nggplot2 \n\n\n\n\n\nemmeans\nmultcomp\npwr"
+    "text": "dplyr\ntidyr\n\n\n\n\n\nggplot2 \n\n\n\n\n\nemmeans\nmultcomp\npwr",
+    "crumbs": [
+      "Home",
+      "R Code and Datasets",
+      "R Help"
+    ]
   },
   {
     "objectID": "r_help.html#navigation",
     "href": "r_help.html#navigation",
     "title": "R Tutorial",
     "section": "",
-    "text": "Home\nAppendix"
+    "text": "Home\nAppendix",
+    "crumbs": [
+      "Home",
+      "R Code and Datasets",
+      "R Help"
+    ]
   },
   {
     "objectID": "project/rubric_proposal.html",
@@ -193,42 +223,72 @@
     "href": "home_readings.html",
     "title": "Readings & Critique Hub",
     "section": "",
-    "text": "Welcome! This page is your central navigation point for everything related to our weekly paper critiques. The ability to critically read, synthesize, and question the primary literature is the single most important skill you will develop in this course."
+    "text": "Welcome! This page is your central navigation point for everything related to our weekly paper critiques. The ability to critically read, synthesize, and question the primary literature is the single most important skill you will develop in this course.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Readings"
+    ]
   },
   {
     "objectID": "home_readings.html#core-resources-navigation",
     "href": "home_readings.html#core-resources-navigation",
     "title": "Readings & Critique Hub",
     "section": "📍 Core Resources & Navigation",
-    "text": "📍 Core Resources & Navigation\nEverything you need for the weekly critiques can be accessed from the links below.\n\n\n\nResource\nDescription\n\n\n\n\n📜 Weekly Readings Schedule\nThe complete week-by-week schedule of all required readings, including mapped textbook chapters, foundational papers, and case studies.\n\n\n🧐 How to Read a Technical Paper\n(Start Here!) A step-by-step guide on how to approach dense, theoretical papers without getting lost in the proofs.\n\n\n✍️ Writing Critique Guidelines\nA detailed guide on how to structure your analysis of a foundational paper, focusing on its logic, assumptions, and impact.\n\n\n✅ Templates, Checklists & Rubric\nAccess the critique template and the official grading rubric."
+    "text": "📍 Core Resources & Navigation\nEverything you need for the weekly critiques can be accessed from the links below.\n\n\n\nResource\nDescription\n\n\n\n\n📜 Weekly Readings Schedule\nThe complete week-by-week schedule of all required readings, including mapped textbook chapters, foundational papers, and case studies.\n\n\n🧐 How to Read a Technical Paper\n(Start Here!) A step-by-step guide on how to approach dense, theoretical papers without getting lost in the proofs.\n\n\n✍️ Writing Critique Guidelines\nA detailed guide on how to structure your analysis of a foundational paper, focusing on its logic, assumptions, and impact.\n\n\n✅ Templates, Checklists & Rubric\nAccess the critique template and the official grading rubric.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Readings"
+    ]
   },
   {
     "objectID": "home_readings.html#weekly-readings-student-leaders",
     "href": "home_readings.html#weekly-readings-student-leaders",
     "title": "Readings & Critique Hub",
     "section": "🗓️ Weekly Readings & Student Leaders",
-    "text": "🗓️ Weekly Readings & Student Leaders\nEach week, the assigned Student Leader will select one paper for the class to read and critique by Thursday of the prior week.\n\n\n\n\n\n\n\n\n\nWeek\nTopic\nPaper Option (Classic / Modern)\nStudent Leader\n\n\n\n\n3\nExchangeability, Positivity, Consistency\nHolland (1986) / Hernán (2018)\nGA\n\n\n4\nConfounding & Selection Bias\nHernán et al. (2004) / Cole & Hernán (2002)\nDB\n\n\n5\nPropensity Scores\nRosenbaum & Rubin (1983) / Austin (2011)\nCB\n\n\n6\nIPTW & Marginal Structural Models\nRobins et al. (2000) / Cole & Hernán (2008)\nCG\n\n\n7\nG-computation & TMLE\nRobins (1986) / Petersen & van der Laan (2014)\nAK\n\n\n8\nInstrumental Variables\nAngrist (1990) / Angrist & Pischke (2010)\nEK\n\n\n9\nEffect Modification & Interaction\nRothman (1974) / VanderWeele (2019)\nEL\n\n\n10\nMediation I (Foundations)\nBaron & Kenny (1986) / Imai et al. (2010)\nGM\n\n\n11\nMediation II & Principal Stratification\nRobins & Greenland (1992) / Daniel et al. (2015)\nKMG\n\n\n12\nSensitivity Analysis\nRosenbaum (1987) / VanderWeele & Ding (2017)\nMS\n\n\n13\nTarget Trial Emulation\nRobins (1987) / Hernán et al. (2008)\nHZ"
+    "text": "🗓️ Weekly Readings & Student Leaders\nEach week, the assigned Student Leader will select one paper for the class to read and critique by Thursday of the prior week.\n\n\n\n\n\n\n\n\n\nWeek\nTopic\nPaper Option (Classic / Modern)\nStudent Leader\n\n\n\n\n3\nExchangeability, Positivity, Consistency\nHolland (1986) / Hernán (2018)\nGA\n\n\n4\nConfounding & Selection Bias\nHernán et al. (2004) / Cole & Hernán (2002)\nDB\n\n\n5\nPropensity Scores\nRosenbaum & Rubin (1983) / Austin (2011)\nCB\n\n\n6\nIPTW & Marginal Structural Models\nRobins et al. (2000) / Cole & Hernán (2008)\nCG\n\n\n7\nG-computation & TMLE\nRobins (1986) / Petersen & van der Laan (2014)\nAK\n\n\n8\nInstrumental Variables\nAngrist (1990) / Angrist & Pischke (2010)\nEK\n\n\n9\nEffect Modification & Interaction\nRothman (1974) / VanderWeele (2019)\nEL\n\n\n10\nMediation I (Foundations)\nBaron & Kenny (1986) / Imai et al. (2010)\nGM\n\n\n11\nMediation II & Principal Stratification\nRobins & Greenland (1992) / Daniel et al. (2015)\nKMG\n\n\n12\nSensitivity Analysis\nRosenbaum (1987) / VanderWeele & Ding (2017)\nMS\n\n\n13\nTarget Trial Emulation\nRobins (1987) / Hernán et al. (2008)\nHZ",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Readings"
+    ]
   },
   {
     "objectID": "home_readings.html#roles-responsibilities",
     "href": "home_readings.html#roles-responsibilities",
     "title": "Readings & Critique Hub",
     "section": "🎓 Roles & Responsibilities",
-    "text": "🎓 Roles & Responsibilities\n\n🧑‍🏫 Discussion Leader\n\nSubmit Paper Choice: Email your selected paper to the instructor by Thursday of the week prior to your assigned week.\nPost Discussion Starter: Post your discussion starter in the weekly Canvas thread by Sunday at 11:59 pm. It must include:\n\nA ~300-word summary of the paper.\nYour answers to the three guiding questions from the Weekly Readings Schedule.\nA key takeaway from the paper.\n\nLead In-Class Discussion: Be prepared to lead the in-class discussion on Tuesday.\n\n\n\n✍️ All Other Students\n\nRead: Read the paper selected by the Discussion Leader.\nPost Critique: Post your critique in the weekly Canvas thread by Monday at 11:59 pm. It must include:\n\nA brief summary of the paper.\nYour answers to the three guiding questions from the Weekly Readings Schedule.\nA personal takeaway from the paper."
+    "text": "🎓 Roles & Responsibilities\n\n🧑‍🏫 Discussion Leader\n\nSubmit Paper Choice: Email your selected paper to the instructor by Thursday of the week prior to your assigned week.\nPost Discussion Starter: Post your discussion starter in the weekly Canvas thread by Sunday at 11:59 pm. It must include:\n\nA ~300-word summary of the paper.\nYour answers to the three guiding questions from the Weekly Readings Schedule.\nA key takeaway from the paper.\n\nLead In-Class Discussion: Be prepared to lead the in-class discussion on Tuesday.\n\n\n\n✍️ All Other Students\n\nRead: Read the paper selected by the Discussion Leader.\nPost Critique: Post your critique in the weekly Canvas thread by Monday at 11:59 pm. It must include:\n\nA brief summary of the paper.\nYour answers to the three guiding questions from the Weekly Readings Schedule.\nA personal takeaway from the paper.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Readings"
+    ]
   },
   {
     "objectID": "home_lectures.html",
     "href": "home_lectures.html",
     "title": "Lecture Notes",
     "section": "",
-    "text": "This page provides a detailed week-by-week schedule for STAT 579. Readings should be completed before the first class of the week.\n\nHR: Hernán, M. A., & Robins, J. M. (2024). Causal Inference: What If.\nNeal: Neal, B. (2020). Introduction to Causal Inference.\nCunningham: Cunningham, S. (2021). Causal Inference: The Mixtape.\nVanderWeele: VanderWeele, T. J. (2015). Explanation in Causal Inference.\n\n\nPart I: Foundations of Causal Inference\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nOptional Reading (Cunningham)\nProject Connection\n\n\n\n\n1\nAug 19, 21\nWhat is a Causal Effect?\nHR: Ch. 1–2; Neal: Ch. 1–2\nCh. 2: Potential Outcomes\nDefine your causal question.\n\n\n2\nAug 26, 28\nDAGs & Assumption Transparency\nNeal: Ch. 3; HR: Ch. 6\nCh. 3: Directed Acyclic Graphs\nDraw a preliminary DAG.\n\n\n3\nSep 2, 4\nExchangeability, Positivity\nHR: Ch. 7; Neal: Ch. 4\nCh. 4: Regression\nIdentify assumptions for your causal model.\n\n\n4\nSep 9, 11\nBias (Confounding, Selection)\nHR: Ch. 8–9\n-\nConsider biases in your dataset.\n\n\n\n\n\nPart II: Estimation Methods\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nOptional Reading (Cunningham)\nProject Connection\n\n\n\n\n5\nSep 16, 18\nPropensity Scores\nHR: Ch. 12–13; Neal: Ch. 7\nCh. 5: Matching & Subclassification\nSelect adjustment strategy.\n\n\n6\nSep 23, 25\nIPTW & MSMs\nHR: Ch. 15; Neal: Ch. 7.5–7.6\n-\nEvaluate MSM relevance.\n\n\n7\nSep 30, Oct 2\nG-computation\nHR: Ch. 20–21\n-\nExplore g-methods.\n\n\n8\nOct 7\nInstrumental Variables\nHR: Ch. 16; Neal: Ch. 9\nCh. 8: Instrumental Variables\nAssess natural experiments.\n\n\n\nNote: UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.\n\n\nPart III: Advanced Topics & Applications\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Connection\n\n\n\n\n9\nOct 14, 16\nEffect Modification\nHR: Ch. 4–5; Neal: Ch. 10\nMilestone: Project Proposal Due.\n\n\n10\nOct 21, 23\nMediation I (Foundations)\nVanderWeele: Ch. 1–2; Neal: Ch. 14\nRefine DAG with mediators.\n\n\n11\nOct 28, 30\nMediation II (Application)\nVanderWeele: Ch. 3; HR: Ch. 23\n-\n\n\n12\nNov 4, 6\nSensitivity Analysis\nNeal: Ch. 8; HR: Ch. 14\nPlan robustness checks.\n\n\n13\nNov 11, 13\nTarget Trial Emulation\nHR: Ch. 22\nReframe project as a trial.\n\n\n14\nNov 18, 20\nFinal Presentations\n-\nPresent your findings.\n\n\n\nNote: Thanksgiving Break is Nov 27-28.\n\nFinals Week (Dec 8–13): Final Project Paper Due."
+    "text": "This page provides a detailed week-by-week schedule for STAT 579. Readings should be completed before the first class of the week.\n\nHR: Hernán, M. A., & Robins, J. M. (2024). Causal Inference: What If.\nNeal: Neal, B. (2020). Introduction to Causal Inference.\nCunningham: Cunningham, S. (2021). Causal Inference: The Mixtape.\nVanderWeele: VanderWeele, T. J. (2015). Explanation in Causal Inference.\n\n\nPart I: Foundations of Causal Inference\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nOptional Reading (Cunningham)\nProject Connection\n\n\n\n\n1\nAug 19, 21\nWhat is a Causal Effect?\nHR: Ch. 1–2; Neal: Ch. 1–2\nCh. 2: Potential Outcomes\nDefine your causal question.\n\n\n2\nAug 26, 28\nDAGs & Assumption Transparency\nNeal: Ch. 3; HR: Ch. 6\nCh. 3: Directed Acyclic Graphs\nDraw a preliminary DAG.\n\n\n3\nSep 2, 4\nExchangeability, Positivity\nHR: Ch. 7; Neal: Ch. 4\nCh. 4: Regression\nIdentify assumptions for your causal model.\n\n\n4\nSep 9, 11\nBias (Confounding, Selection)\nHR: Ch. 8–9\n-\nConsider biases in your dataset.\n\n\n\n\n\nPart II: Estimation Methods\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nOptional Reading (Cunningham)\nProject Connection\n\n\n\n\n5\nSep 16, 18\nPropensity Scores\nHR: Ch. 12–13; Neal: Ch. 7\nCh. 5: Matching & Subclassification\nSelect adjustment strategy.\n\n\n6\nSep 23, 25\nIPTW & MSMs\nHR: Ch. 15; Neal: Ch. 7.5–7.6\n-\nEvaluate MSM relevance.\n\n\n7\nSep 30, Oct 2\nG-computation\nHR: Ch. 20–21\n-\nExplore g-methods.\n\n\n8\nOct 7\nInstrumental Variables\nHR: Ch. 16; Neal: Ch. 9\nCh. 8: Instrumental Variables\nAssess natural experiments.\n\n\n\nNote: UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.\n\n\nPart III: Advanced Topics & Applications\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Connection\n\n\n\n\n9\nOct 14, 16\nEffect Modification\nHR: Ch. 4–5; Neal: Ch. 10\nMilestone: Project Proposal Due.\n\n\n10\nOct 21, 23\nMediation I (Foundations)\nVanderWeele: Ch. 1–2; Neal: Ch. 14\nRefine DAG with mediators.\n\n\n11\nOct 28, 30\nMediation II (Application)\nVanderWeele: Ch. 3; HR: Ch. 23\n-\n\n\n12\nNov 4, 6\nSensitivity Analysis\nNeal: Ch. 8; HR: Ch. 14\nPlan robustness checks.\n\n\n13\nNov 11, 13\nTarget Trial Emulation\nHR: Ch. 22\nReframe project as a trial.\n\n\n14\nNov 18, 20\nFinal Presentations\n-\nPresent your findings.\n\n\n\nNote: Thanksgiving Break is Nov 27-28.\n\nFinals Week (Dec 8–13): Final Project Paper Due.",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Lecture Notes"
+    ]
   },
   {
     "objectID": "home_assignments.html",
     "href": "home_assignments.html",
     "title": "Assignments",
     "section": "",
-    "text": "TBA"
+    "text": "TBA",
+    "crumbs": [
+      "Home",
+      "Course Materials",
+      "Assignments"
+    ]
   },
   {
     "objectID": "contents.html",
@@ -324,42 +384,72 @@
     "href": "index.html",
     "title": "STAT 579: Applied Causal Inference",
     "section": "",
-    "text": "Access UNM Canvas"
+    "text": "Access UNM Canvas",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Home"
+    ]
   },
   {
     "objectID": "index.html#course-overview",
     "href": "index.html#course-overview",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Overview",
-    "text": "Course Overview\nThis graduate-level seminar introduces the theory and application of causal inference, with a strong emphasis on biostatistical and epidemiological contexts. The course builds from conceptual foundations and core assumptions to modern estimation methods for causal effects, emphasizing target trial emulation as a unifying framework.\nKey frameworks and tools include:\n\nPotential Outcomes Framework & SUTVA\nDirected Acyclic Graphs (DAGs)\nPropensity Scores, IPW, and Doubly Robust Methods\nInstrumental Variables\nMediation Analysis (NDE/NIE)\nMarginal Structural Models (MSMs)\nSensitivity Analysis\n\n\nInstructor’s Approach\nCausal inference is not just a toolbox—it’s a rigorous way of thinking about cause and effect. We will prioritize:\n\nPrecise causal questions (not just statistical associations).\nTransparency of assumptions (via DAGs and formal notation).\nIdentification before estimation (thinking carefully about what is learnable from data).\nCritical robustness assessment (sensitivity, replication, target trial framing)."
+    "text": "Course Overview\nThis graduate-level seminar introduces the theory and application of causal inference, with a strong emphasis on biostatistical and epidemiological contexts. The course builds from conceptual foundations and core assumptions to modern estimation methods for causal effects, emphasizing target trial emulation as a unifying framework.\nKey frameworks and tools include:\n\nPotential Outcomes Framework & SUTVA\nDirected Acyclic Graphs (DAGs)\nPropensity Scores, IPW, and Doubly Robust Methods\nInstrumental Variables\nMediation Analysis (NDE/NIE)\nMarginal Structural Models (MSMs)\nSensitivity Analysis\n\n\nInstructor’s Approach\nCausal inference is not just a toolbox—it’s a rigorous way of thinking about cause and effect. We will prioritize:\n\nPrecise causal questions (not just statistical associations).\nTransparency of assumptions (via DAGs and formal notation).\nIdentification before estimation (thinking carefully about what is learnable from data).\nCritical robustness assessment (sensitivity, replication, target trial framing).",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Home"
+    ]
   },
   {
     "objectID": "index.html#learning-objectives",
     "href": "index.html#learning-objectives",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Learning Objectives",
-    "text": "Learning Objectives\nBy the end of the course, students will be able to:\n\nFormulate and distinguish causal from associational questions.\nRepresent assumptions using DAGs and counterfactual notation.\nEvaluate and apply key assumptions (SUTVA, exchangeability, positivity).\nImplement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).\nDecompose effects via mediation analysis.\nConduct sensitivity analyses for unmeasured confounding.\nFrame observational studies as target trial emulations.\nCritically evaluate causal claims in the literature."
+    "text": "Learning Objectives\nBy the end of the course, students will be able to:\n\nFormulate and distinguish causal from associational questions.\nRepresent assumptions using DAGs and counterfactual notation.\nEvaluate and apply key assumptions (SUTVA, exchangeability, positivity).\nImplement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).\nDecompose effects via mediation analysis.\nConduct sensitivity analyses for unmeasured confounding.\nFrame observational studies as target trial emulations.\nCritically evaluate causal claims in the literature.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Home"
+    ]
   },
   {
     "objectID": "index.html#assessment-and-grading",
     "href": "index.html#assessment-and-grading",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Assessment and Grading",
-    "text": "Assessment and Grading\n\n\n\n\n\n\n\n\n\nComponent\nWeight\nDescription\n\n\n\n\nWeekly Concept Checks\n10%\nShort, low-stakes exercises on assumptions, DAGs, and interpretation.\n\n\nProblem Sets (3–4 sets)\n25%\nAnalytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).\n\n\nPaper Critique & Discussion Lead\n20%\nEach student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.\n\n\nFinal Project\n35%\nIndependent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.\n\n\nFinal Presentation\n10%\n15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results."
+    "text": "Assessment and Grading\n\n\n\n\n\n\n\n\n\nComponent\nWeight\nDescription\n\n\n\n\nWeekly Concept Checks\n10%\nShort, low-stakes exercises on assumptions, DAGs, and interpretation.\n\n\nProblem Sets (3–4 sets)\n25%\nAnalytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).\n\n\nPaper Critique & Discussion Lead\n20%\nEach student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.\n\n\nFinal Project\n35%\nIndependent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.\n\n\nFinal Presentation\n10%\n15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Home"
+    ]
   },
   {
     "objectID": "index.html#course-materials",
     "href": "index.html#course-materials",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Materials",
-    "text": "Course Materials\n\nRequired (Freely Available Online)\n\nHernán, M. A., & Robins, J. M. (2024). Causal Inference: What If.\nNeal, B. (2020). Introduction to Causal Inference.\n\n\n\nRecommended\n\nCunningham, S. (2021). Causal Inference: The Mixtape.\nVanderWeele, T. J. (2015). Explanation in Causal Inference.\nPearl, J., Glymour, M., & Jewell, N. (2016). Causal Inference in Statistics: A Primer.\nImbens, G. W., & Rubin, D. B. (2015). Causal Inference for Statistics, Social, and Biomedical Sciences.\nMorgan, S. L., & Winship, C. (2015). Counterfactuals and Causal Inference.\n\n\n\nSoftware\n\nRequired: R and RStudio (or VS Code). Students should have intermediate R proficiency.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue, tmle3, grf, DoubleML.\n\n\n\nKey Notes for Students\n\nPaper Critique & Discussion Lead (20%): Each student is responsible for one session. Deliverables include:\n\nDAG reconstruction of the paper’s causal assumptions.\nAssumptions table (exchangeability, positivity, SUTVA, consistency).\nReplication/robustness plan — how would you replicate or stress-test the findings?\nDiscussion facilitation with prepared questions for peers."
+    "text": "Course Materials\n\nRequired (Freely Available Online)\n\nHernán, M. A., & Robins, J. M. (2024). Causal Inference: What If.\nNeal, B. (2020). Introduction to Causal Inference.\n\n\n\nRecommended\n\nCunningham, S. (2021). Causal Inference: The Mixtape.\nVanderWeele, T. J. (2015). Explanation in Causal Inference.\nPearl, J., Glymour, M., & Jewell, N. (2016). Causal Inference in Statistics: A Primer.\nImbens, G. W., & Rubin, D. B. (2015). Causal Inference for Statistics, Social, and Biomedical Sciences.\nMorgan, S. L., & Winship, C. (2015). Counterfactuals and Causal Inference.\n\n\n\nSoftware\n\nRequired: R and RStudio (or VS Code). Students should have intermediate R proficiency.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue, tmle3, grf, DoubleML.\n\n\n\nKey Notes for Students\n\nPaper Critique & Discussion Lead (20%): Each student is responsible for one session. Deliverables include:\n\nDAG reconstruction of the paper’s causal assumptions.\nAssumptions table (exchangeability, positivity, SUTVA, consistency).\nReplication/robustness plan — how would you replicate or stress-test the findings?\nDiscussion facilitation with prepared questions for peers.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Home"
+    ]
   },
   {
     "objectID": "index.html#course-policies",
     "href": "index.html#course-policies",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Policies",
-    "text": "Course Policies\n\nLate Work: Deadlines are firm; 10% penalty/day unless prior arrangement for documented emergencies.\nAcademic Integrity: Collaboration on ideas is encouraged, but submitted work must be your own.\nParticipation & Respect: Active, inclusive, evidence-based dialogue is expected.\nAccessibility: Contact Accessibility Resource Center for accommodations."
+    "text": "Course Policies\n\nLate Work: Deadlines are firm; 10% penalty/day unless prior arrangement for documented emergencies.\nAcademic Integrity: Collaboration on ideas is encouraged, but submitted work must be your own.\nParticipation & Respect: Active, inclusive, evidence-based dialogue is expected.\nAccessibility: Contact Accessibility Resource Center for accommodations.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Home"
+    ]
   },
   {
     "objectID": "project/project_guidelines.html",
@@ -709,55 +799,103 @@
     "href": "syllabus/syllabus-final.html",
     "title": "STAT 579: Applied Causal Inference",
     "section": "",
-    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM"
+    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#instructor-logistics",
     "href": "syllabus/syllabus-final.html#instructor-logistics",
     "title": "STAT 579: Applied Causal Inference",
     "section": "",
-    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM"
+    "text": "Instructor\nDr. Davood Tofighi\n\n\nAffiliation\nDepartment of Mathematics and Statistics\n\n\nEmail\nThrough Canvas\n\n\nOffice Hours\nTBD – Office/Zoom\n\n\nClass Time\nTuesdays & Thursdays, 9:30 AM – 10:45 AM",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#course-overview",
     "href": "syllabus/syllabus-final.html#course-overview",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Overview",
-    "text": "Course Overview\nThis graduate-level seminar introduces the theory and application of causal inference, with a strong emphasis on biostatistical and epidemiological contexts. The course builds from conceptual foundations and core assumptions to modern estimation methods for causal effects, emphasizing target trial emulation as a unifying framework.\nKey frameworks and tools include:\n\nPotential Outcomes Framework & SUTVA\nDirected Acyclic Graphs (DAGs)\nPropensity Scores, IPW, and Doubly Robust Methods\nInstrumental Variables\nMediation Analysis (NDE/NIE)\nMarginal Structural Models (MSMs)\nSensitivity Analysis\n\n\nInstructor’s Approach\nCausal inference is not just a toolbox—it’s a rigorous way of thinking about cause and effect. We will prioritize:\n\nPrecise causal questions (not just statistical associations).\nTransparency of assumptions (via DAGs and formal notation).\nIdentification before estimation (thinking carefully about what is learnable from data).\nCritical robustness assessment (sensitivity, replication, target trial framing)."
+    "text": "Course Overview\nThis graduate-level seminar introduces the theory and application of causal inference, with a strong emphasis on biostatistical and epidemiological contexts. The course builds from conceptual foundations and core assumptions to modern estimation methods for causal effects, emphasizing target trial emulation as a unifying framework.\nKey frameworks and tools include:\n\nPotential Outcomes Framework & SUTVA\nDirected Acyclic Graphs (DAGs)\nPropensity Scores, IPW, and Doubly Robust Methods\nInstrumental Variables\nMediation Analysis (NDE/NIE)\nMarginal Structural Models (MSMs)\nSensitivity Analysis\n\n\nInstructor’s Approach\nCausal inference is not just a toolbox—it’s a rigorous way of thinking about cause and effect. We will prioritize:\n\nPrecise causal questions (not just statistical associations).\nTransparency of assumptions (via DAGs and formal notation).\nIdentification before estimation (thinking carefully about what is learnable from data).\nCritical robustness assessment (sensitivity, replication, target trial framing).",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#learning-objectives",
     "href": "syllabus/syllabus-final.html#learning-objectives",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Learning Objectives",
-    "text": "Learning Objectives\nBy the end of the course, students will be able to:\n\nFormulate and distinguish causal from associational questions.\nRepresent assumptions using DAGs and counterfactual notation.\nEvaluate and apply key assumptions (SUTVA, exchangeability, positivity).\nImplement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).\nDecompose effects via mediation analysis.\nConduct sensitivity analyses for unmeasured confounding.\nFrame observational studies as target trial emulations.\nCritically evaluate causal claims in the literature."
+    "text": "Learning Objectives\nBy the end of the course, students will be able to:\n\nFormulate and distinguish causal from associational questions.\nRepresent assumptions using DAGs and counterfactual notation.\nEvaluate and apply key assumptions (SUTVA, exchangeability, positivity).\nImplement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).\nDecompose effects via mediation analysis.\nConduct sensitivity analyses for unmeasured confounding.\nFrame observational studies as target trial emulations.\nCritically evaluate causal claims in the literature.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#assessment-and-grading",
     "href": "syllabus/syllabus-final.html#assessment-and-grading",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Assessment and Grading",
-    "text": "Assessment and Grading\n\n\n\n\n\n\n\n\n\nComponent\nWeight\n\\(\\qquad \\qquad \\textrm{Description}\\)\n\n\n\n\nWeekly Concept Checks\n10%\n\\(\\qquad\\) Short, low-stakes exercises on assumptions, DAGs, and interpretation.\n\n\nProblem Sets (3–4 sets)\n25%\n\\(\\qquad\\) Analytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).\n\n\nPaper Critique & Discussion Lead\n20%\n\\(\\qquad\\) Each student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.\n\n\nFinal Project\n35%\n\\(\\qquad\\) Independent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.\n\n\nFinal Presentation\n10%\n\\(\\qquad\\) 15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results."
+    "text": "Assessment and Grading\n\n\n\n\n\n\n\n\n\nComponent\nWeight\n\\(\\qquad \\qquad \\textrm{Description}\\)\n\n\n\n\nWeekly Concept Checks\n10%\n\\(\\qquad\\) Short, low-stakes exercises on assumptions, DAGs, and interpretation.\n\n\nProblem Sets (3–4 sets)\n25%\n\\(\\qquad\\) Analytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).\n\n\nPaper Critique & Discussion Lead\n20%\n\\(\\qquad\\) Each student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.\n\n\nFinal Project\n35%\n\\(\\qquad\\) Independent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.\n\n\nFinal Presentation\n10%\n\\(\\qquad\\) 15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#course-materials",
     "href": "syllabus/syllabus-final.html#course-materials",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Materials",
-    "text": "Course Materials\n\nRequired (Freely Available Online)\n\nHernán, M. A., & Robins, J. M. (2024). Causal Inference: What If. Chapman & Hall/CRC. https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/\nNeal, B. (2020). Introduction to Causal Inference. https://www.bradyneal.com/causal-inference-course\n\n\n\nRecommended\n\nHuntington-Klein, N. (n.d.). The Effect: An Introduction to Research Design and Causality | The Effect. Retrieved August 22, 2025, from https://theeffectbook.net/\nBarrett, M., McGowan, L. D., & Gerke, T. (2025, August 21). Causal Inference in R. https://www.r-causal.org/\nCunningham, S. (2021). Causal Inference: The Mixtape. Yale University Press. URL: https://mixtape.scunning.com\nVanderWeele, T. J. (2015). Explanation in Causal Inference. Oxford University Press, 2015. (Excellent resource specifically for mediation).\nPearl J, Glymour M, Jewell NP. Causal Inference in Statistics: A Primer. Wiley, 2016. (Primer is a more accessible introduction to Pearl’s framework). Focuses heavily on DAGs and structural causal models.\nImbens GW, Rubin DB. Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction. Cambridge University Press, 2015. (Focuses heavily on the potential outcomes framework and design-based inference).\n\n\n\nSoftware\n\nRequired: R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue."
+    "text": "Course Materials\n\nRequired (Freely Available Online)\n\nHernán, M. A., & Robins, J. M. (2024). Causal Inference: What If. Chapman & Hall/CRC. https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/\nNeal, B. (2020). Introduction to Causal Inference. https://www.bradyneal.com/causal-inference-course\n\n\n\nRecommended\n\nHuntington-Klein, N. (n.d.). The Effect: An Introduction to Research Design and Causality | The Effect. Retrieved August 22, 2025, from https://theeffectbook.net/\nBarrett, M., McGowan, L. D., & Gerke, T. (2025, August 21). Causal Inference in R. https://www.r-causal.org/\nCunningham, S. (2021). Causal Inference: The Mixtape. Yale University Press. URL: https://mixtape.scunning.com\nVanderWeele, T. J. (2015). Explanation in Causal Inference. Oxford University Press, 2015. (Excellent resource specifically for mediation).\nPearl J, Glymour M, Jewell NP. Causal Inference in Statistics: A Primer. Wiley, 2016. (Primer is a more accessible introduction to Pearl’s framework). Focuses heavily on DAGs and structural causal models.\nImbens GW, Rubin DB. Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction. Cambridge University Press, 2015. (Focuses heavily on the potential outcomes framework and design-based inference).\n\n\n\nSoftware\n\nRequired: R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.\nCore Packages: tidyverse, dagitty, ggdag, MatchIt, WeightIt, cobalt, ivreg, mediation, EValue.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#course-schedule-14-weeks",
     "href": "syllabus/syllabus-final.html#course-schedule-14-weeks",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Schedule (14 Weeks)",
-    "text": "Course Schedule (14 Weeks)\n\nPart I: Foundations\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n1\nAug 19, 21\nWhat is a Causal Effect? Counterfactuals & SUTVA\nHR Ch. 1–2; Neal Ch. 1–2\nDefine your causal question\nInstructor-led demo critique (introducing assignment expectations)\n\n\n2\nAug 26, 28\nDAGs & Assumption Transparency\nNeal Ch. 3; HR Ch. 6\nDraw a preliminary DAG\nStudent critique\n\n\n3\nSep 2, 4\nExchangeability, Positivity, Consistency\nHR Ch. 7; Neal Ch. 4\nIdentify assumptions for your DAG\nStudent critique\n\n\n4\nSep 9, 11\nConfounding, Selection, Measurement Bias\nHR Ch. 8–9\nConsider biases in your dataset\nStudent critique\n\n\n\n\n\nPart II: Estimation Methods\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n5\nSep 16, 18\nPropensity Scores (matching, weighting)\nHR Ch. 12–13; Neal Ch. 7\nSelect adjustment strategy\nStudent critique\n\n\n6\nSep 23, 25\nIPTW, MSMs, Doubly Robust Estimators\nHR Ch. 15; Neal Ch. 7.5–7.6\nEvaluate MSM relevance\nStudent critique\n\n\n7\nSep 30, Oct 2\nG-computation\nHR Ch. 20–21\nExplore g-methods for your project\nStudent critique\n\n\n8\nOct 7\nInstrumental Variables\nHR Ch. 16; Neal Ch. 9\nAssess natural experiments\nStudent critique\n\n\n\nNote: UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.\n\n\nPart III: Advanced Topics & Applications\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n9\nOct 14, 16\nEffect Modification\nHR Ch. 4–5; Neal Ch. 10\nProject Proposal Due\nStudent critique\n\n\n10\nOct 21, 23\nMediation Analysis I (Foundations)\nVanderWeele Ch. 1–2; Neal Ch. 14\nRefine DAG with mediators\nStudent critique\n\n\n11\nOct 28, 30\nMediation II & Principal Stratification\nVanderWeele Ch. 3; HR Ch. 23\n-\nStudent critique\n\n\n12\nNov 4, 6\nSensitivity Analysis\nNeal Ch. 8; HR Ch. 14\nPlan robustness checks\nStudent critique\n\n\n13\nNov 11, 13\nTarget Trial Emulation\nHR Ch. 22\nReframe project as trial\nStudent critique\n\n\n14\nNov 18, 20\nFinal Presentations\n–\nPresent findings\n–\n\n\n\nNote: Thanksgiving Break is Nov 27-28.\nFinals Week (Dec 8–13): Final Project Paper Due."
+    "text": "Course Schedule (14 Weeks)\n\nPart I: Foundations\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n1\nAug 19, 21\nWhat is a Causal Effect? Counterfactuals & SUTVA\nHR Ch. 1–2; Neal Ch. 1–2\nDefine your causal question\nInstructor-led demo critique (introducing assignment expectations)\n\n\n2\nAug 26, 28\nDAGs & Assumption Transparency\nNeal Ch. 3; HR Ch. 6\nDraw a preliminary DAG\nStudent critique\n\n\n3\nSep 2, 4\nExchangeability, Positivity, Consistency\nHR Ch. 7; Neal Ch. 4\nIdentify assumptions for your DAG\nStudent critique\n\n\n4\nSep 9, 11\nConfounding, Selection, Measurement Bias\nHR Ch. 8–9\nConsider biases in your dataset\nStudent critique\n\n\n\n\n\nPart II: Estimation Methods\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n5\nSep 16, 18\nPropensity Scores (matching, weighting)\nHR Ch. 12–13; Neal Ch. 7\nSelect adjustment strategy\nStudent critique\n\n\n6\nSep 23, 25\nIPTW, MSMs, Doubly Robust Estimators\nHR Ch. 15; Neal Ch. 7.5–7.6\nEvaluate MSM relevance\nStudent critique\n\n\n7\nSep 30, Oct 2\nG-computation\nHR Ch. 20–21\nExplore g-methods for your project\nStudent critique\n\n\n8\nOct 7\nInstrumental Variables\nHR Ch. 16; Neal Ch. 9\nAssess natural experiments\nStudent critique\n\n\n\nNote: UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.\n\n\nPart III: Advanced Topics & Applications\n\n\n\n\n\n\n\n\n\n\n\nWeek\nDates\nCore Topic\nPrimary Readings\nProject Link\nPaper Critique\n\n\n\n\n9\nOct 14, 16\nEffect Modification\nHR Ch. 4–5; Neal Ch. 10\nProject Proposal Due\nStudent critique\n\n\n10\nOct 21, 23\nMediation Analysis I (Foundations)\nVanderWeele Ch. 1–2; Neal Ch. 14\nRefine DAG with mediators\nStudent critique\n\n\n11\nOct 28, 30\nMediation II & Principal Stratification\nVanderWeele Ch. 3; HR Ch. 23\n-\nStudent critique\n\n\n12\nNov 4, 6\nSensitivity Analysis\nNeal Ch. 8; HR Ch. 14\nPlan robustness checks\nStudent critique\n\n\n13\nNov 11, 13\nTarget Trial Emulation\nHR Ch. 22\nReframe project as trial\nStudent critique\n\n\n14\nNov 18, 20\nFinal Presentations\n–\nPresent findings\n–\n\n\n\nNote: Thanksgiving Break is Nov 27-28.\nFinals Week (Dec 8–13): Final Project Paper Due.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   },
   {
     "objectID": "syllabus/syllabus-final.html#course-policies",
     "href": "syllabus/syllabus-final.html#course-policies",
     "title": "STAT 579: Applied Causal Inference",
     "section": "Course Policies",
-    "text": "Course Policies\n\nLate Work: Deadlines are firm. Late work will be penalized 10% per day unless a prior arrangement is made for a documented emergency.\nAcademic Integrity: Collaboration on ideas is encouraged, but all submitted work must be your own.\nParticipation & Respect: Active, inclusive, and evidence-based dialogue is expected.\nAccessibility: Students requiring accommodations should contact the Accessibility Resource Center and provide the instructor with an official letter."
+    "text": "Course Policies\n\nLate Work: Deadlines are firm. Late work will be penalized 10% per day unless a prior arrangement is made for a documented emergency.\nAcademic Integrity: Collaboration on ideas is encouraged, but all submitted work must be your own.\nParticipation & Respect: Active, inclusive, and evidence-based dialogue is expected.\nAccessibility: Students requiring accommodations should contact the Accessibility Resource Center and provide the instructor with an official letter.",
+    "crumbs": [
+      "Home",
+      "Course Overview",
+      "Syllabus",
+      "HTML"
+    ]
   }
 ]
