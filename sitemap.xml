@@ -98,7 +98,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_lectures.html</loc>
-    <lastmod>2025-08-24T17:36:30.769Z</lastmod>
+    <lastmod>2025-09-09T02:47:27.778Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_assignments.html</loc>
@@ -219,5 +219,9 @@
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/syllabus/syllabus-final.html</loc>
     <lastmod>2025-08-22T20:47:40.081Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/lectures/week-04_bias_seleclection_measurement.html</loc>
+    <lastmod>2025-09-09T02:47:47.645Z</lastmod>
   </url>
 </urlset>
