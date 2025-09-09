@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.33">
+<meta name="generator" content="quarto-1.7.34">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -37,9 +37,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dcd723bd3e2d8e65306aa707aebc1039.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a45597b65f5f3795ae8b140358e6d8e8.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-a45597b65f5f3795ae8b140358e6d8e8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a45597b65f5f3795ae8b140358e6d8e8.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-133f02cd984fe4e5aaef13578e2243c5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -454,7 +454,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Aug-23-2025</p>
+        <p class="date">Sep-06-2025</p>
       </div>
     </div>
     
@@ -690,7 +690,6 @@ ul.task-list li input[type="checkbox"] {
 <li>When might it be valid to avoid causal language?</li>
 </ol></li>
 </ul>
-<p>Perfect — let’s finish the <strong>Weekly Reading &amp; Critique Hub</strong> with <strong>Weeks 4–13</strong>. I’ll present them in the same <strong>Quarto-ready format</strong> (summary + three questions per paper).</p>
 </section>
 <section id="week-4-confounding-selection-bias" class="level3">
 <h3 class="anchored" data-anchor-id="week-4-confounding-selection-bias">Week 4 – Confounding &amp; Selection Bias</h3>
@@ -722,7 +721,29 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="part-ii-estimation-methods">Part II: Estimation Methods</h2>
 <section id="week-5-propensity-scores" class="level3">
 <h3 class="anchored" data-anchor-id="week-5-propensity-scores">Week 5 – Propensity Scores</h3>
-<p><em>(see prior section — already complete)</em></p>
+<p><strong>Classic </strong>: <strong>Rosenbaum, P. R., &amp; Rubin, D. B. (1983).</strong> The central role of the propensity score in observational studies for causal effects. <em>Biometrika</em>, 70(1), 41–55. <a href="https://doi.org/10.1093/biomet/70.1.41" class="uri">https://doi.org/10.1093/biomet/70.1.41</a>. <strong>Stable links:</strong> OUP; JSTOR. <a href="https://academic.oup.com/biomet/article-abstract/70/1/41/240879?utm_source=chatgpt.com">Oxford Academic</a> <a href="https://www.jstor.org/stable/2335942?utm_source=chatgpt.com">JSTOR</a></p>
+<p><strong>Summary.</strong><br>
+Proves that the propensity score is a <strong>balancing score</strong>, and that conditioning on it suffices to remove bias from <strong>observed</strong> covariates under strong ignorability. Lays foundations for matching, subclassification, IPTW, and covariate adjustment via the score. <a href="https://academic.oup.com/biomet/article-abstract/70/1/41/240879?utm_source=chatgpt.com">24Oxford Academic</a></p>
+<p><strong>Critique questions.</strong></p>
+<ol type="1">
+<li>Provide diagnostics to verify the <strong>balancing property</strong> in finite samples—what failures most threaten bias/variance?<br>
+</li>
+<li>Under which sampling regimes does <strong>trimming</strong> (lack of overlap) improve MSE yet alter the estimand?<br>
+</li>
+<li>Discuss the limits of propensity scores under <strong>interference</strong> or <strong>measurement error</strong> in covariates.</li>
+</ol>
+<p><strong>Modern</strong>:</p>
+<p><strong>Austin, P. C. (2011).</strong> An introduction to propensity score methods for reducing the effects of confounding in observational studies. <em>Multivariate Behavioral Research</em>, 46(3), 399–424. <a href="https://doi.org/10.1080/00273171.2011.568786" class="uri">https://doi.org/10.1080/00273171.2011.568786</a>. <strong>Stable links:</strong> PubMed/PMC. <a href="https://pubmed.ncbi.nlm.nih.gov/21818162/?utm_source=chatgpt.com">25PubMed</a> <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3144483/?utm_source=chatgpt.com">PMC</a></p>
+<p><strong>Summary.</strong><br>
+Reviews four implementations (matching, stratification, IPTW, regression adjustment) and stresses balance diagnostics and overlap checks. Offers pragmatic guidance for implementation choices and reporting. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3144483/?utm_source=chatgpt.com">PMC</a></p>
+<p><strong>Critique questions.</strong></p>
+<ol type="1">
+<li>Compare <strong>nearest-neighbor matching</strong> vs.&nbsp;<strong>IPTW</strong> for ATE/ATT under severe imbalance; which estimand is recovered, and at what variance cost?<br>
+</li>
+<li>What constitutes adequate <strong>common support</strong>? Propose quantitative thresholds and a pre-registered trimming rule.<br>
+</li>
+<li>Evaluate <strong>post-matching outcome modeling</strong>: when does it help vs.&nbsp;reintroduce model dependence?</li>
+</ol>
 </section>
 <section id="week-6-iptw-marginal-structural-models" class="level3">
 <h3 class="anchored" data-anchor-id="week-6-iptw-marginal-structural-models">Week 6 – IPTW &amp; Marginal Structural Models</h3>
