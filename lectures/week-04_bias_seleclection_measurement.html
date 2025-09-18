@@ -1000,8 +1000,22 @@ Figure&nbsp;1: DAGs for Confounding, Mediation, and Collider Structures
 </figcaption>
 </figure>
 </div>
-<p>For a higher quality output suitable for publications, we can use LaTeX’s <code>tikz</code> package.</p>
-<img src="week-04_bias_seleclection_measurement_files/mediabag/ae5a2bed7e3b4803ce3ace066490eb1076fce4d2.svg" class="img-fluid">
+<!-- 
+For a higher quality output suitable for publications, we can use LaTeX's `tikz` package.
+
+```{.tikz}
+\begin{figure}
+\centering
+\begin{tikzpicture}[node distance=1.5cm, main/.style={draw, circle}]
+    \node[main] (A) {$A$};
+    \node[main] (Y) [right of=A] {$Y$};
+    \node[main] (C) [below of=A, yshift=-0.5cm, xshift=0.75cm] {$C$};
+    \path[->] (A) edge (C);
+    \path[->] (Y) edge (C);
+    \caption{A Collider Structure Drawn with TiKZ}
+\end{tikzpicture}
+\end{figure}
+``` -->
 </section>
 <section id="simulating-and-identifying-collider-bias" class="level2">
 <h2 class="anchored" data-anchor-id="simulating-and-identifying-collider-bias">Simulating and Identifying Collider Bias</h2>
@@ -1169,8 +1183,10 @@ $open
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  ggdag<span class="sc">::</span><span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>&lt;details&gt;</p>
-<p>&lt;summary&gt;Solution to Task 1&lt;/summary&gt;</p>
+<details>
+<summary>
+Solution to Task 1
+</summary>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1180,8 +1196,8 @@ $open
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dag {</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="st">  A [exposure]</span></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="st">  Y [outcome]</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="st">  S [pos=</span><span class="sc">\"</span><span class="st">0,0</span><span class="sc">\"</span><span class="st">]</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="st">  U [pos=</span><span class="sc">\"</span><span class="st">-1,-1</span><span class="sc">\"</span><span class="st">]</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="st">  S </span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="st">  U </span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="st">  A -&gt; Y</span></span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="st">  A -&gt; S </span></span>
@@ -1205,7 +1221,7 @@ $open
 </div>
 <p><strong>Explanation:</strong> In this DAG, <span class="math inline">\(S\)</span> is a collider because it has arrows pointing into it from both <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>. It is also a collider on the path involving the unmeasured confounder <span class="math inline">\(U\)</span> (<span class="math inline">\(A \rightarrow Y \leftarrow U \rightarrow S \leftarrow A\)</span>). By selecting only active users (<span class="math inline">\(S=1\)</span>), we are conditioning on a collider, which will create bias.</p>
 <p>&lt;/details&gt;</p>
-</section>
+</details></section>
 <section id="task-2-simulate-data-based-on-the-dag" class="level2">
 <h2 class="anchored" data-anchor-id="task-2-simulate-data-based-on-the-dag"><strong>Task 2: Simulate Data Based on the DAG</strong></h2>
 <p>Now, let’s simulate a dataset that conforms to the causal structure you just drew.</p>
