@@ -1104,7 +1104,7 @@ Figure&nbsp;1: DAG showing how propensity score conditioning blocks confounding 
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Treatment assignment (A) depends heavily on L1 and L2</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This creates the confounding we need to solve</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>A_prob <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">4</span> <span class="sc">+</span> <span class="fl">0.05</span> <span class="sc">*</span> L1 <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> L2)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>A_prob <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">4</span> <span class="sc">+</span> <span class="fl">0.06</span> <span class="sc">*</span> L1 <span class="sc">+</span> <span class="fl">1.1</span> <span class="sc">*</span> L2)</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, A_prob)</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># The outcome (Y) depends on A, L1, and L2</span></span>
@@ -1114,14 +1114,12 @@ Figure&nbsp;1: DAG showing how propensity score conditioning blocks confounding 
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">A =</span> <span class="fu">factor</span>(A), Y, L1, <span class="at">L2 =</span> <span class="fu">factor</span>(L2))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, let's run the naive, biased regression</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>biased_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> df)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(biased_model) <span class="sc">|&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"A1"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(biased_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-naive-regression-expanded" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1129,33 +1127,30 @@ Figure&nbsp;1: DAG showing how propensity score conditioning blocks confounding 
 Table&nbsp;1: Naive regression estimate of the effect of A on Y, ignoring confounding.
 </figcaption>
 <div aria-describedby="tbl-naive-regression-expanded-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">term</th>
-<th style="text-align: right;">estimate</th>
-<th style="text-align: right;">std.error</th>
-<th style="text-align: right;">statistic</th>
-<th style="text-align: right;">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">A1</td>
-<td style="text-align: right;">4.93</td>
-<td style="text-align: right;">0.66</td>
-<td style="text-align: right;">7.44</td>
-<td style="text-align: right;">0</td>
-</tr>
-</tbody>
-</table>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Y ~ A, data = df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-47.167  -9.072   0.272   9.014  49.158 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 132.3123     0.6552  201.95   &lt;2e-16 ***
+A1           10.1091     0.7374   13.71   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 13.44 on 1998 degrees of freedom
+Multiple R-squared:  0.08599,   Adjusted R-squared:  0.08553 
+F-statistic:   188 on 1 and 1998 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </figure>
 </div>
-</div>
-<p><strong>Interpretation:</strong> The naive model estimates the effect of <code>A</code> to be 11.51, which is more than double the true effect of 5. This massive bias is caused by the fact that individuals with higher <code>L1</code> and <code>L2</code> values are both more likely to receive the treatment and have different outcomes.</p>
+<p><strong>Interpretation:</strong> The naive model estimates the effect of <code>A</code> to be 10.109 , which is more than double the true effect of 5. This massive bias is caused by the fact that individuals with higher <code>L1</code> and <code>L2</code> values are both more likely to receive the treatment and have different outcomes.</p>
 </section>
 <section id="step-2-estimate-propensity-scores-and-check-overlap" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="step-2-estimate-propensity-scores-and-check-overlap">Step 2: Estimate Propensity Scores and Check Overlap</h2>
@@ -1163,22 +1158,23 @@ Table&nbsp;1: Naive regression estimate of the effect of A on Y, ignoring confou
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model treatment assignment using logistic regression</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(A <span class="sc">~</span> L1 <span class="sc">+</span> L2, <span class="at">data =</span> df, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the predicted probabilities (propensity scores) to our data frame</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>pscore <span class="ot">&lt;-</span> <span class="fu">predict</span>(ps_model, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the overlap of propensity scores. This is a critical diagnostic.</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> pscore, <span class="at">fill =</span> A)) <span class="sc">+</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">end =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># title = "Propensity Score Overlap",</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># subtitle = "Checking the positivity/common support assumption",</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Estimated Propensity Score"</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Treatment (A)"</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model treatment assignment using logistic regression</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(A <span class="sc">~</span> L1 <span class="sc">+</span> L2, <span class="at">data =</span> df, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the predicted probabilities (propensity scores) to our data frame</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>pscore <span class="ot">&lt;-</span> <span class="fu">predict</span>(ps_model, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># df1 &lt;- broom::augment(ps_model, newdata = df)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the overlap of propensity scores. This is a critical diagnostic.</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> pscore, <span class="at">fill =</span> A)) <span class="sc">+</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">end =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># title = "Propensity Score Overlap",</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># subtitle = "Checking the positivity/common support assumption",</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Estimated Propensity Score"</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Treatment (A)"</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -1200,17 +1196,17 @@ Figure&nbsp;2: Distribution of propensity scores by treatment group. Good overla
 <p>We use the <code>MatchIt</code> package to find 1-to-1 “propensity score twins.”</p>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the matchit function to perform 1:1 nearest neighbor matching on the logit of the PS</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the logit (the default) often works better than matching on the raw score</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>match_obj <span class="ot">&lt;-</span> <span class="fu">matchit</span>(</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  A <span class="sc">~</span> L1 <span class="sc">+</span> L2,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"nearest"</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"logit"</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># The match_obj contains information about the matching process</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(match_obj)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the matchit function to perform 1:1 nearest neighbor matching on the logit of the PS</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the logit (the default) often works better than matching on the raw score</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>match_obj <span class="ot">&lt;-</span> MatchIt<span class="sc">::</span><span class="fu">matchit</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  A <span class="sc">~</span> L1 <span class="sc">+</span> L2,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"nearest"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"logit"</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># The match_obj contains information about the matching process</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(match_obj)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-match-matching-expanded" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1221,38 +1217,38 @@ Table&nbsp;2: Covariate balance before and after matching. Balance is achieved a
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-matchit(formula = A ~ L1 + L2, data = df, method = "nearest", 
+MatchIt::matchit(formula = A ~ L1 + L2, data = df, method = "nearest", 
     distance = "logit")
 
 Summary of Balance for All Data:
          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-distance        0.3972        0.2608          0.7811     1.3492    0.2273
-L1             53.1466       49.0583          0.4099     1.0427    0.1209
-L20             0.3808        0.7092         -0.6762          .    0.3284
-L21             0.6192        0.2908          0.6762          .    0.3284
+distance        0.8279        0.6455          1.2466     0.5592    0.2817
+L1             52.0525       43.6936          0.8772     1.1341    0.2353
+L20             0.5598        0.7981         -0.4800          .    0.2383
+L21             0.4402        0.2019          0.4800          .    0.2383
          eCDF Max
-distance   0.3428
-L1         0.2024
-L20        0.3284
-L21        0.3284
+distance   0.4189
+L1         0.3624
+L20        0.2383
+L21        0.2383
 
 Summary of Balance for Matched Data:
          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-distance        0.3972        0.3738          0.1342     1.2687    0.0247
-L1             53.1466       51.9153          0.1234     1.0797    0.0457
-L20             0.3808        0.4056         -0.0511          .    0.0248
-L21             0.6192        0.5944          0.0511          .    0.0248
+distance        0.9635        0.6455          2.1731     0.0071    0.6148
+L1             61.2087       43.6936          1.8381     0.6191    0.4981
+L20             0.2067        0.7981         -1.1915          .    0.5914
+L21             0.7933        0.2019          1.1915          .    0.5914
          eCDF Max Std. Pair Dist.
-distance   0.1159          0.1355
-L1         0.0927          0.5511
-L20        0.0248          0.2489
-L21        0.0248          0.2489
+distance   0.9667          2.1731
+L1         0.7886          1.8381
+L20        0.5914          1.3063
+L21        0.5914          1.3063
 
 Sample Sizes:
           Control Treated
-All          1396     604
-Matched       604     604
-Unmatched     792       0
+All           421    1579
+Matched       421     421
+Unmatched       0    1158
 Discarded       0       0</code></pre>
 </div>
 </div>
@@ -1261,7 +1257,7 @@ Discarded       0       0</code></pre>
 <section id="the-r-code-explained" class="level4">
 <h4 class="anchored" data-anchor-id="the-r-code-explained">The R Code Explained</h4>
 <p>Let’s start by understanding the function call that produced this output.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">matchit</span>(<span class="at">formula =</span> A <span class="sc">~</span> L1 <span class="sc">+</span> L2, <span class="at">data =</span> df, <span class="at">method =</span> <span class="st">"nearest"</span>, <span class="at">distance =</span> <span class="st">"logit"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">matchit</span>(<span class="at">formula =</span> A <span class="sc">~</span> L1 <span class="sc">+</span> L2, <span class="at">data =</span> df, <span class="at">method =</span> <span class="st">"nearest"</span>, <span class="at">distance =</span> <span class="st">"logit"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><strong><code>matchit(...)</code></strong>: This is the main function from the <code>MatchIt</code> package used to perform matching.</li>
 <li><strong><code>formula = A ~ L1 + L2</code></strong>: This is the most critical part. It specifies the <strong>propensity score model</strong>.
@@ -1281,12 +1277,12 @@ Discarded       0       0</code></pre>
 <section id="section-1-the-before-picture---summary-of-balance-for-all-data" class="level4">
 <h4 class="anchored" data-anchor-id="section-1-the-before-picture---summary-of-balance-for-all-data">Section 1: The “Before” Picture - <code>Summary of Balance for All Data</code></h4>
 <p>This section is our baseline. It shows the state of confounding in the <strong>original, unmatched dataset</strong>. It tells us <em>why</em> we needed to perform matching in the first place.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Summary of Balance <span class="cf">for</span> All Data<span class="sc">:</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>         Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>distance        <span class="fl">0.3972</span>        <span class="fl">0.2608</span>          <span class="fl">0.7811</span>     <span class="fl">1.3492</span>    <span class="fl">0.2273</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>L1             <span class="fl">53.1466</span>       <span class="fl">49.0583</span>          <span class="fl">0.4099</span>     <span class="fl">1.0427</span>    <span class="fl">0.1209</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>L20             <span class="fl">0.3808</span>        <span class="fl">0.7092</span>         <span class="sc">-</span><span class="fl">0.6762</span>          .    <span class="fl">0.3284</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>L21             <span class="fl">0.6192</span>        <span class="fl">0.2908</span>          <span class="fl">0.6762</span>          .    <span class="fl">0.3284</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Summary of Balance <span class="cf">for</span> All Data<span class="sc">:</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>         Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>distance        <span class="fl">0.3972</span>        <span class="fl">0.2608</span>          <span class="fl">0.7811</span>     <span class="fl">1.3492</span>    <span class="fl">0.2273</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>L1             <span class="fl">53.1466</span>       <span class="fl">49.0583</span>          <span class="fl">0.4099</span>     <span class="fl">1.0427</span>    <span class="fl">0.1209</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>L20             <span class="fl">0.3808</span>        <span class="fl">0.7092</span>         <span class="sc">-</span><span class="fl">0.6762</span>          .    <span class="fl">0.3284</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>L21             <span class="fl">0.6192</span>        <span class="fl">0.2908</span>          <span class="fl">0.6762</span>          .    <span class="fl">0.3284</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><strong><code>Means Treated</code> / <code>Means Control</code></strong>: These columns show the average value of each variable for the treated and control groups, respectively. We can see large differences. For example, the mean of <code>L1</code> is 53.15 for the treated but only 49.06 for the controls.</li>
 <li><strong><code>Std. Mean Diff.</code> (Standardized Mean Difference - SMD)</strong>: 🩺 <strong>This is the most important column for assessing balance.</strong> It represents the difference in means between the two groups, divided by a pooled standard deviation.
@@ -1302,12 +1298,12 @@ Discarded       0       0</code></pre>
 <section id="section-2-the-after-picture---summary-of-balance-for-matched-data" class="level4">
 <h4 class="anchored" data-anchor-id="section-2-the-after-picture---summary-of-balance-for-matched-data">Section 2: The “After” Picture - <code>Summary of Balance for Matched Data</code></h4>
 <p>This section is the “money shot.” It shows the balance on the exact same covariates but for the <strong>newly created matched dataset</strong>. This is how we judge the success of our matching procedure.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Summary of Balance <span class="cf">for</span> Matched Data<span class="sc">:</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>         Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>distance        <span class="fl">0.3972</span>        <span class="fl">0.3738</span>          <span class="fl">0.1342</span>     <span class="fl">1.2687</span>    <span class="fl">0.0247</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>L1             <span class="fl">53.1466</span>       <span class="fl">51.9153</span>          <span class="fl">0.1234</span>     <span class="fl">1.0797</span>    <span class="fl">0.0457</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>L20             <span class="fl">0.3808</span>        <span class="fl">0.4056</span>         <span class="sc">-</span><span class="fl">0.0511</span>          .    <span class="fl">0.0248</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>L21             <span class="fl">0.6192</span>        <span class="fl">0.5944</span>          <span class="fl">0.0511</span>          .    <span class="fl">0.0248</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Summary of Balance <span class="cf">for</span> Matched Data<span class="sc">:</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>         Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>distance        <span class="fl">0.3972</span>        <span class="fl">0.3738</span>          <span class="fl">0.1342</span>     <span class="fl">1.2687</span>    <span class="fl">0.0247</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>L1             <span class="fl">53.1466</span>       <span class="fl">51.9153</span>          <span class="fl">0.1234</span>     <span class="fl">1.0797</span>    <span class="fl">0.0457</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>L20             <span class="fl">0.3808</span>        <span class="fl">0.4056</span>         <span class="sc">-</span><span class="fl">0.0511</span>          .    <span class="fl">0.0248</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>L21             <span class="fl">0.6192</span>        <span class="fl">0.5944</span>          <span class="fl">0.0511</span>          .    <span class="fl">0.0248</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><strong><code>Std. Mean Diff.</code></strong>: ✅ Look here first!
 <ul>
@@ -1323,12 +1319,12 @@ Discarded       0       0</code></pre>
 <section id="section-3-understanding-the-trade-off---sample-sizes" class="level4">
 <h4 class="anchored" data-anchor-id="section-3-understanding-the-trade-off---sample-sizes">Section 3: Understanding the Trade-Off - <code>Sample Sizes</code></h4>
 <p>Matching achieves balance by discarding control units that are not good “twins” for any treated units. This section quantifies that trade-off.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Sample Sizes<span class="sc">:</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>          Control Treated</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>All          <span class="dv">1396</span>     <span class="dv">604</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>Matched       <span class="dv">604</span>     <span class="dv">604</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>Unmatched     <span class="dv">792</span>       <span class="dv">0</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>Discarded       <span class="dv">0</span>       <span class="dv">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Sample Sizes<span class="sc">:</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>          Control Treated</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>All          <span class="dv">1396</span>     <span class="dv">604</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>Matched       <span class="dv">604</span>     <span class="dv">604</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>Unmatched     <span class="dv">792</span>       <span class="dv">0</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>Discarded       <span class="dv">0</span>       <span class="dv">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><strong><code>All</code></strong>: The original dataset contained <strong>604</strong> treated individuals and <strong>1396</strong> control individuals.</li>
 <li><strong><code>Matched</code></strong>: The new, matched dataset contains <strong>604</strong> treated individuals and <strong>604</strong> control individuals. Since we did 1-to-1 matching, every treated unit found a match.</li>
@@ -1347,17 +1343,17 @@ Discarded       0       0</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The `love.plot` is our best friend for balance checking.</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  match_obj,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">binary =</span> <span class="st">"std"</span>, <span class="co"># Standardize differences for binary covariates</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">thresholds =</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="fl">0.1</span>), <span class="co"># Add a vertical line for the balance threshold</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">stars =</span> <span class="st">"raw"</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Covariate Balance Before and After Matching"</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Standardized Mean Differences (SMD) should be &lt; 0.1 after matching"</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The `love.plot` is our best friend for balance checking.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  match_obj,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">binary =</span> <span class="st">"std"</span>, <span class="co"># Standardize differences for binary covariates</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">thresholds =</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="fl">0.1</span>), <span class="co"># Add a vertical line for the balance threshold</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">stars =</span> <span class="st">"raw"</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Covariate Balance Before and After Matching"</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Standardized Mean Differences (SMD) should be &lt; 0.1 after matching"</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-love-plot-expanded" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1390,17 +1386,17 @@ Figure&nbsp;3: A Love plot showing standardized mean differences before and afte
 <section id="the-r-code-explained-1" class="level3">
 <h3 class="anchored" data-anchor-id="the-r-code-explained-1">2. The R Code Explained</h3>
 <p>Let’s break down the code used to generate a typical Love plot.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The `love.plot` is our best friend for balance checking.</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  match_obj,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">binary =</span> <span class="st">"std"</span>, <span class="co"># Standardize differences for binary covariates</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">thresholds =</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="fl">0.1</span>), <span class="co"># Add a vertical line for the balance threshold</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">stars =</span> <span class="st">"raw"</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Covariate Balance Before and After Matching"</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Standardized Mean Differences (SMD) should be &lt; 0.1 after matching"</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The `love.plot` is our best friend for balance checking.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  match_obj,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">binary =</span> <span class="st">"std"</span>, <span class="co"># Standardize differences for binary covariates</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">thresholds =</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="fl">0.1</span>), <span class="co"># Add a vertical line for the balance threshold</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">stars =</span> <span class="st">"raw"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Covariate Balance Before and After Matching"</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Standardized Mean Differences (SMD) should be &lt; 0.1 after matching"</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><strong><code>love.plot(match_obj, ...)</code></strong>: The function is from the <code>cobalt</code> package. Its first argument is the output object from a package like <code>MatchIt</code> or <code>WeightIt</code> (here, <code>match_obj</code>). This object contains all the information about the data before and after adjustment.</li>
 <li><strong><code>binary = "std"</code></strong>: This argument specifies how to handle binary (0/1) covariates. <code>"std"</code> tells the function to calculate a standardized difference, which is generally recommended, making them comparable to continuous variables.</li>
@@ -1464,15 +1460,15 @@ Figure&nbsp;3: A Love plot showing standardized mean differences before and afte
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `match.data()` extracts the new dataset containing only the matched individuals</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>matched_data <span class="ot">&lt;-</span> <span class="fu">match.data</span>(match_obj)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a simple regression on the matched data, using the weights provided by MatchIt</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># These weights account for how individuals were matched (e.g., 1 control matched to multiple treated)</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>matched_effect_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> matched_data, <span class="at">weights =</span> weights)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(matched_effect_model) <span class="sc">|&gt;</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"A1"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `match.data()` extracts the new dataset containing only the matched individuals</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>matched_data <span class="ot">&lt;-</span> <span class="fu">match.data</span>(match_obj)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a simple regression on the matched data, using the weights provided by MatchIt</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># These weights account for how individuals were matched (e.g., 1 control matched to multiple treated)</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>matched_effect_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> matched_data, <span class="at">weights =</span> weights)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(matched_effect_model) <span class="sc">|&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"A1"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -1505,16 +1501,16 @@ Figure&nbsp;3: A Love plot showing standardized mean differences before and afte
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the IPTW weights for the ATE</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>weight_obj <span class="ot">&lt;-</span> <span class="fu">weightit</span>(A <span class="sc">~</span> L1 <span class="sc">+</span> L2, <span class="at">data =</span> df, <span class="at">estimand =</span> <span class="st">"ATE"</span>)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Again, the first step is always to check balance</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  weight_obj,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">thresholds =</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="fl">0.1</span>),</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">stars =</span> <span class="st">"raw"</span>,</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Covariate Balance After IPTW"</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the IPTW weights for the ATE</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>weight_obj <span class="ot">&lt;-</span> <span class="fu">weightit</span>(A <span class="sc">~</span> L1 <span class="sc">+</span> L2, <span class="at">data =</span> df, <span class="at">estimand =</span> <span class="st">"ATE"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Again, the first step is always to check balance</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  weight_obj,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">thresholds =</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="fl">0.1</span>),</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">stars =</span> <span class="st">"raw"</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Covariate Balance After IPTW"</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1525,11 +1521,11 @@ Figure&nbsp;3: A Love plot showing standardized mean differences before and afte
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a simple regression on the original dataset, but with weights</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>weighted_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> df, <span class="at">weights =</span> weight_obj<span class="sc">$</span>weights)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(weighted_model) <span class="sc">|&gt;</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"A1"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a simple regression on the original dataset, but with weights</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>weighted_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> df, <span class="at">weights =</span> weight_obj<span class="sc">$</span>weights)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(weighted_model) <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"A1"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -1578,19 +1574,19 @@ Figure&nbsp;3: A Love plot showing standardized mean differences before and afte
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate confounded data for the lab</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>n_lab <span class="ot">&lt;-</span> <span class="dv">3000</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>income <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_lab, <span class="dv">60</span>, <span class="dv">20</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>signs <span class="ot">&lt;-</span> <span class="fu">rpois</span>(n_lab, <span class="fl">1.5</span>)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>letter_prob <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">+</span> <span class="fl">0.02</span> <span class="sc">*</span> income <span class="sc">+</span> <span class="fl">0.4</span> <span class="sc">*</span> signs)</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>letter <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, letter_prob)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co"># The true causal effect of the letter is an 8 percentage point increase in turnout</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>turnout_prob <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">1.5</span> <span class="sc">+</span> <span class="fl">0.35</span> <span class="sc">*</span> letter <span class="sc">+</span> <span class="fl">0.015</span> <span class="sc">*</span> income <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> signs)</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>voted <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, turnout_prob)</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>gotv_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(voted, letter, income, signs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate confounded data for the lab</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>n_lab <span class="ot">&lt;-</span> <span class="dv">3000</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>income <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_lab, <span class="dv">60</span>, <span class="dv">20</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>signs <span class="ot">&lt;-</span> <span class="fu">rpois</span>(n_lab, <span class="fl">1.5</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>letter_prob <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">+</span> <span class="fl">0.02</span> <span class="sc">*</span> income <span class="sc">+</span> <span class="fl">0.4</span> <span class="sc">*</span> signs)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>letter <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, letter_prob)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co"># The true causal effect of the letter is an 8 percentage point increase in turnout</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>turnout_prob <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">1.5</span> <span class="sc">+</span> <span class="fl">0.35</span> <span class="sc">*</span> letter <span class="sc">+</span> <span class="fl">0.015</span> <span class="sc">*</span> income <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> signs)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>voted <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, turnout_prob)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>gotv_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(voted, letter, income, signs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p><strong>Instructions:</strong></p>
@@ -1598,26 +1594,26 @@ Figure&nbsp;3: A Love plot showing standardized mean differences before and afte
 <li>Calculate the raw difference in voting rates between the letter and no-letter groups.</li>
 <li>Use <code>bal.tab()</code> from the <code>cobalt</code> package to examine the initial state of confounding before any adjustment.</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: student-lab-naive-expanded</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Calculate the simple difference-in-means</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>gotv_df <span class="sc">|&gt;</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(letter) <span class="sc">|&gt;</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">voting_rate =</span> <span class="fu">mean</span>(voted))</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Use bal.tab to see the initial imbalance</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>cobalt<span class="sc">::</span><span class="fu">bal.tab</span>(...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: student-lab-naive-expanded</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Calculate the simple difference-in-means</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>gotv_df <span class="sc">|&gt;</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(letter) <span class="sc">|&gt;</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">voting_rate =</span> <span class="fu">mean</span>(voted))</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Use bal.tab to see the initial imbalance</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>cobalt<span class="sc">::</span><span class="fu">bal.tab</span>(...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="solution-to-task-1" class="level3">
 <h3 class="anchored" data-anchor-id="solution-to-task-1">Solution to Task 1</h3>
 <div class="cell" data-tbl-cap="Initial Covariate Imbalance">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>gotv_df <span class="sc">|&gt;</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(letter) <span class="sc">|&gt;</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">voting_rate =</span> <span class="fu">mean</span>(voted)) <span class="sc">|&gt;</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(letter, voting_rate) <span class="sc">|&gt;</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">raw_difference =</span> <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">0</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>gotv_df <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(letter) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">voting_rate =</span> <span class="fu">mean</span>(voted)) <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(letter, voting_rate) <span class="sc">|&gt;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">raw_difference =</span> <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">0</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div data-pagedtable="false"> <div class="table-caption"><p>Initial Covariate Imbalance</p></div>
@@ -1628,14 +1624,14 @@ Figure&nbsp;3: A Love plot showing standardized mean differences before and afte
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use bal.tab to get a detailed table of imbalance</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>cobalt<span class="sc">::</span><span class="fu">bal.tab</span>(</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  letter <span class="sc">~</span> income <span class="sc">+</span> signs,</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gotv_df,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">un =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">binary =</span> <span class="st">"std"</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use bal.tab to get a detailed table of imbalance</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>cobalt<span class="sc">::</span><span class="fu">bal.tab</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  letter <span class="sc">~</span> income <span class="sc">+</span> signs,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gotv_df,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">un =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">binary =</span> <span class="st">"std"</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Balance Measures
@@ -1660,38 +1656,38 @@ All    1636    1364</code></pre>
 <li>Create a Love plot to verify that balance is achieved (SMDs &lt; 0.1).</li>
 <li>Estimate the Average Treatment Effect on the Treated (ATT) by calculating the difference-in-means on the matched dataset.</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: student-lab-match-expanded</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Perform matching, storing the result in an object</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>gotv_match_obj <span class="ot">&lt;-</span> <span class="fu">matchit</span>(...)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create the Love Plot using the matchit object</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(...)</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Extract the matched data</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>gotv_matched_data <span class="ot">&lt;-</span> <span class="fu">match.data</span>(...)</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Calculate the effect in the matched sample</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>gotv_matched_data <span class="sc">|&gt;</span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(letter) <span class="sc">|&gt;</span></span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">voting_rate =</span> <span class="fu">mean</span>(voted))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: student-lab-match-expanded</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Perform matching, storing the result in an object</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>gotv_match_obj <span class="ot">&lt;-</span> <span class="fu">matchit</span>(...)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create the Love Plot using the matchit object</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(...)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Extract the matched data</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>gotv_matched_data <span class="ot">&lt;-</span> <span class="fu">match.data</span>(...)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Calculate the effect in the matched sample</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>gotv_matched_data <span class="sc">|&gt;</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(letter) <span class="sc">|&gt;</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">voting_rate =</span> <span class="fu">mean</span>(voted))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="solution-to-task-2" class="level3">
 <h3 class="anchored" data-anchor-id="solution-to-task-2">Solution to Task 2</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Perform matching</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>gotv_match_obj <span class="ot">&lt;-</span> <span class="fu">matchit</span>(</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  letter <span class="sc">~</span> income <span class="sc">+</span> signs,</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gotv_df,</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"nearest"</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Check balance</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(gotv_match_obj, <span class="at">binary =</span> <span class="st">"std"</span>, <span class="at">thresholds =</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="fl">0.1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Perform matching</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>gotv_match_obj <span class="ot">&lt;-</span> <span class="fu">matchit</span>(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  letter <span class="sc">~</span> income <span class="sc">+</span> signs,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gotv_df,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"nearest"</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Check balance</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(gotv_match_obj, <span class="at">binary =</span> <span class="st">"std"</span>, <span class="at">thresholds =</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="fl">0.1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1703,17 +1699,17 @@ All    1636    1364</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Estimate effect on matched data</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>gotv_matched_data <span class="ot">&lt;-</span> <span class="fu">match.data</span>(gotv_match_obj)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>effect_matched <span class="ot">&lt;-</span> gotv_matched_data <span class="sc">|&gt;</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(letter) <span class="sc">|&gt;</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">voting_rate =</span> <span class="fu">mean</span>(voted)) <span class="sc">|&gt;</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(letter, voting_rate) <span class="sc">|&gt;</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ATT_estimate =</span> <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">0</span><span class="st">`</span>)</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(effect_matched, <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Estimate effect on matched data</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>gotv_matched_data <span class="ot">&lt;-</span> <span class="fu">match.data</span>(gotv_match_obj)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>effect_matched <span class="ot">&lt;-</span> gotv_matched_data <span class="sc">|&gt;</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(letter) <span class="sc">|&gt;</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">voting_rate =</span> <span class="fu">mean</span>(voted)) <span class="sc">|&gt;</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(letter, voting_rate) <span class="sc">|&gt;</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ATT_estimate =</span> <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">0</span><span class="st">`</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(effect_matched, <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -1746,43 +1742,43 @@ All    1636    1364</code></pre>
 <li>Use <code>bal.tab()</code> this time to check the balance in the weighted sample.</li>
 <li>Run a weighted regression (<code>glm</code>) to estimate the ATE.</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: student-lab-iptw</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Calculate weights</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>gotv_weight_obj <span class="ot">&lt;-</span> <span class="fu">weightit</span>(...)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Check balance on the weighted data</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="fu">bal.tab</span>(gotv_weight_obj)</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Fit a weighted logistic regression model</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>weighted_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(voted <span class="sc">~</span> letter,</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> ...,</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">weights =</span> ...,</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">family =</span> <span class="fu">quasibinomial</span>()) <span class="co"># Quasibinomial is often better for weighted logistic regression</span></span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Get the average marginal effect (our risk difference)</span></span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="co"># This requires the `margins` package</span></span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("margins")</span></span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>margins<span class="sc">::</span><span class="fu">margins</span>(weighted_glm, <span class="at">variables =</span> <span class="st">"letter"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="solution-to-task-3" class="level3">
-<h3 class="anchored" data-anchor-id="solution-to-task-3">Solution to Task 3</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: solution-lab-iptw</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Calculate weights</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>gotv_weight_obj <span class="sc">&amp;</span>lt;<span class="sc">-</span> <span class="fu">weightit</span>(letter <span class="sc">~</span> income <span class="sc">+</span> signs, <span class="at">data =</span> gotv_df, <span class="at">estimand =</span> <span class="sc">&amp;</span>quot;ATE<span class="sc">&amp;</span>quot;)</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Check balance</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: student-lab-iptw</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Calculate weights</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>gotv_weight_obj <span class="ot">&lt;-</span> <span class="fu">weightit</span>(...)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Check balance on the weighted data</span></span>
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="fu">bal.tab</span>(gotv_weight_obj)</span>
 <span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Fit weighted model. We can use lm() for a difference in means.</span></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>weighted_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(voted <span class="sc">~</span> letter, <span class="at">data =</span> gotv_df, <span class="at">weights =</span> gotv_weight_obj<span class="sc">$</span>weights)</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(weighted_lm) <span class="sc">|&gt;</span></span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"letter1"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="at">digits=</span><span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Fit a weighted logistic regression model</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>weighted_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(voted <span class="sc">~</span> letter,</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> ...,</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">weights =</span> ...,</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">family =</span> <span class="fu">quasibinomial</span>()) <span class="co"># Quasibinomial is often better for weighted logistic regression</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Get the average marginal effect (our risk difference)</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="co"># This requires the `margins` package</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("margins")</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>margins<span class="sc">::</span><span class="fu">margins</span>(weighted_glm, <span class="at">variables =</span> <span class="st">"letter"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="solution-to-task-3" class="level3">
+<h3 class="anchored" data-anchor-id="solution-to-task-3">Solution to Task 3</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: solution-lab-iptw</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Calculate weights</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>gotv_weight_obj <span class="sc">&amp;</span>lt;<span class="sc">-</span> <span class="fu">weightit</span>(letter <span class="sc">~</span> income <span class="sc">+</span> signs, <span class="at">data =</span> gotv_df, <span class="at">estimand =</span> <span class="sc">&amp;</span>quot;ATE<span class="sc">&amp;</span>quot;)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Check balance</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="fu">bal.tab</span>(gotv_weight_obj)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Fit weighted model. We can use lm() for a difference in means.</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>weighted_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(voted <span class="sc">~</span> letter, <span class="at">data =</span> gotv_df, <span class="at">weights =</span> gotv_weight_obj<span class="sc">$</span>weights)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(weighted_lm) <span class="sc">|&gt;</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"letter1"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="at">digits=</span><span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Interpretation:</strong> The balance table for the weighted data should also show excellent balance. The final regression, which accounts for the weights, estimates an ATE of about 0.081, or an 8.1 percentage point increase in voting. This result confirms the finding from our matching analysis.</p>
 </section>
 </section>
