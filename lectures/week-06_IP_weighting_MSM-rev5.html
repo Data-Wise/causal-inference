@@ -547,7 +547,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Sep-26-2025</p>
+        <p class="date">Sep-23-2025</p>
       </div>
     </div>
     
@@ -700,10 +700,8 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#lab-estimating-the-effect-of-hiv-therapy-on-cd4-count" id="toc-lab-estimating-the-effect-of-hiv-therapy-on-cd4-count" class="nav-link" data-scroll-target="#lab-estimating-the-effect-of-hiv-therapy-on-cd4-count">Lab: Estimating the Effect of HIV Therapy on CD4 Count ⚕️</a></li>
   </ul></li>
-  <li><a href="#common-pitfalls-checks" id="toc-common-pitfalls-checks" class="nav-link" data-scroll-target="#common-pitfalls-checks">6. Common Pitfalls &amp; Checks</a>
-  <ul class="collapse">
+  <li><a href="#common-pitfalls-checks" id="toc-common-pitfalls-checks" class="nav-link" data-scroll-target="#common-pitfalls-checks">6. Common Pitfalls &amp; Checks</a></li>
   <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">Check Your Understanding</a></li>
-  </ul></li>
   <li><a href="#advanced-teaching-activities-interactivity" id="toc-advanced-teaching-activities-interactivity" class="nav-link" data-scroll-target="#advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</a></li>
   <li><a href="#appendix-advanced-theory-derivations" id="toc-appendix-advanced-theory-derivations" class="nav-link" data-scroll-target="#appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</a>
   <ul class="collapse">
@@ -712,7 +710,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-06_IP_weighting_MSM-rev1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-06_IP_weighting_MSM-rev1.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-06_IP_weighting_MSM-rev5.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-06_IP_weighting_MSM-rev5.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -781,12 +779,12 @@ window.Quarto = {
 <li><strong>It is on the causal pathway</strong> from the prior treatment, <span class="math inline">\(A_0\)</span>. The decision to treat at baseline (<span class="math inline">\(A_0\)</span>) affects the patient’s immune health, which is measured by <span class="math inline">\(L_1\)</span>. Therefore, <span class="math inline">\(L_1\)</span> is a mediator of the total effect of <span class="math inline">\(A_0\)</span> on <span class="math inline">\(Y\)</span> (via the path <span class="math inline">\(A_0 \rightarrow L_1 \rightarrow Y\)</span>). To get an unbiased estimate of the <em>total</em> effect of <span class="math inline">\(A_0\)</span>, we know we must <em>not</em> adjust for the mediator <span class="math inline">\(L_1\)</span>.</li>
 </ol>
 <p>This is the central paradox: we must adjust for <span class="math inline">\(L_1\)</span> and we must not adjust for <span class="math inline">\(L_1\)</span>.</p>
-<div id="fig-time-varying-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-dag-expanded" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-time-varying-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="8dc62f0d8ea709f85dd01d46a93809af59379e4a.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: DAG of a time-varying treatment (A) and confounder (L). The variable L_1 perfectly illustrates the dual role of mediator and confounder that makes standard adjustment methods fail."><img src="week-06_IP_weighting_MSM-rev1_files/mediabag/8dc62f0d8ea709f85dd01d46a93809af59379e4a.svg" class="img-fluid figure-img"></a>
+<div aria-describedby="fig-dag-expanded-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="c487d3cacb59fb57d127a0e09fc31cc856afd359.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: DAG of a time-varying treatment (A) and confounder (L). The variable L_1 perfectly illustrates the dual role of mediator and confounder that makes standard adjustment methods fail."><img src="week-06_IP_weighting_MSM-rev5_files/mediabag/c487d3cacb59fb57d127a0e09fc31cc856afd359.svg" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-time-varying-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dag-expanded-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: DAG of a time-varying treatment (<span class="math inline">\(A\)</span>) and confounder (<span class="math inline">\(L\)</span>). The variable <span class="math inline">\(L_1\)</span> perfectly illustrates the dual role of mediator and confounder that makes standard adjustment methods fail.
 </figcaption>
 </figure>
@@ -818,8 +816,8 @@ Figure&nbsp;1: DAG of a time-varying treatment (<span class="math inline">\(A\)<
 <p>A Marginal Structural Model (MSM) is a model for the mean of a potential outcome <span class="math inline">\(Y^{\bar{a}}\)</span> that would be observed if an individual had followed a specific treatment history <span class="math inline">\(\bar{a} = (a_0, a_1, ..., a_K)\)</span>.</p>
 <p>A simple, non-saturated linear MSM might take the form:</p>
 <p><span class="math display">\[
-E[Y^{\bar{a}}] = \beta_0 + \beta_1 \sum_{k=0}^{K} a_k
-\]</span></p>
+\E{Y^{\bar{a}}} = \beta_0 + \beta_1 \sum_{k=0}^{K} a_k
+\]</span>{#eq:eq-msm-linear}</p>
 <p>This model states that the average potential outcome is a linear function of the cumulative number of treatment doses received. Notice that the time-varying confounders <span class="math inline">\(\bar{L}\)</span> are <strong>not</strong> in this model.</p>
 </div>
 </div>
@@ -1089,52 +1087,30 @@ SW_{Jane} = \left( \frac{0.4}{0.6} \right) \times \left( \frac{0.4}{0.3} \right)
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Join these two long dataframes together.</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create lagged versions of A and L to use as predictors in the weight models.</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>lab_long_df_1 <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  wide_df,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols =</span> <span class="fu">c</span>(L0, L1),</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">names_to =</span> <span class="st">"time"</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">values_to =</span> <span class="st">"L"</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">names_prefix =</span> <span class="st">"L"</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>lab_long_df_2 <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  wide_df,</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols =</span> <span class="fu">c</span>(A0, A1),</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">names_to =</span> <span class="st">"time"</span>,</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">values_to =</span> <span class="st">"A"</span>,</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">names_prefix =</span> <span class="st">"A"</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>lab_long_df <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(lab_long_df_1, lab_long_df_2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"time"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time =</span> <span class="fu">as.numeric</span>(time)) <span class="sc">|&gt;</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(id, time) <span class="sc">|&gt;</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id) <span class="sc">|&gt;</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">lag_A =</span> <span class="fu">lag</span>(A),</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">lag_L =</span> <span class="fu">lag</span>(L)</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">select</span>(wide_df, id, Y), <span class="at">by =</span> <span class="st">"id"</span>)</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co"># The final structure should have these columns:</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co"># id, time, L, A, lag_L, lag_A</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># The final structure should have these columns:</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># id, time, L, A, lag_L, lag_A</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: solution-lab-restructure-expanded</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot L's</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>df_L <span class="ot">&lt;-</span> wide_df <span class="sc">|&gt;</span> <span class="fu">select</span>(id, L0, L1) <span class="sc">|&gt;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>id, </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"time"</span>, </span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_prefix =</span> <span class="st">"L"</span>, </span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"L"</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot A's</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>df_A <span class="ot">&lt;-</span> wide_df <span class="sc">|&gt;</span> <span class="fu">select</span>(id, A0, A1) <span class="sc">|&gt;</span></span>
+<p>&lt;details&gt; &lt;summary&gt;Solution to Task 1&lt;/summary&gt;</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot L's</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df_L <span class="ot">&lt;-</span> wide_df <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, L0, L1) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>id,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"time"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_prefix =</span> <span class="st">"L"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"L"</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot A's</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>df_A <span class="ot">&lt;-</span> wide_df <span class="sc">|&gt;</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, A0, A1) <span class="sc">|&gt;</span></span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>id, </span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"time"</span>, </span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_prefix =</span> <span class="st">"A"</span>, </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>id,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"time"</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_prefix =</span> <span class="st">"A"</span>,</span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"A"</span></span>
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
@@ -1152,8 +1128,63 @@ SW_{Jane} = \left( \frac{0.4}{0.6} \right) \times \left( \frac{0.4}{0.3} \right)
 <span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the final outcome Y to each person's last time point</span></span>
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">select</span>(wide_df, id, Y), <span class="at">by =</span> <span class="st">"id"</span>)</span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(lab_long_df, <span class="dv">4</span>))</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(lab_long_df, <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">id</th>
+<th style="text-align: right;">time</th>
+<th style="text-align: right;">L</th>
+<th style="text-align: right;">A</th>
+<th style="text-align: right;">lag_A</th>
+<th style="text-align: right;">lag_L</th>
+<th style="text-align: right;">Y</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">568.5479</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">503.080</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">530.5064</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">568.5479</td>
+<td style="text-align: right;">503.080</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">471.7651</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">415.982</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">447.6906</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">471.7651</td>
+<td style="text-align: right;">415.982</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>&lt;/details&gt;</p>
 </section>
 <section id="task-2-calculate-stabilized-weights" class="level4">
 <h4 class="anchored" data-anchor-id="task-2-calculate-stabilized-weights"><strong>Task 2: Calculate Stabilized Weights</strong></h4>
@@ -1176,6 +1207,7 @@ SW_{Jane} = \left( \frac{0.4}{0.6} \right) \times \left( \frac{0.4}{0.3} \right)
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># HINT: The final weight is a cumulative product (`cumprod`) of the ratios within each id.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+<p>&lt;details&gt; &lt;summary&gt;Solution to Task 2&lt;/summary&gt;</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1242,7 +1274,12 @@ SW_{Jane} = \left( \frac{0.4}{0.6} \right) \times \left( \frac{0.4}{0.3} \right)
 <span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(final_weights<span class="sc">$</span>sw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.3089  0.6007  0.7841  1.0060  1.1116  9.6834 </code></pre>
 </div>
+</div>
+<p>&lt;/details&gt;</p>
 </section>
 <section id="task-3-fit-the-msm-and-interpret-the-causal-effect" class="level4">
 <h4 class="anchored" data-anchor-id="task-3-fit-the-msm-and-interpret-the-causal-effect"><strong>Task 3: Fit the MSM and Interpret the Causal Effect</strong></h4>
@@ -1250,32 +1287,55 @@ SW_{Jane} = \left( \frac{0.4}{0.6} \right) \times \left( \frac{0.4}{0.3} \right)
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Join the `final_weights` object (containing sw and Y) back to `wide_df` by id.</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create a `cumulative_dose` variable which is the sum of A0 and A1.</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Fit the weighted linear model `lm(Y ~ cumulative_dose, ...)` using the `sw` column as weights.</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Tidy the model output and display the key coefficient.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Join the `final_weights` object (containing sw and Y) back to `wide_df` by id.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create a `cumulative_dose` variable which is the sum of A0 and A1.</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Fit the weighted linear model `lm(Y ~ cumulative_dose, ...)` using the `sw` column as weights.</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Tidy the model output and display the key coefficient.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+<p>&lt;details&gt; &lt;summary&gt;Solution to Task 3&lt;/summary&gt;</p>
 <div class="cell" data-tbl-cap="Causal effect estimate from the final MSM.">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Join the final weights (which correspond to the end of follow-up) to the wide data</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(wide_df, final_weights, <span class="at">by =</span> <span class="st">"id"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cumulative_dose =</span> A0 <span class="sc">+</span> A1)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>lab_msm <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> cumulative_dose, <span class="at">data =</span> final_df, <span class="at">weights =</span> sw)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(lab_msm) <span class="sc">|&gt;</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"cumulative_dose"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(Y <span class="sc">~</span> L0 <span class="sc">+</span> L1 <span class="sc">+</span> A1, <span class="at">data =</span> wide_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Join the final weights (which correspond to the end of follow-up) to the wide data</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(wide_df, final_weights, <span class="at">by =</span> <span class="st">"id"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cumulative_dose =</span> A0 <span class="sc">+</span> A1)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>lab_msm <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> cumulative_dose, <span class="at">data =</span> final_df, <span class="at">weights =</span> sw)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(lab_msm) <span class="sc">|&gt;</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"cumulative_dose"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Causal effect estimate from the final MSM.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">cumulative_dose</td>
+<td style="text-align: right;">62.704</td>
+<td style="text-align: right;">2.555</td>
+<td style="text-align: right;">24.545</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <p><strong>Interpretation:</strong> The coefficient for <code>cumulative_dose</code> is approximately <strong>74.3</strong>. This is our causal estimate. It means that, on average, each additional course (e.g., one time period) of ART therapy <em>causes</em> a patient’s final CD4 count to increase by about 74.3 cells/mm³. This estimate has been successfully adjusted for the complex time-varying confounding by CD4 count, a feat impossible with standard regression.</p>
+<p>&lt;/details&gt;</p>
 </section>
 </section>
 </section>
@@ -1307,11 +1367,11 @@ SW_{Jane} = \left( \frac{0.4}{0.6} \right) \times \left( \frac{0.4}{0.3} \right)
 <p>After calculating your final stabilized weights, you <strong>must inspect their distribution</strong>. Use <code>summary(weights_df$sw)</code>. If you see extremely large weights (e.g., &gt; 100), it’s a sign of a near <strong>positivity violation</strong>. This happens when a person’s observed history was predicted to be nearly impossible by your models. These influential outliers can destabilize your final MSM estimate. In practice, analysts often <strong>truncate</strong> or trim extreme weights (e.g., cap them at the 99th percentile) to ensure robustness.</p>
 </div>
 </div>
-<section id="check-your-understanding" class="level3 callout-question">
-<h3 class="anchored" data-anchor-id="check-your-understanding">Check Your Understanding</h3>
+</section>
+<section id="check-your-understanding" class="level2 callout-question">
+<h2 class="anchored" data-anchor-id="check-your-understanding">Check Your Understanding</h2>
 <p><strong>Q:</strong> You are fitting an MSM for a study with 5 time points. How many propensity score models will you need to fit to calculate the stabilized weights?</p>
 <p><strong>A:</strong> You will need to fit 10 models in total. For each of the 5 time points (<span class="math inline">\(k=0, 1, 2, 3, 4\)</span>), you need one model for the denominator (conditioning on full history) and one model for the numerator (conditioning on treatment history only).</p>
-</section>
 </section>
 <section id="advanced-teaching-activities-interactivity" class="level2">
 <h2 class="anchored" data-anchor-id="advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</h2>
@@ -1395,8 +1455,20 @@ E[Y^{\bar{a}}] = \sum_{\bar{l}} E[Y | \bar{A}=\bar{a}, \bar{L}=\bar{l}] \times \
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-cunningham2021causal" class="csl-entry" role="listitem">
+Cunningham, S. (2021). <em>Causal <span>Inference</span>: <span>The Mixtape</span></em>. Yale University Press. <a href="https://doi.org/10.2307/j.ctv1c29t27">https://doi.org/10.2307/j.ctv1c29t27</a>
+</div>
 <div id="ref-hernan2020causalwhatif" class="csl-entry" role="listitem">
 Hernán, M. Á., &amp; Robins, J. M. (2020). <em>Causal inference: <span>What</span> if</em>. Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-imbens2015causal" class="csl-entry" role="listitem">
+Imbens, G., &amp; Rubin, D. B. (2015). <em>Causal inference for statistics, social, and biomedical sciences: <span>An</span> introduction</em>. Cambridge University Press.
+</div>
+<div id="ref-pearl2009causality" class="csl-entry" role="listitem">
+Pearl, J. (2009). <em>Causality: <span>Models</span>, reasoning, and inference</em> (2nd ed.). Cambridge University Press.
+</div>
+<div id="ref-vanderweele2015book" class="csl-entry" role="listitem">
+VanderWeele, T. J. (2015). <em>Explanation in causal inference: <span>Methods</span> for mediation and interaction</em>. Oxford University Press.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1820,7 +1892,7 @@ Hernán, M. Á., &amp; Robins, J. M. (2020). <em>Causal inference: <span>What</s
   });
   </script>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-06_IP_weighting_MSM-rev1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-06_IP_weighting_MSM-rev5.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
