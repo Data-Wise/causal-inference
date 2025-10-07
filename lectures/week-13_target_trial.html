@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>Propensity Score Methods – Introduction to Causal Inference</title>
+<title>Week 13: Target Trial Emulation – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -56,7 +56,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -81,6 +101,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -204,40 +227,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         }
     };
 </script>
+<link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../assets/styles/css/home.css">
-<meta property="og:title" content="Propensity Score Methods – Introduction to Causal Inference">
+<meta property="og:title" content="Week 13: Target Trial Emulation – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
 <meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
@@ -488,7 +484,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Propensity Score Methods</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Week 13: Target Trial Emulation</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -498,7 +494,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Propensity Score Methods</h1>
+      <h1 class="title">Week 13: Target Trial Emulation</h1>
                       </div>
   </div>
     
@@ -522,7 +518,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Sep-17-2025</p>
+        <p class="date">Oct-02-2025</p>
       </div>
     </div>
     
@@ -647,24 +643,37 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#motivation-and-learning-objectives" id="toc-motivation-and-learning-objectives" class="nav-link active" data-scroll-target="#motivation-and-learning-objectives">🎯 Motivation and Learning Objectives</a></li>
-  <li><a href="#key-concepts-the-why-and-how-of-propensity-scores" id="toc-key-concepts-the-why-and-how-of-propensity-scores" class="nav-link" data-scroll-target="#key-concepts-the-why-and-how-of-propensity-scores">🧠 Key Concepts: The Why and How of Propensity Scores</a>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#r-packages" id="toc-r-packages" class="nav-link" data-scroll-target="#r-packages">R Packages</a></li>
+  <li><a href="#comprehensive-topic-explanation" id="toc-comprehensive-topic-explanation" class="nav-link" data-scroll-target="#comprehensive-topic-explanation">1. Comprehensive Topic Explanation</a>
   <ul class="collapse">
-  <li><a href="#the-fundamental-problem-apples-and-oranges" id="toc-the-fundamental-problem-apples-and-oranges" class="nav-link" data-scroll-target="#the-fundamental-problem-apples-and-oranges">The Fundamental Problem: Apples and Oranges 🍎🍊</a></li>
-  <li><a href="#what-is-a-propensity-score" id="toc-what-is-a-propensity-score" class="nav-link" data-scroll-target="#what-is-a-propensity-score">What is a Propensity Score?</a></li>
-  <li><a href="#the-magic-the-balancing-property-of-the-propensity-score" id="toc-the-magic-the-balancing-property-of-the-propensity-score" class="nav-link" data-scroll-target="#the-magic-the-balancing-property-of-the-propensity-score">The Magic: The Balancing Property of the Propensity Score</a></li>
+  <li><a href="#the-unifying-idea-observational-studies-as-attempts-to-emulate-a-trial" id="toc-the-unifying-idea-observational-studies-as-attempts-to-emulate-a-trial" class="nav-link" data-scroll-target="#the-unifying-idea-observational-studies-as-attempts-to-emulate-a-trial">The Unifying Idea: Observational Studies as Attempts to Emulate a Trial</a></li>
+  <li><a href="#the-seven-components-of-a-target-trial-protocol" id="toc-the-seven-components-of-a-target-trial-protocol" class="nav-link" data-scroll-target="#the-seven-components-of-a-target-trial-protocol">The Seven Components of a Target Trial Protocol</a></li>
   </ul></li>
-  <li><a href="#a-pen-and-paper-numerical-example" id="toc-a-pen-and-paper-numerical-example" class="nav-link" data-scroll-target="#a-pen-and-paper-numerical-example">✍️ A Pen-and-Paper Numerical Example</a></li>
-  <li><a href="#a-more-detailed-r-example" id="toc-a-more-detailed-r-example" class="nav-link" data-scroll-target="#a-more-detailed-r-example">💻 A More Detailed R Example</a>
+  <li><a href="#intuitive-clarifications-of-challenging-ideas" id="toc-intuitive-clarifications-of-challenging-ideas" class="nav-link" data-scroll-target="#intuitive-clarifications-of-challenging-ideas">2. Intuitive Clarifications of Challenging Ideas</a>
   <ul class="collapse">
-  <li><a href="#deeper-dive-inverse-probability-of-treatment-weighting-iptw" id="toc-deeper-dive-inverse-probability-of-treatment-weighting-iptw" class="nav-link" data-scroll-target="#deeper-dive-inverse-probability-of-treatment-weighting-iptw">Deeper Dive: Inverse Probability of Treatment Weighting (IPTW)</a></li>
+  <li><a href="#analogy-the-coffee-and-heart-disease-study" id="toc-analogy-the-coffee-and-heart-disease-study" class="nav-link" data-scroll-target="#analogy-the-coffee-and-heart-disease-study">Analogy: The “Coffee and Heart Disease” Study</a></li>
+  <li><a href="#intention-to-treat-vs.-per-protocol-a-key-distinction" id="toc-intention-to-treat-vs.-per-protocol-a-key-distinction" class="nav-link" data-scroll-target="#intention-to-treat-vs.-per-protocol-a-key-distinction">Intention-to-Treat vs.&nbsp;Per-Protocol: A Key Distinction</a></li>
   </ul></li>
-  <li><a href="#appendix-advanced-statistical-derivations-and-theory" id="toc-appendix-advanced-statistical-derivations-and-theory" class="nav-link" data-scroll-target="#appendix-advanced-statistical-derivations-and-theory">📚 Appendix: Advanced Statistical Derivations and Theory</a>
+  <li><a href="#simple-hand-calculation-numerical-examples" id="toc-simple-hand-calculation-numerical-examples" class="nav-link" data-scroll-target="#simple-hand-calculation-numerical-examples">3. Simple, Hand-Calculation Numerical Example(s)</a></li>
+  <li><a href="#r-code-examples-interpretation" id="toc-r-code-examples-interpretation" class="nav-link" data-scroll-target="#r-code-examples-interpretation">4. R Code Examples &amp; Interpretation</a>
   <ul class="collapse">
-  <li><a href="#derivation-of-the-simple-iptw-estimator" id="toc-derivation-of-the-simple-iptw-estimator" class="nav-link" data-scroll-target="#derivation-of-the-simple-iptw-estimator">📕 Derivation of the Simple IPTW Estimator</a></li>
+  <li><a href="#the-ideal-trial-vs.-the-observational-reality" id="toc-the-ideal-trial-vs.-the-observational-reality" class="nav-link" data-scroll-target="#the-ideal-trial-vs.-the-observational-reality">The Ideal Trial vs.&nbsp;The Observational Reality</a></li>
   </ul></li>
+  <li><a href="#hands-on-r-lab" id="toc-hands-on-r-lab" class="nav-link" data-scroll-target="#hands-on-r-lab">5. Hands-On R Lab</a>
+  <ul class="collapse">
+  <li><a href="#lab-designing-a-target-trial-for-your-final-project" id="toc-lab-designing-a-target-trial-for-your-final-project" class="nav-link" data-scroll-target="#lab-designing-a-target-trial-for-your-final-project">Lab: Designing a Target Trial for Your Final Project</a></li>
+  </ul></li>
+  <li><a href="#common-pitfalls-checks" id="toc-common-pitfalls-checks" class="nav-link" data-scroll-target="#common-pitfalls-checks">6. Common Pitfalls &amp; Checks</a></li>
+  <li><a href="#advanced-teaching-activities-interactivity" id="toc-advanced-teaching-activities-interactivity" class="nav-link" data-scroll-target="#advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</a></li>
+  <li><a href="#appendix-advanced-theory-derivations" id="toc-appendix-advanced-theory-derivations" class="nav-link" data-scroll-target="#appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</a>
+  <ul class="collapse">
+  <li><a href="#synthesis-of-causal-methods-within-the-target-trial-framework" id="toc-synthesis-of-causal-methods-within-the-target-trial-framework" class="nav-link" data-scroll-target="#synthesis-of-causal-methods-within-the-target-trial-framework">Synthesis of Causal Methods within the Target Trial Framework</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-05_propensity_score.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-05_propensity_score.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-13_target_trial.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-13_target_trial.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -674,372 +683,486 @@ window.Quarto = {
 
 
 
-<section id="motivation-and-learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="motivation-and-learning-objectives">🎯 Motivation and Learning Objectives</h2>
-<p>In a perfect world, we would answer all causal questions using a <strong>Randomized Controlled Trial (RCT)</strong>. By randomly assigning treatment, we ensure that, on average, the treated and control groups are identical on all background characteristics (both observed and unobserved). Any difference in their outcomes can therefore be attributed to the treatment.</p>
-<p>However, in public health and clinical research, RCTs are often unethical, impractical, or too expensive. We must rely on <strong>observational data</strong>, where individuals select their own treatments. This leads to a critical problem: people who choose treatment are often systematically different from those who do not.</p>
-<p>This week, we introduce <strong>propensity score methods</strong>, a powerful toolkit designed to address this selection bias. Propensity scores allow us to <strong>mimic the properties of an RCT</strong> by creating balanced comparison groups, helping us to isolate the causal effect of a treatment from the confounding effects of other variables.</p>
-<p><strong>By the end of this module, you will be able to:</strong></p>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>Welcome to our final substantive week of the course. Over the past eleven weeks, we have amassed a powerful toolkit for causal inference: DAGs, potential outcomes, confounding control, propensity scores, instrumental variables, and methods for time-varying exposures. We have treated these as distinct topics, each with its own set of assumptions and procedures.</p>
+<p>This week, we synthesize everything we have learned into a single, cohesive framework: <strong>Target Trial Emulation</strong>. This framework, powerfully articulated by <span class="citation" data-cites="hernan2020causalwhatif">Hernán &amp; Robins (<a href="#ref-hernan2020causalwhatif" role="doc-biblioref">2020</a>)</span>, provides a structured approach to designing and critiquing observational causal inference studies. The core idea is that every causal question can and should be framed as an attempt to emulate a hypothetical, perfectly-designed (but often infeasible) randomized controlled trial—the “target trial.”</p>
+<p>By explicitly specifying the protocol of this ideal target trial, we can then systematically evaluate how our observational analysis succeeds or fails in emulating it. This process makes our assumptions transparent, our design choices deliberate, and our limitations clear. It moves us from a scattered application of statistical methods to a principled, trial-centric approach to causal inference. This week is not about learning a new statistical method, but about learning a new way to <em>think</em>.</p>
+</section>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<p>By the end of this week’s module and workshop, you will be able to:</p>
 <ol type="1">
-<li><strong>Define</strong> the propensity score and explain its central role in causal inference.</li>
-<li><strong>Understand and explain</strong> the <strong>balancing property</strong> of the propensity score and why it is crucial for creating comparable groups.</li>
-<li><strong>Estimate</strong> propensity scores using logistic regression and other methods.</li>
-<li><strong>Implement</strong> three core propensity score methods: <strong>matching</strong>, <strong>inverse probability of treatment weighting (IPTW)</strong>, and <strong>stratification</strong>.</li>
-<li><strong>Assess</strong> whether a propensity score model has successfully balanced the covariates between the treated and control groups using diagnostic plots and tables.</li>
-<li><strong>Critically evaluate</strong> the advantages and limitations of propensity score methods and their underlying assumptions.</li>
+<li><strong>Describe</strong> the seven essential components of a randomized trial protocol and articulate their analogues in the design of an observational study.</li>
+<li><strong>Formulate</strong> a well-defined causal question by specifying the protocol of a hypothetical “target trial” that would, if conducted, answer it.</li>
+<li><strong>Critique</strong> an observational study by comparing its design and analysis to a specified target trial, identifying potential sources of bias arising from deviations.</li>
+<li><strong>Apply</strong> the target trial framework to your own research project, clarifying your study’s eligibility criteria, treatment strategies, assignment mechanism, and causal estimand.</li>
+<li><strong>Synthesize</strong> the range of causal methods learned in this course as tools to be used in the “Analysis Plan” component of an emulated trial.</li>
 </ol>
 </section>
-<section id="key-concepts-the-why-and-how-of-propensity-scores" class="level2">
-<h2 class="anchored" data-anchor-id="key-concepts-the-why-and-how-of-propensity-scores">🧠 Key Concepts: The Why and How of Propensity Scores</h2>
-<section id="the-fundamental-problem-apples-and-oranges" class="level3">
-<h3 class="anchored" data-anchor-id="the-fundamental-problem-apples-and-oranges">The Fundamental Problem: Apples and Oranges 🍎🍊</h3>
-<p>Imagine we want to know the effect of a new fitness program (treatment <code>A=1</code>) on weight loss (outcome <code>Y</code>). In our observational data, people who joined the program lost more weight. But can we conclude the program <em>caused</em> the weight loss?</p>
-<p>Probably not. The people who chose to join are likely different. They might be younger, more health-conscious, or have better access to healthy food. This is <strong>confounding</strong>. We are comparing a group of motivated “apples” to a general population of “oranges.”</p>
-<p>The goal of propensity scores is to solve this problem by creating a “handicap” system. Instead of trying to match people on dozens of characteristics (age, gender, income, diet, etc.), we can boil all of that information down into a single number: the <strong>propensity score</strong>.</p>
+<section id="r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="r-packages">R Packages</h2>
+<p>This week is primarily conceptual, but we will use <code>ggdag</code> to visualize the core challenge that observational studies must overcome.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    tidyverse, <span class="co"># For data manipulation</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    ggdag, <span class="co"># For plotting DAGs</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    knitr <span class="co"># For table formatting</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># A consistent plot theme</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_dag_blank</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
-<section id="what-is-a-propensity-score" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-a-propensity-score">What is a Propensity Score?</h3>
-<blockquote class="blockquote">
-<p>The <strong>propensity score</strong> is the probability that a unit (e.g., a person) receives the treatment, given their observed baseline covariates.</p>
-</blockquote>
-<p><span class="math display">\[
-e(X_i) = P(A_i = 1 | X_i)
-\]</span></p>
-<p>Where:</p>
+<section id="comprehensive-topic-explanation" class="level2">
+<h2 class="anchored" data-anchor-id="comprehensive-topic-explanation">1. Comprehensive Topic Explanation</h2>
+<section id="the-unifying-idea-observational-studies-as-attempts-to-emulate-a-trial" class="level3">
+<h3 class="anchored" data-anchor-id="the-unifying-idea-observational-studies-as-attempts-to-emulate-a-trial">The Unifying Idea: Observational Studies as Attempts to Emulate a Trial</h3>
+<p>The central premise of the target trial framework is that for any causal question, there is an ideal (though perhaps hypothetical) randomized experiment that could answer it. This ideal experiment is the <strong>target trial</strong>. When we conduct an observational study, what we are really trying to do is use observational data and sophisticated analytical methods to emulate that target trial as closely as possible.</p>
+<p>Why is this framework so powerful?</p>
 <ul>
-<li><span class="math inline">\(A_i = 1\)</span> if person <em>i</em> receives the treatment.</li>
-<li><span class="math inline">\(X_i\)</span> is the vector of all observed pre-treatment covariates for person <em>i</em> (e.g., age, gender, baseline health status).</li>
+<li><strong>It provides a common language:</strong> Trialists, epidemiologists, and data scientists can all understand the components of a trial protocol.</li>
+<li><strong>It forces clarity:</strong> Vague causal questions like “What is the effect of statins?” must be refined into specific, answerable questions by defining the components of the trial.</li>
+<li><strong>It illuminates sources of bias:</strong> Biases in observational studies can be elegantly reframed as specific deviations from the target trial’s protocol.</li>
 </ul>
-<p>Think of it like this: if someone has a propensity score of 0.8, it means that based on their observed characteristics, they had an 80% chance of being in the treatment group. A person with a score of 0.1 had only a 10% chance.</p>
 </section>
-<section id="the-magic-the-balancing-property-of-the-propensity-score" class="level3">
-<h3 class="anchored" data-anchor-id="the-magic-the-balancing-property-of-the-propensity-score">The Magic: The Balancing Property of the Propensity Score</h3>
-<p>This is the theoretical cornerstone that makes propensity scores so powerful.</p>
-<blockquote class="blockquote">
-<p><strong>Theorem (Rosenbaum &amp; Rubin, 1983):</strong> If we correctly specify the propensity score model, then within strata of the propensity score, the distribution of the observed covariates <code>X</code> is independent of treatment status <code>A</code>.</p>
-</blockquote>
-<p><span class="math display">\[
-(Y^1, Y^0) \perp A | X \implies (Y^1, Y^0) \perp A | e(X)
-\]</span></p>
-<p><strong>In plain language:</strong> If you take a treated person and an untreated person who have the <strong>exact same propensity score</strong>, you can think of them as being “statistically equivalent” on all the observed covariates that went into the score. It’s as if, for that pair of individuals, the treatment was randomly assigned. By conditioning on this single score, we have “balanced” all the observed confounders simultaneously.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
+<section id="the-seven-components-of-a-target-trial-protocol" class="level3">
+<h3 class="anchored" data-anchor-id="the-seven-components-of-a-target-trial-protocol">The Seven Components of a Target Trial Protocol</h3>
+<p>To emulate a trial, we must first explicitly design it. A trial protocol consists of seven key components. For each component, we must consider its ideal form and its observational analogue.</p>
+<ol type="1">
+<li><p><strong>Eligibility Criteria:</strong></p>
+<ul>
+<li><strong>Target Trial:</strong> Who would be included in the trial? This involves defining the study population based on factors like age, disease status, and prior medical history. Crucially, eligibility must be determined <em>before</em> treatment assignment.</li>
+<li><strong>Observational Analogue:</strong> This corresponds to the inclusion/exclusion criteria for our observational cohort. A common mistake is to select individuals based on information recorded after their treatment has already started, which can introduce selection bias.</li>
+</ul></li>
+<li><p><strong>Treatment Strategies:</strong></p>
+<ul>
+<li><strong>Target Trial:</strong> What, exactly, are the interventions being compared? A “treatment strategy” is a rule that specifies the intervention over time. It must be well-defined and realistic. “Take statins” is vague. “Initiate 40mg of atorvastatin daily at baseline and continue unless a severe side effect occurs” is a well-defined strategy.</li>
+<li><strong>Observational Analogue:</strong> We must identify groups in our data that appear to follow the specified strategies. This can be challenging. For example, in the real world, people’s adherence to a medication plan is not perfect.</li>
+</ul></li>
+<li><p><strong>Assignment Procedure:</strong></p>
+<ul>
+<li><strong>Target Trial:</strong> How are individuals assigned to a treatment strategy? In an ideal trial, this is <strong>random assignment</strong>. Randomization is the key to ensuring that, on average, the treatment groups are exchangeable at baseline.</li>
+<li><strong>Observational Analogue:</strong> This is the most critical point of departure. In observational studies, assignment is <strong>not random</strong>. People’s doctors and they themselves choose treatments based on prognostic factors. This is the origin of <strong>confounding</strong>. Our causal inference methods (propensity scores, standardization, IV) are all attempts to adjust for the lack of randomization.</li>
+</ul></li>
+<li><p><strong>Follow-up Period:</strong></p>
+<ul>
+<li><strong>Target Trial:</strong> When does follow-up begin and end for each individual? Follow-up must begin at the moment of randomization (Time Zero).</li>
+<li><strong>Observational Analogue:</strong> We must define a “Time Zero” in our observational data that corresponds to the start of the treatment strategy. Forgetting to do this is a common source of “immortal time bias,” where, for example, a person must survive for a period of time before they can be classified as “treated,” leading to a spurious protective effect.</li>
+</ul></li>
+<li><p><strong>Outcome:</strong></p>
+<ul>
+<li><strong>Target Trial:</strong> What is the outcome of interest, and how and when is it measured? (e.g., incidence of myocardial infarction within 5 years).</li>
+<li><strong>Observational Analogue:</strong> The outcome definition should be identical. We must ensure it is ascertained equally in all treatment groups to avoid detection bias.</li>
+</ul></li>
+<li><p><strong>Causal Contrast (Estimand):</strong></p>
+<ul>
+<li><strong>Target Trial:</strong> What is the specific causal question? Are we interested in the <strong>Intention-to-Treat (ITT) effect</strong> (the effect of being <em>assigned</em> to a strategy, regardless of adherence) or the <strong>Per-Protocol effect</strong> (the effect of actually <em>adhering</em> to the strategy)?</li>
+<li><strong>Observational Analogue:</strong> This choice has major implications for our analysis. Emulating an ITT effect is often more straightforward (comparing groups based on initial treatment), while emulating a per-protocol effect requires methods like MSMs to handle time-varying confounding and adherence.</li>
+</ul></li>
+<li><p><strong>Analysis Plan:</strong></p>
+<ul>
+<li><strong>Target Trial:</strong> How will the causal contrast be estimated? In a simple trial, this might be a comparison of risks or means.</li>
+<li><strong>Observational Analogue:</strong> This is where our entire toolkit comes into play. The analysis plan specifies the method chosen to adjust for the lack of randomization—be it IPTW to handle time-varying confounding for a per-protocol analysis, or a baseline propensity score model to emulate a simple ITT analysis.</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="intuitive-clarifications-of-challenging-ideas" class="level2">
+<h2 class="anchored" data-anchor-id="intuitive-clarifications-of-challenging-ideas">2. Intuitive Clarifications of Challenging Ideas</h2>
+<section id="analogy-the-coffee-and-heart-disease-study" class="level3">
+<h3 class="anchored" data-anchor-id="analogy-the-coffee-and-heart-disease-study">Analogy: The “Coffee and Heart Disease” Study</h3>
+<p>Imagine we want to answer the question: “Does drinking coffee cause heart disease?” This is a vague question. Let’s use the target trial framework to make it concrete.</p>
+<p><strong>Designing the Target Trial:</strong></p>
+<ul>
+<li><strong>Eligibility:</strong> We might enroll adults aged 40-65 with no prior history of heart disease.</li>
+<li><strong>Treatment Strategies:</strong> We’ll compare two strategies: (1) “Abstain from all caffeinated coffee for 10 years” vs.&nbsp;(2) “Drink 2 cups of caffeinated coffee every morning for 10 years.”</li>
+<li><strong>Assignment:</strong> We would randomly assign eligible participants to one of the two strategies.</li>
+<li><strong>Follow-up:</strong> We would start follow-up at the moment of randomization and continue for 10 years.</li>
+<li><strong>Outcome:</strong> The outcome is the incidence of a major cardiovascular event (e.g., heart attack, stroke).</li>
+<li><strong>Causal Contrast:</strong> We might be interested in the per-protocol effect—the effect among those who actually stuck to their assigned coffee-drinking (or abstaining) plan.</li>
+<li><strong>Analysis Plan:</strong> Compare the 10-year risk of cardiovascular events between the two groups.</li>
+</ul>
+<p><strong>Emulating the Trial with Observational Data:</strong> Now, we take our observational dataset (e.g., the NHANES survey) and try to emulate this trial.</p>
+<ul>
+<li><strong>Eligibility:</strong> We select people in our data who meet the eligibility criteria <em>at the start of our observation period</em>.</li>
+<li><strong>Treatment Strategies:</strong> We find people in the data whose reported coffee intake roughly matches our two strategies.</li>
+<li><strong>Assignment:</strong> This is the problem. In the real world, people who drink coffee are different from those who don’t (they might smoke more, exercise less, etc.). This is <strong>confounding</strong>.</li>
+<li><strong>Analysis Plan to Fix Assignment:</strong> Our analysis plan must now include a method to adjust for these differences. Since behaviors like smoking can change over time and influence future coffee drinking, we likely have time-varying confounding. Therefore, our analysis plan would specify using a Marginal Structural Model with IPTW to estimate the per-protocol effect we desire.</li>
+</ul>
+<p>By structuring our thinking this way, we see that the choice of using an MSM was not arbitrary; it was dictated by the specific causal question (per-protocol effect) and the specific challenges (time-varying confounding) that arose from emulating our target trial.</p>
+</section>
+<section id="intention-to-treat-vs.-per-protocol-a-key-distinction" class="level3">
+<h3 class="anchored" data-anchor-id="intention-to-treat-vs.-per-protocol-a-key-distinction">Intention-to-Treat vs.&nbsp;Per-Protocol: A Key Distinction</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 43%">
+<col style="width: 45%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Causal Question</th>
+<th><strong>Intention-to-Treat (ITT) Effect</strong></th>
+<th><strong>Per-Protocol Effect</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>What it answers</strong></td>
+<td>What is the effect of <em>prescribing</em> or <em>assigning</em> a treatment strategy?</td>
+<td>What is the effect of <em>adhering</em> to a treatment strategy?</td>
+</tr>
+<tr class="even">
+<td><strong>Analogy to Trial</strong></td>
+<td>Compares groups based on their randomized assignment, regardless of what they actually did (“as randomized”).</td>
+<td>Compares groups based on what treatment they actually received and adhered to.</td>
+</tr>
+<tr class="odd">
+<td><strong>Bias in an Ideal Trial</strong></td>
+<td>Unbiased for the effect of assignment. Preserves the benefits of randomization.</td>
+<td>Can be biased even in a trial, as adherence is a post-randomization behavior.</td>
+</tr>
+<tr class="even">
+<td><strong>Observational Emulation</strong></td>
+<td>Simpler. Requires adjusting for baseline confounders only. Example: Propensity score matching on initial treatment.</td>
+<td>More complex. Requires adjusting for baseline <em>and</em> time-varying confounders that affect adherence. Example: MSMs.</td>
+</tr>
+<tr class="odd">
+<td><strong>Usefulness</strong></td>
+<td>Pragmatic. Useful for policy makers deciding whether to recommend a strategy.</td>
+<td>Explanatory. Useful for scientists understanding the biological effects of a treatment if taken as intended.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="simple-hand-calculation-numerical-examples" class="level2">
+<h2 class="anchored" data-anchor-id="simple-hand-calculation-numerical-examples">3. Simple, Hand-Calculation Numerical Example(s)</h2>
+<p>Since this week is conceptual, we won’t do a numerical calculation of an effect. Instead, our “by-hand” example will be to <strong>design a target trial protocol on paper</strong>.</p>
+<p><strong>Causal Question:</strong> Does starting a vegan diet cause weight change in overweight adults?</p>
+<p><strong>Step-by-Step Protocol Design:</strong></p>
+<ol type="1">
+<li><p><strong>Eligibility Criteria:</strong></p>
+<ul>
+<li>Include adults aged 18-65.</li>
+<li>Include individuals with a Body Mass Index (BMI) between 25 and 35 kg/m².</li>
+<li>Exclude individuals who are already vegetarian or vegan.</li>
+<li>Exclude pregnant individuals.</li>
+<li>Exclude individuals with medical conditions that would contraindicate a vegan diet.</li>
+</ul></li>
+<li><p><strong>Treatment Strategies:</strong></p>
+<ul>
+<li><strong>Strategy 1 (Intervention):</strong> Follow a vegan diet for 12 months. A vegan diet is defined as excluding all meat, poultry, fish, dairy, eggs, and honey.</li>
+<li><strong>Strategy 2 (Control):</strong> Continue with your usual diet for 12 months.</li>
+</ul></li>
+<li><p><strong>Assignment Procedure:</strong></p>
+<ul>
+<li><strong>Target Trial:</strong> Randomly assign eligible participants 1:1 to either Strategy 1 or Strategy 2.</li>
+</ul></li>
+<li><p><strong>Follow-up Period:</strong></p>
+<ul>
+<li>Follow-up begins at the time of randomization (Day 0).</li>
+<li>Follow-up ends after 12 months.</li>
+</ul></li>
+<li><p><strong>Outcome:</strong></p>
+<ul>
+<li>The primary outcome is the change in body weight (in kg) from baseline to 12 months.</li>
+</ul></li>
+<li><p><strong>Causal Contrast (Estimand):</strong></p>
+<ul>
+<li>We are interested in the <strong>Intention-to-Treat effect</strong>: the effect of being assigned to the vegan diet strategy, regardless of how well participants adhered to it. This answers the pragmatic question, “What is the effect of recommending a vegan diet?”</li>
+</ul></li>
+<li><p><strong>Analysis Plan:</strong></p>
+<ul>
+<li><strong>Target Trial:</strong> At 12 months, calculate the mean weight change in the group assigned to the vegan diet and the mean weight change in the group assigned to the usual diet. The ATE is the difference between these two means.</li>
+<li><strong>Observational Emulation:</strong> If we were using observational data, our analysis plan would need to adjust for baseline confounders (e.g., age, sex, baseline activity level) that differ between people who spontaneously adopt a vegan diet and those who don’t. We could use propensity score matching or g-computation on the baseline covariates.</li>
+</ul></li>
+</ol>
+<p>This simple exercise transforms a vague question into a precise, answerable scientific query.</p>
+</section>
+<section id="r-code-examples-interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="r-code-examples-interpretation">4. R Code Examples &amp; Interpretation</h2>
+<p>The key challenge in observational studies is the non-random assignment. We can visualize this difference with <code>ggdag</code>.</p>
+<section id="the-ideal-trial-vs.-the-observational-reality" class="level3">
+<h3 class="anchored" data-anchor-id="the-ideal-trial-vs.-the-observational-reality">The Ideal Trial vs.&nbsp;The Observational Reality</h3>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In an ideal trial, assignment (A) is random, so it has no parents.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>trial_dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">exposure =</span> <span class="st">"A"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome =</span> <span class="st">"Y"</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag</span>(trial_dag) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ideal Randomized Trial"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># In an observational study, confounders (L) affect both assignment (A) and outcome (Y).</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>obs_dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> L,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> L,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">exposure =</span> <span class="st">"A"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome =</span> <span class="st">"Y"</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag</span>(obs_dag) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observational Reality"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="fig-dags-trial-obs" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dags-trial-obs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-dags-trial-obs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-dags-trial-obs-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-dags-trial-obs-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="week-13_target_trial_files/figure-html/fig-dags-trial-obs-1.png" class="lightbox" data-gallery="fig-dags-trial-obs" title="Figure&nbsp;1&nbsp;(a): Ideal Randomized Trial"><img src="week-13_target_trial_files/figure-html/fig-dags-trial-obs-1.png" class="img-fluid figure-img" data-ref-parent="fig-dags-trial-obs" width="672"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-dags-trial-obs-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Ideal Randomized Trial
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-dags-trial-obs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-dags-trial-obs-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-dags-trial-obs-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="week-13_target_trial_files/figure-html/fig-dags-trial-obs-2.png" class="lightbox" data-gallery="fig-dags-trial-obs" title="Figure&nbsp;1&nbsp;(b): Observational Reality with Confounding"><img src="week-13_target_trial_files/figure-html/fig-dags-trial-obs-2.png" class="img-fluid figure-img" data-ref-parent="fig-dags-trial-obs" width="672"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-dags-trial-obs-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Observational Reality with Confounding
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dags-trial-obs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Causal DAGs for a Randomized Trial vs.&nbsp;an Observational Study
+</figcaption>
+</figure>
+</div>
+<p><strong>Interpretation:</strong></p>
+<ul>
+<li><strong>Ideal Trial DAG:</strong> The beauty of a randomized trial is its simplicity. There are no arrows pointing into the exposure <code>A</code>. This means there are no backdoor paths between <code>A</code> and the outcome <code>Y</code>. The association between <code>A</code> and <code>Y</code> <em>is</em> the causal effect.</li>
+<li><strong>Observational DAG:</strong> This is the world we usually live in. There is a confounder <code>L</code> that is a common cause of both <code>A</code> and <code>Y</code>, creating a backdoor path (<code>A &lt;- L -&gt; Y</code>). If we naively calculate the association between <code>A</code> and <code>Y</code>, we get a mix of the true causal effect and spurious association from this open backdoor.</li>
+</ul>
+<p>The target trial framework tells us that the goal of our observational analysis plan is to find a way to make the observational DAG <em>behave like</em> the trial DAG. Methods like propensity score weighting or g-computation are tools designed to close that backdoor path, allowing us to isolate the true causal arrow <code>A -&gt; Y</code>.</p>
+</section>
+</section>
+<section id="hands-on-r-lab" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-r-lab">5. Hands-On R Lab</h2>
+<section id="lab-designing-a-target-trial-for-your-final-project" class="level3">
+<h3 class="anchored" data-anchor-id="lab-designing-a-target-trial-for-your-final-project">Lab: Designing a Target Trial for Your Final Project</h3>
+<p><strong>Purpose:</strong> This lab is a capstone workshop. It is designed to help you synthesize the concepts from the course and apply them to your own research question using the structured thinking of the target trial framework.</p>
+<p><strong>Lab Objectives:</strong></p>
+<ol type="1">
+<li>Take a real-world causal question and formalize it by specifying the seven components of a target trial protocol.</li>
+<li>Identify the key points where an observational study attempting to answer this question would deviate from the ideal trial.</li>
+<li>Choose an appropriate analytical method from this course to address those deviations.</li>
+</ol>
+<p><strong>Instructions:</strong> For this lab, you will not be writing R code to analyze data. You will be writing a research protocol in a Quarto document. Choose a causal question you are interested in (this could be for your final project or another topic of interest). Create a new Quarto document and, using the seven components below as your section headers, write out the protocol for the ideal target trial that would answer your question.</p>
+<p>Then, for each section, add a subsection called <strong>“Observational Emulation Challenges”</strong> where you describe the specific problems you would face trying to implement this part of the protocol using real-world observational data.</p>
+<section id="example-project-effect-of-statin-therapy-on-heart-disease" class="level4">
+<h4 class="anchored" data-anchor-id="example-project-effect-of-statin-therapy-on-heart-disease"><strong>Example Project: Effect of Statin Therapy on Heart Disease</strong></h4>
+<p>Here is a filled-out example to guide you.</p>
+<p><strong>1. Eligibility Criteria</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> We will enroll individuals aged 40-75 who have not had a prior cardiovascular event but have at least one risk factor (e.g., hypertension, high cholesterol).</li>
+<li><strong>Observational Emulation Challenges:</strong> In our electronic health record data, we must be careful to define eligibility based only on information available <em>before</em> the first statin prescription (or a corresponding index date for non-users). If we include people who had a heart attack <em>before</em> starting statins, we will have selection bias.</li>
+</ul>
+<p><strong>2. Treatment Strategies</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> We will compare two strategies: (1) “Initiate a moderate-intensity statin (e.g., atorvastatin 20mg) at baseline” vs.&nbsp;(2) “No statin therapy.”</li>
+<li><strong>Observational Emulation Challenges:</strong> In the real world, people may not adhere to their prescription, or they may switch doses or types of statins. We must decide if we are emulating an “intention-to-treat” effect (based on first prescription) or a “per-protocol” effect, which would require tracking adherence over time.</li>
+</ul>
+<p><strong>3. Assignment Procedure</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> Randomly assign eligible participants to one of the two strategies.</li>
+<li><strong>Observational Emulation Challenges:</strong> This is the main deviation. In our data, doctors prescribe statins to patients they believe are at higher risk. This is <strong>confounding by indication</strong>. The groups are not exchangeable at baseline.</li>
+</ul>
+<p><strong>4. Follow-up Period</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> Follow-up begins at randomization and continues for 5 years.</li>
+<li><strong>Observational Emulation Challenges:</strong> We must define Time Zero carefully. For treated individuals, it’s the date of their first prescription. For untreated individuals, we must assign a comparable index date. If we don’t, we can introduce <strong>immortal time bias</strong>. We also have to worry about loss to follow-up (censoring).</li>
+</ul>
+<p><strong>5. Outcome</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> The primary outcome is the first occurrence of a major adverse cardiovascular event (MACE).</li>
+<li><strong>Observational Emulation Challenges:</strong> We must ensure that MACE is recorded with equal accuracy for both statin users and non-users. If statin users have more frequent doctor visits, events might be detected more often, leading to ascertainment bias.</li>
+</ul>
+<p><strong>6. Causal Contrast</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> We will estimate the <strong>Intention-to-Treat effect</strong>.</li>
+<li><strong>Observational Emulation Challenges:</strong> Emulating the ITT effect is feasible. We will compare the group that received an initial statin prescription to the group that did not.</li>
+</ul>
+<p><strong>7. Analysis Plan</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> Compare the 5-year risk of MACE between the two randomized groups.</li>
+<li><strong>Observational Emulation Challenges:</strong> To address the confounding from the non-random assignment, our analysis plan must include an adjustment method. To estimate the ITT effect, we can use <strong>propensity score matching</strong> based on a rich set of baseline covariates (age, sex, comorbidities, baseline cholesterol, etc.) measured at Time Zero. The goal is to create two groups that, at baseline, have a similar probability of having been prescribed a statin, thus emulating randomization.</li>
+</ul>
+</section>
+<section id="your-turn-protocol-design-worksheet" class="level4">
+<h4 class="anchored" data-anchor-id="your-turn-protocol-design-worksheet"><strong>Your Turn: Protocol Design Worksheet</strong></h4>
+<p>Now, create a new document and fill this out for your own research question.</p>
+<p><strong>My Causal Question:</strong> ___________________________</p>
+<ol type="1">
+<li><p><strong>Eligibility Criteria</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> …</li>
+<li><strong>Observational Emulation Challenges:</strong> …</li>
+</ul></li>
+<li><p><strong>Treatment Strategies</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> …</li>
+<li><strong>Observational Emulation Challenges:</strong> …</li>
+</ul></li>
+<li><p><strong>Assignment Procedure</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> …</li>
+<li><strong>Observational Emulation Challenges:</strong> …</li>
+</ul></li>
+<li><p><strong>Follow-up Period</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> …</li>
+<li><strong>Observational Emulation Challenges:</strong> …</li>
+</ul></li>
+<li><p><strong>Outcome</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> …</li>
+<li><strong>Observational Emulation Challenges:</strong> …</li>
+</ul></li>
+<li><p><strong>Causal Contrast</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> …</li>
+<li><strong>Observational Emulation Challenges:</strong> …</li>
+</ul></li>
+<li><p><strong>Analysis Plan</strong></p>
+<ul>
+<li><strong>Target Trial Protocol:</strong> …</li>
+<li><strong>Observational Emulation Challenges:</strong> …</li>
+</ul></li>
+</ol>
+</section>
+</section>
+</section>
+<section id="common-pitfalls-checks" class="level2">
+<h2 class="anchored" data-anchor-id="common-pitfalls-checks">6. Common Pitfalls &amp; Checks</h2>
+<div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Key Assumption: Ignorability &amp; Positivity
+<span class="screen-reader-only">Warning</span>Immortal Time Bias
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>A frequent and subtle error in emulating trials is the incorrect handling of time. “Immortal time” is a period of follow-up during which, by design, the outcome of interest cannot occur. For example, if you define your “treated” group as “patients who took a drug for at least 6 months,” then by definition, everyone in your treated group had to survive for at least 6 months to be included. This creates a spurious survival advantage for the treated group. The solution is to always start follow-up at a consistently defined Time Zero for everyone, before treatment has begun.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Specificity is Your Best Defense Against Bias
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The target trial framework’s greatest strength is that it forces you to be relentlessly specific. Vague terms like “effect,” “exposure,” and “outcome” are not allowed. You must define the precise strategies, population, and timeline. This specificity is what allows you to clearly see the potential mismatches between the ideal trial and your observational data, which are the sources of bias.</p>
+</div>
+</div>
+</section>
+<section id="advanced-teaching-activities-interactivity" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</h2>
 <ol type="1">
-<li><strong>Ignorability (or Unconfoundedness):</strong> We must assume that we have measured and included <strong>all</strong> common causes of the treatment and the outcome in our propensity score model. Propensity scores <em>cannot</em> balance unobserved confounders (e.g., genetic factors, motivation).</li>
-<li><strong>Positivity (or Overlap):</strong> For any set of covariates X, there must be a non-zero probability of being both treated and untreated. <span class="math inline">\(0 &lt; P(A=1 | X=x) &lt; 1\)</span>. If a certain type of person <em>always</em> gets the treatment, we have no one to compare them to.</li>
-</ol>
-</div>
-</div>
-</section>
-</section>
-<section id="a-pen-and-paper-numerical-example" class="level2">
-<h2 class="anchored" data-anchor-id="a-pen-and-paper-numerical-example">✍️ A Pen-and-Paper Numerical Example</h2>
-<p>Let’s make this extremely simple. Imagine we have 6 patients. We want to know if a new drug (<code>A=1</code>) helps reduce blood pressure (<code>Y</code>). We know that <strong>age</strong> (<code>X</code>) is a confounder: older people have higher blood pressure and are also more likely to get the new drug.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Patient</th>
-<th style="text-align: left;">Age (X)</th>
-<th style="text-align: left;">Treatment (A)</th>
-<th style="text-align: left;">Outcome (Y)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">50</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">140</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">55</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">145</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">60</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">155</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">30</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">120</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">35</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">125</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">40</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">130</td>
-</tr>
-</tbody>
-</table>
-<p>A <strong>naive analysis</strong> would be biased:</p>
+<li><p><strong>“Critique the Paper” Exercise:</strong></p>
 <ul>
-<li>Mean outcome for treated: (140 + 145 + 155) / 3 = <strong>146.7</strong></li>
-<li>Mean outcome for control: (120 + 125 + 130) / 3 = <strong>125</strong></li>
-<li>Naive “effect”: 146.7 - 125 = <strong>21.7</strong>. This is confounded by age.</li>
-</ul>
-<p><strong>Step 1: Estimate the Propensity Score</strong> We’ll run a simple logistic regression: <code>A ~ X</code> (Treatment ~ Age). Let’s say our model gives us the following (hypothetical) propensity scores:</p>
+<li><strong>Activity:</strong> I will provide the abstract and methods section of a published observational study. In small groups, your task will be to reverse-engineer the target trial that the authors were implicitly trying to emulate.</li>
+<li><strong>Task:</strong> Write down the 7 protocol components for their target trial. Then, identify the most significant deviation in the authors’ observational study and discuss whether their chosen analysis plan (e.g., a simple multivariable regression) was sufficient to address it.</li>
+</ul></li>
+<li><p><strong>Think-Pair-Share: The “Pragmatic” Trial:</strong></p>
+<ul>
+<li><strong>Think:</strong> “Many modern RCTs are ‘pragmatic trials,’ where treatment assignment is random, but adherence and follow-up are left to be as they would in the real world. How does this blur the line between a trial and an observational study? Which biases that we’ve discussed for observational studies might still be present in a pragmatic trial, especially when estimating a per-protocol effect?”</li>
+<li><strong>Pair:</strong> Discuss with a neighbor. Key points might include confounding by indication when analyzing adherence.</li>
+<li><strong>Share:</strong> We’ll discuss how the target trial framework helps us understand that even some RCTs are not “perfect,” and the same causal principles apply.</li>
+</ul></li>
+</ol>
+</section>
+<section id="appendix-advanced-theory-derivations" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</h2>
+<section id="synthesis-of-causal-methods-within-the-target-trial-framework" class="level3">
+<h3 class="anchored" data-anchor-id="synthesis-of-causal-methods-within-the-target-trial-framework">Synthesis of Causal Methods within the Target Trial Framework</h3>
+<p>This framework allows us to see our entire course as a set of solutions to problems that arise when trying to emulate a target trial.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 11%">
-<col style="width: 11%">
-<col style="width: 22%">
-<col style="width: 18%">
 <col style="width: 35%">
+<col style="width: 22%">
+<col style="width: 33%">
+<col style="width: 7%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Patient</th>
-<th style="text-align: left;">Age (X)</th>
-<th style="text-align: left;">Treatment (A)</th>
-<th style="text-align: left;">Outcome (Y)</th>
-<th style="text-align: left;">Propensity Score e(X)</th>
+<th><strong>Problem (Deviation from Trial)</strong></th>
+<th><strong>Causal Concept</strong></th>
+<th><strong>Analytical Solution(s)</strong></th>
+<th><strong>Week Covered</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">50</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">140</td>
-<td style="text-align: left;"><strong>0.60</strong></td>
+<td><strong>Assignment is not random.</strong> (Baseline prognostic factors differ between groups).</td>
+<td><strong>Confounding</strong></td>
+<td>Regression, Stratification, Propensity Score Matching, G-Computation</td>
+<td>3, 4, 5, 7</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">55</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">145</td>
-<td style="text-align: left;"><strong>0.75</strong></td>
+<td><strong>Assignment is not random</strong> and we have a valid external factor that influences it.</td>
+<td><strong>Instrumental Variable</strong></td>
+<td>Two-Stage Least Squares (2SLS)</td>
+<td>10</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">60</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">155</td>
-<td style="text-align: left;"><strong>0.85</strong></td>
+<td>We want the <strong>per-protocol effect</strong>, but adherence is affected by time-varying prognostic factors.</td>
+<td><strong>Time-Varying Confounding</strong></td>
+<td>Inverse Probability Weighting (IPTW) for Marginal Structural Models (MSMs)</td>
+<td>6</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">30</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">120</td>
-<td style="text-align: left;"><strong>0.15</strong></td>
+<td>Some individuals are lost to follow-up, and this loss is related to treatment and outcome.</td>
+<td><strong>Selection Bias</strong> (Collider-Stratification)</td>
+<td>Inverse Probability of Censoring Weighting (IPCW)</td>
+<td>4, 11</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">35</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">125</td>
-<td style="text-align: left;"><strong>0.25</strong></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">40</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">130</td>
-<td style="text-align: left;"><strong>0.40</strong></td>
+<td>The treatment has a “sharp” threshold for eligibility based on a continuous variable.</td>
+<td><strong>Regression Discontinuity</strong></td>
+<td>Local Linear Regression at the cutoff</td>
+<td>9</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Step 2: Propensity Score Matching (Nearest Neighbor)</strong> For each treated patient, let’s find the control patient with the <em>closest</em> propensity score.</p>
-<ul>
-<li><strong>Treated Patient 1 (e(X)=0.60):</strong> The closest control is <strong>Patient 6 (e(X)=0.40)</strong>.</li>
-<li><strong>Treated Patient 2 (e(X)=0.75):</strong> The closest control is also <strong>Patient 6 (e(X)=0.40)</strong>.</li>
-<li><strong>Treated Patient 3 (e(X)=0.85):</strong> The closest control is also <strong>Patient 6 (e(X)=0.40)</strong>.</li>
-</ul>
-<p>Our new <strong>matched dataset</strong> (allowing Patient 6 to be used multiple times, which is called “matching with replacement”):</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Treated Patient</th>
-<th style="text-align: left;">Treated Y</th>
-<th style="text-align: left;">Matched Control</th>
-<th style="text-align: left;">Control Y</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">140</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">130</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">145</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">130</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">155</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">130</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Step 3: Calculate the Matched Effect</strong> Now we calculate the effect only in this matched sample.</p>
-<ul>
-<li>Mean outcome for treated: (140 + 145 + 155) / 3 = <strong>146.7</strong></li>
-<li>Mean outcome for matched controls: (130 + 130 + 130) / 3 = <strong>130</strong></li>
-<li><strong>Matched ATE Estimate:</strong> 146.7 - 130 = <strong>16.7</strong></li>
-</ul>
-<p>By matching on the propensity score, we’ve created a control group that is “more similar” to the treated group, and our effect estimate is less biased.</p>
-</section>
-<section id="a-more-detailed-r-example" class="level2">
-<h2 class="anchored" data-anchor-id="a-more-detailed-r-example">💻 A More Detailed R Example</h2>
-<p>Let’s expand our R example to be more realistic. We’ll simulate data where <code>Age</code> and <code>Comorbidity</code> (a measure of baseline health) are confounders. The true treatment effect is <strong>10</strong>.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MatchIt)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WeightIt)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cobalt) <span class="co"># For balance checking</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 1. Simulate a richer dataset with confounding ---</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Two confounders: Age and a comorbidity score</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">X_age =</span> <span class="fu">round</span>(<span class="fu">runif</span>(n, <span class="dv">40</span>, <span class="dv">75</span>)),</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">X_comorbidity =</span> <span class="fu">round</span>(<span class="fu">runif</span>(n, <span class="dv">0</span>, <span class="dv">5</span>)),</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Probability of treatment depends on BOTH confounders</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">propensity_true =</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>( <span class="sc">-</span><span class="dv">4</span> <span class="sc">+</span> <span class="fl">0.05</span> <span class="sc">*</span> X_age <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> X_comorbidity ))),</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Treatment status A (1=Treated, 0=Control)</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, propensity_true),</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Outcome Y depends on confounders and treatment. True ATE = 10.</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="dv">50</span> <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> X_age <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> X_comorbidity <span class="sc">+</span> <span class="dv">10</span> <span class="sc">*</span> A <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">5</span>)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 2. Estimate propensity scores using logistic regression ---</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># The formula A ~ X_age + X_comorbidity means we are modeling the probability</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># of receiving treatment A based on a patient's age and comorbidity score.</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(A <span class="sc">~</span> X_age <span class="sc">+</span> X_comorbidity, <span class="at">data =</span> data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>propensity_est <span class="ot">&lt;-</span> <span class="fu">predict</span>(ps_model, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 3. Implement Propensity Score Matching ---</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># The MatchIt package does all the heavy lifting for us.</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># method = "nearest" means we're doing 1-to-1 nearest neighbor matching.</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># distance = "logit" means we match on the logit of the propensity score, which often works better.</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>matched_data_obj <span class="ot">&lt;-</span> <span class="fu">matchit</span>(A <span class="sc">~</span> X_age <span class="sc">+</span> X_comorbidity, <span class="at">data =</span> data,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                            <span class="at">method =</span> <span class="st">"nearest"</span>, <span class="at">distance =</span> <span class="st">"logit"</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 4. ASSESS BALANCE ---</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a critical step! Did the matching work?</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co"># We want to see that the means of the covariates are now similar between</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co"># the treated and control groups in our matched sample.</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># A "Love Plot" is a great way to visualize this.</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(matched_data_obj, <span class="at">thresholds =</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="fl">0.1</span>), <span class="at">abs =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>          <span class="at">var.order =</span> <span class="st">"unadjusted"</span>,</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>          <span class="at">title =</span> <span class="st">"Covariate Balance Before and After Matching"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The Love Plot shows the <strong>Standardized Mean Difference (SMD)</strong> for each covariate before and after matching. An SMD close to 0 indicates good balance. A common rule of thumb is that the absolute SMD should be less than 0.1.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 5. Estimate the Causal Effect from the Matched Data ---</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the new dataset of matched individuals</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>matched_data <span class="ot">&lt;-</span> <span class="fu">match.data</span>(matched_data_obj)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a simple regression on the matched data to get the ATE</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># This automatically handles the matched pairs correctly.</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>matched_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> matched_data, <span class="at">weights =</span> weights)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(matched_model) <span class="co"># The coefficient for A is our ATE estimate!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="deeper-dive-inverse-probability-of-treatment-weighting-iptw" class="level3">
-<h3 class="anchored" data-anchor-id="deeper-dive-inverse-probability-of-treatment-weighting-iptw">Deeper Dive: Inverse Probability of Treatment Weighting (IPTW)</h3>
-<p>Matching can be inefficient because it discards unmatched control units. IPTW uses <em>all</em> the data, but weights it to create a balanced “pseudo-population.”</p>
-<p><strong>The Intuition:</strong></p>
-<ul>
-<li>A <strong>treated person</strong> with a high propensity score (e.g., 0.9) was “very likely” to get the treatment. They are common, so we give them a small weight: <code>weight = 1 / 0.9 = 1.11</code>.</li>
-<li>A <strong>treated person</strong> with a low propensity score (e.g., 0.1) was “unlikely” to get the treatment. They are rare and thus highly informative. We give them a large weight: <code>weight = 1 / 0.1 = 10</code>.</li>
-<li>Similarly, <strong>untreated people</strong> get a weight of <code>1 / (1 - e(X))</code>.</li>
-</ul>
-<p>This weighting scheme creates a new sample where the treatment is no longer associated with the covariates <code>X</code>.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 6. Implement IPTW ---</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The WeightIt package simplifies this process.</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># It automatically calculates the weights based on our propensity score model.</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>weight_obj <span class="ot">&lt;-</span> <span class="fu">weightit</span>(A <span class="sc">~</span> X_age <span class="sc">+</span> X_comorbidity, <span class="at">data =</span> data, <span class="at">method =</span> <span class="st">"ps"</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the weights to our original dataframe</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>iptw <span class="ot">&lt;-</span> weight_obj<span class="sc">$</span>weights</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 7. Estimate the Causal Effect using Weighted Regression ---</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a regression on the FULL dataset, but tell it to use the weights.</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>iptw_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> data, <span class="at">weights =</span> iptw)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(iptw_model) <span class="co"># The coefficient for A is our IPTW ATE estimate.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The target trial framework provides the structure to identify the problem, and the methods we’ve learned throughout this course provide the tools to solve it. This structured approach is the hallmark of modern, rigorous causal inference.</p>
 </section>
 </section>
-<section id="appendix-advanced-statistical-derivations-and-theory" class="level2">
-<h2 class="anchored" data-anchor-id="appendix-advanced-statistical-derivations-and-theory">📚 Appendix: Advanced Statistical Derivations and Theory</h2>
-<section id="derivation-of-the-simple-iptw-estimator" class="level3">
-<h3 class="anchored" data-anchor-id="derivation-of-the-simple-iptw-estimator">📕 Derivation of the Simple IPTW Estimator</h3>
-<p><strong>Motivation:</strong> This derivation shows how the simple inverse probability weighting formula mathematically removes confounding bias and isolates the average treatment effect (ATE).</p>
-<p><strong>Goal:</strong> We want to estimate the ATE, which is defined as <span class="math inline">\(E[Y^1] - E[Y^0]\)</span>.</p>
-<p><strong>Derivation for <span class="math inline">\(E[Y^1]\)</span>:</strong></p>
-<ol type="1">
-<li>We start with the observed mean for the treated, but we want the population mean. We can write <span class="math inline">\(E[Y^1]\)</span> using the law of total expectation:</li>
-</ol>
-<p><span class="math display">\[
-E[Y^1] = E[E[Y^1|X]]
-\]</span></p>
-<ol start="2" type="1">
-<li>Under the assumption of <strong>consistency</strong> (<span class="math inline">\(Y = A \cdot Y^1 + (1-A) \cdot Y^0\)</span>), for people who actually received the treatment (<span class="math inline">\(A=1\)</span>), their observed outcome <span class="math inline">\(Y\)</span> is equal to their potential outcome <span class="math inline">\(Y^1\)</span>.</li>
-</ol>
-<p><span class="math display">\[
-E[Y|A=1, X] = E[Y^1|A=1, X]
-\]</span></p>
-<ol start="3" type="1">
-<li>Under the assumption of <strong>ignorability</strong> (<span class="math inline">\(Y^1 \perp A | X\)</span>), conditioning on X is enough to break the link between treatment and potential outcomes.</li>
-</ol>
-<p><span class="math display">\[
-E[Y^1|A=1, X] = E[Y^1|X]
-\]</span></p>
-<p>Therefore, <span class="math inline">\(E[Y|A=1, X] = E[Y^1|X]\)</span>. We can now express the population mean <span class="math inline">\(E[Y^1]\)</span> in terms of observed quantities.</p>
-<ol start="4" type="1">
-<li><p>Let’s define the propensity score <span class="math inline">\(e(X) = P(A=1|X)\)</span>. We can cleverly rewrite the expectation of the weighted outcome for treated people: <span class="math display">\[
-E\left[\frac{A \cdot Y}{e(X)}\right] = E\left[ E\left[ \frac{A \cdot Y}{e(X)} \Bigg| X \right] \right] \quad \text{(by Law of Iterated Expectations)}
-\]</span></p></li>
-<li><p>Let’s focus on the inner expectation. Since <span class="math inline">\(e(X)\)</span> is a function of <span class="math inline">\(X\)</span>, it can be treated as a constant within this expectation.</p></li>
-</ol>
-<p><span class="math display">\[
-E\left[ \frac{A \cdot Y}{e(X)} \Bigg| X \right] = \frac{1}{e(X)} E[A \cdot Y | X]
-\]</span></p>
-<p><span class="math inline">\(E[A \cdot Y | X] = P(A=1|X)E[Y|A=1,X] + P(A=0|X)E[Y|A=0,X] \cdot 0\)</span></p>
-<p><span class="math display">\[
-= e(X) E[Y|A=1,X]
-\]</span> 6. Substituting this back in: <span class="math display">\[
-\frac{1}{e(X)} \cdot e(X) E[Y|A=1,X] = E[Y|A=1,X]
-\]</span></p>
-<ol start="7" type="1">
-<li>From our earlier steps, we know <span class="math inline">\(E[Y|A=1,X] = E[Y^1|X]\)</span>. So, the inner expectation simplifies to <span class="math inline">\(E[Y^1|X]\)</span>.</li>
-<li>Substituting this back into the outer expectation: <span class="math display">\[
-E\left[\frac{A \cdot Y}{e(X)}\right] = E[E[Y^1|X]] = E[Y^1]
-\]</span></li>
-</ol>
-<p><strong>Conclusion:</strong> We have shown that the expectation of the inverse-probability-weighted outcome for the treated group is an unbiased estimator for the population average potential outcome under treatment, <span class="math inline">\(E[Y^1]\)</span>. A parallel derivation shows that <span class="math inline">\(E\left[\frac{(1-A) \cdot Y}{1-e(X)}\right] = E[Y^0]\)</span>.</p>
-<p>Therefore, the simple IPTW estimator for the ATE is: <span class="math display">\[
-\widehat{ATE}_{IPTW} = \frac{1}{N} \sum_{i=1}^N \frac{A_i Y_i}{e(X_i)} - \frac{1}{N} \sum_{i=1}^N \frac{(1-A_i) Y_i}{1-e(X_i)}
-\]</span></p>
+<section id="references" class="level2">
+
+
 
 
 </section>
-</section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-hernan2020causalwhatif" class="csl-entry" role="listitem">
+Hernán, M. Á., &amp; Robins, J. M. (2020). <em>Causal inference: <span>What</span> if</em>. Chapman &amp; Hall/CRC.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
@@ -1461,9 +1584,41 @@ E\left[\frac{A \cdot Y}{e(X)}\right] = E[E[Y^1|X]] = E[Y^1]
   });
   </script>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-13_target_trial.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-05_propensity_score.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

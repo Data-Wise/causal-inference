@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>Propensity Score Methods – Introduction to Causal Inference</title>
+<title>Instrumental Variables (IV) Estimation – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,41 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -237,7 +202,7 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../assets/styles/css/home.css">
-<meta property="og:title" content="Propensity Score Methods – Introduction to Causal Inference">
+<meta property="og:title" content="Instrumental Variables (IV) Estimation – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
 <meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
@@ -488,7 +453,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Propensity Score Methods</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Instrumental Variables (IV) Estimation</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -498,7 +463,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Propensity Score Methods</h1>
+      <h1 class="title">Instrumental Variables (IV) Estimation</h1>
                       </div>
   </div>
     
@@ -522,7 +487,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Sep-17-2025</p>
+        <p class="date">Oct-07-2025</p>
       </div>
     </div>
     
@@ -647,24 +612,34 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#motivation-and-learning-objectives" id="toc-motivation-and-learning-objectives" class="nav-link active" data-scroll-target="#motivation-and-learning-objectives">🎯 Motivation and Learning Objectives</a></li>
-  <li><a href="#key-concepts-the-why-and-how-of-propensity-scores" id="toc-key-concepts-the-why-and-how-of-propensity-scores" class="nav-link" data-scroll-target="#key-concepts-the-why-and-how-of-propensity-scores">🧠 Key Concepts: The Why and How of Propensity Scores</a>
+  <li><a href="#motivation-and-learning-objectives" id="toc-motivation-and-learning-objectives" class="nav-link active" data-scroll-target="#motivation-and-learning-objectives">Motivation and Learning Objectives</a></li>
+  <li><a href="#instrumental-variables-iv-estimation" id="toc-instrumental-variables-iv-estimation" class="nav-link" data-scroll-target="#instrumental-variables-iv-estimation">Instrumental Variables (IV) Estimation</a>
   <ul class="collapse">
-  <li><a href="#the-fundamental-problem-apples-and-oranges" id="toc-the-fundamental-problem-apples-and-oranges" class="nav-link" data-scroll-target="#the-fundamental-problem-apples-and-oranges">The Fundamental Problem: Apples and Oranges 🍎🍊</a></li>
-  <li><a href="#what-is-a-propensity-score" id="toc-what-is-a-propensity-score" class="nav-link" data-scroll-target="#what-is-a-propensity-score">What is a Propensity Score?</a></li>
-  <li><a href="#the-magic-the-balancing-property-of-the-propensity-score" id="toc-the-magic-the-balancing-property-of-the-propensity-score" class="nav-link" data-scroll-target="#the-magic-the-balancing-property-of-the-propensity-score">The Magic: The Balancing Property of the Propensity Score</a></li>
+  <li><a href="#rationale-and-potential-outcomes-framework" id="toc-rationale-and-potential-outcomes-framework" class="nav-link" data-scroll-target="#rationale-and-potential-outcomes-framework">1. Rationale and Potential Outcomes Framework</a>
+  <ul class="collapse">
+  <li><a href="#iv-assumptions-in-potential-outcomes" id="toc-iv-assumptions-in-potential-outcomes" class="nav-link" data-scroll-target="#iv-assumptions-in-potential-outcomes">IV Assumptions in Potential Outcomes</a></li>
   </ul></li>
-  <li><a href="#a-pen-and-paper-numerical-example" id="toc-a-pen-and-paper-numerical-example" class="nav-link" data-scroll-target="#a-pen-and-paper-numerical-example">✍️ A Pen-and-Paper Numerical Example</a></li>
-  <li><a href="#a-more-detailed-r-example" id="toc-a-more-detailed-r-example" class="nav-link" data-scroll-target="#a-more-detailed-r-example">💻 A More Detailed R Example</a>
+  <li><a href="#step-by-step-derivation" id="toc-step-by-step-derivation" class="nav-link" data-scroll-target="#step-by-step-derivation">2. Step-by-Step Derivation</a>
   <ul class="collapse">
-  <li><a href="#deeper-dive-inverse-probability-of-treatment-weighting-iptw" id="toc-deeper-dive-inverse-probability-of-treatment-weighting-iptw" class="nav-link" data-scroll-target="#deeper-dive-inverse-probability-of-treatment-weighting-iptw">Deeper Dive: Inverse Probability of Treatment Weighting (IPTW)</a></li>
+  <li><a href="#step-1-decomposing-the-population" id="toc-step-1-decomposing-the-population" class="nav-link" data-scroll-target="#step-1-decomposing-the-population">Step 1: Decomposing the Population</a></li>
+  <li><a href="#step-2-analyzing-the-numerator-eyz1---eyz0" id="toc-step-2-analyzing-the-numerator-eyz1---eyz0" class="nav-link" data-scroll-target="#step-2-analyzing-the-numerator-eyz1---eyz0">Step 2: Analyzing the Numerator: <span class="math inline">\(\E{Y|Z=1} - \E{Y|Z=0}\)</span></a></li>
+  <li><a href="#step-3-analyzing-the-denominator-eaz1---eaz0" id="toc-step-3-analyzing-the-denominator-eaz1---eaz0" class="nav-link" data-scroll-target="#step-3-analyzing-the-denominator-eaz1---eaz0">Step 3: Analyzing the Denominator: <span class="math inline">\(\E{A|Z=1} - \E{A|Z=0}\)</span></a></li>
+  <li><a href="#step-4-combining-the-numerator-and-denominator" id="toc-step-4-combining-the-numerator-and-denominator" class="nav-link" data-scroll-target="#step-4-combining-the-numerator-and-denominator">Step 4: Combining the Numerator and Denominator</a></li>
   </ul></li>
-  <li><a href="#appendix-advanced-statistical-derivations-and-theory" id="toc-appendix-advanced-statistical-derivations-and-theory" class="nav-link" data-scroll-target="#appendix-advanced-statistical-derivations-and-theory">📚 Appendix: Advanced Statistical Derivations and Theory</a>
+  <li><a href="#the-core-assumption-consistency" id="toc-the-core-assumption-consistency" class="nav-link" data-scroll-target="#the-core-assumption-consistency">The Core Assumption: Consistency</a></li>
+  <li><a href="#mathematical-formulation" id="toc-mathematical-formulation" class="nav-link" data-scroll-target="#mathematical-formulation">Mathematical Formulation</a>
   <ul class="collapse">
-  <li><a href="#derivation-of-the-simple-iptw-estimator" id="toc-derivation-of-the-simple-iptw-estimator" class="nav-link" data-scroll-target="#derivation-of-the-simple-iptw-estimator">📕 Derivation of the Simple IPTW Estimator</a></li>
+  <li><a href="#outcome-y" id="toc-outcome-y" class="nav-link" data-scroll-target="#outcome-y">Outcome Y</a></li>
+  <li><a href="#treatment-a-with-an-instrument-z" id="toc-treatment-a-with-an-instrument-z" class="nav-link" data-scroll-target="#treatment-a-with-an-instrument-z">Treatment A (with an Instrument Z)</a></li>
+  </ul></li>
+  <li><a href="#explaining-expected-value-of-observed-y-given-observed-instrument" id="toc-explaining-expected-value-of-observed-y-given-observed-instrument" class="nav-link" data-scroll-target="#explaining-expected-value-of-observed-y-given-observed-instrument">Explaining Expected Value of Observed Y given Observed Instrument</a></li>
+  <li><a href="#step-1-the-starting-point" id="toc-step-1-the-starting-point" class="nav-link" data-scroll-target="#step-1-the-starting-point">Step 1: The Starting Point</a></li>
+  <li><a href="#step-2-applying-consistency-to-the-outcome-y" id="toc-step-2-applying-consistency-to-the-outcome-y" class="nav-link" data-scroll-target="#step-2-applying-consistency-to-the-outcome-y">Step 2: Applying Consistency to the Outcome (Y)</a></li>
+  <li><a href="#step-3-applying-consistency-to-the-treatment-a" id="toc-step-3-applying-consistency-to-the-treatment-a" class="nav-link" data-scroll-target="#step-3-applying-consistency-to-the-treatment-a">Step 3: Applying Consistency to the Treatment (A)</a></li>
+  <li><a href="#step-4-final-substitution" id="toc-step-4-final-substitution" class="nav-link" data-scroll-target="#step-4-final-substitution">Step 4: Final Substitution</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-05_propensity_score.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-05_propensity_score.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-08_instrumental_variable-rev2.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-08_instrumental_variable-rev2.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -675,365 +650,227 @@ window.Quarto = {
 
 
 <section id="motivation-and-learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="motivation-and-learning-objectives">🎯 Motivation and Learning Objectives</h2>
-<p>In a perfect world, we would answer all causal questions using a <strong>Randomized Controlled Trial (RCT)</strong>. By randomly assigning treatment, we ensure that, on average, the treated and control groups are identical on all background characteristics (both observed and unobserved). Any difference in their outcomes can therefore be attributed to the treatment.</p>
-<p>However, in public health and clinical research, RCTs are often unethical, impractical, or too expensive. We must rely on <strong>observational data</strong>, where individuals select their own treatments. This leads to a critical problem: people who choose treatment are often systematically different from those who do not.</p>
-<p>This week, we introduce <strong>propensity score methods</strong>, a powerful toolkit designed to address this selection bias. Propensity scores allow us to <strong>mimic the properties of an RCT</strong> by creating balanced comparison groups, helping us to isolate the causal effect of a treatment from the confounding effects of other variables.</p>
-<p><strong>By the end of this module, you will be able to:</strong></p>
+<h2 class="anchored" data-anchor-id="motivation-and-learning-objectives">Motivation and Learning Objectives</h2>
+<p>Instrumental Variables (IV) estimation is a powerful technique for estimating causal effects when randomization is not possible due to confounding. This method allows us to identify the causal effect of a treatment on an outcome by using an instrument that affects treatment but is not directly related to the outcome. In this lesson, we will:</p>
+<ul>
+<li>Understand the rationale behind IV estimation and its assumptions.</li>
+<li>Derive the IV estimand using the potential outcomes framework.</li>
+<li>Explain the relationship between observed outcomes and potential outcomes.</li>
+<li>Explore the mathematical formulation of IV estimation.</li>
+<li>Explain the expected value of observed outcomes given an instrument.</li>
+<li>Understand the core assumption of consistency in causal inference.</li>
+<li>Apply these concepts to practical examples.</li>
+</ul>
+</section>
+<section id="instrumental-variables-iv-estimation" class="level1">
+<h1>Instrumental Variables (IV) Estimation</h1>
+<p>The IV estimand calculates the Local Average Treatment Effect (LATE)—the causal effect of a treatment for the specific subgroup of individuals whose treatment status is changed by the instrument.</p>
+<section id="rationale-and-potential-outcomes-framework" class="level2">
+<h2 class="anchored" data-anchor-id="rationale-and-potential-outcomes-framework">1. Rationale and Potential Outcomes Framework</h2>
+<p>The potential outcomes framework helps us define causal effects precisely. For each individual <span class="math inline">\(i\)</span>, we define:</p>
+<ul>
+<li><span class="math inline">\(Y_i^1\)</span>: The potential outcome if the individual receives the treatment (<span class="math inline">\(A=1\)</span>).</li>
+<li><span class="math inline">\(Y_i^0\)</span>: The potential outcome if the individual does not receive the treatment (<span class="math inline">\(A=0\)</span>).</li>
+<li>The individual-level causal effect is <span class="math inline">\(Y_i^1 - Y_i^0\)</span>. We can only ever observe one of these for any given person.</li>
+</ul>
+<p>Similarly, we define potential treatment assignments based on the instrument, <span class="math inline">\(Z\)</span>:</p>
+<ul>
+<li><span class="math inline">\(A_i^1\)</span>: The treatment the individual would take if the instrument is present (<span class="math inline">\(Z=1\)</span>).</li>
+<li><span class="math inline">\(A_i^0\)</span>: The treatment the individual would take if the instrument is absent (<span class="math inline">\(Z=0\)</span>).</li>
+</ul>
+<p>The challenge of confounding means that the groups who choose <span class="math inline">\(A=1\)</span> and <span class="math inline">\(A=0\)</span> are different in ways that also affect the outcome. The instrument (<span class="math inline">\(Z\)</span>) helps us overcome this by creating an “as-if” random reason for changing treatment status.</p>
+<section id="iv-assumptions-in-potential-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="iv-assumptions-in-potential-outcomes">IV Assumptions in Potential Outcomes</h3>
 <ol type="1">
-<li><strong>Define</strong> the propensity score and explain its central role in causal inference.</li>
-<li><strong>Understand and explain</strong> the <strong>balancing property</strong> of the propensity score and why it is crucial for creating comparable groups.</li>
-<li><strong>Estimate</strong> propensity scores using logistic regression and other methods.</li>
-<li><strong>Implement</strong> three core propensity score methods: <strong>matching</strong>, <strong>inverse probability of treatment weighting (IPTW)</strong>, and <strong>stratification</strong>.</li>
-<li><strong>Assess</strong> whether a propensity score model has successfully balanced the covariates between the treated and control groups using diagnostic plots and tables.</li>
-<li><strong>Critically evaluate</strong> the advantages and limitations of propensity score methods and their underlying assumptions.</li>
+<li><strong>Relevance</strong>: <span class="math inline">\(\E{A^1} - \E{A^0} \neq 0\)</span>. The instrument actually affects treatment uptake on average.</li>
+<li><strong>Independence</strong>: <span class="math inline">\(Z \indep (\Yone, \Yzero, A^1, A^0)\)</span>. The instrument is as-if randomly assigned and is therefore independent of an individual’s potential outcomes and potential treatment choices. This is the key assumption that replaces the “no unmeasured confounders” idea.</li>
+<li><strong>Exclusion Restriction</strong>: <span class="math inline">\(Y_i^{a, z} = Y_i^{a}\)</span> for <span class="math inline">\(a \in \{0, 1\}\)</span>. An individual’s potential outcome depends only on the treatment they receive (<span class="math inline">\(a\)</span>), not on the value of the instrument (<span class="math inline">\(z\)</span>). The instrument works <em>only</em> through the treatment.</li>
+<li><strong>Monotonicity</strong>: <span class="math inline">\(A_i^1 \ge A_i^0\)</span> for all individuals. The instrument encourages (or has no effect on) treatment uptake for everyone; it never discourages it. This assumption rules out the existence of “defiers.”</li>
 </ol>
 </section>
-<section id="key-concepts-the-why-and-how-of-propensity-scores" class="level2">
-<h2 class="anchored" data-anchor-id="key-concepts-the-why-and-how-of-propensity-scores">🧠 Key Concepts: The Why and How of Propensity Scores</h2>
-<section id="the-fundamental-problem-apples-and-oranges" class="level3">
-<h3 class="anchored" data-anchor-id="the-fundamental-problem-apples-and-oranges">The Fundamental Problem: Apples and Oranges 🍎🍊</h3>
-<p>Imagine we want to know the effect of a new fitness program (treatment <code>A=1</code>) on weight loss (outcome <code>Y</code>). In our observational data, people who joined the program lost more weight. But can we conclude the program <em>caused</em> the weight loss?</p>
-<p>Probably not. The people who chose to join are likely different. They might be younger, more health-conscious, or have better access to healthy food. This is <strong>confounding</strong>. We are comparing a group of motivated “apples” to a general population of “oranges.”</p>
-<p>The goal of propensity scores is to solve this problem by creating a “handicap” system. Instead of trying to match people on dozens of characteristics (age, gender, income, diet, etc.), we can boil all of that information down into a single number: the <strong>propensity score</strong>.</p>
 </section>
-<section id="what-is-a-propensity-score" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-a-propensity-score">What is a Propensity Score?</h3>
-<blockquote class="blockquote">
-<p>The <strong>propensity score</strong> is the probability that a unit (e.g., a person) receives the treatment, given their observed baseline covariates.</p>
-</blockquote>
-<p><span class="math display">\[
-e(X_i) = P(A_i = 1 | X_i)
-\]</span></p>
-<p>Where:</p>
+<section id="step-by-step-derivation" class="level2">
+<h2 class="anchored" data-anchor-id="step-by-step-derivation">2. Step-by-Step Derivation</h2>
+<p>The derivation elegantly shows how the IV formula isolates the average treatment effect for a specific group.</p>
+<section id="step-1-decomposing-the-population" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-decomposing-the-population">Step 1: Decomposing the Population</h3>
+<p>Under the monotonicity assumption, we can classify everyone into three groups based on their potential treatment choices. This is called principal stratification.</p>
 <ul>
-<li><span class="math inline">\(A_i = 1\)</span> if person <em>i</em> receives the treatment.</li>
-<li><span class="math inline">\(X_i\)</span> is the vector of all observed pre-treatment covariates for person <em>i</em> (e.g., age, gender, baseline health status).</li>
+<li>Compliers (c): Individuals who take the treatment if encouraged but not otherwise. (<span class="math inline">\(A_i^0=0, A_i^1=1\)</span>).</li>
+<li>Always-Takers (a): Individuals who take the treatment regardless of the instrument. (<span class="math inline">\(A_i^0=1, A_i^1=1\)</span>).</li>
+<li>Never-Takers (n): Individuals who do not take the treatment regardless of the instrument. (<span class="math inline">\(A_i^0=0, A_i^1=0\)</span>).</li>
 </ul>
-<p>Think of it like this: if someone has a propensity score of 0.8, it means that based on their observed characteristics, they had an 80% chance of being in the treatment group. A person with a score of 0.1 had only a 10% chance.</p>
+<p>Let <span class="math inline">\(\pi_c, \pi_a, \pi_n\)</span> be the proportion of each group in the population.</p>
 </section>
-<section id="the-magic-the-balancing-property-of-the-propensity-score" class="level3">
-<h3 class="anchored" data-anchor-id="the-magic-the-balancing-property-of-the-propensity-score">The Magic: The Balancing Property of the Propensity Score</h3>
-<p>This is the theoretical cornerstone that makes propensity scores so powerful.</p>
-<blockquote class="blockquote">
-<p><strong>Theorem (Rosenbaum &amp; Rubin, 1983):</strong> If we correctly specify the propensity score model, then within strata of the propensity score, the distribution of the observed covariates <code>X</code> is independent of treatment status <code>A</code>.</p>
-</blockquote>
+<section id="step-2-analyzing-the-numerator-eyz1---eyz0" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-analyzing-the-numerator-eyz1---eyz0">Step 2: Analyzing the Numerator: <span class="math inline">\(\E{Y|Z=1} - \E{Y|Z=0}\)</span></h3>
+<p>First, let’s expand the term <span class="math inline">\(\E{Y|Z=1}\)</span>. The observed outcome <span class="math inline">\(Y\)</span> when <span class="math inline">\(Z=1\)</span> is determined by the treatment individuals take when <span class="math inline">\(Z=1\)</span>, which is <span class="math inline">\(A^1\)</span>. So, <span class="math inline">\(Y = Y(A^1)\)</span>.</p>
 <p><span class="math display">\[
-(Y^1, Y^0) \perp A | X \implies (Y^1, Y^0) \perp A | e(X)
+\E{Y|Z=1} = \E{Y(A^1)|Z=1}
 \]</span></p>
-<p><strong>In plain language:</strong> If you take a treated person and an untreated person who have the <strong>exact same propensity score</strong>, you can think of them as being “statistically equivalent” on all the observed covariates that went into the score. It’s as if, for that pair of individuals, the treatment was randomly assigned. By conditioning on this single score, we have “balanced” all the observed confounders simultaneously.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Key Assumption: Ignorability &amp; Positivity
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li><strong>Ignorability (or Unconfoundedness):</strong> We must assume that we have measured and included <strong>all</strong> common causes of the treatment and the outcome in our propensity score model. Propensity scores <em>cannot</em> balance unobserved confounders (e.g., genetic factors, motivation).</li>
-<li><strong>Positivity (or Overlap):</strong> For any set of covariates X, there must be a non-zero probability of being both treated and untreated. <span class="math inline">\(0 &lt; P(A=1 | X=x) &lt; 1\)</span>. If a certain type of person <em>always</em> gets the treatment, we have no one to compare them to.</li>
-</ol>
-</div>
-</div>
-</section>
-</section>
-<section id="a-pen-and-paper-numerical-example" class="level2">
-<h2 class="anchored" data-anchor-id="a-pen-and-paper-numerical-example">✍️ A Pen-and-Paper Numerical Example</h2>
-<p>Let’s make this extremely simple. Imagine we have 6 patients. We want to know if a new drug (<code>A=1</code>) helps reduce blood pressure (<code>Y</code>). We know that <strong>age</strong> (<code>X</code>) is a confounder: older people have higher blood pressure and are also more likely to get the new drug.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Patient</th>
-<th style="text-align: left;">Age (X)</th>
-<th style="text-align: left;">Treatment (A)</th>
-<th style="text-align: left;">Outcome (Y)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">50</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">140</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">55</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">145</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">60</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">155</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">30</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">120</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">35</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">125</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">40</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">130</td>
-</tr>
-</tbody>
-</table>
-<p>A <strong>naive analysis</strong> would be biased:</p>
+<p>By the independence assumption, we can drop the conditioning on <span class="math inline">\(Z=1\)</span>:</p>
+<p><span class="math display">\[
+\E{Y|Z=1} = \E{Y(A^1)}
+\]</span></p>
+<p>Using the law of total expectation, we can write this as a weighted average across our three groups:</p>
+<p><span class="math display">\[
+\E{Y(A^1)} = \E{Y(A^1)|\text{type}=c}\pi_c + \E{Y(A^1)|\text{type}=n}\pi_n + \E{Y(A^1)|\text{type}=a}\pi_a
+\]</span></p>
+<p>Now, substitute the known treatment status for each group when <span class="math inline">\(Z=1\)</span>:</p>
 <ul>
-<li>Mean outcome for treated: (140 + 145 + 155) / 3 = <strong>146.7</strong></li>
-<li>Mean outcome for control: (120 + 125 + 130) / 3 = <strong>125</strong></li>
-<li>Naive “effect”: 146.7 - 125 = <strong>21.7</strong>. This is confounded by age.</li>
+<li>For Compliers, <span class="math inline">\(A^1=1\)</span>, so the term becomes <span class="math inline">\(\E{\Yone|\text{type}=c}\pi_c\)</span>.</li>
+<li>For Never-Takers, <span class="math inline">\(A^1=0\)</span>, so the term becomes <span class="math inline">\(\E{\Yzero|\text{type}=n}\pi_n\)</span>.</li>
+<li>For Always-Takers, <span class="math inline">\(A^1=1\)</span>, so the term becomes <span class="math inline">\(\E{\Yone|\text{type}=a}\pi_a\)</span>.</li>
 </ul>
-<p><strong>Step 1: Estimate the Propensity Score</strong> We’ll run a simple logistic regression: <code>A ~ X</code> (Treatment ~ Age). Let’s say our model gives us the following (hypothetical) propensity scores:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 11%">
-<col style="width: 11%">
-<col style="width: 22%">
-<col style="width: 18%">
-<col style="width: 35%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Patient</th>
-<th style="text-align: left;">Age (X)</th>
-<th style="text-align: left;">Treatment (A)</th>
-<th style="text-align: left;">Outcome (Y)</th>
-<th style="text-align: left;">Propensity Score e(X)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">50</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">140</td>
-<td style="text-align: left;"><strong>0.60</strong></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">55</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">145</td>
-<td style="text-align: left;"><strong>0.75</strong></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">60</td>
-<td style="text-align: left;">1 (Treated)</td>
-<td style="text-align: left;">155</td>
-<td style="text-align: left;"><strong>0.85</strong></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">30</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">120</td>
-<td style="text-align: left;"><strong>0.15</strong></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">35</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">125</td>
-<td style="text-align: left;"><strong>0.25</strong></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">40</td>
-<td style="text-align: left;">0 (Control)</td>
-<td style="text-align: left;">130</td>
-<td style="text-align: left;"><strong>0.40</strong></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Step 2: Propensity Score Matching (Nearest Neighbor)</strong> For each treated patient, let’s find the control patient with the <em>closest</em> propensity score.</p>
+<p>So, <span class="math inline">\(\E{Y|Z=1} = \E{\Yone|c}\pi_c + \E{\Yzero|n}\pi_n + \E{\Yone|a}\pi_a\)</span>.</p>
+<p>Now we do the same for <span class="math inline">\(\E{Y|Z=0} = \E{Y(A^0)}\)</span>:</p>
+<p><span class="math display">\[
+\E{Y(A^0)} = \E{Y(A^0)|c}\pi_c + \E{Y(A^0)|n}\pi_n + \E{Y(A^0)|a}\pi_a
+\]</span></p>
 <ul>
-<li><strong>Treated Patient 1 (e(X)=0.60):</strong> The closest control is <strong>Patient 6 (e(X)=0.40)</strong>.</li>
-<li><strong>Treated Patient 2 (e(X)=0.75):</strong> The closest control is also <strong>Patient 6 (e(X)=0.40)</strong>.</li>
-<li><strong>Treated Patient 3 (e(X)=0.85):</strong> The closest control is also <strong>Patient 6 (e(X)=0.40)</strong>.</li>
+<li>For Compliers, <span class="math inline">\(A^0=0\)</span>, so the term becomes <span class="math inline">\(\E{\Yzero|\text{type}=c}\pi_c\)</span>.</li>
+<li>For Never-Takers, <span class="math inline">\(A^0=0\)</span>, so the term becomes <span class="math inline">\(\E{\Yzero|\text{type}=n}\pi_n\)</span>.</li>
+<li>For Always-Takers, <span class="math inline">\(A^0=1\)</span>, so the term becomes <span class="math inline">\(\E{\Yone|\text{type}=a}\pi_a\)</span>.</li>
 </ul>
-<p>Our new <strong>matched dataset</strong> (allowing Patient 6 to be used multiple times, which is called “matching with replacement”):</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Treated Patient</th>
-<th style="text-align: left;">Treated Y</th>
-<th style="text-align: left;">Matched Control</th>
-<th style="text-align: left;">Control Y</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">140</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">130</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">145</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">130</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">155</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">130</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Step 3: Calculate the Matched Effect</strong> Now we calculate the effect only in this matched sample.</p>
-<ul>
-<li>Mean outcome for treated: (140 + 145 + 155) / 3 = <strong>146.7</strong></li>
-<li>Mean outcome for matched controls: (130 + 130 + 130) / 3 = <strong>130</strong></li>
-<li><strong>Matched ATE Estimate:</strong> 146.7 - 130 = <strong>16.7</strong></li>
-</ul>
-<p>By matching on the propensity score, we’ve created a control group that is “more similar” to the treated group, and our effect estimate is less biased.</p>
+<p>So, <span class="math inline">\(\E{Y|Z=0} = \E{\Yzero|c}\pi_c + \E{\Yzero|n}\pi_n + \E{\Yone|a}\pi_a\)</span>.</p>
+<p>Finally, we subtract the two expressions. Notice that the terms for always-takers and never-takers are identical in both equations, so they cancel out perfectly!</p>
+<p><span class="math display">\[
+\E{Y|Z=1} - \E{Y|Z=0} = (\E{\Yone|c}\pi_c) - (\E{\Yzero|c}\pi_c)
+\]</span></p>
+<p><span class="math display">\[
+\implies \E{Y|Z=1} - \E{Y|Z=0} = (\E{\Yone|c} - \E{\Yzero|c}) \cdot \pi_c
+\]</span></p>
+<p>The numerator is the average treatment effect for compliers multiplied by the proportion of compliers.</p>
 </section>
-<section id="a-more-detailed-r-example" class="level2">
-<h2 class="anchored" data-anchor-id="a-more-detailed-r-example">💻 A More Detailed R Example</h2>
-<p>Let’s expand our R example to be more realistic. We’ll simulate data where <code>Age</code> and <code>Comorbidity</code> (a measure of baseline health) are confounders. The true treatment effect is <strong>10</strong>.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MatchIt)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WeightIt)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cobalt) <span class="co"># For balance checking</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 1. Simulate a richer dataset with confounding ---</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Two confounders: Age and a comorbidity score</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">X_age =</span> <span class="fu">round</span>(<span class="fu">runif</span>(n, <span class="dv">40</span>, <span class="dv">75</span>)),</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">X_comorbidity =</span> <span class="fu">round</span>(<span class="fu">runif</span>(n, <span class="dv">0</span>, <span class="dv">5</span>)),</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Probability of treatment depends on BOTH confounders</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">propensity_true =</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>( <span class="sc">-</span><span class="dv">4</span> <span class="sc">+</span> <span class="fl">0.05</span> <span class="sc">*</span> X_age <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> X_comorbidity ))),</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Treatment status A (1=Treated, 0=Control)</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, propensity_true),</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Outcome Y depends on confounders and treatment. True ATE = 10.</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="dv">50</span> <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> X_age <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> X_comorbidity <span class="sc">+</span> <span class="dv">10</span> <span class="sc">*</span> A <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">5</span>)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 2. Estimate propensity scores using logistic regression ---</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># The formula A ~ X_age + X_comorbidity means we are modeling the probability</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># of receiving treatment A based on a patient's age and comorbidity score.</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(A <span class="sc">~</span> X_age <span class="sc">+</span> X_comorbidity, <span class="at">data =</span> data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>propensity_est <span class="ot">&lt;-</span> <span class="fu">predict</span>(ps_model, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 3. Implement Propensity Score Matching ---</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># The MatchIt package does all the heavy lifting for us.</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># method = "nearest" means we're doing 1-to-1 nearest neighbor matching.</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># distance = "logit" means we match on the logit of the propensity score, which often works better.</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>matched_data_obj <span class="ot">&lt;-</span> <span class="fu">matchit</span>(A <span class="sc">~</span> X_age <span class="sc">+</span> X_comorbidity, <span class="at">data =</span> data,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                            <span class="at">method =</span> <span class="st">"nearest"</span>, <span class="at">distance =</span> <span class="st">"logit"</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 4. ASSESS BALANCE ---</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a critical step! Did the matching work?</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co"># We want to see that the means of the covariates are now similar between</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co"># the treated and control groups in our matched sample.</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># A "Love Plot" is a great way to visualize this.</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(matched_data_obj, <span class="at">thresholds =</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="fl">0.1</span>), <span class="at">abs =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>          <span class="at">var.order =</span> <span class="st">"unadjusted"</span>,</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>          <span class="at">title =</span> <span class="st">"Covariate Balance Before and After Matching"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The Love Plot shows the <strong>Standardized Mean Difference (SMD)</strong> for each covariate before and after matching. An SMD close to 0 indicates good balance. A common rule of thumb is that the absolute SMD should be less than 0.1.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 5. Estimate the Causal Effect from the Matched Data ---</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the new dataset of matched individuals</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>matched_data <span class="ot">&lt;-</span> <span class="fu">match.data</span>(matched_data_obj)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a simple regression on the matched data to get the ATE</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># This automatically handles the matched pairs correctly.</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>matched_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> matched_data, <span class="at">weights =</span> weights)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(matched_model) <span class="co"># The coefficient for A is our ATE estimate!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="deeper-dive-inverse-probability-of-treatment-weighting-iptw" class="level3">
-<h3 class="anchored" data-anchor-id="deeper-dive-inverse-probability-of-treatment-weighting-iptw">Deeper Dive: Inverse Probability of Treatment Weighting (IPTW)</h3>
-<p>Matching can be inefficient because it discards unmatched control units. IPTW uses <em>all</em> the data, but weights it to create a balanced “pseudo-population.”</p>
-<p><strong>The Intuition:</strong></p>
-<ul>
-<li>A <strong>treated person</strong> with a high propensity score (e.g., 0.9) was “very likely” to get the treatment. They are common, so we give them a small weight: <code>weight = 1 / 0.9 = 1.11</code>.</li>
-<li>A <strong>treated person</strong> with a low propensity score (e.g., 0.1) was “unlikely” to get the treatment. They are rare and thus highly informative. We give them a large weight: <code>weight = 1 / 0.1 = 10</code>.</li>
-<li>Similarly, <strong>untreated people</strong> get a weight of <code>1 / (1 - e(X))</code>.</li>
-</ul>
-<p>This weighting scheme creates a new sample where the treatment is no longer associated with the covariates <code>X</code>.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 6. Implement IPTW ---</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The WeightIt package simplifies this process.</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># It automatically calculates the weights based on our propensity score model.</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>weight_obj <span class="ot">&lt;-</span> <span class="fu">weightit</span>(A <span class="sc">~</span> X_age <span class="sc">+</span> X_comorbidity, <span class="at">data =</span> data, <span class="at">method =</span> <span class="st">"ps"</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the weights to our original dataframe</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>iptw <span class="ot">&lt;-</span> weight_obj<span class="sc">$</span>weights</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 7. Estimate the Causal Effect using Weighted Regression ---</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a regression on the FULL dataset, but tell it to use the weights.</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>iptw_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> data, <span class="at">weights =</span> iptw)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(iptw_model) <span class="co"># The coefficient for A is our IPTW ATE estimate.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="step-3-analyzing-the-denominator-eaz1---eaz0" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-analyzing-the-denominator-eaz1---eaz0">Step 3: Analyzing the Denominator: <span class="math inline">\(\E{A|Z=1} - \E{A|Z=0}\)</span></h3>
+<p>This step is more straightforward. Using the same logic:</p>
+<p><span class="math display">\[
+\E{A|Z=1} - \E{A|Z=0} = \E{A^1} - \E{A^0}
+\]</span></p>
+<p>Let’s expand each term across our three groups:</p>
+<p><span class="math display">\[
+\E{A^1} = \E{A^1|c}\pi_c + \E{A^1|n}\pi_n + \E{A^1|a}\pi_a
+\]</span></p>
+<p><span class="math display">\[
+\E{A^1} = (1)\pi_c + (0)\pi_n + (1)\pi_a = \pi_c + \pi_a
+\]</span></p>
+<p>And:</p>
+<p><span class="math display">\[
+\E{A^0} = \E{A^0|c}\pi_c + \E{A^0|n}\pi_n + \E{A^0|a}\pi_a
+\]</span></p>
+<p><span class="math display">\[
+\E{A^0} = (0)\pi_c + (0)\pi_n + (1)\pi_a = \pi_a
+\]</span></p>
+<p>Subtracting the two gives:</p>
+<p><span class="math display">\[
+\E{A|Z=1} - \E{A|Z=0} = (\pi_c + \pi_a) - (\pi_a) = \pi_c
+\]</span></p>
+<p>The denominator is simply the proportion of compliers in the population.</p>
+</section>
+<section id="step-4-combining-the-numerator-and-denominator" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-combining-the-numerator-and-denominator">Step 4: Combining the Numerator and Denominator</h3>
+<p>Now we assemble the final IV estimand ratio:</p>
+<p><span class="math display">\[
+\text{IV Estimand} = \frac{\E{Y|Z=1} - \E{Y|Z=0}}{\E{A|Z=1} - \E{A|Z=0}} = \frac{(\E{\Yone|c} - \E{\Yzero|c}) \cdot \pi_c}{\pi_c}
+\]</span></p>
+<p>The <span class="math inline">\(\pi_c\)</span> terms cancel, leaving our final result:</p>
+<p><span class="math display">\[
+\text{IV Estimand} = \E{\Yone|c} - \E{\Yzero|c}
+\]</span></p>
+<p>This proves that under the IV assumptions, the formula precisely calculates the Local Average Treatment Effect (LATE): the average causal effect of the treatment <em>only</em> for the subpopulation of compliers.</p>
+<p>The relationship between what we can see (observed outcomes) and what could have happened (potential outcomes) is the foundation of modern causal inference. It allows us to use real-world data to answer “what if” questions.</p>
 </section>
 </section>
-<section id="appendix-advanced-statistical-derivations-and-theory" class="level2">
-<h2 class="anchored" data-anchor-id="appendix-advanced-statistical-derivations-and-theory">📚 Appendix: Advanced Statistical Derivations and Theory</h2>
-<section id="derivation-of-the-simple-iptw-estimator" class="level3">
-<h3 class="anchored" data-anchor-id="derivation-of-the-simple-iptw-estimator">📕 Derivation of the Simple IPTW Estimator</h3>
-<p><strong>Motivation:</strong> This derivation shows how the simple inverse probability weighting formula mathematically removes confounding bias and isolates the average treatment effect (ATE).</p>
-<p><strong>Goal:</strong> We want to estimate the ATE, which is defined as <span class="math inline">\(E[Y^1] - E[Y^0]\)</span>.</p>
-<p><strong>Derivation for <span class="math inline">\(E[Y^1]\)</span>:</strong></p>
-<ol type="1">
-<li>We start with the observed mean for the treated, but we want the population mean. We can write <span class="math inline">\(E[Y^1]\)</span> using the law of total expectation:</li>
-</ol>
+<section id="the-core-assumption-consistency" class="level2">
+<h2 class="anchored" data-anchor-id="the-core-assumption-consistency">The Core Assumption: Consistency</h2>
+<p>The primary rule connecting observed and potential outcomes is the consistency assumption. It states that an individual’s observed outcome is simply their potential outcome corresponding to the treatment they actually received.</p>
+<ul>
+<li>For the Outcome (Y): If an individual receives treatment <span class="math inline">\(A=a\)</span>, their observed outcome <span class="math inline">\(Y\)</span> is equal to their potential outcome <span class="math inline">\(Y(a)\)</span>.
+<ul>
+<li>If you take the medicine (<span class="math inline">\(A=1\)</span>), the headache level you experience (<span class="math inline">\(Y\)</span>) is precisely your potential headache level had you taken the medicine (<span class="math inline">\(\Yone\)</span>).</li>
+<li>If you don’t take the medicine (<span class="math inline">\(A=0\)</span>), the headache level you experience (<span class="math inline">\(Y\)</span>) is your potential headache level had you not taken it (<span class="math inline">\(\Yzero\)</span>).</li>
+</ul></li>
+<li>For the Treatment (A): The same logic applies if there’s an instrument (<span class="math inline">\(Z\)</span>) influencing the treatment. If an individual is exposed to instrument level <span class="math inline">\(Z=z\)</span>, their observed treatment status <span class="math inline">\(A\)</span> is equal to their potential treatment status <span class="math inline">\(A(z)\)</span>.
+<ul>
+<li>If you are encouraged by your doctor to get a vaccine (<span class="math inline">\(Z=1\)</span>), your observed vaccination status (<span class="math inline">\(A\)</span>) is your potential status had you been encouraged (<span class="math inline">\(A^1\)</span>).</li>
+</ul></li>
+</ul>
+<p>Without this assumption, we couldn’t link the data we collect to the causal effects we want to estimate. Consistency is one half of the broader Stable Unit Treatment Value Assumption (SUTVA), with the other half being “no interference” between individuals.</p>
+</section>
+<section id="mathematical-formulation" class="level2">
+<h2 class="anchored" data-anchor-id="mathematical-formulation">Mathematical Formulation</h2>
+<p>We can express these relationships with simple formulas. For a binary treatment (<span class="math inline">\(A \in \{0, 1\}\)</span>):</p>
+<section id="outcome-y" class="level3">
+<h3 class="anchored" data-anchor-id="outcome-y">Outcome Y</h3>
+<p>The observed outcome <span class="math inline">\(Y\)</span> is a “switched” version of the two potential outcomes, where the switch is controlled by the observed treatment <span class="math inline">\(A\)</span>:</p>
 <p><span class="math display">\[
-E[Y^1] = E[E[Y^1|X]]
+Y = A \cdot \Yone + (1-A) \cdot \Yzero
 \]</span></p>
-<ol start="2" type="1">
-<li>Under the assumption of <strong>consistency</strong> (<span class="math inline">\(Y = A \cdot Y^1 + (1-A) \cdot Y^0\)</span>), for people who actually received the treatment (<span class="math inline">\(A=1\)</span>), their observed outcome <span class="math inline">\(Y\)</span> is equal to their potential outcome <span class="math inline">\(Y^1\)</span>.</li>
-</ol>
+<p>How it works:</p>
+<ul>
+<li>If an individual gets the treatment, <span class="math inline">\(A=1\)</span>. The formula becomes <span class="math inline">\(Y = (1) \cdot \Yone + (1-1) \cdot \Yzero = \Yone\)</span>.</li>
+<li>If an individual does not get the treatment, <span class="math inline">\(A=0\)</span>. The formula becomes <span class="math inline">\(Y = (0) \cdot \Yone + (1-0) \cdot \Yzero = \Yzero\)</span>.</li>
+</ul>
+</section>
+<section id="treatment-a-with-an-instrument-z" class="level3">
+<h3 class="anchored" data-anchor-id="treatment-a-with-an-instrument-z">Treatment A (with an Instrument Z)</h3>
+<p>Similarly, the observed treatment <span class="math inline">\(A\)</span> is a switched version of the potential treatment statuses, controlled by the observed instrument <span class="math inline">\(Z\)</span>:</p>
 <p><span class="math display">\[
-E[Y|A=1, X] = E[Y^1|A=1, X]
+A = Z \cdot A^1 + (1-Z) \cdot A^0
 \]</span></p>
-<ol start="3" type="1">
-<li>Under the assumption of <strong>ignorability</strong> (<span class="math inline">\(Y^1 \perp A | X\)</span>), conditioning on X is enough to break the link between treatment and potential outcomes.</li>
-</ol>
+<p>How it works:</p>
+<ul>
+<li>If an individual is exposed to the instrument, <span class="math inline">\(Z=1\)</span>. The formula becomes <span class="math inline">\(A = (1) \cdot A^1 + (1-1) \cdot A^0 = A^1\)</span>.</li>
+<li>If an individual is not exposed to the instrument, <span class="math inline">\(Z=0\)</span>. The formula becomes <span class="math inline">\(A = (0) \cdot A^1 + (1-0) \cdot A^0 = A^0\)</span>.</li>
+</ul>
+<p>These equations are the fundamental link that allows us to take observable quantities (<span class="math inline">\(Y\)</span>, <span class="math inline">\(A\)</span>, <span class="math inline">\(Z\)</span>) and, under further assumptions like ignorability, make statements about the unobservable causal effects derived from potential outcomes (<span class="math inline">\(\Yone - \Yzero\)</span>).</p>
+</section>
+</section>
+<section id="explaining-expected-value-of-observed-y-given-observed-instrument" class="level2">
+<h2 class="anchored" data-anchor-id="explaining-expected-value-of-observed-y-given-observed-instrument">Explaining Expected Value of Observed Y given Observed Instrument</h2>
+<p>This equality is established by applying the consistency assumption twice, which is the fundamental rule linking observed data to the potential outcomes framework.</p>
+<p>Here is a detailed step-by-step explanation.</p>
+</section>
+<section id="step-1-the-starting-point" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-the-starting-point">Step 1: The Starting Point</h2>
+<p>We begin with the left side of the equation:</p>
 <p><span class="math display">\[
-E[Y^1|A=1, X] = E[Y^1|X]
+\E{Y|Z=1}
 \]</span></p>
-<p>Therefore, <span class="math inline">\(E[Y|A=1, X] = E[Y^1|X]\)</span>. We can now express the population mean <span class="math inline">\(E[Y^1]\)</span> in terms of observed quantities.</p>
-<ol start="4" type="1">
-<li><p>Let’s define the propensity score <span class="math inline">\(e(X) = P(A=1|X)\)</span>. We can cleverly rewrite the expectation of the weighted outcome for treated people: <span class="math display">\[
-E\left[\frac{A \cdot Y}{e(X)}\right] = E\left[ E\left[ \frac{A \cdot Y}{e(X)} \Bigg| X \right] \right] \quad \text{(by Law of Iterated Expectations)}
-\]</span></p></li>
-<li><p>Let’s focus on the inner expectation. Since <span class="math inline">\(e(X)\)</span> is a function of <span class="math inline">\(X\)</span>, it can be treated as a constant within this expectation.</p></li>
-</ol>
+<p>This expression represents the expected (or average) observed outcome <span class="math inline">\(Y\)</span> among the subgroup of individuals who received the instrument at level 1 (<span class="math inline">\(Z=1\)</span>).</p>
+</section>
+<section id="step-2-applying-consistency-to-the-outcome-y" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-applying-consistency-to-the-outcome-y">Step 2: Applying Consistency to the Outcome (Y)</h2>
+<p>The first rule we use is the consistency assumption for the outcome. This rule states that an individual’s observed outcome (<span class="math inline">\(Y\)</span>) is their potential outcome corresponding to the treatment level (<span class="math inline">\(A\)</span>) they actually received.</p>
+<ul>
+<li>Rule: <span class="math inline">\(Y = \Ya\)</span></li>
+<li>Application: We can substitute <span class="math inline">\(\Ya\)</span> for <span class="math inline">\(Y\)</span> inside our expectation, as they are defined to be equivalent.</li>
+</ul>
 <p><span class="math display">\[
-E\left[ \frac{A \cdot Y}{e(X)} \Bigg| X \right] = \frac{1}{e(X)} E[A \cdot Y | X]
+\E{Y|Z=1} = \E{\Ya|Z=1}
 \]</span></p>
-<p><span class="math inline">\(E[A \cdot Y | X] = P(A=1|X)E[Y|A=1,X] + P(A=0|X)E[Y|A=0,X] \cdot 0\)</span></p>
+<p>This expression now reads: “The expected potential outcome, evaluated at the observed treatment <span class="math inline">\(A\)</span>, for the group where <span class="math inline">\(Z=1\)</span>.”</p>
+</section>
+<section id="step-3-applying-consistency-to-the-treatment-a" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-applying-consistency-to-the-treatment-a">Step 3: Applying Consistency to the Treatment (A)</h2>
+<p>Next, we focus on the observed treatment, <span class="math inline">\(A\)</span>, specifically for the group conditioned on <span class="math inline">\(Z=1\)</span>. The consistency assumption for the treatment states that an individual’s observed treatment status (<span class="math inline">\(A\)</span>) is their potential treatment status corresponding to the instrument level (<span class="math inline">\(Z\)</span>) they were actually exposed to.</p>
+<ul>
+<li>Rule: <span class="math inline">\(A = A(Z)\)</span></li>
+<li>Application: For the specific subgroup where <span class="math inline">\(Z=1\)</span>, this rule simplifies to: <span class="math inline">\(A = A^1\)</span>. This means that for everyone in this group, their observed treatment is equal to their potential treatment had they received the instrument.</li>
+</ul>
+</section>
+<section id="step-4-final-substitution" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-final-substitution">Step 4: Final Substitution</h2>
+<p>Now we can substitute the result from Step 3 into the expression from Step 2. Since we are working entirely within the subgroup where <span class="math inline">\(A\)</span> is equivalent to <span class="math inline">\(A^1\)</span>, we can replace <span class="math inline">\(A\)</span> with <span class="math inline">\(A^1\)</span> inside the potential outcome function.</p>
 <p><span class="math display">\[
-= e(X) E[Y|A=1,X]
-\]</span> 6. Substituting this back in: <span class="math display">\[
-\frac{1}{e(X)} \cdot e(X) E[Y|A=1,X] = E[Y|A=1,X]
+\E{\Ya|Z=1} = \E{Y(A^1)|Z=1}
 \]</span></p>
-<ol start="7" type="1">
-<li>From our earlier steps, we know <span class="math inline">\(E[Y|A=1,X] = E[Y^1|X]\)</span>. So, the inner expectation simplifies to <span class="math inline">\(E[Y^1|X]\)</span>.</li>
-<li>Substituting this back into the outer expectation: <span class="math display">\[
-E\left[\frac{A \cdot Y}{e(X)}\right] = E[E[Y^1|X]] = E[Y^1]
-\]</span></li>
-</ol>
-<p><strong>Conclusion:</strong> We have shown that the expectation of the inverse-probability-weighted outcome for the treated group is an unbiased estimator for the population average potential outcome under treatment, <span class="math inline">\(E[Y^1]\)</span>. A parallel derivation shows that <span class="math inline">\(E\left[\frac{(1-A) \cdot Y}{1-e(X)}\right] = E[Y^0]\)</span>.</p>
-<p>Therefore, the simple IPTW estimator for the ATE is: <span class="math display">\[
-\widehat{ATE}_{IPTW} = \frac{1}{N} \sum_{i=1}^N \frac{A_i Y_i}{e(X_i)} - \frac{1}{N} \sum_{i=1}^N \frac{(1-A_i) Y_i}{1-e(X_i)}
+<p>By chaining these steps together, we show the full equality:</p>
+<p><span class="math display">\[
+\E{Y|Z=1} \xrightarrow{\text{Consistency on Y}} \E{\Ya|Z=1} \xrightarrow{\text{within the Z=1 group}}_{\text{Consistency on A }} \E{Y(A^1)|Z=1}
 \]</span></p>
+<p>This final expression, <span class="math inline">\(\E{Y(A^1)|Z=1}\)</span>, represents the expected potential outcome that results from the potential treatment an individual would choose if exposed to the instrument.</p>
 
 
 </section>
@@ -1465,5 +1302,5 @@ E\left[\frac{A \cdot Y}{e(X)}\right] = E[E[Y^1|X]] = E[Y^1]
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-05_propensity_score.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-08_instrumental_variable-rev2.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>
