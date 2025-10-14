@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="quarto-1.8.25" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+
+<meta name="author" content="Davood Tofighi, Ph.D." />
+
+<title>Week 7: Effect Modification – Introduction to Causal Inference</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<!-- htmldependencies:E3FAD763 -->
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script>
+    MathJax = {
+        tex: {
+            macros: {
+                RR: "{\\mathbb{R}}",
+                NN: "{\\mathbb{N}}",
+                QQ: "{\\mathbb{Q}}",
+                ZZ: "{\\mathbb{Z}}",
+                PP: "{\\mathbb{P}}",
+                // expectation & probability
+                E: ["{\\EE\\left[ #1 \\right]}", 1],
+                Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
+                EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
+                EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
+                EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
+                Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
+                ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
+                Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                pr: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
+                ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
+                ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
+                ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
+                ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
+                // operators (both lower & upper case)
+                var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
+                Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
+                cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
+                Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
+                cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
+                Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
+                logit: "{\\operatorname{logit}}",
+                expit: "{\\operatorname{expit}}", // inverse logit
+                sgn: "{\\operatorname{sgn}}",
+                EE: "{\\operatorname{\\mathbb{E}}}",
+
+
+                // vector & basic constructs
+                vect: ["{\\mathbf{#1}}", 1],
+                abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
+                norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
+                ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
+
+                // indicator variants
+                indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
+                ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+
+                // independence & non-independence (bare + braced forms via separate names)
+                indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
+                nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+
+                // do-operator & d-separation
+                doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
+                dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+
+                // potential outcomes & notational conveniences
+                Y: ["{Y^{#1}}", 1],
+                Ya: "{Y^a}",
+                Yone: "{Y^1}",
+                Yzero: "{Y^0}",
+
+                // estimands
+                ATE: "{\\tau_{\\text{ATE}}}",
+                ATT: "{\\tau_{\\text{ATT}}}",
+                ATC: "{\\tau_{\\text{ATC}}}",
+                CATE: "{\\tau_{\\text{CATE}}}",
+
+                DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
+                DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
+                DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
+                DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
+
+                // identification blocks
+                gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
+                ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
+
+                // risk measures
+                RD: "{\\operatorname{RD}}",
+                OR: "{\\operatorname{OR}}",
+
+                // optimization operators
+                argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
+                argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
+            }
+        }
+    };
+</script>
+<link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/styles/css/home.css" />
+</head>
+
+<body>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="/index.html" class="navbar-brand navbar-brand-logo">
+    <img src="/assets/images/icon.png" alt="" class="navbar-logo light-content" />
+    <img src="/assets/images/icon.png" alt="" class="navbar-logo dark-content" />
+    </a>
+    <a class="navbar-brand" href="/index.html">
+    <span class="navbar-title">Introduction to Causal Inference</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+  aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation"
+  onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="/index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false" >
+ <span class="menu-text">Syllabus</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
+        <li>
+    <a class="dropdown-item" href="/syllabus/syllabus-final.pdf">
+ <span class="dropdown-text">PDF</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="/syllabus/syllabus-final.html">
+ <span class="dropdown-text">HTML</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/syllabus/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="/home_lectures.html"> 
+<span class="menu-text">Lecture Notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="/home_project.html"> 
+<span class="menu-text">Project</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="/home_readings.html"> 
+<span class="menu-text">Readings</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="/home_assignments.html"> 
+<span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="/r_help.html"> 
+<span class="menu-text">R Help</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i 
+  class="bi bi-github" 
+  role="img" 
+  aria-label="GitHub" 
+>
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn"
+      data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" 
+      aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation"
+      onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <h1 class="quarto-secondary-nav-title no-breadcrumbs"></h1>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" role="link"
+        aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation"
+        onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="/index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1"  role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Overview</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2"  role="navigation" aria-expanded="false">
+ <span class="menu-text">Syllabus</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="/syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PDF</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="/syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HTML</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="/syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schedule</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3"  role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Materials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="/home_lectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lecture Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="/home_assignments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignments</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="/home_project.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="/home_readings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4"  role="navigation" aria-expanded="false">
+ <span class="menu-text">R Code and Datasets</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="/r_help.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R Help</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" ></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <div id="quarto-toc-target"></div>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<script id = "quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+
+<header id="title-block-header" class="quarto-title-block default">
+  <div class="quarto-title-banner">
+    <div class="quarto-title column-body">
+      <h1 class="title">Week 7: Effect Modification</h1>
+            <p class="subtitle lead">Understanding Heterogeneity in Causal Effects</p>
+                      </div>
+  </div>
+    
+  <div class="quarto-title-meta-author">
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Affiliation</div>
+    
+      <div class="quarto-title-meta-contents">
+      <p class="author"><a href="https://Data-Wise.github.io/regression">Davood Tofighi, Ph.D.</a> <a href="mailto:dtofighi@unm.edu" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-8523-7776" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              Department of Mathematics and Statistics, University of New Mexico
+            </p>
+        </div>
+    </div>
+
+  <div class="quarto-title-meta">
+
+        
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Oct-14-2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header>
+
+<nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview-and-learning-objectives" id="toc-overview-and-learning-objectives">📋 Overview and Learning Objectives</a></li>
+  <li><a href="#defining-effect-modification" id="toc-defining-effect-modification">🎯 Defining Effect Modification</a>
+  <ul>
+  <li><a href="#fundamental-concept" id="toc-fundamental-concept">Fundamental Concept</a></li>
+  <li><a href="#effect-modification-vs.-confounding" id="toc-effect-modification-vs.-confounding">Effect Modification vs. Confounding</a></li>
+  <li><a href="#why-effect-modification-matters" id="toc-why-effect-modification-matters">Why Effect Modification Matters</a></li>
+  </ul></li>
+  <li><a href="#the-importance-of-scale" id="toc-the-importance-of-scale">📏 The Importance of Scale</a>
+  <ul>
+  <li><a href="#additive-vs.-multiplicative-scales" id="toc-additive-vs.-multiplicative-scales">Additive vs. Multiplicative Scales</a></li>
+  <li><a href="#detailed-numerical-example-scale-dependency" id="toc-detailed-numerical-example-scale-dependency">Detailed Numerical Example: Scale Dependency</a></li>
+  <li><a href="#which-scale-should-we-use" id="toc-which-scale-should-we-use">Which Scale Should We Use?</a></li>
+  <li><a href="#mathematical-relationship-between-scales" id="toc-mathematical-relationship-between-scales">Mathematical Relationship Between Scales</a></li>
+  </ul></li>
+  <li><a href="#assessing-heterogeneity-statistical-methods" id="toc-assessing-heterogeneity-statistical-methods">🔍 Assessing Heterogeneity: Statistical Methods</a>
+  <ul>
+  <li><a href="#stratification-approach" id="toc-stratification-approach">Stratification Approach</a></li>
+  <li><a href="#regression-with-interaction-terms" id="toc-regression-with-interaction-terms">Regression with Interaction Terms</a></li>
+  <li><a href="#assumptions-and-causal-interpretation" id="toc-assumptions-and-causal-interpretation">Assumptions and Causal Interpretation</a></li>
+  </ul></li>
+  <li><a href="#worked-example-complete-analysis" id="toc-worked-example-complete-analysis">✅ Worked Example: Complete Analysis</a>
+  <ul>
+  <li><a href="#research-question" id="toc-research-question">Research Question</a></li>
+  <li><a href="#dataset" id="toc-dataset">Dataset</a></li>
+  <li><a href="#step-1-stratified-analysis" id="toc-step-1-stratified-analysis">Step 1: Stratified Analysis</a></li>
+  <li><a href="#step-2-regression-with-interaction" id="toc-step-2-regression-with-interaction">Step 2: Regression with Interaction</a></li>
+  <li><a href="#step-3-statistical-testing" id="toc-step-3-statistical-testing">Step 3: Statistical Testing</a></li>
+  <li><a href="#step-4-interpretation-and-reporting" id="toc-step-4-interpretation-and-reporting">Step 4: Interpretation and Reporting</a></li>
+  </ul></li>
+  <li><a href="#visualizing-effect-modification" id="toc-visualizing-effect-modification">📊 Visualizing Effect Modification</a>
+  <ul>
+  <li><a href="#forest-plots" id="toc-forest-plots">Forest Plots</a></li>
+  <li><a href="#interaction-plots" id="toc-interaction-plots">Interaction Plots</a></li>
+  <li><a href="#heatmaps-for-multiple-modifiers" id="toc-heatmaps-for-multiple-modifiers">Heatmaps for Multiple Modifiers</a></li>
+  </ul></li>
+  <li><a href="#mathematical-framework-and-derivations" id="toc-mathematical-framework-and-derivations">🧮 Mathematical Framework and Derivations</a>
+  <ul>
+  <li><a href="#formal-definition-of-effect-modification" id="toc-formal-definition-of-effect-modification">Formal Definition of Effect Modification</a></li>
+  <li><a href="#identification-under-conditional-exchangeability" id="toc-identification-under-conditional-exchangeability">Identification Under Conditional Exchangeability</a></li>
+  <li><a href="#variance-of-interaction-effects" id="toc-variance-of-interaction-effects">Variance of Interaction Effects</a></li>
+  <li><a href="#relationship-to-sufficient-component-causes" id="toc-relationship-to-sufficient-component-causes">Relationship to Sufficient-Component Causes</a></li>
+  </ul></li>
+  <li><a href="#common-pitfalls-and-misconceptions" id="toc-common-pitfalls-and-misconceptions">⚠️ Common Pitfalls and Misconceptions</a>
+  <ul>
+  <li><a href="#confusing-statistical-and-biological-interaction" id="toc-confusing-statistical-and-biological-interaction">Confusing Statistical and Biological Interaction</a></li>
+  <li><a href="#multiple-testing-problem" id="toc-multiple-testing-problem">Multiple Testing Problem</a></li>
+  <li><a href="#power-for-interaction-detection" id="toc-power-for-interaction-detection">6.3 Power for Interaction Detection</a></li>
+  <li><a href="#simpsons-paradox-and-collider-bias" id="toc-simpsons-paradox-and-collider-bias">Simpson’s Paradox and Collider Bias</a></li>
+  <li><a href="#measurement-error-in-modifiers" id="toc-measurement-error-in-modifiers">Measurement Error in Modifiers</a></li>
+  </ul></li>
+  <li><a href="#advanced-topics-multiple-effect-modifiers" id="toc-advanced-topics-multiple-effect-modifiers">🎓 Advanced Topics: Multiple Effect Modifiers</a>
+  <ul>
+  <li><a href="#three-way-interactions" id="toc-three-way-interactions">Three-Way Interactions</a></li>
+  <li><a href="#machine-learning-for-heterogeneous-effects" id="toc-machine-learning-for-heterogeneous-effects">Machine Learning for Heterogeneous Effects</a></li>
+  </ul></li>
+  <li><a href="#summary-and-key-takeaways" id="toc-summary-and-key-takeaways">📝 Summary and Key Takeaways</a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding">❓ Check Your Understanding</a></li>
+  <li><a href="#question-1-distinguishing-concepts" id="toc-question-1-distinguishing-concepts">Question 1: Distinguishing Concepts</a></li>
+  <li><a href="#question-2-scale-dependency" id="toc-question-2-scale-dependency">Question 2: Scale Dependency</a></li>
+  <li><a href="#question-3-regression-interpretation" id="toc-question-3-regression-interpretation">Question 3: Regression Interpretation</a></li>
+  </ul>
+</nav>
+<section id="overview-and-learning-objectives" class="level2">
+<h2>📋 Overview and Learning Objectives</h2>
+<p><strong>Goal:</strong> To distinguish effect modification from confounding and understand its importance in causal inference.</p>
+<p>By the end of this session, you will be able to:</p>
+<ol type="1">
+<li>Formally define effect modification and distinguish it from confounding</li>
+<li>Understand why the scale of measurement matters when assessing heterogeneity</li>
+<li>Identify and quantify effect modification using stratification and regression methods</li>
+<li>Interpret interaction effects on both additive and multiplicative scales</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Learning Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Effect modification is about <strong>heterogeneity in causal effects</strong>—the treatment works differently for different people. This is fundamentally different from confounding, which is about <strong>bias in estimating a single average effect</strong>. Keep this distinction clear as we proceed.</p>
+</div>
+</div>
+</section>
+<section id="defining-effect-modification" class="level2">
+<h2>🎯 Defining Effect Modification</h2>
+<section id="fundamental-concept" class="level3">
+<h3>Fundamental Concept</h3>
+<p><strong>Effect modification</strong> (also called <strong>effect heterogeneity</strong> or <strong>interaction</strong>) occurs when the causal effect of a treatment <span class="math inline">\(A\)</span> on an outcome <span class="math inline">\(Y\)</span> differs across levels of a third variable <span class="math inline">\(V\)</span>.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>📌 Formal Definition
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(V\)</span> be a variable (the <strong>effect modifier</strong>) that takes values in some set (e.g., <span class="math inline">\(V \in \{0, 1\}\)</span> for binary, or <span class="math inline">\(V \in \RR\)</span> for continuous).</p>
+<p><strong>Effect modification is present</strong> when:</p>
+<p><span class="math display">\[
+\E{Y^{a=1} - Y^{a=0} \mid V = v} \neq \E{Y^{a=1} - Y^{a=0} \mid V = v&#39;}
+\]</span></p>
+<p>for some values <span class="math inline">\(v \neq v&#39;\)</span>.</p>
+<p>In words: the average causal effect differs across strata defined by <span class="math inline">\(V\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="effect-modification-vs.-confounding" class="level3">
+<h3>Effect Modification vs. Confounding</h3>
+<p>This distinction is <strong>critical</strong> and often confused:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 43%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Aspect</th>
+<th style="text-align: left;">Effect Modification</th>
+<th style="text-align: left;">Confounding</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>What it is</strong></td>
+<td style="text-align: left;">Heterogeneity in the causal effect across subgroups</td>
+<td style="text-align: left;">Bias in estimating the average causal effect</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>The question</strong></td>
+<td style="text-align: left;">“Does the effect differ for different people?”</td>
+<td style="text-align: left;">“Is our estimate of the average effect biased?”</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Variable role</strong></td>
+<td style="text-align: left;"><span class="math inline">\(V\)</span> modifies the effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(C\)</span> affects both <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>, creating bias</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Causal structure</strong></td>
+<td style="text-align: left;"><span class="math inline">\(A \rightarrow Y\)</span> relationship varies by <span class="math inline">\(V\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(C \rightarrow A\)</span> and <span class="math inline">\(C \rightarrow Y\)</span> (backdoor path)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Can both exist?</strong></td>
+<td style="text-align: left;">Yes! <span class="math inline">\(V\)</span> can be both a confounder AND an effect modifier</td>
+<td style="text-align: left;">Yes! Same variable can play both roles</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Analysis goal</strong></td>
+<td style="text-align: left;">Estimate stratum-specific effects <span class="math inline">\(\E{Y^1 - Y^0 \mid V=v}\)</span></td>
+<td style="text-align: left;">Estimate marginal effect <span class="math inline">\(\E{Y^1 - Y^0}\)</span> without bias</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>🧠 Conceptual Analogy
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Think of <strong>confounding</strong> as a “distorted lens” that makes you see the wrong average effect.</p>
+<p>Think of <strong>effect modification</strong> as recognizing that different groups genuinely experience different effects—like how a medication works differently for children vs. adults.</p>
+</div>
+</div>
+<p><strong>Example to illustrate the difference:</strong></p>
+<p>Consider the effect of aspirin (<span class="math inline">\(A\)</span>) on heart attack risk (<span class="math inline">\(Y\)</span>), with age (<span class="math inline">\(V\)</span>) as a third variable.</p>
+<ul>
+<li><strong>Age as a confounder:</strong> Older people are more likely to take aspirin AND more likely to have heart attacks (regardless of aspirin). If we don’t adjust for age, we might wrongly conclude aspirin increases heart attack risk.</li>
+<li><strong>Age as an effect modifier:</strong> Even after adjusting for confounding, aspirin might reduce heart attacks more strongly in older adults than in younger adults. The <em>causal effect itself</em> differs by age.</li>
+</ul>
+</section>
+<section id="why-effect-modification-matters" class="level3">
+<h3>Why Effect Modification Matters</h3>
+<p>Understanding effect modification is crucial for:</p>
+<ol type="1">
+<li><strong>Personalized medicine:</strong> Identifying who benefits most (or least) from treatment</li>
+<li><strong>Policy targeting:</strong> Allocating resources to subgroups with largest benefits</li>
+<li><strong>Understanding mechanisms:</strong> Different effects often reveal underlying biology or social processes</li>
+<li><strong>Generalizability:</strong> Effects in one population may not transfer to another</li>
+<li><strong>Equity considerations:</strong> Ensuring treatments don’t exacerbate health disparities</li>
+</ol>
+</section>
+</section>
+<section id="the-importance-of-scale" class="level2">
+<h2>📏 The Importance of Scale</h2>
+<p>One of the most subtle and important aspects of effect modification is that <strong>interaction depends on the scale</strong> of measurement. Two effects can be “the same” on one scale but “different” on another.</p>
+<section id="additive-vs.-multiplicative-scales" class="level3">
+<h3>Additive vs. Multiplicative Scales</h3>
+<p>We can measure effects on different scales:</p>
+<p><strong>Additive scale (Risk Difference):</strong></p>
+<p><span class="math display">\[
+\text{RD}_v = \E{Y^{a=1} \mid V=v} - \E{Y^{a=0} \mid V=v}
+\]</span></p>
+<p><strong>Multiplicative scale (Risk Ratio):</strong></p>
+<p><span class="math display">\[
+\text{RR}_v = \frac{\E{Y^{a=1} \mid V=v}}{\E{Y^{a=0} \mid V=v}}
+\]</span></p>
+<p><strong>Multiplicative scale (Odds Ratio):</strong></p>
+<p><span class="math display">\[
+\text{OR}_v = \frac{\E{Y^{a=1} \mid V=v} / (1 - \E{Y^{a=1} \mid V=v})}{\E{Y^{a=0} \mid V=v} / (1 - \E{Y^{a=0} \mid V=v})}
+\]</span></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Key Insight: Scale Matters
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Effect modification can be present on one scale but absent on another.</strong></p>
+<ul>
+<li>No interaction on additive scale: <span class="math inline">\(\text{RD}_{v=1} = \text{RD}_{v=0}\)</span></li>
+<li>No interaction on multiplicative scale: <span class="math inline">\(\text{RR}_{v=1} = \text{RR}_{v=0}\)</span></li>
+</ul>
+<p>These conditions are <strong>generally incompatible</strong> unless the effect is exactly zero or in special edge cases.</p>
+</div>
+</div>
+</section>
+<section id="detailed-numerical-example-scale-dependency" class="level3">
+<h3>Detailed Numerical Example: Scale Dependency</h3>
+<p>Let’s work through a concrete example to see how the same data can show interaction on one scale but not another.</p>
+<p><strong>Scenario:</strong> We study the effect of a new drug (<span class="math inline">\(A\)</span>: 1 = treated, 0 = control) on disease occurrence (<span class="math inline">\(Y\)</span>: 1 = disease, 0 = no disease), stratified by sex (<span class="math inline">\(V\)</span>: 1 = female, 0 = male).</p>
+<p><strong>Observed data</strong> (under conditional exchangeability):</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 34%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Group</th>
+<th style="text-align: left;">Treatment</th>
+<th style="text-align: left;"><span class="math inline">\(\Prob{Y=1 \mid A, V}\)</span></th>
+<th style="text-align: left;">Sample size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Males (<span class="math inline">\(V=0\)</span>)</td>
+<td style="text-align: left;">Control (<span class="math inline">\(A=0\)</span>)</td>
+<td style="text-align: left;">0.10</td>
+<td style="text-align: left;">1000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Males (<span class="math inline">\(V=0\)</span>)</td>
+<td style="text-align: left;">Treated (<span class="math inline">\(A=1\)</span>)</td>
+<td style="text-align: left;">0.05</td>
+<td style="text-align: left;">1000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Females (<span class="math inline">\(V=1\)</span>)</td>
+<td style="text-align: left;">Control (<span class="math inline">\(A=0\)</span>)</td>
+<td style="text-align: left;">0.20</td>
+<td style="text-align: left;">1000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Females (<span class="math inline">\(V=1\)</span>)</td>
+<td style="text-align: left;">Treated (<span class="math inline">\(A=1\)</span>)</td>
+<td style="text-align: left;">0.10</td>
+<td style="text-align: left;">1000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 1: Calculate risk differences (additive scale)</strong></p>
+<p>For males:</p>
+<p><span class="math display">\[
+\text{RD}_{\text{male}} = 0.05 - 0.10 = -0.05
+\]</span></p>
+<p>For females:</p>
+<p><span class="math display">\[
+\text{RD}_{\text{female}} = 0.10 - 0.20 = -0.10
+\]</span></p>
+<p><strong>Comparison:</strong></p>
+<p><span class="math display">\[
+\text{RD}_{\text{female}} - \text{RD}_{\text{male}} = -0.10 - (-0.05) = -0.05
+\]</span></p>
+<p>The risk difference is <strong>twice as large</strong> for females. There IS interaction on the additive scale.</p>
+<p><strong>Step 2: Calculate risk ratios (multiplicative scale)</strong></p>
+<p>For males:</p>
+<p><span class="math display">\[
+\text{RR}_{\text{male}} = \frac{0.05}{0.10} = 0.50
+\]</span></p>
+<p>For females:</p>
+<p><span class="math display">\[
+\text{RR}_{\text{female}} = \frac{0.10}{0.20} = 0.50
+\]</span></p>
+<p><strong>Comparison:</strong></p>
+<p><span class="math display">\[
+\text{RR}_{\text{female}} / \text{RR}_{\text{male}} = 0.50 / 0.50 = 1.0
+\]</span></p>
+<p>The risk ratio is <strong>identical</strong> for both groups. There is NO interaction on the multiplicative scale.</p>
+<p><strong>Step 3: Interpretation</strong></p>
+<ul>
+<li><strong>Additive perspective:</strong> The treatment provides 5 percentage points of absolute risk reduction for males but 10 percentage points for females. From a public health perspective (preventing cases), the treatment is more beneficial for females.</li>
+<li><strong>Multiplicative perspective:</strong> The treatment cuts risk in half (50% reduction) for both males and females. The relative efficacy is the same.</li>
+</ul>
+<p>Both statements are <strong>simultaneously true</strong>. The choice of scale affects:</p>
+<ul>
+<li>Statistical testing for interaction</li>
+<li>Communication to patients/policymakers</li>
+<li>Resource allocation decisions</li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Common Pitfall: “No Interaction” Depends on Scale
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Never say simply “there is no interaction” without specifying the scale. A study might report “no evidence of interaction” because they tested on the odds ratio scale, while meaningful interaction exists on the risk difference scale (which may be more policy-relevant).</p>
+</div>
+</div>
+</section>
+<section id="which-scale-should-we-use" class="level3">
+<h3>Which Scale Should We Use?</h3>
+<p>The choice depends on context:</p>
+<p><strong>Additive scale (Risk Difference) preferred when:</strong></p>
+<ul>
+<li>Making public health decisions about population impact</li>
+<li>Considering absolute number of cases prevented</li>
+<li>Allocating limited resources</li>
+<li>Assessing sufficient-component causes (mechanistic interactions)</li>
+</ul>
+<p><strong>Multiplicative scale (Risk Ratio/Odds Ratio) preferred when:</strong></p>
+<ul>
+<li>Comparing relative efficacy across different baseline risks</li>
+<li>Analyzing case-control studies (OR is natural)</li>
+<li>Effects are thought to act proportionally</li>
+<li>Traditional in some fields (epidemiology, clinical trials)</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Practical Guidance
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In most public health and policy applications, <strong>additive interaction is more meaningful</strong> because:</p>
+<ol type="1">
+<li>It directly answers “how many more cases are prevented?”</li>
+<li>It aligns with cost-effectiveness analyses</li>
+<li>It’s more interpretable to non-statisticians</li>
+</ol>
+<p>However, always report both when possible, and be explicit about which scale you’re using.</p>
+</div>
+</div>
+</section>
+<section id="mathematical-relationship-between-scales" class="level3">
+<h3>Mathematical Relationship Between Scales</h3>
+<p>To understand why interaction on one scale implies interaction on another (except in special cases), consider the mathematical relationship.</p>
+<p>For simplicity, let <span class="math inline">\(p_0^v = \Prob{Y=1 \mid A=0, V=v}\)</span> (baseline risk) and <span class="math inline">\(p_1^v = \Prob{Y=1 \mid A=1, V=v}\)</span> (treated risk).</p>
+<p><strong>No additive interaction means:</strong></p>
+<p><span class="math display">\[
+(p_1^{v=1} - p_0^{v=1}) = (p_1^{v=0} - p_0^{v=0})
+\]</span></p>
+<p><strong>No multiplicative interaction means:</strong></p>
+<p><span class="math display">\[
+\frac{p_1^{v=1}}{p_0^{v=1}} = \frac{p_1^{v=0}}{p_0^{v=0}}
+\]</span></p>
+<p>These can only both be true simultaneously if:</p>
+<ul>
+<li>The effect is zero: <span class="math inline">\(p_1^v = p_0^v\)</span> for all <span class="math inline">\(v\)</span></li>
+<li>Special boundary cases (risks near 0 or 1)</li>
+</ul>
+<p><strong>Proof sketch for incompatibility:</strong></p>
+<p>Suppose no multiplicative interaction: <span class="math inline">\(\frac{p_1^1}{p_0^1} = \frac{p_1^0}{p_0^0} = \text{RR}\)</span></p>
+<p>Then: <span class="math inline">\(p_1^1 = \text{RR} \cdot p_0^1\)</span> and <span class="math inline">\(p_1^0 = \text{RR} \cdot p_0^0\)</span></p>
+<p>Additive effects:</p>
+<p><span class="math display">\[
+\text{RD}^1 = p_1^1 - p_0^1 = \text{RR} \cdot p_0^1 - p_0^1 = p_0^1(\text{RR} - 1)
+\]</span></p>
+<p><span class="math display">\[
+\text{RD}^0 = p_1^0 - p_0^0 = \text{RR} \cdot p_0^0 - p_0^0 = p_0^0(\text{RR} - 1)
+\]</span></p>
+<p>For no additive interaction: <span class="math inline">\(\text{RD}^1 = \text{RD}^0\)</span></p>
+<p><span class="math display">\[
+p_0^1(\text{RR} - 1) = p_0^0(\text{RR} - 1)
+\]</span></p>
+<p>This requires <span class="math inline">\(p_0^1 = p_0^0\)</span> (same baseline risk) or <span class="math inline">\(\text{RR} = 1\)</span> (no effect).</p>
+<p>Thus, except in special cases, <strong>we cannot have both no additive and no multiplicative interaction.</strong></p>
+</section>
+</section>
+<section id="assessing-heterogeneity-statistical-methods" class="level2">
+<h2>🔍 Assessing Heterogeneity: Statistical Methods</h2>
+<section id="stratification-approach" class="level3">
+<h3>Stratification Approach</h3>
+<p>The most transparent method for assessing effect modification is <strong>stratification</strong>: estimate the treatment effect separately within each level of the potential modifier <span class="math inline">\(V\)</span>.</p>
+<p><strong>Algorithm:</strong></p>
+<ol type="1">
+<li>Partition the data into strata defined by <span class="math inline">\(V\)</span> (e.g., <span class="math inline">\(V=0\)</span> and <span class="math inline">\(V=1\)</span>)</li>
+<li>Within each stratum, estimate the causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span></li>
+<li>Compare effects across strata</li>
+<li>Test for statistical significance of differences</li>
+</ol>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>Transparent and easy to interpret</li>
+<li>No parametric assumptions about the form of interaction</li>
+<li>Shows actual effect estimates in each subgroup</li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul>
+<li>Requires sufficient sample size in each stratum</li>
+<li>Cannot handle continuous modifiers easily</li>
+<li>Doesn’t provide a single test statistic</li>
+</ul>
+</section>
+<section id="regression-with-interaction-terms" class="level3">
+<h3>Regression with Interaction Terms</h3>
+<p>Alternatively, we can use <strong>regression models with product terms</strong> to test for and estimate effect modification.</p>
+<section id="binary-treatment-and-binary-modifier" class="level4">
+<h4>Binary Treatment and Binary Modifier</h4>
+<p><strong>Model for the outcome:</strong></p>
+<p><span class="math display">\[
+\E{Y \mid A, V} = \beta_0 + \beta_1 A + \beta_2 V + \beta_3 (A \times V)
+\]</span></p>
+<p><strong>Interpretation of coefficients:</strong></p>
+<ul>
+<li><span class="math inline">\(\beta_0\)</span>: Expected outcome when <span class="math inline">\(A=0\)</span> and <span class="math inline">\(V=0\)</span> (reference group)</li>
+<li><span class="math inline">\(\beta_1\)</span>: Effect of treatment when <span class="math inline">\(V=0\)</span> (the “main effect” of <span class="math inline">\(A\)</span>)</li>
+<li><span class="math inline">\(\beta_2\)</span>: Difference in outcome between <span class="math inline">\(V=1\)</span> and <span class="math inline">\(V=0\)</span> when <span class="math inline">\(A=0\)</span></li>
+<li><span class="math inline">\(\beta_3\)</span>: <strong>Interaction term</strong> — additional effect of treatment when <span class="math inline">\(V=1\)</span> compared to <span class="math inline">\(V=0\)</span></li>
+</ul>
+<p><strong>Causal effects in each stratum:</strong></p>
+<p>When <span class="math inline">\(V=0\)</span>:</p>
+<p><span class="math display">\[
+\E{Y^{a=1} - Y^{a=0} \mid V=0} = \beta_1
+\]</span></p>
+<p>When <span class="math inline">\(V=1\)</span>:</p>
+<p><span class="math display">\[
+\E{Y^{a=1} - Y^{a=0} \mid V=1} = \beta_1 + \beta_3
+\]</span></p>
+<p><strong>Test for effect modification:</strong></p>
+<ul>
+<li><span class="math inline">\(H_0: \beta_3 = 0\)</span> (no effect modification)</li>
+<li><span class="math inline">\(H_1: \beta_3 \neq 0\)</span> (effect modification present)</li>
+</ul>
+<p>Use standard t-test or Wald test on <span class="math inline">\(\beta_3\)</span>.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>📌 Key Point: Interactions Are Scale-Dependent
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The regression model above tests for <strong>additive interaction</strong> (on the scale of the outcome). If you use:</p>
+<ul>
+<li><strong>Linear regression:</strong> Tests additive interaction on the scale of <span class="math inline">\(Y\)</span></li>
+<li><strong>Logistic regression:</strong> Tests multiplicative interaction on the <strong>log-odds scale</strong> (not risk ratio or risk difference!)</li>
+<li><strong>Log-linear (Poisson) regression:</strong> Tests multiplicative interaction on the log-risk scale</li>
+</ul>
+<p>Be very careful about interpretation!</p>
+</div>
+</div>
+</section>
+<section id="detailed-numerical-example-binary-binary-interaction" class="level4">
+<h4>Detailed Numerical Example: Binary-Binary Interaction</h4>
+<p>Let’s use the data from Section 2.2 and fit a linear probability model.</p>
+<p><strong>Data structure:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Person</th>
+<th style="text-align: left;"><span class="math inline">\(A\)</span></th>
+<th style="text-align: left;"><span class="math inline">\(V\)</span></th>
+<th style="text-align: left;"><span class="math inline">\(Y\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">…</td>
+<td style="text-align: left;">…</td>
+<td style="text-align: left;">…</td>
+<td style="text-align: left;">…</td>
+</tr>
+</tbody>
+</table>
+<p>With group-level summaries:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;"><span class="math inline">\(A\)</span></th>
+<th style="text-align: left;"><span class="math inline">\(V\)</span></th>
+<th style="text-align: left;"><span class="math inline">\(\bar{Y}\)</span></th>
+<th style="text-align: left;"><span class="math inline">\(n\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0.10</td>
+<td style="text-align: left;">1000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0.05</td>
+<td style="text-align: left;">1000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0.20</td>
+<td style="text-align: left;">1000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0.10</td>
+<td style="text-align: left;">1000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 1: Fit the linear model</strong></p>
+<p><span class="math display">\[
+\E{Y \mid A, V} = \beta_0 + \beta_1 A + \beta_2 V + \beta_3 (A \times V)
+\]</span></p>
+<p><strong>Predicted values for each group:</strong></p>
+<ul>
+<li><span class="math inline">\(A=0, V=0\)</span>: <span class="math inline">\(\hat{\E{Y}} = \beta_0 = 0.10\)</span></li>
+<li><span class="math inline">\(A=1, V=0\)</span>: <span class="math inline">\(\hat{\E{Y}} = \beta_0 + \beta_1 = 0.05\)</span></li>
+<li><span class="math inline">\(A=0, V=1\)</span>: <span class="math inline">\(\hat{\E{Y}} = \beta_0 + \beta_2 = 0.20\)</span></li>
+<li><span class="math inline">\(A=1, V=1\)</span>: <span class="math inline">\(\hat{\E{Y}} = \beta_0 + \beta_1 + \beta_2 + \beta_3 = 0.10\)</span></li>
+</ul>
+<p><strong>Step 2: Solve for coefficients</strong></p>
+<p>From <span class="math inline">\(A=0, V=0\)</span>:</p>
+<p><span class="math display">\[
+\beta_0 = 0.10
+\]</span></p>
+<p>From <span class="math inline">\(A=1, V=0\)</span>:</p>
+<p><span class="math display">\[
+\beta_1 = 0.05 - 0.10 = -0.05
+\]</span></p>
+<p>From <span class="math inline">\(A=0, V=1\)</span>:</p>
+<p><span class="math display">\[
+\beta_2 = 0.20 - 0.10 = 0.10
+\]</span></p>
+<p>From <span class="math inline">\(A=1, V=1\)</span>:</p>
+<p><span class="math display">\[
+\beta_3 = 0.10 - (0.10 + (-0.05) + 0.10) = 0.10 - 0.15 = -0.05
+\]</span></p>
+<p><strong>Step 3: Interpretation</strong></p>
+<ul>
+<li><span class="math inline">\(\hat{\beta}_0 = 0.10\)</span>: Baseline risk for untreated males</li>
+<li><span class="math inline">\(\hat{\beta}_1 = -0.05\)</span>: Treatment reduces risk by 5 percentage points for males</li>
+<li><span class="math inline">\(\hat{\beta}_2 = 0.10\)</span>: Females have 10 percentage points higher baseline risk</li>
+<li><span class="math inline">\(\hat{\beta}_3 = -0.05\)</span>: Treatment provides an <strong>additional</strong> 5 percentage point reduction for females</li>
+</ul>
+<p><strong>Causal effects:</strong></p>
+<ul>
+<li>Males: <span class="math inline">\(\hat{\beta}_1 = -0.05\)</span></li>
+<li>Females: <span class="math inline">\(\hat{\beta}_1 + \hat{\beta}_3 = -0.05 + (-0.05) = -0.10\)</span></li>
+</ul>
+<p>The treatment effect is <strong>twice as large</strong> for females (in absolute terms).</p>
+<p><strong>Statistical test:</strong> Test <span class="math inline">\(H_0: \beta_3 = 0\)</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R code example with simulated data matching the proportions</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>n_per_group <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">each =</span> n_per_group)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="at">each =</span> n_per_group)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate outcomes based on the specified probabilities</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">4</span> <span class="sc">*</span> n_per_group)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>Y[A <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> V <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_per_group, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.10</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>Y[A <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> V <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_per_group, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>Y[A <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> V <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_per_group, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.20</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>Y[A <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> V <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_per_group, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.10</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frame</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Y =</span> Y, <span class="at">A =</span> A, <span class="at">V =</span> V)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit linear probability model with interaction</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> V <span class="sc">+</span> A<span class="sc">:</span>V, <span class="at">data =</span> data)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Y ~ A + V + A:V, data = data)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-0.197 -0.115 -0.092 -0.048  0.952 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  0.092000   0.009869   9.322  &lt; 2e-16 ***
+A           -0.044000   0.013957  -3.153  0.00163 ** 
+V            0.105000   0.013957   7.523 6.57e-14 ***
+A:V         -0.038000   0.019738  -1.925  0.05427 .  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.3121 on 3996 degrees of freedom
+Multiple R-squared:  0.02925,   Adjusted R-squared:  0.02852 
+F-statistic: 40.13 on 3 and 3996 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># View coefficients</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(model)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)           A           V         A:V 
+      0.092      -0.044       0.105      -0.038 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test for interaction</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The interaction term is A:V</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="st">&quot;A:V&quot;</span>, ]</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Estimate  Std. Error     t value    Pr(&gt;|t|) 
+-0.03800000  0.01973797 -1.92522300  0.05427236 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate stratum-specific effects</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Effect in V=0 group (males)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>effect_V0 <span class="ot">&lt;-</span> <span class="fu">coef</span>(model)[<span class="st">&quot;A&quot;</span>]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Effect in V=1 group (females)</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>effect_V1 <span class="ot">&lt;-</span> <span class="fu">coef</span>(model)[<span class="st">&quot;A&quot;</span>] <span class="sc">+</span> <span class="fu">coef</span>(model)[<span class="st">&quot;A:V&quot;</span>]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Treatment effect for V=0 (males):&quot;</span>, effect_V0, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Treatment effect for V=0 (males): -0.044 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Treatment effect for V=1 (females):&quot;</span>, effect_V1, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Treatment effect for V=1 (females): -0.082 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Difference in effects:&quot;</span>, <span class="fu">coef</span>(model)[<span class="st">&quot;A:V&quot;</span>], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Difference in effects: -0.038 </code></pre>
+</div>
+</div>
+<p><strong>Expected output interpretation:</strong></p>
+<ul>
+<li>The coefficient for <code>A:V</code> should be close to <span class="math inline">\(-0.05\)</span> (with sampling variability)</li>
+<li>The p-value tests whether this interaction is statistically significant</li>
+<li>Confidence intervals quantify uncertainty in the interaction effect</li>
+</ul>
+</section>
+<section id="continuous-modifier" class="level4">
+<h4>Continuous Modifier</h4>
+<p>When <span class="math inline">\(V\)</span> is continuous (e.g., age, BMI), the interaction term represents how the treatment effect changes per unit increase in <span class="math inline">\(V\)</span>.</p>
+<p><strong>Model:</strong></p>
+<p><span class="math display">\[
+\E{Y \mid A, V} = \beta_0 + \beta_1 A + \beta_2 V + \beta_3 (A \times V)
+\]</span></p>
+<p><strong>Interpretation:</strong></p>
+<ul>
+<li><span class="math inline">\(\beta_3\)</span>: Change in treatment effect per 1-unit increase in <span class="math inline">\(V\)</span></li>
+<li>Treatment effect at specific value <span class="math inline">\(V=v\)</span>: <span class="math inline">\(\beta_1 + \beta_3 v\)</span></li>
+</ul>
+<p><strong>Example:</strong> Effect of exercise program (<span class="math inline">\(A\)</span>) on weight loss (<span class="math inline">\(Y\)</span>), modified by baseline BMI (<span class="math inline">\(V\)</span>)</p>
+<p>If <span class="math inline">\(\hat{\beta}_1 = -2\)</span> kg and <span class="math inline">\(\hat{\beta}_3 = -0.1\)</span> kg per BMI unit:</p>
+<ul>
+<li>At BMI = 25: Effect = <span class="math inline">\(-2 + (-0.1)(25) = -4.5\)</span> kg</li>
+<li>At BMI = 35: Effect = <span class="math inline">\(-2 + (-0.1)(35) = -5.5\)</span> kg</li>
+</ul>
+<p>The program is more effective for people with higher baseline BMI.</p>
+</section>
+</section>
+<section id="assumptions-and-causal-interpretation" class="level3">
+<h3>Assumptions and Causal Interpretation</h3>
+<p>To interpret estimated effect modification <strong>causally</strong>, we need:</p>
+<ol type="1">
+<li><strong>Conditional exchangeability</strong> within strata of <span class="math inline">\(V\)</span>:</li>
+</ol>
+<p><span class="math display">\[
+Y^a \indep A \mid V
+\]</span></p>
+<p>No unmeasured confounding within levels of the modifier.</p>
+<ol start="2" type="1">
+<li><strong>Positivity</strong> within strata:</li>
+</ol>
+<p><span class="math display">\[
+0 &lt; \Prob{A=a \mid V=v} &lt; 1 \text{ for all } v
+\]</span></p>
+<p>Both treatment levels observed at all modifier levels.</p>
+<ol start="3" type="1">
+<li><strong>Correct model specification:</strong> The interaction term captures the true heterogeneity.</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>⚠️ Common Pitfall: Confounding of Interaction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If there are <strong>unmeasured confounders that differ across strata of <span class="math inline">\(V\)</span></strong>, what appears to be effect modification may actually be <strong>confounding of the interaction</strong>.</p>
+<p><strong>Example:</strong> Studying drug effectiveness by hospital. Sicker patients go to specialized hospitals. The drug appears less effective at specialized hospitals, but this could be because those patients are sicker (confounding), not because the drug truly works differently by hospital type (effect modification).</p>
+<p><strong>Solution:</strong> Control for confounders within each stratum of <span class="math inline">\(V\)</span>, or use methods like targeted maximum likelihood estimation (TMLE).</p>
+</div>
+</div>
+</section>
+</section>
+<section id="worked-example-complete-analysis" class="level2">
+<h2>✅ Worked Example: Complete Analysis</h2>
+<p>Let’s work through a full analysis of effect modification from start to finish.</p>
+<section id="research-question" class="level3">
+<h3>Research Question</h3>
+<p>Does the effect of a job training program (<span class="math inline">\(A\)</span>: 1 = enrolled, 0 = not enrolled) on earnings one year later (<span class="math inline">\(Y\)</span>, in thousands of dollars) differ by participants’ baseline education level (<span class="math inline">\(V\)</span>: 1 = college degree, 0 = no degree)?</p>
+</section>
+<section id="dataset" class="level3">
+<h3>Dataset</h3>
+<p>Assume we have an observational study with <span class="math inline">\(n = 1000\)</span> participants. For simplicity, assume conditional exchangeability holds after accounting for baseline covariates (age, previous earnings, etc.), which we’ll suppress in this example.</p>
+<p><strong>Summary statistics:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Education (<span class="math inline">\(V\)</span>)</th>
+<th style="text-align: left;">Training (<span class="math inline">\(A\)</span>)</th>
+<th style="text-align: left;">Mean <span class="math inline">\(Y\)</span></th>
+<th style="text-align: left;">SD <span class="math inline">\(Y\)</span></th>
+<th style="text-align: left;"><span class="math inline">\(n\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">No degree (0)</td>
+<td style="text-align: left;">No (0)</td>
+<td style="text-align: left;">25</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">300</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">No degree (0)</td>
+<td style="text-align: left;">Yes (1)</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">200</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">College (1)</td>
+<td style="text-align: left;">No (0)</td>
+<td style="text-align: left;">55</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">300</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">College (1)</td>
+<td style="text-align: left;">Yes (1)</td>
+<td style="text-align: left;">58</td>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">200</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-1-stratified-analysis" class="level3">
+<h3>Step 1: Stratified Analysis</h3>
+<p><strong>Estimate effects within each education stratum:</strong></p>
+<p>For <span class="math inline">\(V=0\)</span> (no college degree):</p>
+<p><span class="math display">\[
+\widehat{\text{Effect}}_{V=0} = 32 - 25 = 7 \text{ thousand dollars}
+\]</span></p>
+<p>For <span class="math inline">\(V=1\)</span> (college degree):</p>
+<p><span class="math display">\[
+\widehat{\text{Effect}}_{V=1} = 58 - 55 = 3 \text{ thousand dollars}
+\]</span></p>
+<p><strong>Difference in effects:</strong></p>
+<p><span class="math display">\[
+7 - 3 = 4 \text{ thousand dollars}
+\]</span></p>
+<p>The training program appears to increase earnings more for those without a college degree.</p>
+</section>
+<section id="step-2-regression-with-interaction" class="level3">
+<h3>Step 2: Regression with Interaction</h3>
+<p><strong>Fit the model:</strong></p>
+<p><span class="math display">\[
+\E{Y \mid A, V} = \beta_0 + \beta_1 A + \beta_2 V + \beta_3 (A \times V)
+\]</span></p>
+<p><strong>Predicted means (solving system of equations):</strong></p>
+<p>From <span class="math inline">\(A=0, V=0\)</span>: <span class="math inline">\(\beta_0 = 25\)</span></p>
+<p>From <span class="math inline">\(A=1, V=0\)</span>: <span class="math inline">\(\beta_0 + \beta_1 = 32 \Rightarrow \beta_1 = 7\)</span></p>
+<p>From <span class="math inline">\(A=0, V=1\)</span>: <span class="math inline">\(\beta_0 + \beta_2 = 55 \Rightarrow \beta_2 = 30\)</span></p>
+<p>From <span class="math inline">\(A=1, V=1\)</span>: <span class="math inline">\(\beta_0 + \beta_1 + \beta_2 + \beta_3 = 58\)</span></p>
+<p><span class="math display">\[
+25 + 7 + 30 + \beta_3 = 58 \Rightarrow \beta_3 = -4
+\]</span></p>
+<p><strong>Results:</strong></p>
+<ul>
+<li><span class="math inline">\(\hat{\beta}_0 = 25\)</span>: Average earnings for untreated non-college group</li>
+<li><span class="math inline">\(\hat{\beta}_1 = 7\)</span>: Training effect for non-college group (+$7,000)</li>
+<li><span class="math inline">\(\hat{\beta}_2 = 30\)</span>: College graduates earn $30,000 more at baseline</li>
+<li><span class="math inline">\(\hat{\beta}_3 = -4\)</span>: Interaction term (training effect is $4,000 less for college graduates)</li>
+</ul>
+<p><strong>Causal effects by stratum:</strong></p>
+<ul>
+<li>Non-college: <span class="math inline">\(\hat{\beta}_1 = 7\)</span> thousand</li>
+<li>College: <span class="math inline">\(\hat{\beta}_1 + \hat{\beta}_3 = 7 + (-4) = 3\)</span> thousand</li>
+</ul>
+</section>
+<section id="step-3-statistical-testing" class="level3">
+<h3>Step 3: Statistical Testing</h3>
+<p><strong>Test <span class="math inline">\(H_0: \beta_3 = 0\)</span> (no effect modification)</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate Data Matching the Summary Statistics</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">456</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to Generate Normal Data with Specified Mean and SD</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>generate_group <span class="ot">&lt;-</span> <span class="cf">function</span>(n, mean, sd, A, V) {</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">Y =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> mean, <span class="at">sd =</span> sd),</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">A =</span> A,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">V =</span> V</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate Each Group</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">generate_group</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">25</span>, <span class="at">sd =</span> <span class="dv">10</span>, <span class="at">A =</span> <span class="dv">0</span>, <span class="at">V =</span> <span class="dv">0</span>),</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">generate_group</span>(<span class="dv">200</span>, <span class="at">mean =</span> <span class="dv">32</span>, <span class="at">sd =</span> <span class="dv">12</span>, <span class="at">A =</span> <span class="dv">1</span>, <span class="at">V =</span> <span class="dv">0</span>),</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">generate_group</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">55</span>, <span class="at">sd =</span> <span class="dv">15</span>, <span class="at">A =</span> <span class="dv">0</span>, <span class="at">V =</span> <span class="dv">1</span>),</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">generate_group</span>(<span class="dv">200</span>, <span class="at">mean =</span> <span class="dv">58</span>, <span class="at">sd =</span> <span class="dv">14</span>, <span class="at">A =</span> <span class="dv">1</span>, <span class="at">V =</span> <span class="dv">1</span>)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit Interaction Model</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>model_int <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> V <span class="sc">+</span> A<span class="sc">:</span>V, <span class="at">data =</span> data)</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_int)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Y ~ A + V + A:V, data = data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-44.446  -8.432  -0.307   8.451  45.874 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  25.3416     0.7295  34.737  &lt; 2e-16 ***
+A             8.9879     1.1535   7.792 1.65e-14 ***
+V            29.6400     1.0317  28.729  &lt; 2e-16 ***
+A:V          -5.4249     1.6313  -3.326 0.000915 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 12.64 on 996 degrees of freedom
+Multiple R-squared:  0.5569,    Adjusted R-squared:  0.5556 
+F-statistic: 417.3 on 3 and 996 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract Interaction Coefficient and Test</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>interaction_result <span class="ot">&lt;-</span> <span class="fu">summary</span>(model_int)<span class="sc">$</span>coefficients[<span class="st">&quot;A:V&quot;</span>, ]</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Interaction term (A:V):</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Interaction term (A:V):</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Estimate:&quot;</span>, interaction_result[<span class="st">&quot;Estimate&quot;</span>], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Estimate: -5.424883 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Std. Error:&quot;</span>, interaction_result[<span class="st">&quot;Std. Error&quot;</span>], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Std. Error: 1.631261 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;t-value:&quot;</span>, interaction_result[<span class="st">&quot;t value&quot;</span>], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>t-value: -3.325576 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;p-value:&quot;</span>, interaction_result[<span class="st">&quot;Pr(&gt;|t|)&quot;</span>], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>p-value: 0.0009145714 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Stratum-specific Effects with Confidence Intervals</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate Marginal means</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_int, <span class="sc">~</span> A <span class="sc">|</span> V)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(emm)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>V = 0:
+ contrast estimate   SE  df t.ratio p.value
+ A0 - A1     -8.99 1.15 996  -7.792  &lt;.0001
+
+V = 1:
+ contrast estimate   SE  df t.ratio p.value
+ A0 - A1     -3.56 1.15 996  -3.089  0.0021</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Or Manually Calculate:</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Effect in V=0</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>beta_A <span class="ot">&lt;-</span> <span class="fu">coef</span>(model_int)[<span class="st">&quot;A&quot;</span>]</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>se_A <span class="ot">&lt;-</span> <span class="fu">summary</span>(model_int)<span class="sc">$</span>coefficients[<span class="st">&quot;A&quot;</span>, <span class="st">&quot;Std. Error&quot;</span>]</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Effect in V=1</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>beta_A_V1 <span class="ot">&lt;-</span> <span class="fu">coef</span>(model_int)[<span class="st">&quot;A&quot;</span>] <span class="sc">+</span> <span class="fu">coef</span>(model_int)[<span class="st">&quot;A:V&quot;</span>]</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>se_A_V1 <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vcov</span>(model_int)[<span class="st">&quot;A&quot;</span>, <span class="st">&quot;A&quot;</span>] <span class="sc">+</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">vcov</span>(model_int)[<span class="st">&quot;A:V&quot;</span>, <span class="st">&quot;A:V&quot;</span>] <span class="sc">+</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span> <span class="sc">*</span> <span class="fu">vcov</span>(model_int)[<span class="st">&quot;A&quot;</span>, <span class="st">&quot;A:V&quot;</span>]</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">--- Stratum-Specific Effects ---</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Stratum-Specific Effects ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;V=0 (No College):</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>V=0 (No College):</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;  Effect:&quot;</span>, beta_A, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Effect: 8.987925 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;  95% CI: [&quot;</span>, beta_A <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se_A, <span class="st">&quot;,&quot;</span>, beta_A <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se_A, <span class="st">&quot;]</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  95% CI: [ 6.727112 , 11.24874 ]</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">V=1 (College):</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+V=1 (College):</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;  Effect:&quot;</span>, beta_A_V1, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Effect: 3.563042 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r cell-code"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;  95% CI: [&quot;</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    beta_A_V1 <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se_A_V1,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;,&quot;</span>,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    beta_A_V1 <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se_A_V1,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;]</span><span class="sc">\n</span><span class="st">&quot;</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  95% CI: [ 1.302229 , 5.823854 ]</code></pre>
+</div>
+</div>
+</section>
+<section id="step-4-interpretation-and-reporting" class="level3">
+<h3>Step 4: Interpretation and Reporting</h3>
+<p><strong>Statistical conclusion:</strong> If <span class="math inline">\(p &lt; 0.05\)</span> for <span class="math inline">\(\beta_3\)</span>, we reject the null hypothesis of no effect modification. There is statistically significant evidence that education level modifies the effect of job training on earnings.</p>
+<p><strong>Substantive interpretation:</strong> The job training program increases earnings for both groups, but the benefit is larger (by approximately $4,000) for individuals without a college degree. This suggests:</p>
+<ol type="1">
+<li><strong>Targeting:</strong> Programs may be more cost-effective when targeted to non-college populations</li>
+<li><strong>Mechanisms:</strong> College graduates may already have skills that the training provides, leading to smaller marginal benefits</li>
+<li><strong>Policy:</strong> This is evidence of <strong>heterogeneous treatment effects</strong> relevant for resource allocation</li>
+</ol>
+<p><strong>Report format:</strong></p>
+<blockquote>
+<p>“We found significant effect modification by education level (interaction p = 0.XX). Among participants without a college degree, the training program increased earnings by $7,000 (95% CI: [X, Y]). Among college graduates, the effect was smaller: $3,000 (95% CI: [X, Y]). The difference in effects was statistically significant (<span class="math inline">\(\beta_3 = -4\)</span>, SE = Z, p = 0.XX), indicating that the training program is more beneficial for those without prior college education.”</p>
+</blockquote>
+</section>
+</section>
+<section id="visualizing-effect-modification" class="level2">
+<h2>📊 Visualizing Effect Modification</h2>
+<p>Effective visualization is crucial for communicating heterogeneous effects.</p>
+<section id="forest-plots" class="level3">
+<h3>Forest Plots</h3>
+<p>Show estimated effects and confidence intervals for each subgroup:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Data for Forest Plot</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>subgroup_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Subgroup =</span> <span class="fu">c</span>(<span class="st">&quot;No College Degree&quot;</span>, <span class="st">&quot;College Degree&quot;</span>),</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Effect =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">3</span>),</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Lower =</span> <span class="fu">c</span>(<span class="fl">5.5</span>, <span class="fl">1.2</span>), <span class="co"># hypothetical CIs</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Upper =</span> <span class="fu">c</span>(<span class="fl">8.5</span>, <span class="fl">4.8</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(subgroup_results, <span class="fu">aes</span>(<span class="at">x =</span> Subgroup, <span class="at">y =</span> Effect)) <span class="sc">+</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> Lower, <span class="at">ymax =</span> Upper), <span class="at">width =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Job Training Effect on Earnings by Education Level&quot;</span>,</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">&quot;Treatment Effect (thousands of dollars)&quot;</span>,</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code></pre></div>
+</section>
+<section id="interaction-plots" class="level3">
+<h3>Interaction Plots</h3>
+<p>For continuous modifiers, plotthe predicted treatment effect as a function of the modifier:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example with Continuous Modifier (e.g., age)</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume We Have Age as a Continuous Variable instead of Education</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate Data with Age as Modifier</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">789</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>age <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="dv">18</span>, <span class="dv">65</span>)</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="dv">30</span> <span class="sc">+</span> <span class="dv">5</span><span class="sc">*</span>A <span class="sc">-</span> <span class="fl">0.2</span><span class="sc">*</span>age <span class="sc">+</span> <span class="fl">0.15</span><span class="sc">*</span>A<span class="sc">*</span>age <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">10</span>)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>data_age <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Y =</span> Y, <span class="at">A =</span> A, <span class="at">age =</span> age)</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit Model with Continuous Interaction</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>model_age <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> age <span class="sc">+</span> A<span class="sc">:</span>age, <span class="at">data =</span> data_age)</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Prediction Data</span></span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>pred_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">seq</span>(<span class="dv">18</span>, <span class="dv">65</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>pred_data<span class="sc">$</span>Y_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_age, <span class="at">newdata =</span> pred_data)</span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pred_data, <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> Y_pred, <span class="at">color =</span> <span class="fu">factor</span>(A), <span class="at">linetype =</span> <span class="fu">factor</span>(A))) <span class="sc">+</span></span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;0&quot;</span> <span class="ot">=</span> <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="st">&quot;red&quot;</span>),</span>
+<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Control&quot;</span>, <span class="st">&quot;Treated&quot;</span>),</span>
+<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a>                     <span class="at">name =</span> <span class="st">&quot;Treatment&quot;</span>) <span class="sc">+</span></span>
+<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linetype_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;0&quot;</span> <span class="ot">=</span> <span class="st">&quot;solid&quot;</span>, <span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="st">&quot;solid&quot;</span>),</span>
+<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a>                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Control&quot;</span>, <span class="st">&quot;Treated&quot;</span>),</span>
+<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a>                        <span class="at">name =</span> <span class="st">&quot;Treatment&quot;</span>) <span class="sc">+</span></span>
+<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Predicted Outcomes by Treatment and Age&quot;</span>,</span>
+<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Interaction between treatment and age&quot;</span>,</span>
+<span id="cb42-36"><a href="#cb42-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Age (years)&quot;</span>,</span>
+<span id="cb42-37"><a href="#cb42-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Predicted Earnings (thousands)&quot;</span></span>
+<span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-41"><a href="#cb42-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate and Plot Treatment Effect as Function of Age</span></span>
+<span id="cb42-42"><a href="#cb42-42" aria-hidden="true" tabindex="-1"></a>effect_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb42-43"><a href="#cb42-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">seq</span>(<span class="dv">18</span>, <span class="dv">65</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb42-44"><a href="#cb42-44" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-45"><a href="#cb42-45" aria-hidden="true" tabindex="-1"></a>effect_data<span class="sc">$</span>effect <span class="ot">&lt;-</span> <span class="fu">coef</span>(model_age)[<span class="st">&quot;A&quot;</span>] <span class="sc">+</span> <span class="fu">coef</span>(model_age)[<span class="st">&quot;A:age&quot;</span>] <span class="sc">*</span> effect_data<span class="sc">$</span>age</span>
+<span id="cb42-46"><a href="#cb42-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-47"><a href="#cb42-47" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(effect_data, <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> effect)) <span class="sc">+</span></span>
+<span id="cb42-48"><a href="#cb42-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>) <span class="sc">+</span></span>
+<span id="cb42-49"><a href="#cb42-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb42-50"><a href="#cb42-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb42-51"><a href="#cb42-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Treatment Effect as a Function of Age&quot;</span>,</span>
+<span id="cb42-52"><a href="#cb42-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Age (years)&quot;</span>,</span>
+<span id="cb42-53"><a href="#cb42-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Treatment Effect (thousands)&quot;</span></span>
+<span id="cb42-54"><a href="#cb42-54" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb42-55"><a href="#cb42-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+</section>
+<section id="heatmaps-for-multiple-modifiers" class="level3">
+<h3>Heatmaps for Multiple Modifiers</h3>
+<p>When examining multiple potential effect modifiers simultaneously:</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example with Two Modifiers: Education and Baseline Income</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is for Illustration only</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Hypothetical Effect Estimates across Two Modifiers</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>effect_matrix <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">education =</span> <span class="fu">c</span>(<span class="st">&quot;No HS&quot;</span>, <span class="st">&quot;HS&quot;</span>, <span class="st">&quot;Some College&quot;</span>, <span class="st">&quot;College+&quot;</span>),</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">income_quartile =</span> <span class="fu">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;Q2&quot;</span>, <span class="st">&quot;Q3&quot;</span>, <span class="st">&quot;Q4&quot;</span>)</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate Effect Sizes (for illustration)</span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>effect_matrix<span class="sc">$</span>effect <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">16</span>, <span class="at">mean =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(effect_matrix, <span class="fu">aes</span>(<span class="at">x =</span> education, <span class="at">y =</span> income_quartile, <span class="at">fill =</span> effect)) <span class="sc">+</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">&quot;white&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(effect, <span class="dv">1</span>)), <span class="at">color =</span> <span class="st">&quot;white&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis</span>(<span class="at">name =</span> <span class="st">&quot;Treatment</span><span class="sc">\n</span><span class="st">Effect&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Treatment Effect by Education and Income&quot;</span>,</span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Education Level&quot;</span>,</span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Baseline Income Quartile&quot;</span></span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
+</section>
+</section>
+<section id="mathematical-framework-and-derivations" class="level2">
+<h2>🧮 Mathematical Framework and Derivations</h2>
+<section id="formal-definition-of-effect-modification" class="level3">
+<h3>Formal Definition of Effect Modification</h3>
+<p>Let’s formalize effect modification in the potential outcomes framework.</p>
+<p><strong>Definition (Effect Modification on Additive Scale):</strong></p>
+<p>Effect modification by <span class="math inline">\(V\)</span> is present when there exist values <span class="math inline">\(v, v&#39; \in \mathcal{V}\)</span> such that:</p>
+<p><span class="math display">\[
+\E{Y^{a=1} - Y^{a=0} \mid V = v} \neq \E{Y^{a=1} - Y^{a=0} \mid V = v&#39;}
+\]</span></p>
+<p>Equivalently:</p>
+<p><span class="math display">\[
+\E{Y^{a=1} \mid V = v} - \E{Y^{a=0} \mid V = v} \neq \E{Y^{a=1} \mid V = v&#39;} - \E{Y^{a=0} \mid V = v&#39;}
+\]</span></p>
+<p><strong>Definition (Effect Modification on Multiplicative Scale):</strong></p>
+<p>Effect modification by <span class="math inline">\(V\)</span> is present on the ratio scale when:</p>
+<p><span class="math display">\[
+\frac{\E{Y^{a=1} \mid V = v}}{\E{Y^{a=0} \mid V = v}} \neq \frac{\E{Y^{a=1} \mid V = v&#39;}}{\E{Y^{a=0} \mid V = v&#39;}}
+\]</span></p>
+</section>
+<section id="identification-under-conditional-exchangeability" class="level3">
+<h3>Identification Under Conditional Exchangeability</h3>
+<p><strong>Assumption (Conditional Exchangeability within Strata of <span class="math inline">\(V\)</span>):</strong></p>
+<p><span class="math display">\[
+Y^a \indep A \mid V \quad \text{for all } a
+\]</span></p>
+<p><strong>Theorem (Identification of Stratum-Specific Effects):</strong></p>
+<p>Under conditional exchangeability and positivity within strata, the stratum-specific average causal effect is identified:</p>
+<p><span class="math display">\[
+\E{Y^{a=1} - Y^{a=0} \mid V = v} = \E{Y \mid A=1, V=v} - \E{Y \mid A=0, V=v}
+\]</span></p>
+<p><strong>Proof:</strong></p>
+<p>Start with the left-hand side:</p>
+<p><span class="math display">\[
+\E{Y^{a=1} - Y^{a=0} \mid V = v}
+\]</span></p>
+<p>By linearity of expectation:</p>
+<p><span class="math display">\[
+= \E{Y^{a=1} \mid V = v} - \E{Y^{a=0} \mid V = v}
+\]</span></p>
+<p>Under conditional exchangeability (<span class="math inline">\(Y^a \indep A \mid V\)</span>), we have:</p>
+<p><span class="math display">\[
+\E{Y^a \mid V = v} = \E{Y^a \mid A=a, V = v}
+\]</span></p>
+<p>By consistency (<span class="math inline">\(Y = Y^A\)</span> when <span class="math inline">\(A=a\)</span> is realized):</p>
+<p><span class="math display">\[
+\E{Y^a \mid A=a, V = v} = \E{Y \mid A=a, V = v}
+\]</span></p>
+<p>Therefore:</p>
+<p><span class="math display">\[
+\E{Y^{a=1} \mid V = v} - \E{Y^{a=0} \mid V = v} = \E{Y \mid A=1, V=v} - \E{Y \mid A=0, V=v}
+\]</span></p>
+<p>This shows we can estimate causal effects within strata using observed data. <span class="math inline">\(\square\)</span></p>
+</section>
+<section id="variance-of-interaction-effects" class="level3">
+<h3>Variance of Interaction Effects</h3>
+<p>When we estimate <span class="math inline">\(\beta_3\)</span> in the regression model, understanding its variance is important for inference.</p>
+<p><strong>Linear Model:</strong></p>
+<p><span class="math display">\[
+Y_i = \beta_0 + \beta_1 A_i + \beta_2 V_i + \beta_3 (A_i \times V_i) + \epsilon_i
+\]</span></p>
+<p>where <span class="math inline">\(\epsilon_i \sim N(0, \sigma^2)\)</span> independently.</p>
+<p><strong>Design matrix</strong> (for <span class="math inline">\(n\)</span> observations):</p>
+<p><span class="math display">\[
+\mathbf{X} = \begin{bmatrix} 1 &amp; A_1 &amp; V_1 &amp; A_1 V_1 \ 1 &amp; A_2 &amp; V_2 &amp; A_2 V_2 \ \vdots &amp; \vdots &amp; \vdots &amp; \vdots \ 1 &amp; A_n &amp; V_n &amp; A_n V_n \end{bmatrix}
+\]</span></p>
+<p><strong>Variance-covariance matrix of <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>:</strong></p>
+<p><span class="math display">\[
+\var{\hat{\boldsymbol{\beta}}} = \sigma^2 (\mathbf{X}^\top \mathbf{X})^{-1}
+\]</span></p>
+<p>The variance of the interaction coefficient is the <span class="math inline">\((4,4)\)</span> element:</p>
+<p><span class="math display">\[
+\var{\hat{\beta}_3} = \sigma^2 [(\mathbf{X}^\top \mathbf{X})^{-1}]_{44}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>🧠 Intuition for Interaction Variance
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The variance of <span class="math inline">\(\hat{\beta}_3\)</span> depends on:</p>
+<ol type="1">
+<li><strong>Sample size:</strong> Larger <span class="math inline">\(n\)</span> reduces variance</li>
+<li><strong>Distribution of <span class="math inline">\((A, V)\)</span>:</strong> Variance is smallest when we have balanced samples across all four combinations <span class="math inline">\((A=0, V=0)\)</span>, <span class="math inline">\((A=1, V=0)\)</span>, <span class="math inline">\((A=0, V=1)\)</span>, <span class="math inline">\((A=1, V=1)\)</span></li>
+<li><strong>Outcome variance <span class="math inline">\(\sigma^2\)</span>:</strong> More noise in <span class="math inline">\(Y\)</span> increases uncertainty</li>
+<li><strong>Correlation structure:</strong> If <span class="math inline">\(A\)</span> and <span class="math inline">\(V\)</span> are highly correlated, interaction estimation becomes difficult (multicollinearity)</li>
+</ol>
+<p><strong>Practical implication:</strong> Testing for interactions requires larger sample sizes than testing main effects. As a rule of thumb, you need <strong>4 times the sample size</strong> to detect an interaction of the same magnitude as a main effect with the same power.</p>
+</div>
+</div>
+</section>
+<section id="relationship-to-sufficient-component-causes" class="level3">
+<h3>Relationship to Sufficient-Component Causes</h3>
+<p>In epidemiology, <strong>sufficient-component cause models</strong> provide a mechanistic interpretation of interaction.</p>
+<p><strong>Framework:</strong> - A <strong>sufficient cause</strong> is a set of conditions that inevitably produce the outcome - Each sufficient cause consists of multiple <strong>component causes</strong> - The outcome occurs when any sufficient cause is completed</p>
+<p><strong>Example:</strong> Disease (<span class="math inline">\(Y=1\)</span>) occurs if: - Sufficient cause 1: Genetic susceptibility (<span class="math inline">\(G\)</span>) AND environmental exposure (<span class="math inline">\(E\)</span>) - Sufficient cause 2: High viral load (<span class="math inline">\(V\)</span>) alone</p>
+<p><strong>Additive interaction</strong> corresponds to <strong>synergism</strong> in the sufficient-component cause framework:</p>
+<p>Two factors <span class="math inline">\(A\)</span> and <span class="math inline">\(V\)</span> show synergism if they work together in at least one sufficient cause.</p>
+<p><strong>Measure of synergism:</strong></p>
+<p>The <strong>Relative Excess Risk due to Interaction (RERI)</strong>:</p>
+<p><span class="math display">\[
+\text{RERI} = \text{RR}_{11} - \text{RR}_{10} - \text{RR}_{01} + 1
+\]</span></p>
+<p>where <span class="math inline">\(\text{RR}_{av}\)</span> denotes the risk ratio for <span class="math inline">\(A=a, V=v\)</span> relative to <span class="math inline">\(A=0, V=0\)</span>.</p>
+<p>If <span class="math inline">\(\text{RERI} &gt; 0\)</span>: <strong>Synergism</strong> (positive additive interaction) If <span class="math inline">\(\text{RERI} &lt; 0\)</span>: <strong>Antagonism</strong> (negative additive interaction) If <span class="math inline">\(\text{RERI} = 0\)</span>: No interaction on additive scale</p>
+<p><strong>Derivation of RERI:</strong></p>
+<p>Let <span class="math inline">\(p_{av} = \Prob{Y=1 \mid A=a, V=v}\)</span> and <span class="math inline">\(p_{00} = \Prob{Y=1 \mid A=0, V=0}\)</span> be the baseline risk.</p>
+<p>Risk ratios:</p>
+<p><span class="math display">\[
+\text{RR}_{11} = \frac{p_{11}}{p_{00}}, \quad \text{RR}_{10} = \frac{p_{10}}{p_{00}}, \quad \text{RR}_{01} = \frac{p_{01}}{p_{00}}
+\]</span></p>
+<p>Risk differences:</p>
+<p><span class="math display">\[
+\text{RD}_{11} = p_{11} - p_{00}, \quad \text{RD}_{10} = p_{10} - p_{00}, \quad \text{RD}_{01} = p_{01} - p_{00}
+\]</span></p>
+<p>Additive interaction is:</p>
+<p><span class="math display">\[
+\text{RD}_{11} - \text{RD}_{10} - \text{RD}_{01} = (p_{11} - p_{00}) - (p_{10} - p_{00}) - (p_{01} - p_{00})
+\]</span></p>
+<p><span class="math display">\[
+= p_{11} - p_{10} - p_{01} + p_{00}
+\]</span></p>
+<p>Converting to relative scale by dividing by <span class="math inline">\(p_{00}\)</span>:</p>
+<p><span class="math display">\[
+\frac{p_{11} - p_{10} - p_{01} + p_{00}}{p_{00}} = \frac{p_{11}}{p_{00}} - \frac{p_{10}}{p_{00}} - \frac{p_{01}}{p_{00}} + 1
+\]</span></p>
+<p><span class="math display">\[
+= \text{RR}_{11} - \text{RR}_{10} - \text{RR}_{01} + 1 = \text{RERI}
+\]</span></p>
+<p><strong>Example calculation:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;"><span class="math inline">\(A\)</span></th>
+<th style="text-align: left;"><span class="math inline">\(V\)</span></th>
+<th style="text-align: left;"><span class="math inline">\(p_{av}\)</span></th>
+<th style="text-align: left;"><span class="math inline">\(\text{RR}_{av}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0.01</td>
+<td style="text-align: left;">1.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0.03</td>
+<td style="text-align: left;">3.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0.02</td>
+<td style="text-align: left;">2.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0.08</td>
+<td style="text-align: left;">8.00</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[
+\text{RERI} = 8.00 - 3.00 - 2.00 + 1 = 4.00
+\]</span></p>
+<p>Interpretation: 4 times as many cases occur due to the joint action of <span class="math inline">\(A\)</span> and <span class="math inline">\(V\)</span> than would be expected from their independent effects. This indicates strong synergism.</p>
+</section>
+</section>
+<section id="common-pitfalls-and-misconceptions" class="level2">
+<h2>⚠️ Common Pitfalls and Misconceptions</h2>
+<section id="confusing-statistical-and-biological-interaction" class="level3">
+<h3>Confusing Statistical and Biological Interaction</h3>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>⚠️ Pitfall: Interaction Terminology
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The term “interaction” is used differently across disciplines:</p>
+<ul>
+<li><strong>Statistical interaction:</strong> Departure from additivity in a statistical model (scale-dependent)</li>
+<li><strong>Biological interaction:</strong> Joint action of causes in producing disease (mechanistic)</li>
+<li><strong>Pharmacological interaction:</strong> When drugs affect each other’s mechanisms</li>
+</ul>
+<p>These are related but distinct concepts. Statistical interaction doesn’t necessarily imply a biological mechanism, and vice versa.</p>
+</div>
+</div>
+</section>
+<section id="multiple-testing-problem" class="level3">
+<h3>Multiple Testing Problem</h3>
+<p>When examining many potential effect modifiers, false positives become likely.</p>
+<p><strong>Problem:</strong> If you test 20 subgroup effects at <span class="math inline">\(\alpha = 0.05\)</span>, you expect 1 false positive even if no true effect modification exists.</p>
+<p><strong>Solutions:</strong></p>
+<ol type="1">
+<li><strong>Pre-specification:</strong> Declare effect modifiers of interest a priori based on theory</li>
+<li><strong>Multiple testing correction:</strong> Use Bonferroni, FDR, or hierarchical testing procedures</li>
+<li><strong>Replication:</strong> Confirm findings in independent datasets</li>
+<li><strong>Effect size consideration:</strong> Don’t rely solely on p-values; consider magnitude and clinical relevance</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>🧠 Best Practice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In your analysis plan, specify:</p>
+<ul>
+<li>Primary effect modifier(s) to be tested with full <span class="math inline">\(\alpha = 0.05\)</span></li>
+<li>Secondary (exploratory) modifiers tested at adjusted significance levels</li>
+<li>How results will be interpreted differently for confirmatory vs. exploratory analyses</li>
+</ul>
+<p>This prevents “fishing” for significant subgroups post-hoc.</p>
+</div>
+</div>
+</section>
+<section id="power-for-interaction-detection" class="level3">
+<h3>6.3 Power for Interaction Detection</h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>📌 Critical Statistical Fact
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Detecting interactions requires much larger sample sizes than detecting main effects.</p>
+<p><strong>Rule of thumb:</strong> To achieve the same power to detect an interaction of size <span class="math inline">\(\delta\)</span> as a main effect of size <span class="math inline">\(\delta\)</span>, you need approximately <strong>4 times the sample size</strong>.</p>
+<p><strong>Why?</strong> The interaction term <span class="math inline">\(A \times V\)</span> has less variance explained because it’s the product of two variables, and fewer observations inform the interaction parameter.</p>
+</div>
+</div>
+<p><strong>Example:</strong></p>
+<ul>
+<li>To detect a main effect of <span class="math inline">\(\delta = 0.3\)</span> with 80% power requires <span class="math inline">\(n = 176\)</span></li>
+<li>To detect an interaction of <span class="math inline">\(\delta = 0.3\)</span> with 80% power requires <span class="math inline">\(n = 704\)</span></li>
+</ul>
+<p><strong>Implication:</strong> Many studies are underpowered for subgroup analyses. Non-significant interaction tests should be interpreted cautiously—absence of evidence is not evidence of absence.</p>
+</section>
+<section id="simpsons-paradox-and-collider-bias" class="level3">
+<h3>Simpson’s Paradox and Collider Bias</h3>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>⚠️ Danger: Conditioning on Colliders
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Stratifying by certain variables can <strong>induce</strong> spurious associations or mask true ones.</p>
+<p>If <span class="math inline">\(V\)</span> is a <strong>collider</strong> (caused by both <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>, or by their common causes), conditioning on <span class="math inline">\(V\)</span> opens a non-causal path and biases effect estimates.</p>
+</div>
+</div>
+<p><strong>Example:</strong></p>
+<pre><code>A → Y
+↓   ↓
+  V</code></pre>
+<p>Here, <span class="math inline">\(V\)</span> is a collider. Stratifying by <span class="math inline">\(V\)</span> induces a spurious association between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> even if there’s no causal effect.</p>
+<p><strong>Implication:</strong> Not every variable is a valid effect modifier for causal analysis. Use causal diagrams (DAGs) to determine whether conditioning on <span class="math inline">\(V\)</span> is appropriate.</p>
+</section>
+<section id="measurement-error-in-modifiers" class="level3">
+<h3>Measurement Error in Modifiers</h3>
+<p>If the effect modifier <span class="math inline">\(V\)</span> is measured with error, interaction effects may be attenuated (bias toward the null) or distorted.</p>
+<p><strong>Example:</strong> If age is the true modifier but is self-reported with error, the estimated interaction <span class="math inline">\(\hat{\beta}_3\)</span> will underestimate the true interaction.</p>
+</section>
+</section>
+<section id="advanced-topics-multiple-effect-modifiers" class="level2">
+<h2>🎓 Advanced Topics: Multiple Effect Modifiers</h2>
+<section id="three-way-interactions" class="level3">
+<h3>Three-Way Interactions</h3>
+<p>When multiple variables modify effects, we can have higher-order interactions.</p>
+<p><strong>Model with two modifiers <span class="math inline">\(V\)</span> and <span class="math inline">\(W\)</span>:</strong></p>
+<p><span class="math display">\[
+\E{Y \mid A, V, W} = \beta_0 + \beta_1 A + \beta_2 V + \beta_3 W + \beta_4 (A \times V) + \beta_5 (A \times W) + \beta_6 (V \times W) + \beta_7 (A \times V \times W)
+\]</span></p>
+<p><strong>Interpretation of <span class="math inline">\(\beta_7\)</span>:</strong> The three-way interaction captures whether the effect modification by <span class="math inline">\(V\)</span> itself differs across levels of <span class="math inline">\(W\)</span>.</p>
+<p><strong>Example:</strong></p>
+<ul>
+<li>Drug effect (<span class="math inline">\(A\)</span>) modified by genotype (<span class="math inline">\(V\)</span>) and sex (<span class="math inline">\(W\)</span>)</li>
+<li><span class="math inline">\(\beta_7 \neq 0\)</span> means: “The genotype’s modification of the drug effect is different for males vs. females”</li>
+</ul>
+<p><strong>Caution:</strong> Three-way interactions are hard to interpret and require very large samples. Use sparingly and only when theoretically motivated.</p>
+</section>
+<section id="machine-learning-for-heterogeneous-effects" class="level3">
+<h3>Machine Learning for Heterogeneous Effects</h3>
+<p>Modern methods allow flexible discovery of effect modification without pre-specifying functional forms:</p>
+<p><strong>Approaches:</strong></p>
+<ol type="1">
+<li><strong>Causal trees/forests:</strong> Partition covariate space to find subgroups with different effects
+<ul>
+<li>Random forests adapted for treatment effect estimation</li>
+<li>Algorithms: <code>grf</code> package in R (Generalized Random Forests)</li>
+</ul></li>
+<li><strong>BART (Bayesian Additive Regression Trees):</strong> Nonparametric Bayesian method
+<ul>
+<li>Automatically captures interactions</li>
+<li>Provides uncertainty quantification</li>
+</ul></li>
+<li><strong>Meta-learners:</strong> Two-stage approaches
+<ul>
+<li>S-learner: Single model with treatment-covariate interactions</li>
+<li>T-learner: Separate models for treated and control</li>
+<li>X-learner: More efficient combination</li>
+</ul></li>
+</ol>
+<p><strong>Example with Causal Forests:</strong></p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install if Needed: install.packages(&quot;grf&quot;)</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(grf)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate Data</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">999</span>)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(n <span class="sc">*</span> <span class="dv">5</span>), n, <span class="dv">5</span>)  <span class="co"># 5 covariates</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>W <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>)  <span class="co"># Treatment</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="co"># True Heterogeneous Effect: Effect Depends on X1 and X2</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>tau <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> X[,<span class="dv">1</span>] <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> (X[,<span class="dv">2</span>] <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> tau <span class="sc">*</span> W <span class="sc">+</span> X[,<span class="dv">1</span>] <span class="sc">+</span> X[,<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit Causal Forest</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>cf <span class="ot">&lt;-</span> <span class="fu">causal_forest</span>(X, Y, W)</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict Individual Treatment Effects</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>tau_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(cf)<span class="sc">$</span>predictions</span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Variable Importance for Effect Heterogeneity</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>var_imp <span class="ot">&lt;-</span> <span class="fu">variable_importance</span>(cf)</span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(var_imp)</span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate Average Treatment Effect</span></span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a><span class="fu">average_treatment_effect</span>(cf)</span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Best Linear Projection: Which Variables Drive Heterogeneity?</span></span>
+<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a>blp <span class="ot">&lt;-</span> <span class="fu">best_linear_projection</span>(cf, X)</span>
+<span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(blp)</span></code></pre></div>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>Data-driven discovery of effect modifiers</li>
+<li>Handles complex, nonlinear interactions</li>
+<li>No need to pre-specify interaction terms</li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul>
+<li>Less interpretable than simple regression</li>
+<li>Requires larger samples</li>
+<li>Risk of overfitting without proper validation</li>
+</ul>
+</section>
+</section>
+<section id="summary-and-key-takeaways" class="level2">
+<h2>📝 Summary and Key Takeaways</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>🧠 Key Concepts to Remember
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Effect modification</strong> is about heterogeneity in causal effects, NOT bias in estimation (that’s confounding)</li>
+<li><strong>Scale matters critically:</strong> Interaction on additive scale ≠ interaction on multiplicative scale (except in special cases)</li>
+<li><strong>Additive scale</strong> (risk difference) is usually more relevant for public health and policy decisions</li>
+<li><strong>Identification requires:</strong> Conditional exchangeability within strata of the effect modifier</li>
+<li><strong>Analysis methods:</strong>
+<ul>
+<li>Stratification: Transparent but limited to categorical modifiers</li>
+<li>Regression interactions: Flexible but requires correct specification</li>
+<li>Machine learning: Data-driven but less interpretable</li>
+</ul></li>
+<li><strong>Pitfalls to avoid:</strong>
+<ul>
+<li>Multiple testing without correction</li>
+<li>Underpowered interaction tests</li>
+<li>Conditioning on colliders</li>
+<li>Confusing statistical and biological interaction</li>
+</ul></li>
+<li><strong>Reporting:</strong> Always specify the scale, provide stratum-specific effects with confidence intervals, and be transparent about pre-specification vs. exploratory analyses</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="check-your-understanding" class="level2">
+<h2>❓ Check Your Understanding</h2>
+</section>
+<section id="question-1-distinguishing-concepts" class="level2 callout-question">
+<h2>Question 1: Distinguishing Concepts</h2>
+<p>A study finds that age is associated with both statin use and cardiovascular disease risk. Additionally, statins reduce CVD risk more in older patients than younger patients.</p>
+<p><strong>Which of the following is true?</strong></p>
+<ol type="A">
+<li>Age is only a confounder</li>
+<li>Age is only an effect modifier</li>
+<li>Age is both a confounder and an effect modifier</li>
+<li>Age is neither a confounder nor an effect modifier</li>
+</ol>
+<details>
+<summary>
+Click for answer
+</summary>
+<p><strong>Answer: C</strong></p>
+Age is a <strong>confounder</strong> because it affects both treatment (older people more likely to take statins) and outcome (older people at higher baseline risk). It’s also an <strong>effect modifier</strong> because the causal effect of statins differs by age group. The same variable can play both roles simultaneously. To estimate unbiased stratum-specific effects, we need to account for age as a confounder within each age stratum if there are other age-related confounders.
+</details>
+</section>
+<section id="question-2-scale-dependency" class="level2 callout-question">
+<h2>Question 2: Scale Dependency</h2>
+<p>A vaccine reduces disease risk from 20% to 10% in adults and from 10% to 5% in children.</p>
+<p><strong>Calculate:</strong> a) Risk differences in each group b) Risk ratios in each group c) Is there effect modification on the additive scale? d) Is there effect modification on the multiplicative scale?</p>
+<details>
+<summary>
+Click for answer
+</summary>
+<p><strong>a) Risk differences:</strong> - Adults: <span class="math inline">\(0.10 - 0.20 = -0.10\)</span> (10 percentage point reduction) - Children: <span class="math inline">\(0.05 - 0.10 = -0.05\)</span> (5 percentage point reduction)</p>
+<p><strong>b) Risk ratios:</strong> - Adults: <span class="math inline">\(0.10 / 0.20 = 0.50\)</span> (50% of original risk) - Children: <span class="math inline">\(0.05 / 0.10 = 0.50\)</span> (50% of original risk)</p>
+<p><strong>c) Additive scale:</strong> YES, effect modification present The absolute risk reduction differs (<span class="math inline">\(-0.10\)</span> vs <span class="math inline">\(-0.05\)</span>)</p>
+<p><strong>d) Multiplicative scale:</strong> NO effect modification The relative risk is identical (<span class="math inline">\(0.50\)</span> in both groups)</p>
+<strong>Interpretation:</strong> The vaccine cuts risk in half for both groups (same relative efficacy), but prevents twice as many cases per 100 people in adults because their baseline risk is higher. For resource allocation, the additive perspective may be more relevant.
+</details>
+</section>
+<section id="question-3-regression-interpretation" class="level2 callout-question">
+<h2>Question 3: Regression Interpretation</h2>
+<p>You fit the model: <span class="math inline">\(\E{Y \mid A, V} = 50 + 10A + 20V - 5(A \times V)\)</span></p>
+<p>where <span class="math inline">\(Y\)</span> is blood pressure, <span class="math inline">\(A\)</span> is medication (1=yes, 0=no), and <span class="math inline">\(V\)</span> is diabetes status (1=yes, 0=no).</p>
+<p><strong>What is the treatment effect for:</strong> a) Non-diabetic patients (<span class="math inline">\(V=0\)</span>)? b) Diabetic patients (<span class="math inline">\(V=1\)</span>)? c) Interpret the interaction coefficient <span class="math inline">\(-5\)</span>.</p>
+<details>
+<summary>
+Click for answer
+</summary>
+<p><strong>a) Non-diabetic patients (<span class="math inline">\(V=0\)</span>):</strong></p>
+<p><span class="math display">\[
+\E{Y \mid A=1, V=0} - \E{Y \mid A=0, V=0} = (50 + 10) - (50) = 10
+\]</span></p>
+<p>The medication reduces blood pressure by 10 units.</p>
+<p><strong>b) Diabetic patients (<span class="math inline">\(V=1\)</span>):</strong></p>
+<p><span class="math display">\[
+\E{Y \mid A=1, V=1} - \E{Y \mid A=0, V=1} = (50 + 10 + 20 - 5) - (50 + 20) = 5
+\]</span></p>
+<p>The medication reduces blood pressure by only 5 units.</p>
+<p><strong>c) Interpretation of <span class="math inline">\(-5\)</span>:</strong></p>
+The interaction coefficient of <span class="math inline">\(-5\)</span> means that the medication is 5 units less effective for diabetic patients compared to non-diabetic patients. Equivalently, diabetes reduces the treatment effect by 5 units. This suggests diabetes may interfere with the medication’s mechanism or that diabetic patients have different underlying pathophysiology.
+</details>
+</section>
+<div id="quarto-navigation-envelope" class="hidden">
+<p><span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyLXRpdGxl">Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXItdGl0bGU=">Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMQ==">Course Overview</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9pbmRleC5odG1sSG9tZQ==">Home</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMg==">Syllabus</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9zeWxsYWJ1cy9zeWxsYWJ1cy1maW5hbC5wZGZQREY=">PDF</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9zeWxsYWJ1cy9zeWxsYWJ1cy1maW5hbC5odG1sSFRNTA==">HTML</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9zeWxsYWJ1cy9zY2hlZHVsZS5odG1sU2NoZWR1bGU=">Schedule</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMw==">Course Materials</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9ob21lX2xlY3R1cmVzLmh0bWxMZWN0dXJlLU5vdGVz">Lecture Notes</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9ob21lX2Fzc2lnbm1lbnRzLmh0bWxBc3NpZ25tZW50cw==">Assignments</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9ob21lX3Byb2plY3QuaHRtbFByb2plY3Q=">Project</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9ob21lX3JlYWRpbmdzLmh0bWxSZWFkaW5ncw==">Readings</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tNA==">R Code and Datasets</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9yX2hlbHAuaHRtbFItSGVscA==">R Help</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6SG9tZQ==">Home</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L2luZGV4Lmh0bWw=">/index.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6U3lsbGFidXM=">Syllabus</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6UERG">PDF</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L3N5bGxhYnVzL3N5bGxhYnVzLWZpbmFsLnBkZg==">/syllabus/syllabus-final.pdf</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6SFRNTA==">HTML</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L3N5bGxhYnVzL3N5bGxhYnVzLWZpbmFsLmh0bWw=">/syllabus/syllabus-final.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6U2NoZWR1bGU=">Schedule</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L3N5bGxhYnVzL3NjaGVkdWxlLmh0bWw=">/syllabus/schedule.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6TGVjdHVyZSBOb3Rlcw==">Lecture Notes</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L2hvbWVfbGVjdHVyZXMuaHRtbA==">/home_lectures.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6UHJvamVjdA==">Project</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L2hvbWVfcHJvamVjdC5odG1s">/home_project.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6UmVhZGluZ3M=">Readings</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L2hvbWVfcmVhZGluZ3MuaHRtbA==">/home_readings.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6QXNzaWdubWVudHM=">Assignments</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L2hvbWVfYXNzaWdubWVudHMuaHRtbA==">/home_assignments.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6UiBIZWxw">R Help</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6L3JfaGVscC5odG1s">/r_help.html</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXI6aHR0cHM6Ly9naXRodWIuY29tL0RhdGEtV2lzZS9jYXVzYWwtaW5mZXJlbmNl">https://github.com/Data-Wise/causal-inference</span></p>
+</div>
+<div id="quarto-meta-markdown" class="hidden">
+<p><span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW1ldGF0aXRsZQ==">Week 7: Effect Modification – Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLXR3aXR0ZXJjYXJkdGl0bGU=">Week 7: Effect Modification – Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW9nY2FyZHRpdGxl">Week 7: Effect Modification – Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW1ldGFzaXRlbmFtZQ==">Introduction to Causal Inference</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLXR3aXR0ZXJjYXJkZGVzYw==">Understanding Heterogeneity in Causal Effects</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW9nY2FyZGRkZXNj">Understanding Heterogeneity in Causal Effects</span></p>
+</div>
+
+</main> <!-- /main -->
+<script id = "quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/Data-Wise\.github\.io\/causal-inference\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+</body>
+
+</html>
