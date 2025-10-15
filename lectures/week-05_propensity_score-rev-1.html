@@ -1136,23 +1136,23 @@ lm(formula = Y ~ A, data = df)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--47.167  -9.072   0.272   9.014  49.158 
+-45.907  -9.102  -0.108   9.387  44.500 
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) 132.3123     0.6552  201.95   &lt;2e-16 ***
-A1           10.1091     0.7374   13.71   &lt;2e-16 ***
+(Intercept) 135.9827     0.3822 355.752   &lt;2e-16 ***
+A1            5.9884     0.6305   9.497   &lt;2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 13.44 on 1998 degrees of freedom
-Multiple R-squared:  0.08599,   Adjusted R-squared:  0.08553 
-F-statistic:   188 on 1 and 1998 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 13.6 on 1998 degrees of freedom
+Multiple R-squared:  0.04319,   Adjusted R-squared:  0.04272 
+F-statistic:  90.2 on 1 and 1998 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </figure>
 </div>
-<p><strong>Interpretation:</strong> The naive model estimates the effect of <code>A</code> to be 10.109 , which is more than double the true effect of 5. This massive bias is caused by the fact that individuals with higher <code>L1</code> and <code>L2</code> values are both more likely to receive the treatment and have different outcomes.</p>
+<p><strong>Interpretation:</strong> The naive model estimates the effect of <code>A</code> to be 5.988 , which is more than double the true effect of 5. This massive bias is caused by the fact that individuals with higher <code>L1</code> and <code>L2</code> values are both more likely to receive the treatment and have different outcomes.</p>
 </section>
 <section id="step-2-estimate-propensity-scores-and-check-overlap" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="step-2-estimate-propensity-scores-and-check-overlap">Step 2: Estimate Propensity Scores and Check Overlap</h2>
@@ -1224,33 +1224,33 @@ MatchIt::matchit(formula = A ~ L1 + L2, data = df, method = "nearest",
 
 Summary of Balance for All Data:
          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-distance        0.8279        0.6455          1.2466     0.5592    0.2817
-L1             52.0525       43.6936          0.8772     1.1341    0.2353
-L20             0.5598        0.7981         -0.4800          .    0.2383
-L21             0.4402        0.2019          0.4800          .    0.2383
+distance        0.4495        0.3199          0.7354     1.3270    0.2105
+L1             53.5838       48.3809          0.5258     1.0699    0.1492
+L20             0.4517        0.7020         -0.5029          .    0.2503
+L21             0.5483        0.2980          0.5029          .    0.2503
          eCDF Max
-distance   0.4189
-L1         0.3624
-L20        0.2383
-L21        0.2383
+distance   0.3069
+L1         0.2272
+L20        0.2503
+L21        0.2503
 
 Summary of Balance for Matched Data:
          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-distance        0.9635        0.6455          2.1731     0.0071    0.6148
-L1             61.2087       43.6936          1.8381     0.6191    0.4981
-L20             0.2067        0.7981         -1.1915          .    0.5914
-L21             0.7933        0.2019          1.1915          .    0.5914
+distance        0.4495        0.4036          0.2602     1.5172    0.0544
+L1             53.5838       51.9545          0.1647     1.1635    0.0462
+L20             0.4517        0.5333         -0.1640          .    0.0816
+L21             0.5483        0.4667          0.1640          .    0.0816
          eCDF Max Std. Pair Dist.
-distance   0.9667          2.1731
-L1         0.7886          1.8381
-L20        0.5914          1.3063
-L21        0.5914          1.3063
+distance   0.1782          0.2606
+L1         0.0816          0.7813
+L20        0.0816          0.6179
+L21        0.0816          0.6179
 
 Sample Sizes:
           Control Treated
-All           421    1579
-Matched       421     421
-Unmatched       0    1158
+All          1265     735
+Matched       735     735
+Unmatched     530       0
 Discarded       0       0</code></pre>
 </div>
 </div>
@@ -1486,9 +1486,9 @@ Figure&nbsp;3: A Love plot showing standardized mean differences before and afte
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">A1</td>
-<td style="text-align: right;">5.23</td>
-<td style="text-align: right;">0.8</td>
-<td style="text-align: right;">6.57</td>
+<td style="text-align: right;">4.31</td>
+<td style="text-align: right;">0.72</td>
+<td style="text-align: right;">6.01</td>
 <td style="text-align: right;">0</td>
 </tr>
 </tbody>
@@ -1543,9 +1543,9 @@ Figure&nbsp;3: A Love plot showing standardized mean differences before and afte
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">A1</td>
-<td style="text-align: right;">4.63</td>
+<td style="text-align: right;">4.4</td>
 <td style="text-align: right;">0.6</td>
-<td style="text-align: right;">7.71</td>
+<td style="text-align: right;">7.32</td>
 <td style="text-align: right;">0</td>
 </tr>
 </tbody>

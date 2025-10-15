@@ -525,7 +525,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Oct-14-2025</p>
+        <p class="date">Oct-15-2025</p>
       </div>
     </div>
     
@@ -1518,19 +1518,19 @@ Y^a \indep A \mid V
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to Generate Normal Data with Specified Mean and SD</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>generate_group <span class="ot">&lt;-</span> <span class="cf">function</span>(n, mean, sd, A, V) {</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">Y =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> mean, <span class="at">sd =</span> sd),</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">A =</span> A,</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">V =</span> V</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Y =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> mean, <span class="at">sd =</span> sd),</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">A =</span> A,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">V =</span> V</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate Each Group</span></span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">generate_group</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">25</span>, <span class="at">sd =</span> <span class="dv">10</span>, <span class="at">A =</span> <span class="dv">0</span>, <span class="at">V =</span> <span class="dv">0</span>),</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">generate_group</span>(<span class="dv">200</span>, <span class="at">mean =</span> <span class="dv">32</span>, <span class="at">sd =</span> <span class="dv">12</span>, <span class="at">A =</span> <span class="dv">1</span>, <span class="at">V =</span> <span class="dv">0</span>),</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">generate_group</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">55</span>, <span class="at">sd =</span> <span class="dv">15</span>, <span class="at">A =</span> <span class="dv">0</span>, <span class="at">V =</span> <span class="dv">1</span>),</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">generate_group</span>(<span class="dv">200</span>, <span class="at">mean =</span> <span class="dv">58</span>, <span class="at">sd =</span> <span class="dv">14</span>, <span class="at">A =</span> <span class="dv">1</span>, <span class="at">V =</span> <span class="dv">1</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_group</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">25</span>, <span class="at">sd =</span> <span class="dv">10</span>, <span class="at">A =</span> <span class="dv">0</span>, <span class="at">V =</span> <span class="dv">0</span>),</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_group</span>(<span class="dv">200</span>, <span class="at">mean =</span> <span class="dv">32</span>, <span class="at">sd =</span> <span class="dv">12</span>, <span class="at">A =</span> <span class="dv">1</span>, <span class="at">V =</span> <span class="dv">0</span>),</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_group</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">55</span>, <span class="at">sd =</span> <span class="dv">15</span>, <span class="at">A =</span> <span class="dv">0</span>, <span class="at">V =</span> <span class="dv">1</span>),</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate_group</span>(<span class="dv">200</span>, <span class="at">mean =</span> <span class="dv">58</span>, <span class="at">sd =</span> <span class="dv">14</span>, <span class="at">A =</span> <span class="dv">1</span>, <span class="at">V =</span> <span class="dv">1</span>)</span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit Interaction Model</span></span>
@@ -1625,9 +1625,9 @@ V = 1:
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Effect in V=1</span></span>
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>beta_A_V1 <span class="ot">&lt;-</span> <span class="fu">coef</span>(model_int)[<span class="st">"A"</span>] <span class="sc">+</span> <span class="fu">coef</span>(model_int)[<span class="st">"A:V"</span>]</span>
 <span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>se_A_V1 <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vcov</span>(model_int)[<span class="st">"A"</span>, <span class="st">"A"</span>] <span class="sc">+</span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">vcov</span>(model_int)[<span class="st">"A:V"</span>, <span class="st">"A:V"</span>] <span class="sc">+</span></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span> <span class="sc">*</span> <span class="fu">vcov</span>(model_int)[<span class="st">"A"</span>, <span class="st">"A:V"</span>]</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vcov</span>(model_int)[<span class="st">"A"</span>, <span class="st">"A"</span>] <span class="sc">+</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vcov</span>(model_int)[<span class="st">"A:V"</span>, <span class="st">"A:V"</span>] <span class="sc">+</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="sc">*</span> <span class="fu">vcov</span>(model_int)[<span class="st">"A"</span>, <span class="st">"A:V"</span>]</span>
 <span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Stratum-Specific Effects ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1675,11 +1675,11 @@ V=1 (College):</code></pre>
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"  95% CI: ["</span>,</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    beta_A_V1 <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se_A_V1,</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">","</span>,</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    beta_A_V1 <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se_A_V1,</span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"  95% CI: ["</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  beta_A_V1 <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se_A_V1,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">","</span>,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  beta_A_V1 <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se_A_V1,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span></span>
 <span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -1884,7 +1884,11 @@ Y_i = \beta_0 + \beta_1 A_i + \beta_2 V_i + \beta_3 (A_i \times V_i) + \epsilon_
 <p>where <span class="math inline">\(\epsilon_i \sim N(0, \sigma^2)\)</span> independently.</p>
 <p><strong>Design matrix</strong> (for <span class="math inline">\(n\)</span> observations):</p>
 <p><span class="math display">\[
-\mathbf{X} = \begin{bmatrix} 1 &amp; A_1 &amp; V_1 &amp; A_1 V_1 \ 1 &amp; A_2 &amp; V_2 &amp; A_2 V_2 \ \vdots &amp; \vdots &amp; \vdots &amp; \vdots \ 1 &amp; A_n &amp; V_n &amp; A_n V_n \end{bmatrix}
+\mathbf{X} =
+\begin{bmatrix} 1 &amp; A_1 &amp; V_1 &amp; A_1 V_1 \\
+1 &amp; A_2 &amp; V_2 &amp; A_2 V_2 \\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\
+1 &amp; A_n &amp; V_n &amp; A_n V_n \end{bmatrix}
 \]</span></p>
 <p><strong>Variance-covariance matrix of <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>:</strong></p>
 <p><span class="math display">\[

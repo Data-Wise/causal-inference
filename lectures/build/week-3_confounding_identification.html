@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
-<meta name="dcterms.date" content="2025-07-12">
 
-<title>Lecture Notes – Introduction to Causal Inference</title>
+<title>Week 3: Confounding &amp; Identification – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,33 +21,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./home_assignments.html" rel="next">
-<link href="./syllabus/schedule.html" rel="prev">
-<link href="./assets/images/icon.png" rel="icon" type="image/png">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/images/icon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -172,13 +207,44 @@ ul.task-list li input[type="checkbox"] {
         }
     };
 </script>
+<link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="assets/styles/css/home.css">
-<meta property="og:title" content="Lecture Notes – Introduction to Causal Inference">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../assets/styles/css/home.css">
+<meta property="og:title" content="Week 3: Confounding &amp; Identification – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
-<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/build/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
 </head>
 
@@ -351,11 +417,11 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./assets/images/icon.png" alt="" class="navbar-logo light-content">
-    <img src="./assets/images/icon.png" alt="" class="navbar-logo dark-content">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/images/icon.png" alt="" class="navbar-logo light-content">
+    <img src="../../assets/images/icon.png" alt="" class="navbar-logo dark-content">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Introduction to Causal Inference</span>
     </a>
   </div>
@@ -366,7 +432,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link active" href="../../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -375,37 +441,37 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
         <li>
-    <a class="dropdown-item" href="./syllabus/syllabus-final.pdf">
+    <a class="dropdown-item" href="../../syllabus/syllabus-final.pdf">
  <span class="dropdown-text">PDF</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./syllabus/syllabus-final.html">
+    <a class="dropdown-item" href="../../syllabus/syllabus-final.html">
  <span class="dropdown-text">HTML</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="./syllabus/schedule.html"> 
+    <a class="nav-link" href="../../syllabus/schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_lectures.html"> 
+    <a class="nav-link" href="../../home_lectures.html"> 
 <span class="menu-text">Lecture Notes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_project.html"> 
+    <a class="nav-link" href="../../home_project.html"> 
 <span class="menu-text">Project</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_readings.html"> 
+    <a class="nav-link" href="../../home_readings.html"> 
 <span class="menu-text">Readings</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_assignments.html"> 
+    <a class="nav-link" href="../../home_assignments.html"> 
 <span class="menu-text">Assignments</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./r_help.html"> 
+    <a class="nav-link" href="../../r_help.html"> 
 <span class="menu-text">R Help</span></a>
   </li>  
 </ul>
@@ -427,7 +493,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./home_lectures.html">Course Materials</a></li><li class="breadcrumb-item"><a href="./home_lectures.html">Lecture Notes</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Week 3: Confounding &amp; Identification</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -436,8 +502,8 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./home_lectures.html">Course Materials</a></li><li class="breadcrumb-item"><a href="./home_lectures.html">Lecture Notes</a></li></ol></nav>
-      <h1 class="title">Lecture Notes</h1>
+    <div class="quarto-title column-body">
+      <h1 class="title">Week 3: Confounding &amp; Identification</h1>
                       </div>
   </div>
     
@@ -461,16 +527,10 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">July 12, 2025</p>
+        <p class="date">Sep-03-2025</p>
       </div>
     </div>
     
-      <div>
-      <div class="quarto-title-meta-heading">Modified</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date-modified">October 15, 2025</p>
-      </div>
-    </div>
       
     </div>
     
@@ -479,7 +539,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
-      <a href="./index.html" class="sidebar-logo-link">
+      <a href="../../index.html" class="sidebar-logo-link">
       </a>
       </div>
     <div class="sidebar-menu-container"> 
@@ -495,7 +555,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Home</span></a>
   </div>
 </li>
@@ -510,13 +570,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
+  <a href="../../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
  <span class="menu-text">PDF</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+  <a href="../../syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">HTML</span></a>
   </div>
 </li>
@@ -524,7 +584,7 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+  <a href="../../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Schedule</span></a>
   </div>
 </li>
@@ -532,34 +592,34 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Materials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_lectures.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../home_lectures.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lecture Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_assignments.html" class="sidebar-item-text sidebar-link">
+  <a href="../../home_assignments.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Assignments</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_project.html" class="sidebar-item-text sidebar-link">
+  <a href="../../home_project.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Project</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_readings.html" class="sidebar-item-text sidebar-link">
+  <a href="../../home_readings.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Readings</span></a>
   </div>
 </li>
@@ -576,7 +636,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./r_help.html" class="sidebar-item-text sidebar-link">
+  <a href="../../r_help.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">R Help</span></a>
   </div>
 </li>
@@ -592,11 +652,26 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#part-i-foundations-of-causal-inference" id="toc-part-i-foundations-of-causal-inference" class="nav-link active" data-scroll-target="#part-i-foundations-of-causal-inference">Part I: Foundations of Causal Inference</a></li>
-  <li><a href="#part-ii-estimation-methods" id="toc-part-ii-estimation-methods" class="nav-link" data-scroll-target="#part-ii-estimation-methods">Part II: Estimation Methods</a></li>
-  <li><a href="#part-iii-advanced-topics-applications" id="toc-part-iii-advanced-topics-applications" class="nav-link" data-scroll-target="#part-iii-advanced-topics-applications">Part III: Advanced Topics &amp; Applications</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#conceptual-overview" id="toc-conceptual-overview" class="nav-link" data-scroll-target="#conceptual-overview">Conceptual Overview</a>
+  <ul class="collapse">
+  <li><a href="#what-is-confounding" id="toc-what-is-confounding" class="nav-link" data-scroll-target="#what-is-confounding">What is Confounding?</a></li>
+  <li><a href="#exchangeability-the-key-to-causal-inference" id="toc-exchangeability-the-key-to-causal-inference" class="nav-link" data-scroll-target="#exchangeability-the-key-to-causal-inference">Exchangeability: The Key to Causal Inference</a></li>
+  </ul></li>
+  <li><a href="#methodological-core" id="toc-methodological-core" class="nav-link" data-scroll-target="#methodological-core">Methodological Core</a>
+  <ul class="collapse">
+  <li><a href="#the-backdoor-criterion" id="toc-the-backdoor-criterion" class="nav-link" data-scroll-target="#the-backdoor-criterion">The Backdoor Criterion</a></li>
+  </ul></li>
+  <li><a href="#numerical-examples" id="toc-numerical-examples" class="nav-link" data-scroll-target="#numerical-examples">Numerical Examples</a>
+  <ul class="collapse">
+  <li><a href="#standardization-by-hand" id="toc-standardization-by-hand" class="nav-link" data-scroll-target="#standardization-by-hand">Standardization by Hand</a></li>
+  </ul></li>
+  <li><a href="#r-applications" id="toc-r-applications" class="nav-link" data-scroll-target="#r-applications">R Applications</a></li>
+  <li><a href="#common-pitfalls" id="toc-common-pitfalls" class="nav-link" data-scroll-target="#common-pitfalls">Common Pitfalls</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
+  <li><a href="#hands-on-r-lab" id="toc-hands-on-r-lab" class="nav-link" data-scroll-target="#hands-on-r-lab">Hands-On R Lab</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/home_lectures.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/build/week-3_confounding_identification.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-3_confounding_identification.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -606,195 +681,224 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>This page provides a detailed week-by-week schedule for STAT 579. Readings should be completed <em>before</em> the first class of the week.</p>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<p>This week, we tackle the central challenge in observational causal inference: <strong>confounding</strong>. Our goal is to move from observing an association to making a credible causal claim. We will learn a rigorous, graphical method—the <strong>backdoor criterion</strong>—to identify the variables we must adjust for to achieve this. By the end of this module, you will be able to define confounding, use Directed Acyclic Graphs (DAGs) to find an appropriate adjustment set, and implement this logic in R.</p>
+</section>
+<section id="conceptual-overview" class="level2">
+<h2 class="anchored" data-anchor-id="conceptual-overview">Conceptual Overview</h2>
+<section id="what-is-confounding" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-confounding">What is Confounding?</h3>
+<p>A <strong>confounder</strong> is a variable that is a common cause of both the treatment (<span class="math inline">\(A_i\)</span>) and the outcome (<span class="math inline">\(Y_i\)</span>). This shared cause creates a non-causal, “spurious” association between the treatment and outcome that can be mistaken for a true causal effect.</p>
+</section>
+<section id="exchangeability-the-key-to-causal-inference" class="level3">
+<h3 class="anchored" data-anchor-id="exchangeability-the-key-to-causal-inference">Exchangeability: The Key to Causal Inference</h3>
+<p>To estimate a causal effect, we need the treated and untreated groups to be <strong>exchangeable</strong>.</p>
 <ul>
-<li><strong>HR:</strong> Hernán, M. A., &amp; Robins, J. M. (2024). <em>Causal Inference: What If</em>.</li>
-<li><strong>Neal:</strong> Neal, B. (2020). <em>Introduction to Causal Inference</em>.</li>
-<li><strong>Cunningham:</strong> Cunningham, S. (2021). <em>Causal Inference: The Mixtape</em>.</li>
-<li><strong>VanderWeele:</strong> VanderWeele, T. J. (2015). <em>Explanation in Causal Inference</em>.</li>
+<li><strong>Unconditional Exchangeability</strong>: This is the ideal state, achieved in a Randomized Controlled Trial (RCT). Randomization ensures that treatment assignment (<span class="math inline">\(A_i\)</span>) is independent of the potential outcomes (<span class="math inline">\(Y_i^a\)</span>). This means the treated and untreated groups are, on average, identical on all factors (measured and unmeasured) that might influence the outcome. We write this as:</li>
 </ul>
-<section id="part-i-foundations-of-causal-inference" class="level3">
-<h3 class="anchored" data-anchor-id="part-i-foundations-of-causal-inference">Part I: Foundations of Causal Inference</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Week</th>
-<th style="text-align: left;">Dates</th>
-<th style="text-align: left;">Core Topic</th>
-<th style="text-align: left;">Primary Readings</th>
-<th style="text-align: left;">Optional Reading (Cunningham)</th>
-<th style="text-align: left;">Project Connection</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>1</strong></td>
-<td style="text-align: left;">Aug 19, 21</td>
-<td style="text-align: left;"><a href="./lectures/week-01_what_is_causal_effect.html">What is a Causal Effect?</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 1–2; <strong>Neal:</strong> Ch. 1–2</td>
-<td style="text-align: left;">Ch. 2: Potential Outcomes</td>
-<td style="text-align: left;">Define your causal question.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>2</strong></td>
-<td style="text-align: left;">Aug 26, 28</td>
-<td style="text-align: left;"><a href="./lectures/week-02_DAG.html">DAGs &amp; Assumption Transparency</a></td>
-<td style="text-align: left;"><strong>Neal:</strong> Ch. 3; <strong>HR:</strong> Ch. 6</td>
-<td style="text-align: left;">Ch. 3: Directed Acyclic Graphs</td>
-<td style="text-align: left;">Draw a preliminary DAG.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>3</strong></td>
-<td style="text-align: left;">Sep 2, 4</td>
-<td style="text-align: left;"><a href="./lectures/week-03_exchangeability_positivity.html">Exchangeability, Positivity</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 7; <strong>Neal:</strong> Ch. 4</td>
-<td style="text-align: left;">Ch. 4: Regression</td>
-<td style="text-align: left;">Identify assumptions for your causal model.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>4</strong></td>
-<td style="text-align: left;">Sep 9, 11</td>
-<td style="text-align: left;"><a href="./lectures/week-04_bias_seleclection_measurement.html">Bias (Confounding, Selection)</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 8–9</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">Consider biases in your dataset.</td>
-</tr>
-</tbody>
-</table>
+<p><span id="eq-unconditional-exchangeability"><span class="math display">\[
+Y_i^a \perp A_i
+\tag{1}\]</span></span></p>
+<ul>
+<li><strong>Conditional Exchangeability</strong>: In observational studies, we cannot randomize. Instead, we rely on the assumption that we have measured all common causes of treatment and outcome (the confounders, <span class="math inline">\(X_i\)</span>). If we adjust for this set of measured confounders, then within each level (or stratum) of <span class="math inline">\(X_i\)</span>, the treatment assignment is “as good as random.” This crucial assumption is formally stated as:</li>
+</ul>
+<p><span id="eq-conditional-exchangeability"><span class="math display">\[
+Y_i^a \perp A_i \mid X_i
+\tag{2}\]</span></span></p>
+<p>As we see in <a href="#eq-unconditional-exchangeability" class="quarto-xref">Equation&nbsp;1</a> and <a href="#eq-conditional-exchangeability" class="quarto-xref">Equation&nbsp;2</a>, the challenge is to identify the correct set of variables <span class="math inline">\(X_i\)</span> to measure and adjust for.</p>
 </section>
-<section id="part-ii-estimation-methods" class="level3">
-<h3 class="anchored" data-anchor-id="part-ii-estimation-methods">Part II: Estimation Methods</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Week</th>
-<th style="text-align: left;">Dates</th>
-<th style="text-align: left;">Core Topic</th>
-<th style="text-align: left;">Primary Readings</th>
-<th style="text-align: left;">Optional Reading (Cunningham)</th>
-<th style="text-align: left;">Project Connection</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>5</strong></td>
-<td style="text-align: left;">Sep 16, 18</td>
-<td style="text-align: left;"><a href="./lectures/week-05_propensity_score.html">Propensity Scores-I</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 12–13; <strong>Neal:</strong> Ch. 7</td>
-<td style="text-align: left;">Ch. 5: Matching &amp; Subclassification</td>
-<td style="text-align: left;">Select adjustment strategy.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>5</strong></td>
-<td style="text-align: left;">Sep 16, 18</td>
-<td style="text-align: left;"><a href="./lectures/week-05_propensity_score-rev-1.html">Propensity Scores-II</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 12–13; <strong>Neal:</strong> Ch. 7</td>
-<td style="text-align: left;">Ch. 5: Matching &amp; Subclassification</td>
-<td style="text-align: left;">Select adjustment strategy.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>6</strong></td>
-<td style="text-align: left;">Sep 23, 25</td>
-<td style="text-align: left;"><a href="./lectures/week-06_IP_weighting_MSM-rev2.html">IPTW &amp; MSMs</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 15; <strong>Neal:</strong> Ch. 7.5–7.6</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">Evaluate MSM relevance.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>6</strong></td>
-<td style="text-align: left;">Sep 23, 25</td>
-<td style="text-align: left;"><a href="./lectures/week-06_IP_weighting_MSM-rev1.html">IPTW &amp; MSMs</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 15; <strong>Neal:</strong> Ch. 7.5–7.6</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">Evaluate MSM relevance.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>7</strong></td>
-<td style="text-align: left;">Sep 30, Oct 2</td>
-<td style="text-align: left;"><a href="./lectures/week-07_g_computation-rev1.html">G-computation</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 20–21</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">Explore g-methods.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>8</strong></td>
-<td style="text-align: left;">Oct 7</td>
-<td style="text-align: left;"><a href="./lectures/week-08_instrumental_variable.html">Instrumental Variables</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 16; <strong>Neal:</strong> Ch. 9</td>
-<td style="text-align: left;">Ch. 8: Instrumental Variables</td>
-<td style="text-align: left;">Assess natural experiments.</td>
-</tr>
-</tbody>
-</table>
-<p><em><strong>Note:</strong> UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.</em></p>
 </section>
-<section id="part-iii-advanced-topics-applications" class="level3">
-<h3 class="anchored" data-anchor-id="part-iii-advanced-topics-applications">Part III: Advanced Topics &amp; Applications</h3>
+<section id="methodological-core" class="level2">
+<h2 class="anchored" data-anchor-id="methodological-core">Methodological Core</h2>
+<section id="the-backdoor-criterion" class="level3">
+<h3 class="anchored" data-anchor-id="the-backdoor-criterion">The Backdoor Criterion</h3>
+<p>The <strong>backdoor criterion</strong> is a graphical rule that uses a DAG to tell us which set of variables satisfies the conditional exchangeability assumption.</p>
+<p>A set of variables <span class="math inline">\(X_i\)</span> satisfies the <strong>backdoor criterion</strong> relative to a treatment <span class="math inline">\(A_i\)</span> and an outcome <span class="math inline">\(Y_i\)</span> if:</p>
+<ol type="1">
+<li><strong>It blocks every backdoor path</strong> from <span class="math inline">\(A_i\)</span> to <span class="math inline">\(Y_i\)</span>.</li>
+<li><strong>It does not contain any variable that is a descendant of</strong> <span class="math inline">\(A_i\)</span>.</li>
+</ol>
+<p>A <strong>backdoor path</strong> is any path connecting <span class="math inline">\(A_i\)</span> and <span class="math inline">\(Y_i\)</span> that starts with an arrow pointing <em>into</em> <span class="math inline">\(A_i\)</span>. To block a backdoor path, we must “condition on” a variable on that path.</p>
+</section>
+</section>
+<section id="numerical-examples" class="level2">
+<h2 class="anchored" data-anchor-id="numerical-examples">Numerical Examples</h2>
+<p>Let’s illustrate with a scenario. We are studying the effect of a new medication (<span class="math inline">\(A_i\)</span>) on heart disease (<span class="math inline">\(Y_i\)</span>). We believe that <code>age</code> (<span class="math inline">\(X_i\)</span>) is a confounder, as older patients are more likely to receive the medication and also more likely to have heart disease.</p>
+<p>The DAG is: <span class="math inline">\(A_i \leftarrow X_i \rightarrow Y_i\)</span> and <span class="math inline">\(A_i \rightarrow Y_i\)</span>.</p>
+<ul>
+<li><strong>Backdoor Path</strong>: <span class="math inline">\(A_i \leftarrow X_i \rightarrow Y_i\)</span>.</li>
+<li><strong>Adjustment Set</strong>: To block this path, we must adjust for <span class="math inline">\(X_i\)</span>.</li>
+</ul>
+<section id="standardization-by-hand" class="level3">
+<h3 class="anchored" data-anchor-id="standardization-by-hand">Standardization by Hand</h3>
+<p>Suppose we have the data in <a href="#tbl-raw-data" class="quarto-xref">Table&nbsp;1</a>.</p>
+<div id="tbl-raw-data" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-raw-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1
+</figcaption>
+<div aria-describedby="tbl-raw-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th style="text-align: left;">Week</th>
-<th style="text-align: left;">Dates</th>
-<th style="text-align: left;">Core Topic</th>
-<th style="text-align: left;">Primary Readings</th>
-<th style="text-align: left;">Project Connection</th>
+<th style="text-align: center;">Group</th>
+<th style="text-align: center;">Treatment (<span class="math inline">\(A_i=1\)</span>)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><strong>9</strong></td>
-<td style="text-align: left;">Oct 14, 16</td>
-<td style="text-align: left;"><a href="./lectures/week-09_effect_modification.html">Effect Modification</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 4–5; <strong>Neal:</strong> Ch. 10</td>
-<td style="text-align: left;"><strong>Milestone: Project Proposal Due.</strong></td>
+<td style="text-align: center;"><strong>Young (<span class="math inline">\(X_i=0\)</span>)</strong></td>
+<td style="text-align: center;">10/40 (25%)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>9</strong></td>
-<td style="text-align: left;">Oct 14, 16</td>
-<td style="text-align: left;"><a href="./lectures/week-09_effect_modification-rev1.html">Effect Modification</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 4–5; <strong>Neal:</strong> Ch. 10</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>10</strong></td>
-<td style="text-align: left;">Oct 21, 23</td>
-<td style="text-align: left;"><a href="./lectures/week-10_mediation_analysis_example.html">Mediation I (Foundations)</a></td>
-<td style="text-align: left;"><strong>VanderWeele:</strong> Ch. 1–2; <strong>Neal:</strong> Ch. 14</td>
-<td style="text-align: left;">Refine DAG with mediators.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>11</strong></td>
-<td style="text-align: left;">Oct 28, 30</td>
-<td style="text-align: left;"><a href="./lectures/week-11_mediation_analysis.html">Mediation II (Application)</a></td>
-<td style="text-align: left;"><strong>VanderWeele:</strong> Ch. 3; <strong>HR:</strong> Ch. 23</td>
-<td style="text-align: left;">-</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>12</strong></td>
-<td style="text-align: left;">Nov 4, 6</td>
-<td style="text-align: left;"><a href="./lectures/week-12_sensitivity_analysis-rev3.html">Sensitivity Analysis</a></td>
-<td style="text-align: left;"><strong>Neal:</strong> Ch. 8; <strong>HR:</strong> Ch. 14</td>
-<td style="text-align: left;">Plan robustness checks.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>13</strong></td>
-<td style="text-align: left;">Nov 11, 13</td>
-<td style="text-align: left;"><a href="./lectures/week-13_target_trial.html">Target Trial Emulation</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 22</td>
-<td style="text-align: left;">Reframe project as a trial.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>14</strong></td>
-<td style="text-align: left;">Nov 18, 20</td>
-<td style="text-align: left;"><strong>Final Presentations</strong></td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">Present your findings.</td>
+<td style="text-align: center;"><strong>Old (<span class="math inline">\(X_i=1\)</span>)</strong></td>
+<td style="text-align: center;">40/60 (66.7%)</td>
 </tr>
 </tbody>
 </table>
-<p><em><strong>Note:</strong> Thanksgiving Break is Nov 27-28.</em></p>
-<hr>
-<p><strong>Finals Week (Dec 8–13):</strong> Final Project Paper Due.</p>
+</div>
+</figure>
+</div>
+<ol type="1">
+<li><strong>Crude (Biased) Association</strong>:
+<ul>
+<li>Risk among treated: <span class="math inline">\((10+40)/(40+60) = 50/100 = 50\%\)</span>.</li>
+<li>Risk among untreated: <span class="math inline">\((5+20)/(20+80) = 25/100 = 25\%\)</span>.</li>
+<li>Crude Risk Difference: <span class="math inline">\(50\% - 25\% = 25\%\)</span>. This is confounded.</li>
+</ul></li>
+<li><strong>Adjusted Estimate (Standardization)</strong>: We calculate the ATE by weighting the stratum-specific effects by the prevalence of each stratum.
+<ul>
+<li>Proportion Young: <span class="math inline">\((40+20)/200 = 0.3\)</span>.</li>
+<li>Proportion Old: <span class="math inline">\((60+80)/200 = 0.7\)</span>.</li>
+<li>ATE = <span class="math inline">\(\sum_{x} (E[Y_i|A_i=1, X_i=x] - E[Y_i|A_i=0, X_i=x])P(X_i=x)\)</span></li>
+<li>ATE = <span class="math inline">\((0.25 - 0.25) \times 0.3 + (0.667 - 0.25) \times 0.7 \approx 29.2\%\)</span>.</li>
+</ul></li>
+</ol>
+<p>The adjusted causal effect is a 29.2% increase in mortality, which differs from the crude estimate of 25%.</p>
+</section>
+</section>
+<section id="r-applications" class="level2">
+<h2 class="anchored" data-anchor-id="r-applications">R Applications</h2>
+<p>We can use a regression model to perform the adjustment. The key is to include the confounder <span class="math inline">\(X_i\)</span> in the model.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(dagitty)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dag {</span><span class="sc">\n</span><span class="st">  A [exposure];</span><span class="sc">\n</span><span class="st">  Y [outcome];</span><span class="sc">\n</span><span class="st">  X;</span><span class="sc">\n</span><span class="st">  X -&gt; A;</span><span class="sc">\n</span><span class="st">  X -&gt; Y;</span><span class="sc">\n</span><span class="st">  A -&gt; Y;</span><span class="sc">\n</span><span class="st">}"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dag)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="week-3_confounding_identification_files/figure-html/fig-dag-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: DAG showing confounding of the A-Y relationship by X"><img src="week-3_confounding_identification_files/figure-html/fig-dag-1.png" class="img-fluid figure-img" width="672"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: DAG showing confounding of the A-Y relationship by X
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The DAG in <a href="#fig-dag" class="quarto-xref">Figure&nbsp;1</a> shows that we must adjust for <span class="math inline">\(X\)</span>.</p>
+</section>
+<section id="common-pitfalls" class="level2">
+<h2 class="anchored" data-anchor-id="common-pitfalls">Common Pitfalls</h2>
+<p>Adjusting for the wrong variable can create bias. These are “bad controls.”</p>
+<ul>
+<li><strong>Mediators</strong>: A mediator (<span class="math inline">\(M_i\)</span>) is on the causal pathway from <span class="math inline">\(A_i\)</span> to <span class="math inline">\(Y_i\)</span> (<span class="math inline">\(A_i \to M_i \to Y_i\)</span>). Adjusting for a mediator blocks part of the causal effect you want to measure.</li>
+<li><strong>Colliders</strong>: A collider is a variable caused by two other variables (e.g., <span class="math inline">\(A_i \to Z_i \leftarrow Y_i\)</span>). Conditioning on a collider <em>opens</em> a non-causal path and induces bias.</li>
+</ul>
+</section>
+<section id="exercises" class="level2">
+<h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+<ol type="1">
+<li>In an observational study, if we are certain that all confounders are measured, what core assumption from the potential outcomes framework (<a href="#eq-conditional-exchangeability" class="quarto-xref">Equation&nbsp;2</a>) are we trying to satisfy?</li>
+<li>Draw a DAG where <span class="math inline">\(X_i\)</span> is a confounder and <span class="math inline">\(M_i\)</span> is a mediator. What is the minimal sufficient adjustment set to estimate the total effect of <span class="math inline">\(A_i\)</span> on <span class="math inline">\(Y_i\)</span>?</li>
+<li>A study on exercise (<span class="math inline">\(A_i\)</span>) and blood pressure (<span class="math inline">\(Y_i\)</span>) adjusts for diet (<span class="math inline">\(X_i\)</span>) and a genetic marker (<span class="math inline">\(Z_i\)</span>). The true DAG is <span class="math inline">\(A_i \leftarrow X_i \rightarrow Y_i\)</span> and <span class="math inline">\(A_i \rightarrow Z_i \leftarrow Y_i\)</span>. Is adjusting for <span class="math inline">\(Z_i\)</span> a good idea? Why or why not?</li>
+</ol>
+</section>
+<section id="hands-on-r-lab" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-r-lab">Hands-On R Lab</h2>
+<p>Let’s implement the adjustment in R.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data based on our DAG</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.7</span>) <span class="co"># Confounder (0=young, 1=old)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fu">ifelse</span>(X <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.4</span>, <span class="fl">0.6</span>)) <span class="co"># Treatment depends on X</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> A <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> X)) <span class="co"># Outcome</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(A, Y, <span class="at">X =</span> <span class="fu">as.factor</span>(X))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Crude (confounded) model</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>crude_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> df, <span class="at">family =</span> <span class="fu">binomial</span>())</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(crude_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Y ~ A, family = binomial(), data = df)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept) -0.09909    0.19925  -0.497    0.619
+A            0.40447    0.28470   1.421    0.155
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 276.76  on 199  degrees of freedom
+Residual deviance: 274.73  on 198  degrees of freedom
+AIC: 278.73
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Crude OR:"</span>, <span class="fu">exp</span>(<span class="fu">coef</span>(crude_model)[<span class="st">'A'</span>]), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Crude OR: 1.498512 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Adjusted (unconfounded) model</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>adjusted_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> X, <span class="at">data =</span> df, <span class="at">family =</span> <span class="fu">binomial</span>())</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjusted_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Y ~ A + X, family = binomial(), data = df)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -1.1886     0.3306  -3.596 0.000324 ***
+A             0.0540     0.3113   0.173 0.862295    
+X1            1.7093     0.3710   4.607 4.09e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 276.76  on 199  degrees of freedom
+Residual deviance: 250.52  on 197  degrees of freedom
+AIC: 256.52
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Adjusted OR:"</span>, <span class="fu">exp</span>(<span class="fu">coef</span>(adjusted_model)[<span class="st">'A'</span>]), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Adjusted OR: 1.055485 </code></pre>
+</div>
+</div>
 
 
 </section>
@@ -1220,22 +1324,42 @@ ul.task-list li input[type="checkbox"] {
     }
   });
   </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="./syllabus/schedule.html" class="pagination-link" aria-label="Schedule">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Schedule</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="./home_assignments.html" class="pagination-link" aria-label="Assignments">
-        <span class="nav-page-text">Assignments</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/build/week-3_confounding_identification.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/home_lectures.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

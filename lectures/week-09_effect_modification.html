@@ -529,7 +529,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Oct-14-2025</p>
+        <p class="date">Oct-15-2025</p>
       </div>
     </div>
     
@@ -701,12 +701,16 @@ window.Quarto = {
   <li><a href="#solution-task-2" id="toc-solution-task-2" class="nav-link" data-scroll-target="#solution-task-2">Solution Task 2</a></li>
   <li><a href="#task-3-calculate-measures-on-different-scales" id="toc-task-3-calculate-measures-on-different-scales" class="nav-link" data-scroll-target="#task-3-calculate-measures-on-different-scales">Task 3: Calculate Measures on Different Scales</a></li>
   <li><a href="#task-4-causal-machine-learning-approach" id="toc-task-4-causal-machine-learning-approach" class="nav-link" data-scroll-target="#task-4-causal-machine-learning-approach">Task 4: Causal Machine Learning Approach</a></li>
-  <li><a href="#lab-reflection-questions" id="toc-lab-reflection-questions" class="nav-link" data-scroll-target="#lab-reflection-questions">Lab Reflection Questions</a></li>
-  </ul></li>
+  <li><a href="#lab-reflection-questions" id="toc-lab-reflection-questions" class="nav-link" data-scroll-target="#lab-reflection-questions">Lab Reflection Questions</a>
+  <ul class="collapse">
   <li><a href="#reflection-questions" id="toc-reflection-questions" class="nav-link" data-scroll-target="#reflection-questions">❓ Reflection Questions</a></li>
-  <li><a href="#retrieval-quiz" id="toc-retrieval-quiz" class="nav-link" data-scroll-target="#retrieval-quiz">Retrieval Quiz</a></li>
+  </ul></li>
+  <li><a href="#retrieval-quiz" id="toc-retrieval-quiz" class="nav-link" data-scroll-target="#retrieval-quiz">Retrieval Quiz</a>
+  <ul class="collapse">
   <li><a href="#knowledge-check" id="toc-knowledge-check" class="nav-link" data-scroll-target="#knowledge-check">❓ Knowledge Check</a></li>
+  </ul></li>
   <li><a href="#common-pitfalls-checks" id="toc-common-pitfalls-checks" class="nav-link" data-scroll-target="#common-pitfalls-checks">6 Common Pitfalls &amp; Checks</a></li>
+  </ul></li>
   <li><a href="#advanced-teaching-activities-interactivity" id="toc-advanced-teaching-activities-interactivity" class="nav-link" data-scroll-target="#advanced-teaching-activities-interactivity">7 Advanced Teaching Activities &amp; Interactivity</a>
   <ul class="collapse">
   <li><a href="#flipped-classroom-effect-modification-debate" id="toc-flipped-classroom-effect-modification-debate" class="nav-link" data-scroll-target="#flipped-classroom-effect-modification-debate">7.1 Flipped Classroom: Effect Modification Debate</a></li>
@@ -748,17 +752,17 @@ window.Quarto = {
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load required packages using pacman</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    dagitty, <span class="co"># DAG construction and analysis</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    ggdag, <span class="co"># Beautiful DAG plotting with ggplot2</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    tidyverse, <span class="co"># Data manipulation and visualization</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    broom, <span class="co"># Tidy model outputs</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    grf, <span class="co"># Generalized random forests for causal ML</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    rpart, <span class="co"># Decision trees for causal trees</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    rpart.plot, <span class="co"># Plotting decision trees</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    kableExtra, <span class="co"># Enhanced tables</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    gt, <span class="co"># Grammar of tables</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    patchwork, <span class="co"># Combining plots</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    marginaleffects <span class="co"># Marginal effects and contrasts</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  dagitty, <span class="co"># DAG construction and analysis</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  ggdag, <span class="co"># Beautiful DAG plotting with ggplot2</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  tidyverse, <span class="co"># Data manipulation and visualization</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  broom, <span class="co"># Tidy model outputs</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  grf, <span class="co"># Generalized random forests for causal ML</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  rpart, <span class="co"># Decision trees for causal trees</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  rpart.plot, <span class="co"># Plotting decision trees</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  kableExtra, <span class="co"># Enhanced tables</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  gt, <span class="co"># Grammar of tables</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  patchwork, <span class="co"># Combining plots</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  marginaleffects <span class="co"># Marginal effects and contrasts</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
@@ -1079,11 +1083,11 @@ Figure&nbsp;1: A visual representation of Rothman’s sufficient-component cause
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dataset</span></span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>sim_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">age =</span> age,</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">age_group =</span> <span class="fu">ifelse</span>(age <span class="sc">&gt;=</span> <span class="dv">50</span>, <span class="st">"Older"</span>, <span class="st">"Younger"</span>),</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment =</span> <span class="fu">factor</span>(treatment, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Treatment"</span>)),</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome =</span> outcome</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">age =</span> age,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">age_group =</span> <span class="fu">ifelse</span>(age <span class="sc">&gt;=</span> <span class="dv">50</span>, <span class="st">"Older"</span>, <span class="st">"Younger"</span>),</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="fu">factor</span>(treatment, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Treatment"</span>)),</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> outcome</span>
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Show first few rows</span></span>
@@ -1118,31 +1122,31 @@ Table&nbsp;1: Simulated Dataset with Effect Modification
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize potential effect modification</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> sim_data <span class="sc">|&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> treatment, <span class="at">y =</span> outcome, <span class="at">fill =</span> treatment)) <span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>age_group) <span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"Treatment Effects by Age Group"</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Blood Pressure (mmHg)"</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Treatment Group"</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="st">"Set2"</span>) <span class="sc">+</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> treatment, <span class="at">y =</span> outcome, <span class="at">fill =</span> treatment)) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>age_group) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Treatment Effects by Age Group"</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Blood Pressure (mmHg)"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Treatment Group"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="st">"Set2"</span>) <span class="sc">+</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot with regression lines</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> sim_data <span class="sc">|&gt;</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> outcome, <span class="at">color =</span> treatment)) <span class="sc">+</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"Treatment Effect Varies with Age"</span>,</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Age (years)"</span>,</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Blood Pressure (mmHg)"</span>,</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">color =</span> <span class="st">"Treatment"</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="st">"Set1"</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> outcome, <span class="at">color =</span> treatment)) <span class="sc">+</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Treatment Effect Varies with Age"</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Age (years)"</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Blood Pressure (mmHg)"</span>,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Treatment"</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="st">"Set1"</span>)</span>
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine plots</span></span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1234,37 +1238,37 @@ Table&nbsp;2: Regression Models Testing Effect Modification
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate effects within age strata</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>stratum_effects <span class="ot">&lt;-</span> sim_data <span class="sc">|&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(age_group) <span class="sc">|&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">control_mean =</span> <span class="fu">mean</span>(outcome[treatment <span class="sc">==</span> <span class="st">"Control"</span>]),</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">treatment_mean =</span> <span class="fu">mean</span>(outcome[treatment <span class="sc">==</span> <span class="st">"Treatment"</span>]),</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">effect =</span> treatment_mean <span class="sc">-</span> control_mean,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">se =</span> <span class="fu">sqrt</span>(</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">var</span>(outcome[treatment <span class="sc">==</span> <span class="st">"Control"</span>]) <span class="sc">/</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                <span class="fu">sum</span>(treatment <span class="sc">==</span> <span class="st">"Control"</span>) <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                <span class="fu">var</span>(outcome[treatment <span class="sc">==</span> <span class="st">"Treatment"</span>]) <span class="sc">/</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sum</span>(treatment <span class="sc">==</span> <span class="st">"Treatment"</span>)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">ci_lower =</span> effect <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">ci_upper =</span> effect <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age_group) <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">control_mean =</span> <span class="fu">mean</span>(outcome[treatment <span class="sc">==</span> <span class="st">"Control"</span>]),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_mean =</span> <span class="fu">mean</span>(outcome[treatment <span class="sc">==</span> <span class="st">"Treatment"</span>]),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">effect =</span> treatment_mean <span class="sc">-</span> control_mean,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">sqrt</span>(</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">var</span>(outcome[treatment <span class="sc">==</span> <span class="st">"Control"</span>]) <span class="sc">/</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(treatment <span class="sc">==</span> <span class="st">"Control"</span>) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">var</span>(outcome[treatment <span class="sc">==</span> <span class="st">"Treatment"</span>]) <span class="sc">/</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>          <span class="fu">sum</span>(treatment <span class="sc">==</span> <span class="st">"Treatment"</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_lower =</span> effect <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_upper =</span> effect <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>stratum_effects <span class="sc">|&gt;</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">digits =</span> <span class="dv">2</span>,</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Age Group"</span>,</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Control Mean"</span>,</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Treatment Mean"</span>,</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Effect"</span>,</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>            <span class="st">"SE"</span>,</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>            <span class="st">"95% CI Lower"</span>,</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>            <span class="st">"95% CI Upper"</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">caption =</span> <span class="st">"Treatment Effects by Age Stratum"</span></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Age Group"</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Control Mean"</span>,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Treatment Mean"</span>,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Effect"</span>,</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>      <span class="st">"SE"</span>,</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>      <span class="st">"95% CI Lower"</span>,</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      <span class="st">"95% CI Upper"</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Treatment Effects by Age Stratum"</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-stratum-effects" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1320,23 +1324,19 @@ Table&nbsp;3: Stratum-Specific Treatment Effects
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dag_mod <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> V,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> V,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="st">"Treatment"</span>, <span class="at">V =</span> <span class="st">"Age"</span>, <span class="at">Y =</span> <span class="st">"Blood Pressure"</span>),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">1</span>, <span class="at">V =</span> <span class="dv">2</span>, <span class="at">Y =</span> <span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">1</span>, <span class="at">V =</span> <span class="dv">2</span>, <span class="at">Y =</span> <span class="dv">1</span>)),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">exposure =</span> <span class="st">"A"</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome =</span> <span class="st">"Y"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  Y <span class="sc">~</span> A <span class="sc">+</span> V,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  A <span class="sc">~</span> V,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="st">"Treatment"</span>, <span class="at">V =</span> <span class="st">"Age"</span>, <span class="at">Y =</span> <span class="st">"Blood Pressure"</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">1</span>, <span class="at">V =</span> <span class="dv">2</span>, <span class="at">Y =</span> <span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">1</span>, <span class="at">V =</span> <span class="dv">2</span>, <span class="at">Y =</span> <span class="dv">1</span>)),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="st">"A"</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> <span class="st">"Y"</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Best Practice: Use the modular ggdag() + geom_*() syntax.</span></span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># geom_dag_label_repel() is excellent for preventing text overlap.</span></span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag</span>(dag_mod) <span class="sc">+</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dag_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> label)) <span class="sc">+</span> <span class="co"># Use the "label" aesthetic</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"DAG for Potential Effect Modification"</span>,</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">subtitle =</span> <span class="st">"Age is a potential effect modifier of Treatment on Blood Pressure"</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> label)) <span class="sc">+</span> <span class="co"># Use the "label" aesthetic</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -1362,51 +1362,49 @@ Figure&nbsp;3: DAG Showing Effect Modification vs.&nbsp;Confounding
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ages_of_interest <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">45</span>, <span class="dv">60</span>, <span class="dv">75</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>marginal_effects <span class="ot">&lt;-</span> marginaleffects<span class="sc">::</span><span class="fu">predictions</span>(</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    model_with_int,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">newdata =</span> <span class="fu">expand_grid</span>(</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">treatment =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Treatment"</span>),</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">age =</span> ages_of_interest</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  model_with_int,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="fu">expand_grid</span>(</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Treatment"</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">age =</span> ages_of_interest</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(treatment, age, estimate, conf.low, conf.high) <span class="sc">|&gt;</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">names_from =</span> treatment,</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">values_from =</span> <span class="fu">c</span>(estimate, conf.low, conf.high)</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">effect =</span> estimate_Treatment <span class="sc">-</span> estimate_Control,</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">effect_se =</span> <span class="fu">sqrt</span>(</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>            (conf.high_Treatment <span class="sc">-</span> conf.low_Treatment)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                <span class="dv">16</span> <span class="sc">+</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                (conf.high_Control <span class="sc">-</span> conf.low_Control)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="dv">16</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">effect_ci_low =</span> effect <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> effect_se,</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">effect_ci_high =</span> effect <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> effect_se</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(age, effect, effect_ci_low, effect_ci_high)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(treatment, age, estimate, conf.low, conf.high) <span class="sc">|&gt;</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> treatment,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(estimate, conf.low, conf.high)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">effect =</span> estimate_Treatment <span class="sc">-</span> estimate_Control,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">effect_se =</span> <span class="fu">sqrt</span>(</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>      (conf.high_Treatment <span class="sc">-</span> conf.low_Treatment)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="dv">16</span> <span class="sc">+</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        (conf.high_Control <span class="sc">-</span> conf.low_Control)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="dv">16</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">effect_ci_low =</span> effect <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> effect_se,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">effect_ci_high =</span> effect <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> effect_se</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age, effect, effect_ci_low, effect_ci_high)</span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>marginal_effects <span class="sc">|&gt;</span></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">digits =</span> <span class="dv">2</span>,</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(</span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Age"</span>,</span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Treatment Effect"</span>,</span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">"95% CI Lower"</span>,</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>            <span class="st">"95% CI Upper"</span></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">caption =</span> <span class="st">"Predicted Treatment Effects by Age"</span></span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Age"</span>,</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Treatment Effect"</span>,</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>      <span class="st">"95% CI Lower"</span>,</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>      <span class="st">"95% CI Upper"</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<table class="table table-striped caption-top table-sm small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Marginal Effects at Different Ages</caption>
 <thead>
 <tr class="header">
-<th style="text-align: right;" data-quarto-table-cell-role="th">Age</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Treatment Effect</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">95% CI Lower</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">95% CI Upper</th>
+<th style="text-align: right;">Age</th>
+<th style="text-align: right;">Treatment Effect</th>
+<th style="text-align: right;">95% CI Lower</th>
+<th style="text-align: right;">95% CI Upper</th>
 </tr>
 </thead>
 <tbody>
@@ -1468,144 +1466,47 @@ Figure&nbsp;3: DAG Showing Effect Modification vs.&nbsp;Confounding
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate patient characteristics</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>lab_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">patient_id =</span> <span class="dv">1</span><span class="sc">:</span>n_lab,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">age =</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(n_lab, <span class="dv">65</span>, <span class="dv">12</span>)),</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sex =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>), n_lab, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">baseline_risk =</span> <span class="fu">case_when</span>(</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        sex <span class="sc">==</span> <span class="st">"Male"</span> <span class="sc">&amp;</span> age <span class="sc">&gt;=</span> <span class="dv">65</span> <span class="sc">~</span> <span class="fl">0.15</span>,</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        sex <span class="sc">==</span> <span class="st">"Male"</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">65</span> <span class="sc">~</span> <span class="fl">0.08</span>,</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        sex <span class="sc">==</span> <span class="st">"Female"</span> <span class="sc">&amp;</span> age <span class="sc">&gt;=</span> <span class="dv">65</span> <span class="sc">~</span> <span class="fl">0.10</span>,</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        sex <span class="sc">==</span> <span class="st">"Female"</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">65</span> <span class="sc">~</span> <span class="fl">0.05</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Treatment assignment (slightly biased toward higher risk patients)</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment =</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.5</span> <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> (baseline_risk <span class="sc">-</span> <span class="fl">0.1</span>)),</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate outcome with complex interactions</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Drug effect varies by sex and age</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">drug_effect =</span> <span class="fu">case_when</span>(</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        treatment <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> sex <span class="sc">==</span> <span class="st">"Male"</span> <span class="sc">~</span> <span class="sc">-</span><span class="fl">0.6</span> <span class="sc">*</span> baseline_risk,</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        treatment <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> sex <span class="sc">==</span> <span class="st">"Female"</span> <span class="sc">~</span> <span class="sc">-</span><span class="fl">0.8</span> <span class="sc">*</span> baseline_risk,</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">patient_id =</span> <span class="dv">1</span><span class="sc">:</span>n_lab,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(n_lab, <span class="dv">65</span>, <span class="dv">12</span>)),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sex =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>), n_lab, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">baseline_risk =</span> <span class="fu">case_when</span>(</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    sex <span class="sc">==</span> <span class="st">"Male"</span> <span class="sc">&amp;</span> age <span class="sc">&gt;=</span> <span class="dv">65</span> <span class="sc">~</span> <span class="fl">0.15</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    sex <span class="sc">==</span> <span class="st">"Male"</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">65</span> <span class="sc">~</span> <span class="fl">0.08</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    sex <span class="sc">==</span> <span class="st">"Female"</span> <span class="sc">&amp;</span> age <span class="sc">&gt;=</span> <span class="dv">65</span> <span class="sc">~</span> <span class="fl">0.10</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    sex <span class="sc">==</span> <span class="st">"Female"</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">65</span> <span class="sc">~</span> <span class="fl">0.05</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Treatment assignment (slightly biased toward higher risk patients)</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.5</span> <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> (baseline_risk <span class="sc">-</span> <span class="fl">0.1</span>)),</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate outcome with complex interactions</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Drug effect varies by sex and age</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">drug_effect =</span> <span class="fu">case_when</span>(</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    treatment <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> sex <span class="sc">==</span> <span class="st">"Male"</span> <span class="sc">~</span> <span class="sc">-</span><span class="fl">0.6</span> <span class="sc">*</span> baseline_risk,</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    treatment <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> sex <span class="sc">==</span> <span class="st">"Female"</span> <span class="sc">~</span> <span class="sc">-</span><span class="fl">0.8</span> <span class="sc">*</span> baseline_risk,</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># FIX: Create a valid probability vector first</span></span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate the event probability, including noise</span></span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">event_prob =</span> baseline_risk <span class="sc">+</span> drug_effect <span class="sc">+</span> <span class="fu">rnorm</span>(n_lab, <span class="dv">0</span>, <span class="fl">0.01</span>),</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>        <span class="co"># CRITICAL: Clamp the probability to the valid [0, 1] range</span></span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">event_prob =</span> <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">pmin</span>(<span class="dv">1</span>, event_prob)),</span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Now, simulate the outcome using the sanitized probability</span></span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">cv_event =</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, <span class="at">prob =</span> event_prob)</span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert treatment to a factor for clarity in models/plots</span></span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">treatment =</span> <span class="fu">factor</span>(treatment, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"Drug"</span>)),</span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">age_group =</span> <span class="fu">ifelse</span>(age <span class="sc">&gt;=</span> <span class="dv">65</span>, <span class="st">"≥65"</span>, <span class="st">"&lt;65"</span>)</span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># FIX: Create a valid probability vector first</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate the event probability, including noise</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">event_prob =</span> baseline_risk <span class="sc">+</span> drug_effect <span class="sc">+</span> <span class="fu">rnorm</span>(n_lab, <span class="dv">0</span>, <span class="fl">0.01</span>),</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># CRITICAL: Clamp the probability to the valid [0, 1] range</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">event_prob =</span> <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">pmin</span>(<span class="dv">1</span>, event_prob)),</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Now, simulate the outcome using the sanitized probability</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv_event =</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, <span class="at">prob =</span> event_prob)</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert treatment to a factor for clarity in models/plots</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment =</span> <span class="fu">factor</span>(treatment, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"Drug"</span>)),</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">age_group =</span> <span class="fu">ifelse</span>(age <span class="sc">&gt;=</span> <span class="dv">65</span>, <span class="st">"≥65"</span>, <span class="st">"&lt;65"</span>)</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Display summary</span></span>
 <span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>lab_data <span class="sc">|&gt;</span></span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(patient_id, age, sex, age_group, treatment, cv_event) <span class="sc">|&gt;</span></span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">|&gt;</span></span>
-<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Lab Dataset: Cardiovascular Drug Trial"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(patient_id, age, sex, age_group, treatment, cv_event) <span class="sc">|&gt;</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Lab Dataset: Cardiovascular Drug Trial"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output-display">
-<table class="table table-striped caption-top table-sm small">
-<caption>Lab Dataset: Cardiovascular Drug Trial</caption>
-<thead>
-<tr class="header">
-<th style="text-align: right;" data-quarto-table-cell-role="th">patient_id</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">age</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">sex</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">age_group</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">treatment</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">cv_event</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">81</td>
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">≥65</td>
-<td style="text-align: left;">Placebo</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">58</td>
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">&lt;65</td>
-<td style="text-align: left;">Drug</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">69</td>
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">≥65</td>
-<td style="text-align: left;">Drug</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">73</td>
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">≥65</td>
-<td style="text-align: left;">Drug</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">70</td>
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">≥65</td>
-<td style="text-align: left;">Placebo</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">64</td>
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">&lt;65</td>
-<td style="text-align: left;">Placebo</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">83</td>
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">≥65</td>
-<td style="text-align: left;">Placebo</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">64</td>
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">&lt;65</td>
-<td style="text-align: left;">Drug</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">89</td>
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">≥65</td>
-<td style="text-align: left;">Placebo</td>
-<td style="text-align: right;">0</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">64</td>
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">&lt;65</td>
-<td style="text-align: left;">Placebo</td>
-<td style="text-align: right;">0</td>
-</tr>
-</tbody>
-</table>
-</div>
 </div>
 </section>
 <section id="task-1-exploratory-analysis" class="level2">
@@ -1640,196 +1541,79 @@ Figure&nbsp;3: DAG Showing Effect Modification vs.&nbsp;Confounding
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate event rates by treatment and sex</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>event_rates <span class="ot">&lt;-</span> lab_data <span class="sc">|&gt;</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(treatment, sex) <span class="sc">|&gt;</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">n =</span> <span class="fu">n</span>(),</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">events =</span> <span class="fu">sum</span>(cv_event),</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">rate =</span> <span class="fu">sum</span>(cv_event) <span class="sc">/</span> <span class="fu">n</span>(),</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(treatment, sex) <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">events =</span> <span class="fu">sum</span>(cv_event),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">rate =</span> <span class="fu">sum</span>(cv_event) <span class="sc">/</span> <span class="fu">n</span>(),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>event_rates <span class="sc">|&gt;</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">"Event Rates by Treatment and Sex"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">"Event Rates by Treatment and Sex"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Create visualization</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>lab_data <span class="sc">|&gt;</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cv_event =</span> <span class="fu">factor</span>(cv_event, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No Event"</span>, <span class="st">"CV Event"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> treatment, <span class="at">fill =</span> cv_event)) <span class="sc">+</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>sex) <span class="sc">+</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"CV Event Proportions by Treatment and Sex"</span>,</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion"</span>,</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Outcome"</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="st">"Set1"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output-display">
-<table class="table table-striped caption-top table-sm small">
-<caption>Event Rates by Treatment and Sex</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">treatment</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">sex</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">n</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">events</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">rate</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Placebo</td>
-<td style="text-align: left;">Female</td>
-<td style="text-align: right;">526</td>
-<td style="text-align: right;">41</td>
-<td style="text-align: right;">0.078</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Placebo</td>
-<td style="text-align: left;">Male</td>
-<td style="text-align: right;">466</td>
-<td style="text-align: right;">59</td>
-<td style="text-align: right;">0.127</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Drug</td>
-<td style="text-align: left;">Female</td>
-<td style="text-align: right;">505</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">0.016</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Drug</td>
-<td style="text-align: left;">Male</td>
-<td style="text-align: right;">503</td>
-<td style="text-align: right;">28</td>
-<td style="text-align: right;">0.056</td>
-</tr>
-</tbody>
-</table>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create visualization</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>lab_data <span class="sc">|&gt;</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">cv_event =</span> <span class="fu">factor</span>(cv_event, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No Event"</span>, <span class="st">"CV Event"</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> treatment, <span class="at">fill =</span> cv_event)) <span class="sc">+</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>sex) <span class="sc">+</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"CV Event Proportions by Treatment and Sex"</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Proportion"</span>,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">fill =</span> <span class="st">"Outcome"</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="st">"Set1"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><a href="week-09_effect_modification_files/figure-html/task1-solution-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="week-09_effect_modification_files/figure-html/task1-solution-1.png" class="img-fluid figure-img" width="672"></a></p>
-</figure>
-</div>
-</div>
 </div>
 <p><strong>Observation</strong>: The drug appears more effective in females (larger reduction in event proportion).</p>
 </section>
 <section id="task-2-formal-interaction-testing" class="level2">
 <h2 class="anchored" data-anchor-id="task-2-formal-interaction-testing">Task 2: Formal Interaction Testing</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: task2-skeleton</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># YOUR </span><span class="al">TASK</span><span class="co">: Fit logistic regression models</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Model without interaction</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>model_main <span class="ot">&lt;-</span> <span class="fu">glm</span>(_____ <span class="sc">~</span> _____ <span class="sc">+</span> _____, <span class="at">data =</span> lab_data, <span class="at">family =</span> _____)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Model with interaction</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>model_int <span class="ot">&lt;-</span> <span class="fu">glm</span>(_____ <span class="sc">~</span> _____ <span class="sc">*</span> _____, <span class="at">data =</span> lab_data, <span class="at">family =</span> _____)</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare models</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(_____, _____, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: task2-skeleton</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># YOUR </span><span class="al">TASK</span><span class="co">: Fit logistic regression models</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Model without interaction</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>model_main <span class="ot">&lt;-</span> <span class="fu">glm</span>(_____ <span class="sc">~</span> _____ <span class="sc">+</span> _____, <span class="at">data =</span> lab_data, <span class="at">family =</span> _____)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Model with interaction</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>model_int <span class="ot">&lt;-</span> <span class="fu">glm</span>(_____ <span class="sc">~</span> _____ <span class="sc">*</span> _____, <span class="at">data =</span> lab_data, <span class="at">family =</span> _____)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare models</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(_____, _____, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="solution-task-2" class="level2">
 <h2 class="anchored" data-anchor-id="solution-task-2">Solution Task 2</h2>
 <div class="cell" data-tbl-cap="Logistic Regression Results">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model without interaction</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>model_main <span class="ot">&lt;-</span> <span class="fu">glm</span>(</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    cv_event <span class="sc">~</span> treatment <span class="sc">+</span> sex <span class="sc">+</span> age,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> lab_data,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>()</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Model with interaction</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>model_int <span class="ot">&lt;-</span> <span class="fu">glm</span>(</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    cv_event <span class="sc">~</span> treatment <span class="sc">*</span> sex <span class="sc">+</span> age,</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> lab_data,</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>()</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare models</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>model_comparison <span class="ot">&lt;-</span> <span class="fu">anova</span>(model_main, model_int, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(model_comparison)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model without interaction</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>model_main <span class="ot">&lt;-</span> <span class="fu">glm</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  cv_event <span class="sc">~</span> treatment <span class="sc">+</span> sex <span class="sc">+</span> age,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> lab_data,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">binomial</span>()</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Model with interaction</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>model_int <span class="ot">&lt;-</span> <span class="fu">glm</span>(</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  cv_event <span class="sc">~</span> treatment <span class="sc">*</span> sex <span class="sc">+</span> age,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> lab_data,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">binomial</span>()</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare models</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>model_comparison <span class="ot">&lt;-</span> <span class="fu">anova</span>(model_main, model_int, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(model_comparison)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Show interaction model coefficients</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_int) <span class="sc">|&gt;</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Interaction Model Coefficients"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Analysis of Deviance Table
-
-Model 1: cv_event ~ treatment + sex + age
-Model 2: cv_event ~ treatment * sex + age
-  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)  
-1      1996     935.05                       
-2      1995     932.01  1   3.0433  0.08107 .
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show interaction model coefficients</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_int) <span class="sc">|&gt;</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Interaction Model Coefficients"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<table class="table table-striped caption-top table-sm small">
-<caption>Logistic Regression Results</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">term</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">estimate</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">std.error</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">statistic</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">-3.9491</td>
-<td style="text-align: right;">0.5495</td>
-<td style="text-align: right;">-7.1867</td>
-<td style="text-align: right;">0.0000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">treatmentDrug</td>
-<td style="text-align: right;">-1.6831</td>
-<td style="text-align: right;">0.3922</td>
-<td style="text-align: right;">-4.2913</td>
-<td style="text-align: right;">0.0000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">sexMale</td>
-<td style="text-align: right;">0.5353</td>
-<td style="text-align: right;">0.2148</td>
-<td style="text-align: right;">2.4919</td>
-<td style="text-align: right;">0.0127</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">age</td>
-<td style="text-align: right;">0.0225</td>
-<td style="text-align: right;">0.0078</td>
-<td style="text-align: right;">2.8797</td>
-<td style="text-align: right;">0.0040</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">treatmentDrug:sexMale</td>
-<td style="text-align: right;">0.7739</td>
-<td style="text-align: right;">0.4596</td>
-<td style="text-align: right;">1.6840</td>
-<td style="text-align: right;">0.0922</td>
-</tr>
-</tbody>
-</table>
-</div>
 </div>
 <p><strong>Interpretation</strong>: The significant interaction term indicates that sex modifies the treatment effect.</p>
 </section>
@@ -1838,94 +1622,47 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell" data-tbl-cap="Interaction Measures on Multiple Scales">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate predicted probabilities for each group</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>pred_data <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment =</span> <span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"Drug"</span>),</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sex =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>),</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">age =</span> <span class="dv">65</span> <span class="co"># Fix age at median</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_int, <span class="at">newdata =</span> pred_data, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>pred_data<span class="sc">$</span>prob <span class="ot">&lt;-</span> predictions</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape for easier calculation</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>results_wide <span class="ot">&lt;-</span> pred_data <span class="sc">|&gt;</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> treatment, <span class="at">values_from =</span> prob) <span class="sc">|&gt;</span></span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Additive measures</span></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">risk_diff =</span> Placebo <span class="sc">-</span> Drug,</span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Multiplicative measures</span></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">risk_ratio =</span> Drug <span class="sc">/</span> Placebo,</span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">odds_ratio =</span> (Drug <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> Drug)) <span class="sc">/</span> (Placebo <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> Placebo))</span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>results_wide <span class="sc">|&gt;</span></span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Effect Measures by Sex"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate predicted probabilities for each group</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>pred_data <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"Drug"</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sex =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">age =</span> <span class="dv">65</span> <span class="co"># Fix age at median</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_int, <span class="at">newdata =</span> pred_data, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>pred_data<span class="sc">$</span>prob <span class="ot">&lt;-</span> predictions</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape for easier calculation</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>results_wide <span class="ot">&lt;-</span> pred_data <span class="sc">|&gt;</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> treatment, <span class="at">values_from =</span> prob) <span class="sc">|&gt;</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Additive measures</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">risk_diff =</span> Placebo <span class="sc">-</span> Drug,</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Multiplicative measures</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">risk_ratio =</span> Drug <span class="sc">/</span> Placebo,</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">odds_ratio =</span> (Drug <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> Drug)) <span class="sc">/</span> (Placebo <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> Placebo))</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>results_wide <span class="sc">|&gt;</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Effect Measures by Sex"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Test for interaction on additive scale</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>additive_interaction <span class="ot">&lt;-</span> (results_wide<span class="sc">$</span>risk_diff[<span class="dv">2</span>] <span class="sc">-</span> results_wide<span class="sc">$</span>risk_diff[<span class="dv">1</span>])</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>multiplicative_interaction <span class="ot">&lt;-</span> (results_wide<span class="sc">$</span>risk_ratio[<span class="dv">2</span>] <span class="sc">/</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>  results_wide<span class="sc">$</span>risk_ratio[<span class="dv">1</span>])</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Additive interaction (difference of risk differences):"</span>,</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(additive_interaction, <span class="dv">4</span>),</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>  <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Multiplicative interaction (ratio of risk ratios):"</span>,</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(multiplicative_interaction, <span class="dv">4</span>),</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>  <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output-display">
-<table class="table table-striped caption-top table-sm small">
-<caption>Interaction Measures on Multiple Scales</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">sex</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">age</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Placebo</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Drug</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">risk_diff</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">risk_ratio</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">odds_ratio</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Male</td>
-<td style="text-align: right;">65</td>
-<td style="text-align: right;">0.1243</td>
-<td style="text-align: right;">0.0541</td>
-<td style="text-align: right;">0.0702</td>
-<td style="text-align: right;">0.4352</td>
-<td style="text-align: right;">0.4029</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Female</td>
-<td style="text-align: right;">65</td>
-<td style="text-align: right;">0.0768</td>
-<td style="text-align: right;">0.0152</td>
-<td style="text-align: right;">0.0615</td>
-<td style="text-align: right;">0.1982</td>
-<td style="text-align: right;">0.1858</td>
-</tr>
-</tbody>
-</table>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test for interaction on additive scale</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>additive_interaction <span class="ot">&lt;-</span> (results_wide<span class="sc">$</span>risk_diff[<span class="dv">2</span>] <span class="sc">-</span> results_wide<span class="sc">$</span>risk_diff[<span class="dv">1</span>])</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>multiplicative_interaction <span class="ot">&lt;-</span> (results_wide<span class="sc">$</span>risk_ratio[<span class="dv">2</span>] <span class="sc">/</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    results_wide<span class="sc">$</span>risk_ratio[<span class="dv">1</span>])</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Additive interaction (difference of risk differences):"</span>,</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(additive_interaction, <span class="dv">4</span>),</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Additive interaction (difference of risk differences): -0.0087 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Multiplicative interaction (ratio of risk ratios):"</span>,</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(multiplicative_interaction, <span class="dv">4</span>),</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Multiplicative interaction (ratio of risk ratios): 0.4554 </code></pre>
-</div>
 </div>
 <p><strong>Key Finding</strong>: Strong interaction exists on the multiplicative scale but weaker interaction on the additive scale.</p>
 </section>
@@ -1934,108 +1671,58 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data for causal forest</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> lab_data <span class="sc">|&gt;</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(age, sex) <span class="sc">|&gt;</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">sex =</span> <span class="fu">as.numeric</span>(<span class="fu">factor</span>(sex))) <span class="sc">|&gt;</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>()</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>W <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(lab_data<span class="sc">$</span>treatment <span class="sc">==</span> <span class="st">"Drug"</span>)</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> lab_data<span class="sc">$</span>cv_event</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit causal forest</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>cf <span class="ot">&lt;-</span> <span class="fu">causal_forest</span>(X, Y, W, <span class="at">num.trees =</span> <span class="dv">1000</span>)</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Get individual treatment effect estimates</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>tau_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(cf)<span class="sc">$</span>predictions</span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Add to dataset</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>lab_data<span class="sc">$</span>individual_effect <span class="ot">&lt;-</span> tau_hat</span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize heterogeneous effects</span></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>lab_data <span class="sc">|&gt;</span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> individual_effect, <span class="at">color =</span> sex)) <span class="sc">+</span></span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"Individual Treatment Effects from Causal Forest"</span>,</span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Age"</span>,</span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Estimated Treatment Effect"</span>,</span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">color =</span> <span class="st">"Sex"</span></span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data for causal forest</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> lab_data <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age, sex) <span class="sc">|&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sex =</span> <span class="fu">as.numeric</span>(<span class="fu">factor</span>(sex))) <span class="sc">|&gt;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>W <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(lab_data<span class="sc">$</span>treatment <span class="sc">==</span> <span class="st">"Drug"</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> lab_data<span class="sc">$</span>cv_event</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit causal forest</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>cf <span class="ot">&lt;-</span> <span class="fu">causal_forest</span>(X, Y, W, <span class="at">num.trees =</span> <span class="dv">1000</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Get individual treatment effect estimates</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>tau_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(cf)<span class="sc">$</span>predictions</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Add to dataset</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>lab_data<span class="sc">$</span>individual_effect <span class="ot">&lt;-</span> tau_hat</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize heterogeneous effects</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>lab_data <span class="sc">|&gt;</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> individual_effect, <span class="at">color =</span> sex)) <span class="sc">+</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Individual Treatment Effects from Causal Forest"</span>,</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Age"</span>,</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Estimated Treatment Effect"</span>,</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Sex"</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary of effect heterogeneity</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>lab_data <span class="sc">|&gt;</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex, age_group) <span class="sc">|&gt;</span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_effect =</span> <span class="fu">mean</span>(individual_effect),</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_effect =</span> <span class="fu">sd</span>(individual_effect),</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">4</span>,</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Mean Treatment Effects by Subgroup (Causal Forest)"</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><a href="week-09_effect_modification_files/figure-html/task4-causal-forest-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="week-09_effect_modification_files/figure-html/task4-causal-forest-1.png" class="img-fluid figure-img" width="672"></a></p>
-</figure>
-</div>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary of effect heterogeneity</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>lab_data <span class="sc">|&gt;</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(sex, age_group) <span class="sc">|&gt;</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">mean_effect =</span> <span class="fu">mean</span>(individual_effect),</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_effect =</span> <span class="fu">sd</span>(individual_effect),</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">digits =</span> <span class="dv">4</span>,</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">caption =</span> <span class="st">"Mean Treatment Effects by Subgroup (Causal Forest)"</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<table class="table table-striped caption-top table-sm small">
-<caption>Mean Treatment Effects by Subgroup (Causal Forest)</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">sex</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">age_group</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">mean_effect</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">sd_effect</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">&lt;65</td>
-<td style="text-align: right;">-0.0536</td>
-<td style="text-align: right;">0.0210</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">≥65</td>
-<td style="text-align: right;">-0.0754</td>
-<td style="text-align: right;">0.0362</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">&lt;65</td>
-<td style="text-align: right;">-0.0559</td>
-<td style="text-align: right;">0.0240</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">≥65</td>
-<td style="text-align: right;">-0.0836</td>
-<td style="text-align: right;">0.0447</td>
-</tr>
-</tbody>
-</table>
-</div>
 </div>
 <p><strong>Insight</strong>: The causal forest confirms our regression findings and reveals additional nuanced heterogeneity within subgroups.</p>
 </section>
 <section id="lab-reflection-questions" class="level2">
 <h2 class="anchored" data-anchor-id="lab-reflection-questions">Lab Reflection Questions</h2>
-</section>
-</section>
-<section id="reflection-questions" class="level1 callout-question">
-<h1>❓ Reflection Questions</h1>
+<section id="reflection-questions" class="level3 callout-question">
+<h3 class="anchored" data-anchor-id="reflection-questions">❓ Reflection Questions</h3>
 <ol type="1">
 <li><strong>Scale dependence</strong>: Why might the same data show interaction on one scale but not another? When might each scale be more relevant for clinical decision-making?</li>
 <li><strong>Causal interpretation</strong>: How does the causal forest approach differ from traditional regression-based interaction testing? What are the advantages and limitations of each?</li>
@@ -2048,11 +1735,11 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <li>The analysis suggests the drug is particularly beneficial for females and may have increasing benefit with age. However, clinical recommendations should also consider cost, side effects, and patient preferences—not just statistical effect modification.</li>
 </ol>
 </section>
+</section>
 <section id="retrieval-quiz" class="level2">
 <h2 class="anchored" data-anchor-id="retrieval-quiz">Retrieval Quiz</h2>
-</section>
-<section id="knowledge-check" class="level1 callout-question">
-<h1>❓ Knowledge Check</h1>
+<section id="knowledge-check" class="level3 callout-question">
+<h3 class="anchored" data-anchor-id="knowledge-check">❓ Knowledge Check</h3>
 <p><strong>Question 1</strong>: A study finds that a new drug reduces heart attack risk by 2 percentage points in men (from 10% to 8%) and by 1 percentage point in women (from 5% to 4%). Is there effect modification? On which scale?</p>
 <details>
 <summary>
@@ -2075,15 +1762,16 @@ Click for answer
 <strong>Answer</strong>: Causal forests can discover complex, nonlinear interactions involving multiple variables simultaneously without requiring researchers to pre-specify interaction terms. Traditional regression only finds interactions that researchers explicitly include in the model.
 </details>
 </section>
-<section id="common-pitfalls-checks" class="level1">
-<h1>6 Common Pitfalls &amp; Checks</h1>
+</section>
+<section id="common-pitfalls-checks" class="level2">
+<h2 class="anchored" data-anchor-id="common-pitfalls-checks">6 Common Pitfalls &amp; Checks</h2>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>⚠️ Common Pitfall: Confusing Effect Modification with Confounding
+<span class="screen-reader-only">Warning</span>Common Pitfall: Confusing Effect Modification with Confounding
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -2098,7 +1786,7 @@ Click for answer
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>⚠️ Common Pitfall: Scale Confusion
+<span class="screen-reader-only">Warning</span>Common Pitfall: Scale Confusion
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -2119,7 +1807,7 @@ Click for answer
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>⚠️ Common Pitfall: Statistical vs.&nbsp;Biological Interaction
+<span class="screen-reader-only">Warning</span>Common Pitfall: Statistical vs.&nbsp;Biological Interaction
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -2139,7 +1827,7 @@ Click for answer
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>📌 Essential Checks for Effect Modification Analysis
+<span class="screen-reader-only">Important</span>Essential Checks for Effect Modification Analysis
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -2158,7 +1846,7 @@ Click for answer
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>🧠 Self-Check Questions
+<span class="screen-reader-only">Tip</span>Self-Check Questions
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -2172,6 +1860,7 @@ Click for answer
 </ul>
 </div>
 </div>
+</section>
 </section>
 <section id="advanced-teaching-activities-interactivity" class="level1">
 <h1>7 Advanced Teaching Activities &amp; Interactivity</h1>

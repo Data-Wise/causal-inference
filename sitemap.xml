@@ -98,7 +98,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_lectures.html</loc>
-    <lastmod>2025-10-14T15:38:34.249Z</lastmod>
+    <lastmod>2025-10-15T18:22:47.653Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/home_assignments.html</loc>
@@ -306,7 +306,7 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-09_effect_modification.html</loc>
-    <lastmod>2025-10-14T15:21:41.403Z</lastmod>
+    <lastmod>2025-10-15T18:00:30.532Z</lastmod>
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-13_target_trial.html</loc>
@@ -318,6 +318,18 @@
   </url>
   <url>
     <loc>https://Data-Wise.github.io/causal-inference/lectures/week-09_effect_modification-rev1.html</loc>
-    <lastmod>2025-10-14T15:38:49.083Z</lastmod>
+    <lastmod>2025-10-15T18:12:48.838Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/lectures/week-01_what_is_causal_effect.html</loc>
+    <lastmod>2025-08-26T15:32:40.679Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/lectures/week-02_DAG.html</loc>
+    <lastmod>2025-08-28T16:43:05.501Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Data-Wise.github.io/causal-inference/lectures/build/week-3_confounding_identification.html</loc>
+    <lastmod>2025-09-04T04:48:31.343Z</lastmod>
   </url>
 </urlset>
