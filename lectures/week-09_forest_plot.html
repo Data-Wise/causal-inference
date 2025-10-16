@@ -8,7 +8,7 @@
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
 
-<title>STAT 579: Applied Causal Inference – Introduction to Causal Inference</title>
+<title>Forest Plots – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,32 +21,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./syllabus/syllabus-final.pdf" rel="next">
-<link href="./assets/images/icon.png" rel="icon" type="image/png">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../assets/images/icon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -170,17 +207,19 @@ ul.task-list li input[type="checkbox"] {
         }
     };
 </script>
+<link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 
 
-<link rel="stylesheet" href="assets/styles/css/home.css">
-<meta property="og:title" content="STAT 579: Applied Causal Inference – Introduction to Causal Inference">
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="Forest Plots – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
-<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -349,11 +388,11 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./assets/images/icon.png" alt="" class="navbar-logo light-content">
-    <img src="./assets/images/icon.png" alt="" class="navbar-logo dark-content">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo light-content">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo dark-content">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Introduction to Causal Inference</span>
     </a>
   </div>
@@ -364,7 +403,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -373,37 +412,37 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
         <li>
-    <a class="dropdown-item" href="./syllabus/syllabus-final.pdf">
+    <a class="dropdown-item" href="../syllabus/syllabus-final.pdf">
  <span class="dropdown-text">PDF</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./syllabus/syllabus-final.html">
+    <a class="dropdown-item" href="../syllabus/syllabus-final.html">
  <span class="dropdown-text">HTML</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="./syllabus/schedule.html"> 
+    <a class="nav-link" href="../syllabus/schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_lectures.html"> 
+    <a class="nav-link" href="../home_lectures.html"> 
 <span class="menu-text">Lecture Notes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_project.html"> 
+    <a class="nav-link" href="../home_project.html"> 
 <span class="menu-text">Project</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_readings.html"> 
+    <a class="nav-link" href="../home_readings.html"> 
 <span class="menu-text">Readings</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_assignments.html"> 
+    <a class="nav-link" href="../home_assignments.html"> 
 <span class="menu-text">Assignments</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./r_help.html"> 
+    <a class="nav-link" href="../r_help.html"> 
 <span class="menu-text">R Help</span></a>
   </li>  
 </ul>
@@ -425,7 +464,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Course Overview</a></li><li class="breadcrumb-item"><a href="./index.html">Home</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Forest Plots</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -434,8 +473,8 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Course Overview</a></li><li class="breadcrumb-item"><a href="./index.html">Home</a></li></ol></nav>
-      <h1 class="title">STAT 579: Applied Causal Inference</h1>
+    <div class="quarto-title column-body">
+      <h1 class="title">Forest Plots</h1>
                       </div>
   </div>
     
@@ -471,23 +510,23 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
-      <a href="./index.html" class="sidebar-logo-link">
+      <a href="../index.html" class="sidebar-logo-link">
       </a>
       </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Overview</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Home</span></a>
   </div>
 </li>
@@ -502,13 +541,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
  <span class="menu-text">PDF</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">HTML</span></a>
   </div>
 </li>
@@ -516,7 +555,7 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Schedule</span></a>
   </div>
 </li>
@@ -533,25 +572,25 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_lectures.html" class="sidebar-item-text sidebar-link">
+  <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lecture Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_assignments.html" class="sidebar-item-text sidebar-link">
+  <a href="../home_assignments.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Assignments</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_project.html" class="sidebar-item-text sidebar-link">
+  <a href="../home_project.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Project</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_readings.html" class="sidebar-item-text sidebar-link">
+  <a href="../home_readings.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Readings</span></a>
   </div>
 </li>
@@ -568,7 +607,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./r_help.html" class="sidebar-item-text sidebar-link">
+  <a href="../r_help.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">R Help</span></a>
   </div>
 </li>
@@ -584,193 +623,241 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#course-overview" id="toc-course-overview" class="nav-link active" data-scroll-target="#course-overview">Course Overview</a>
+  <li><a href="#what-is-a-forest-plot-and-how-does-it-show-effect-modification" id="toc-what-is-a-forest-plot-and-how-does-it-show-effect-modification" class="nav-link active" data-scroll-target="#what-is-a-forest-plot-and-how-does-it-show-effect-modification">What is a Forest Plot and How Does It Show Effect Modification?</a></li>
+  <li><a href="#anatomy-of-a-forest-plot" id="toc-anatomy-of-a-forest-plot" class="nav-link" data-scroll-target="#anatomy-of-a-forest-plot">Anatomy of a Forest Plot</a></li>
+  <li><a href="#how-to-interpret-a-forest-plot-for-effect-modification" id="toc-how-to-interpret-a-forest-plot-for-effect-modification" class="nav-link" data-scroll-target="#how-to-interpret-a-forest-plot-for-effect-modification">How to Interpret a Forest Plot for Effect Modification</a></li>
+  <li><a href="#r-code-example-visualizing-the-sepsis-trial-results" id="toc-r-code-example-visualizing-the-sepsis-trial-results" class="nav-link" data-scroll-target="#r-code-example-visualizing-the-sepsis-trial-results">R Code Example: Visualizing the Sepsis Trial Results</a>
   <ul class="collapse">
-  <li><a href="#instructors-approach" id="toc-instructors-approach" class="nav-link" data-scroll-target="#instructors-approach">Instructor’s Approach</a></li>
+  <li><a href="#step-1-calculate-stratified-effects-and-confidence-intervals" id="toc-step-1-calculate-stratified-effects-and-confidence-intervals" class="nav-link" data-scroll-target="#step-1-calculate-stratified-effects-and-confidence-intervals">Step 1: Calculate Stratified Effects and Confidence Intervals</a></li>
+  <li><a href="#step-2-create-the-forest-plot-with-ggplot2" id="toc-step-2-create-the-forest-plot-with-ggplot2" class="nav-link" data-scroll-target="#step-2-create-the-forest-plot-with-ggplot2">Step 2: Create the Forest Plot with <code>ggplot2</code></a></li>
   </ul></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
-  <li><a href="#assessment-and-grading" id="toc-assessment-and-grading" class="nav-link" data-scroll-target="#assessment-and-grading">Assessment and Grading</a></li>
-  <li><a href="#course-materials" id="toc-course-materials" class="nav-link" data-scroll-target="#course-materials">Course Materials</a>
-  <ul class="collapse">
-  <li><a href="#required-freely-available-online" id="toc-required-freely-available-online" class="nav-link" data-scroll-target="#required-freely-available-online">Required (Freely Available Online)</a></li>
-  <li><a href="#recommended" id="toc-recommended" class="nav-link" data-scroll-target="#recommended">Recommended</a></li>
-  <li><a href="#software" id="toc-software" class="nav-link" data-scroll-target="#software">Software</a></li>
-  <li><a href="#key-notes-for-students" id="toc-key-notes-for-students" class="nav-link" data-scroll-target="#key-notes-for-students">Key Notes for Students</a></li>
-  </ul></li>
-  <li><a href="#course-policies" id="toc-course-policies" class="nav-link" data-scroll-target="#course-policies">Course Policies</a></li>
+  <li><a href="#interpretation-of-the-example-plot" id="toc-interpretation-of-the-example-plot" class="nav-link" data-scroll-target="#interpretation-of-the-example-plot">Interpretation of the Example Plot</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-09_forest_plot.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-09_forest_plot.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
 
 
 
 
 
 
-<p><a href="https://canvas.unm.edu" class="btn btn-primary">Access UNM Canvas</a></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th><strong>Instructor</strong></th>
-<th>Davood Tofighi, PhD</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Affiliation</strong></td>
-<td>Department of Mathematics and Statistics</td>
-</tr>
-<tr class="even">
-<td><strong>Office</strong></td>
-<td>Science Math Learning Center (SMLC) 228</td>
-</tr>
-<tr class="odd">
-<td><strong>Office Hours</strong></td>
-<td>TBD – Office/Zoom</td>
-</tr>
-<tr class="even">
-<td><strong>Email</strong></td>
-<td>Through Canvas</td>
-</tr>
-<tr class="odd">
-<td><strong>Class Time</strong></td>
-<td>Tuesdays &amp; Thursdays, 9:30 AM – 10:45 AM</td>
-</tr>
-</tbody>
-</table>
-<section id="course-overview" class="level2">
-<h2 class="anchored" data-anchor-id="course-overview">Course Overview</h2>
-<p>This graduate-level seminar introduces the <strong>theory and application of causal inference</strong>, with a strong emphasis on <strong>biostatistical and epidemiological contexts</strong>. The course builds from <strong>conceptual foundations and core assumptions</strong> to <strong>modern estimation methods</strong> for causal effects, emphasizing <strong>target trial emulation</strong> as a unifying framework.</p>
-<p>Key frameworks and tools include:</p>
-<ul>
-<li>Potential Outcomes Framework &amp; SUTVA</li>
-<li>Directed Acyclic Graphs (DAGs)</li>
-<li>Propensity Scores, IPW, and Doubly Robust Methods</li>
-<li>Instrumental Variables</li>
-<li>Mediation Analysis (NDE/NIE)</li>
-<li>Marginal Structural Models (MSMs)</li>
-<li>Sensitivity Analysis</li>
-</ul>
-<section id="instructors-approach" class="level3">
-<h3 class="anchored" data-anchor-id="instructors-approach">Instructor’s Approach</h3>
-<p>Causal inference is not just a toolbox—it’s a <strong>rigorous way of thinking</strong> about cause and effect. We will prioritize:</p>
-<ul>
-<li><strong>Precise causal questions</strong> (not just statistical associations).</li>
-<li><strong>Transparency of assumptions</strong> (via DAGs and formal notation).</li>
-<li><strong>Identification before estimation</strong> (thinking carefully about what is learnable from data).</li>
-<li><strong>Critical robustness assessment</strong> (sensitivity, replication, target trial framing).</li>
-</ul>
+<section id="what-is-a-forest-plot-and-how-does-it-show-effect-modification" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-a-forest-plot-and-how-does-it-show-effect-modification">What is a Forest Plot and How Does It Show Effect Modification?</h2>
+<p>A <strong>forest plot</strong> is a graph that visually summarizes the results of multiple analyses, all estimating the same effect. In the context of effect modification, it’s used to display the causal effect of a treatment within different subgroups of a population. Its power comes from showing both the <strong>point estimate</strong> of the effect and its <strong>confidence interval</strong> for each subgroup, side-by-side.</p>
+<p>You can spot effect modification on a forest plot when the point estimates for different subgroups are noticeably different, and their confidence intervals show little or no overlap.</p>
+<p>Think of it as telling a <strong>“tale of two (or more) cities.”</strong> Instead of reporting the average weather for an entire country (the average treatment effect), a forest plot gives you the specific weather forecast for each individual city (the subgroup-specific effects). If the weather is drastically different in each city, you have effect modification.</p>
 </section>
-</section>
-<section id="learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
-<p>By the end of the course, students will be able to:</p>
+<section id="anatomy-of-a-forest-plot" class="level2">
+<h2 class="anchored" data-anchor-id="anatomy-of-a-forest-plot">Anatomy of a Forest Plot</h2>
+<p>A forest plot has several key components that work together to tell the story of your analysis:</p>
 <ol type="1">
-<li>Formulate and distinguish causal from associational questions.</li>
-<li>Represent assumptions using DAGs and counterfactual notation.</li>
-<li>Evaluate and apply key assumptions (SUTVA, exchangeability, positivity).</li>
-<li>Implement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).</li>
-<li>Decompose effects via mediation analysis.</li>
-<li>Conduct sensitivity analyses for unmeasured confounding.</li>
-<li>Frame observational studies as target trial emulations.</li>
-<li>Critically evaluate causal claims in the literature.</li>
+<li><strong>Y-Axis (The Subgroups):</strong> The left side of the plot lists the different subgroups being compared. These are the strata of your potential effect modifier (e.g., Male vs.&nbsp;Female, Old vs.&nbsp;Young, Low Risk vs.&nbsp;High Risk). An “Overall” category is often included at the bottom to show the average effect.</li>
+<li><strong>X-Axis (The Effect Scale):</strong> The horizontal axis is scaled to the effect measure you are using. This could be a risk ratio, odds ratio, risk difference, or mean difference.</li>
+<li><strong>Points/Squares (The Point Estimates):</strong> For each subgroup, a square or dot is placed at the location of its point estimate for the treatment effect. The <strong>size</strong> of the square is often proportional to the precision of the estimate (which is related to the subgroup’s sample size). Larger subgroups get larger squares and have more “weight” in the overall analysis.</li>
+<li><strong>Horizontal Lines (The Confidence Intervals):</strong> The lines extending from either side of the square represent the 95% confidence interval for the effect estimate in that subgroup. A longer line means more uncertainty; a shorter line means a more precise estimate.</li>
+<li><strong>The Vertical Line of No Effect:</strong> A solid or dashed vertical line is drawn at the point of “no effect.”
+<ul>
+<li>For <strong>ratios</strong> (Risk Ratio, Odds Ratio), this line is at <strong>1.0</strong>.</li>
+<li>For <strong>differences</strong> (Risk Difference, Mean Difference), this line is at <strong>0.0</strong>.</li>
+</ul></li>
 </ol>
 </section>
-<section id="assessment-and-grading" class="level2">
-<h2 class="anchored" data-anchor-id="assessment-and-grading">Assessment and Grading</h2>
+<section id="how-to-interpret-a-forest-plot-for-effect-modification" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-interpret-a-forest-plot-for-effect-modification">How to Interpret a Forest Plot for Effect Modification</h2>
+<p>Follow these steps to read the story the plot is telling:</p>
+<ol type="1">
+<li><strong>Check for Heterogeneity:</strong> Look at the <strong>point estimates</strong> (the squares). Are they in very different locations along the x-axis? If the effect for one group is far from the effect for another, it’s a visual clue that effect modification might be present.</li>
+<li><strong>Assess Statistical Significance of the Difference:</strong> Look at the <strong>confidence intervals</strong> (the horizontal lines).
+<ul>
+<li>If the confidence intervals for two subgroups <strong>do not overlap</strong>, you have strong statistical evidence that the effect is truly different between those groups (i.e., statistically significant effect modification).</li>
+<li>If they <strong>do overlap</strong>, the difference between the subgroups may be due to random chance.</li>
+</ul></li>
+<li><strong>Evaluate the Effect in Each Subgroup:</strong> For each subgroup’s row, look at its confidence interval in relation to the <strong>line of no effect</strong>.
+<ul>
+<li>If a subgroup’s CI <strong>does not cross</strong> the line of no effect, the treatment has a statistically significant effect in that subgroup.</li>
+<li>If a subgroup’s CI <strong>does cross</strong> the line of no effect, you cannot conclude there is a significant effect of the treatment in that subgroup.</li>
+</ul></li>
+</ol>
+<p>A classic sign of strong effect modification is when the treatment has a significant, beneficial effect in one subgroup (its CI is entirely to one side of the null line) but has no significant effect in another subgroup (its CI crosses the null line).</p>
+</section>
+<section id="r-code-example-visualizing-the-sepsis-trial-results" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="r-code-example-visualizing-the-sepsis-trial-results">R Code Example: Visualizing the Sepsis Trial Results</h2>
+<p>Let’s create a forest plot for the sepsis trial data from our previous lab. We found evidence of effect modification on the <strong>additive scale</strong> (Risk Difference). Our goal is to create a plot that visually represents the results from our stratified analysis.</p>
+<section id="step-1-calculate-stratified-effects-and-confidence-intervals" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-calculate-stratified-effects-and-confidence-intervals">Step 1: Calculate Stratified Effects and Confidence Intervals</h3>
+<p>First, we need to calculate not only the point estimates but also the 95% confidence intervals for the risk difference in each age group. To do this, we need to get the raw counts in each of the four cells.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the sepsis_df from the previous lab</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(dplyr, tidyr, ggplot2, forcats)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>n_lab <span class="ot">&lt;-</span> <span class="dv">4000</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>age_group <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, <span class="fl">0.4</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>drug <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>p_mortality <span class="ot">&lt;-</span> <span class="fu">case_when</span>(</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  age_group <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> drug <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="fl">0.10</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  age_group <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> drug <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="fl">0.05</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  age_group <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> drug <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="fl">0.30</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  age_group <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> drug <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="fl">0.15</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>mortality <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, p_mortality)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>sepsis_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  mortality,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">drug =</span> <span class="fu">factor</span>(drug),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">age_group =</span> <span class="fu">factor</span>(age_group, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"&lt;=65"</span>, <span class="st">"&gt;65"</span>))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate counts, risks, and CIs for the risk difference</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>forest_plot_data <span class="ot">&lt;-</span> sepsis_df <span class="sc">|&gt;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age_group, drug) <span class="sc">|&gt;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">events =</span> <span class="fu">sum</span>(mortality),</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">risk =</span> events <span class="sc">/</span> n) <span class="sc">|&gt;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pivot to get treated and control stats on the same row</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> drug,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(n, events, risk)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate Risk Difference and its standard error and CI</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">rd =</span> risk_1 <span class="sc">-</span> risk_0,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">se_rd =</span> <span class="fu">sqrt</span>((risk_1 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> risk_1) <span class="sc">/</span> n_1) <span class="sc">+</span> (risk_0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> risk_0) <span class="sc">/</span> n_0)),</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower_ci =</span> rd <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se_rd,</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper_ci =</span> rd <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se_rd</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add an overall "Average" effect</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This recalculates everything on the whole dataset</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    sepsis_df <span class="sc">|&gt;</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(drug) <span class="sc">|&gt;</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">events =</span> <span class="fu">sum</span>(mortality), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">risk =</span> events <span class="sc">/</span> n) <span class="sc">|&gt;</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> drug, <span class="at">values_from =</span> <span class="fu">c</span>(n, events, risk)) <span class="sc">|&gt;</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>        <span class="at">rd =</span> risk_1 <span class="sc">-</span> risk_0,</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>        <span class="at">se_rd =</span> <span class="fu">sqrt</span>(</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>          (risk_1 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> risk_1) <span class="sc">/</span> n_1) <span class="sc">+</span> (risk_0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> risk_0) <span class="sc">/</span> n_0)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        <span class="at">lower_ci =</span> rd <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se_rd,</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">upper_ci =</span> rd <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se_rd,</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">age_group =</span> <span class="st">"Overall"</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a "weight" column for plotting, based on inverse of the variance</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weight =</span> <span class="dv">1</span> <span class="sc">/</span> (se_rd<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reorder for the plot</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age_group =</span> <span class="fu">fct_relevel</span>(age_group, <span class="st">"Overall"</span>, <span class="at">after =</span> <span class="cn">Inf</span>))</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>  forest_plot_data <span class="sc">|&gt;</span> <span class="fu">select</span>(age_group, rd, lower_ci, upper_ci),</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 13%">
-<col style="width: 2%">
-<col style="width: 84%">
-</colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Component</th>
-<th style="text-align: left;">Weight</th>
-<th style="text-align: left;">Description</th>
+<th style="text-align: left;">age_group</th>
+<th style="text-align: right;">rd</th>
+<th style="text-align: right;">lower_ci</th>
+<th style="text-align: right;">upper_ci</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><strong>Weekly Concept Checks</strong></td>
-<td style="text-align: left;">10%</td>
-<td style="text-align: left;">Short, low-stakes exercises on assumptions, DAGs, and interpretation.</td>
+<td style="text-align: left;">&lt;=65</td>
+<td style="text-align: right;">-0.036</td>
+<td style="text-align: right;">-0.056</td>
+<td style="text-align: right;">-0.016</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>Problem Sets (3–4 sets)</strong></td>
-<td style="text-align: left;">25%</td>
-<td style="text-align: left;">Analytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).</td>
+<td style="text-align: left;">&gt;65</td>
+<td style="text-align: right;">-0.173</td>
+<td style="text-align: right;">-0.213</td>
+<td style="text-align: right;">-0.133</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><strong>Paper Critique &amp; Discussion Lead</strong></td>
-<td style="text-align: left;">20%</td>
-<td style="text-align: left;">Each student will lead one class discussion of an assigned paper. This involves reconstructing the authors’ DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Final Project</strong></td>
-<td style="text-align: left;">35%</td>
-<td style="text-align: left;">Independent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Final Presentation</strong></td>
-<td style="text-align: left;">10%</td>
-<td style="text-align: left;">15-minute conference-style presentation defending your project’s causal assumptions and interpreting the results.</td>
+<td style="text-align: left;">Overall</td>
+<td style="text-align: right;">-0.092</td>
+<td style="text-align: right;">-0.113</td>
+<td style="text-align: right;">-0.071</td>
 </tr>
 </tbody>
 </table>
 </div>
+</div>
 </section>
-<section id="course-materials" class="level2">
-<h2 class="anchored" data-anchor-id="course-materials">Course Materials</h2>
-<section id="required-freely-available-online" class="level3">
-<h3 class="anchored" data-anchor-id="required-freely-available-online">Required (Freely Available Online)</h3>
-<ul>
-<li>Hernán, M. A., &amp; Robins, J. M. (2024). <em>Causal Inference: What If</em>.</li>
-<li>Neal, B. (2020). <em>Introduction to Causal Inference</em>.</li>
-</ul>
+<section id="step-2-create-the-forest-plot-with-ggplot2" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="step-2-create-the-forest-plot-with-ggplot2">Step 2: Create the Forest Plot with <code>ggplot2</code></h3>
+<p>Now we use this summary data frame to build the plot.</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> forest_plot_data, <span class="fu">aes</span>(<span class="at">x =</span> rd, <span class="at">y =</span> age_group)) <span class="sc">+</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the vertical line of no effect at x=0</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the confidence interval lines</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbarh</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> lower_ci, <span class="at">xmax =</span> upper_ci), <span class="at">height =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the point estimates, with size proportional to weight/precision</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> weight), <span class="at">shape =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Formatting</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Risk Difference (Drug - Placebo)"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.25</span>, <span class="fl">0.05</span>, <span class="fl">0.05</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Patient Subgroup"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Effect of Sepsis Drug on Mortality"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Stratified by Age Group"</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major.y =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div id="fig-forest-plot" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-forest-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="week-09_forest_plot_files/figure-html/fig-forest-plot-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: Forest plot of the effect of a new sepsis drug on 30-day mortality, stratified by age group."><img src="week-09_forest_plot_files/figure-html/fig-forest-plot-1.png" class="img-fluid figure-img" width="672"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-forest-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Forest plot of the effect of a new sepsis drug on 30-day mortality, stratified by age group.
+</figcaption>
+</figure>
+</div>
+</div></div></div>
 </section>
-<section id="recommended" class="level3">
-<h3 class="anchored" data-anchor-id="recommended">Recommended</h3>
-<ul>
-<li>Cunningham, S. (2021). <em>Causal Inference: The Mixtape</em>.</li>
-<li>VanderWeele, T. J. (2015). <em>Explanation in Causal Inference</em>.</li>
-<li>Pearl, J., Glymour, M., &amp; Jewell, N. (2016). <em>Causal Inference in Statistics: A Primer</em>.</li>
-<li>Imbens, G. W., &amp; Rubin, D. B. (2015). <em>Causal Inference for Statistics, Social, and Biomedical Sciences</em>.</li>
-<li>Morgan, S. L., &amp; Winship, C. (2015). <em>Counterfactuals and Causal Inference</em>.</li>
-</ul>
 </section>
-<section id="software" class="level3">
-<h3 class="anchored" data-anchor-id="software">Software</h3>
-<ul>
-<li><strong>Required:</strong> R and RStudio (or VS Code). Students should have intermediate R proficiency.</li>
-<li><strong>Core Packages:</strong> <code>tidyverse</code>, <code>dagitty</code>, <code>ggdag</code>, <code>MatchIt</code>, <code>WeightIt</code>, <code>cobalt</code>, <code>ivreg</code>, <code>mediation</code>, <code>EValue</code>, <code>tmle3</code>, <code>grf</code>, <code>DoubleML</code>.</li>
-</ul>
-</section>
-<section id="key-notes-for-students" class="level3">
-<h3 class="anchored" data-anchor-id="key-notes-for-students">Key Notes for Students</h3>
-<ul>
-<li><strong>Paper Critique &amp; Discussion Lead (20%)</strong>: Each student is responsible for one session. Deliverables include:
+<section id="interpretation-of-the-example-plot" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-of-the-example-plot">Interpretation of the Example Plot</h2>
+<p>This forest plot visually confirms what we found in our numerical analysis:</p>
 <ol type="1">
-<li><strong>DAG reconstruction</strong> of the paper’s causal assumptions.</li>
-<li><strong>Assumptions table</strong> (exchangeability, positivity, SUTVA, consistency).</li>
-<li><strong>Replication/robustness plan</strong> — how would you replicate or stress-test the findings?</li>
-<li><strong>Discussion facilitation</strong> with prepared questions for peers.</li>
-</ol></li>
-</ul>
-</section>
-</section>
-<section id="course-policies" class="level2">
-<h2 class="anchored" data-anchor-id="course-policies">Course Policies</h2>
-<ul>
-<li><strong>Late Work:</strong> Deadlines are firm; 10% penalty/day unless prior arrangement for documented emergencies.</li>
-<li><strong>Academic Integrity:</strong> Collaboration on ideas is encouraged, but submitted work must be your own.</li>
-<li><strong>Participation &amp; Respect:</strong> Active, inclusive, evidence-based dialogue is expected.</li>
-<li><strong>Accessibility:</strong> Contact Accessibility Resource Center for accommodations.</li>
-</ul>
+<li><strong>Heterogeneity:</strong> The point estimate (square) for the <code>&gt;65</code> group is much farther to the left (a more negative, i.e., more beneficial, risk difference) than the point estimate for the <code>&lt;=65</code> group.</li>
+<li><strong>Statistical Significance:</strong> The confidence intervals for the two age groups <strong>do not overlap</strong>, providing strong evidence that the effect of the drug is statistically different between older and younger patients. This is significant effect modification.</li>
+<li><strong>Subgroup Effects:</strong> Both confidence intervals are entirely to the left of the vertical line at 0. This means the drug has a statistically significant beneficial effect in <strong>both</strong> age groups. However, the <em>magnitude</em> of this benefit is substantially larger in the older group. The “Overall” effect falls somewhere in between, but reporting only this average would obscure the important clinical finding that the drug’s benefit is much greater for older patients.</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Common Pitfall: The “Subgroup Analysis Gone Wrong”
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A common error is to declare that a treatment “only works” in one subgroup just because its effect is significant in that group but not in another. For example, if the CI for the <code>&lt;=65</code> group had slightly crossed the null line (e.g., [-0.11, 0.01]), it would be wrong to conclude the drug is ineffective for young people. The correct approach is to perform a <strong>formal test for interaction</strong>, which is equivalent to checking if the confidence intervals for the stratum-specific effects overlap. The question is not “Is the effect significant in group A and not group B?” but rather “<strong>Is the effect in group A significantly different from the effect in group B?</strong>”</p>
+</div>
+</div>
 
 
 </section>
@@ -1196,19 +1283,42 @@ ul.task-list li input[type="checkbox"] {
     }
   });
   </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="./syllabus/syllabus-final.pdf" class="pagination-link" aria-label="PDF">
-        <span class="nav-page-text">PDF</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-09_forest_plot.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>
