@@ -1,0 +1,149 @@
+---
+title: "Weekly Paper Critique Schedule"
+---
+
+**Week 1:** Instructor-led demonstration. No student assignment.
+
+## **Week 2: DAGs & Assumption Transparency**
+
+  - **Primary Paper:** Pearl, J. (1995). Causal diagrams for empirical research. *Biometrika*, 82(4), 669–710.
+  - **DOI:** [https://doi.org/10.1093/biomet/82.4.669](https://doi.org/10.1093/biomet/82.4.669)
+  - **Reason for Inclusion:** This is the seminal paper that introduced Directed Acyclic Graphs (DAGs) as a formal, non-parametric language for encoding causal assumptions and deriving their testable implications. It established the mathematical link between causal structures and statistical dependencies, providing a graphical toolkit for identifying and mitigating bias.
+  - **Critique Focus:** Understand that a DAG is a visual representation of the assumed data-generating process, making assumptions transparent and debatable. Master the rules of d-separation to identify conditional independencies. Critically evaluate how the "back-door criterion" provides a clear, non-parametric justification for selecting a sufficient set of adjustment covariates.
+  - **Suggested Discussion Questions:**
+    1. What is the "back-door criterion," and how does it formally define a sufficient set of covariates to close all confounding pathways between an exposure and outcome?
+    2. Explain the difference between a confounder, a mediator, and a collider on a DAG. What are the analytical consequences of adjusting for each?
+    3. How does the concept of d-separation allow a researcher to test the assumptions encoded in their DAG against the observed data?
+  - **Optional Alternative:** Greenland, S., Pearl, J., & Robins, J. M. (1999). Causal diagrams for epidemiologic research. *Epidemiology*, 10(1), 37–48.
+
+## **Week 3: Exchangeability, Positivity, Consistency**
+
+  - **Primary Paper:** Rubin, D. B. (1974). Estimating Causal Effects of Treatments in Randomized and Nonrandomized Studies. *Journal of Educational Psychology*, 66(5), 688–701.
+  - **DOI:** [https://doi.org/10.1037/h0037350](https://doi.org/10.1037/h0037350)
+  - **Reason for Inclusion:** This paper established the potential outcomes framework (or Rubin Causal Model), which underpins most modern causal inference methods. It provides a precise mathematical language for defining a causal effect for an individual unit and formalizes the core challenge of causal inference.
+  - **Critique Focus:** Deconstruct the "fundamental problem of causal inference"—that we can never simultaneously observe both potential outcomes for the same unit. Critically examine the Stable Unit Treatment Value Assumption (SUTVA) and its two components (no interference, consistent versions of treatment) as necessary prerequisites for defining causal effects.
+  - **Suggested Discussion Questions:**
+    1. Explain the concepts of potential outcomes, $Y\_i(1)$ and $Y\_i(0)$. Why is the individual causal effect, $Y\_i(1) - Y\_i(0)$, fundamentally unobservable?
+    2. What is SUTVA, and can you provide a realistic public health scenario (e.g., involving infectious disease or social networks) where it would likely be violated?
+    3. How does a randomized controlled trial (RCT) allow us to overcome the fundamental problem to estimate the *average* causal effect?
+  - **Optional Alternative:** Holland, P. W. (1986). Statistics and Causal Inference. *Journal of the American Statistical Association*, 81(396), 945–960.
+
+## **Week 4: Confounding, Selection, Measurement Bias**
+
+  - **Primary Paper:** Hernán, M. Á., Hernández-Díaz, S., & Robins, J. M. (2004). A structural approach to selection bias. *Epidemiology*, 15(5), 615–625.
+  - **DOI:** [https://doi.org/10.1097/01.ede.0000135174.63482.43](https://doi.org/10.1097/01.ede.0000135174.63482.43)
+  - **Reason for Inclusion:** This paper provides a clear, unified taxonomy of selection bias using the language of DAGs. It brilliantly clarifies that many forms of bias, including Berkson's bias and bias from loss-to-follow-up, are structurally equivalent to conditioning on a collider, thereby creating spurious associations.
+  - **Critique Focus:** Use DAGs to differentiate between classical confounding (a "back-door path" with a common cause) and selection bias (an open path created by conditioning on a common effect). Pay special attention to how study design choices—such as restricting analyses to hospital patients or complete cases—can induce selection bias.
+  - **Suggested Discussion Questions:**
+    1. Draw a simple DAG to illustrate how restricting a study population to hospital attendees could induce a spurious association between two diseases that are independent in the general population.
+    2. How can loss-to-follow-up be represented on a DAG? Under what conditions will it induce bias in an exposure-outcome relationship?
+    3. The paper argues that confounding and selection bias are structurally different but can be handled by similar methods (e.g., weighting). How would you construct inverse probability weights to account for selection bias?
+  - **Optional Alternative:** VanderWeele, T. J., & Shpitser, I. (2013). On the definition of a confounder. *Annals of Statistics*, 41(1), 196–220.
+
+## **Week 5: Propensity Scores**
+
+  - **Primary Paper:** Rosenbaum, P. R., & Rubin, D. B. (1983). The central role of the propensity score in observational studies for causal effects. *Biometrika*, 70(1), 41–55.
+  - **DOI:** [https://doi.org/10.1093/biomet/70.1.41](https://doi.org/10.1093/biomet/70.1.41)
+  - **Reason for Inclusion:** This is the foundational paper that introduced the propensity score—the conditional probability of treatment given observed covariates—and proved its key properties. It provided a revolutionary, practical tool for controlling for many observed confounders simultaneously.
+  - **Critique Focus:** Understand the balancing property of the propensity score: at any given value of the score, the distribution of observed covariates is the same between treated and untreated subjects. Critically assess how matching, stratifying, or weighting on this single scalar value can recreate the covariate balance of an RCT, and evaluate the importance of the positivity (common support) assumption.
+  - **Suggested Discussion Questions:**
+    1. The authors state the propensity score is a "balancing score." What does this mean, and why is it so useful in high-dimensional settings?
+    2. What is the key assumption of "strong ignorability" (or unconfoundedness) that is required for propensity score methods to yield an unbiased estimate of the average treatment effect?
+    3. How does the concept of "common support" or "overlap" relate to the positivity assumption? What can go wrong if there are regions of poor overlap?
+  - **Optional Alternative:** Stuart, E. A. (2010). Matching methods for causal inference: A review and a look forward. *Statistical Science*, 25(1), 1–21.
+
+## **Week 6: IPTW, MSMs, Doubly Robust Estimators**
+
+  - **Primary Paper:** Robins, J. M., Hernán, M. Á., & Brumback, B. (2000). Marginal Structural Models and Causal Inference in Epidemiology. *Epidemiology*, 11(5), 550–560.
+  - **DOI:** [https://doi.org/10.1097/00001648-200009000-00011](https://www.google.com/search?q=https://doi.org/10.1097/00001648-200009000-00011)
+  - **Reason for Inclusion:** This paper introduced Marginal Structural Models (MSMs) as a principled method for handling time-varying confounders that are themselves affected by past treatment. This solved a critical problem that standard adjustment methods (like regression) cannot handle without inducing bias.
+  - **Critique Focus:** Understand the specific structure of a time-varying confounder that is also a mediator. Use a DAG to see why conditioning on this variable in a regression model blocks the causal path of interest while also inducing collider-stratification bias. Deconstruct the logic of Inverse Probability of Treatment Weighting (IPTW) and the "pseudo-population" it creates where treatment is independent of the confounders.
+  - **Suggested Discussion Questions:**
+    1. Provide a clinical example of a time-varying confounder affected by prior treatment (e.g., in HIV treatment). Why does adjusting for it via standard regression lead to bias?
+    2. Explain intuitively how IPTW works. What is the "pseudo-population" it creates, and what properties does it have?
+    3. What is the purpose of "stabilized weights" in an MSM, and how do they improve statistical efficiency compared to unstabilized weights?
+  - **Optional Alternative:** Kang, J. D. Y., & Schafer, J. L. (2007). Demystifying double robustness: A comparison of alternative strategies for estimating a population mean from incomplete data. *Statistical Science*, 22(4), 523–539.
+
+## **Week 7: G-computation**
+
+  - **Primary Paper:** Snowden, J. M., Rose, S., & Mortimer, K. M. (2011). Implementation of G-computation on a simulated data set for time-varying confounding. *American Journal of Epidemiology*, 173(7), 731–738.
+  - **DOI:** [https://doi.org/10.1093/aje/kwq472](https://doi.org/10.1093/aje/kwq472)
+  - **Reason for Inclusion:** This paper provides a highly accessible, applied tutorial on implementing the parametric g-formula (g-computation). It demystifies a method that is conceptually powerful but can be difficult to grasp from more theoretical texts, making it a valuable resource for applied researchers.
+  - **Critique Focus:** Contrast the standardization-based logic of g-computation with the weighting-based logic of IPTW. Understand the two-stage process: (1) fitting a flexible model for the outcome conditional on treatment and confounders, and (2) using this model to simulate potential outcomes under fixed treatment strategies and then averaging (standardizing) over the population's confounder distribution.
+  - **Suggested Discussion Questions:**
+    1. What are the key steps in implementing the parametric g-formula for a time-varying exposure?
+    2. G-computation relies on the assumption of no unmeasured confounding and correct specification of the outcome model. How does this differ from the key assumptions of an MSM with IPTW?
+    3. When might you prefer g-computation over an MSM (e.g., when positivity is a major concern)? When might an MSM be preferred (e.g., when the outcome model is hard to specify)?
+  - **Optional Alternative:** Hernán, M. Á., & Robins, J. M. (2006). Estimating causal effects from epidemiological data. *Journal of Epidemiology and Community Health*, 60(7), 578–586.
+
+## **Week 8: Instrumental Variables**
+
+  - **Primary Paper:** Angrist, J. D., Imbens, G. W., & Rubin, D. B. (1996). Identification of Causal Effects Using Instrumental Variables. *Journal of the American Statistical Association*, 91(434), 444–455.
+  - **DOI:** [https://doi.org/10.1080/01621459.1996.10476902](https://doi.org/10.1080/01621459.1996.10476902)
+  - **Reason for Inclusion:** This Nobel prize-winning work connected the econometric method of instrumental variables (IV) to the potential outcomes framework. It rigorously clarified the assumptions of IV and, crucially, defined the causal estimand that IV methods identify: the Local Average Treatment Effect (LATE).
+  - **Critique Focus:** Deconstruct the three core assumptions of a valid instrument: (1) relevance (instrument affects exposure), (2) independence (instrument is "as-if" random), and (3) the exclusion restriction (instrument affects the outcome *only* through the exposure). Critically analyze the LATE—what specific causal effect is being estimated, and for which unobservable subpopulation (the "compliers")?
+  - **Suggested Discussion Questions:**
+    1. Describe the three core IV assumptions using a DAG. Which of these are empirically testable, and which must be justified entirely on subject-matter grounds?
+    2. What is the "Local Average Treatment Effect" (LATE)? How does it differ from the Average Treatment Effect (ATE), and why is this distinction so important for policy interpretation?
+    3. Define the four principal strata in the IV context: compliers, never-takers, always-takers, and defiers. For which of these groups does IV estimate the treatment effect, and what is the "monotonicity" assumption?
+  - **Optional Alternative:** Angrist, J. D., & Krueger, A. B. (1991). Does Compulsory School Attendance Affect Schooling and Earnings? *The Quarterly Journal of Economics*, 106(4), 979–1014.
+
+## **Week 9: Effect Modification**
+
+  - **Primary Paper:** Yusuf, S., Wittes, J., Probstfield, J., & Tyroler, H. A. (1991). Analysis and interpretation of treatment effects in subgroups of patients in randomized clinical trials. *JAMA*, 266(1), 93–98.
+  - **DOI:** [https://doi.org/10.1001/jama.1991.03470010099035](https://www.google.com/search?q=https://doi.org/10.1001/jama.1991.03470010099035)
+  - **Reason for Inclusion:** This is a highly influential and cautionary paper that outlines the statistical and inferential pitfalls of subgroup analysis. It provides a critical perspective on the search for heterogeneous treatment effects using traditional methods and establishes best practices for avoiding spurious claims.
+  - **Critique Focus:** Evaluate the dangers of post-hoc, data-driven subgroup analyses, which often lead to false-positive findings that cannot be replicated. Discuss the crucial difference between an exploratory analysis of effect modification and a confirmatory one based on a pre-specified hypothesis. Consider the problem of multiple comparisons and the low statistical power of formal tests for interaction.
+  - **Suggested Discussion Questions:**
+    1. What are the five "major fallacies" or "considerations" the authors highlight regarding subgroup analysis (e.g., confusing within-subgroup significance with between-subgroup differences)?
+    2. Why is a formal statistical test for interaction (a test of homogeneity of effects) vastly preferable to simply comparing the p-values or point estimates between subgroups?
+    3. The authors argue that most subgroup findings should be considered "exploratory" or "hypothesis-generating." What strict criteria would be required to elevate a subgroup finding to a "confirmatory" level?
+  - **Optional Alternative:** VanderWeele, T. J. (2009). On the distinction between interaction and effect modification. *Epidemiology*, 20(6), 863–871.
+
+## **Week 10: Mediation Analysis I (Foundations)**
+
+  - **Primary Paper:** Pearl, J. (2014). Interpretation and identification of causal mediation. *Psychological Methods*, 19(4), 459–481.
+  - **DOI:** [https://doi.org/10.1037/a0036434](https://www.google.com/search?q=https://doi.org/10.1037/a0036434)
+  - **Reason for Inclusion:** This paper provides a clear, graphical model-based framework for defining and identifying direct and indirect effects. It directly addresses the limitations and ambiguities of traditional regression-based approaches (like the one in the optional reading) and establishes the non-parametric foundations of modern mediation analysis.
+  - **Critique Focus:** Understand the "Mediation Formulas" and the assumptions they require (encoded in the DAG). Contrast the non-parametric definitions of direct and indirect effects with the product-of-coefficients method. Pay special attention to the conceptual and practical differences between the Natural Direct Effect (NDE) and the Controlled Direct Effect (CDE).
+  - **Suggested Discussion Questions:**
+    1. How does Pearl define the Controlled Direct Effect (CDE) and the Natural Direct Effect (NDE) using do-calculus and potential outcomes? What is the core conceptual difference?
+    2. What are the four key identification assumptions (represented graphically as the absence of certain arrows) needed to non-parametrically identify the Natural Direct and Indirect Effects?
+    3. Pearl is critical of the idea of "holding the mediator constant" via statistical adjustment in traditional approaches. What is his argument, and how does the concept of the CDE solve this problem?
+  - **Optional Alternative:** Baron, R. M., & Kenny, D. A. (1986). The moderator-mediator variable distinction in social psychological research. *Journal of Personality and Social Psychology*, 51(6), 1173–1182.
+
+## **Week 11: Mediation II & Principal Stratification**
+
+  - **Primary Paper:** Imai, K., Keele, L., & Tingley, D. (2010). A general approach to causal mediation analysis. *Psychological Methods*, 15(4), 309–334.
+  - **DOI:** [https://doi.org/10.1037/a0020761](https://www.google.com/search?q=https://doi.org/10.1037/a0020761)
+  - **Reason for Inclusion:** Building on the theoretical foundations of mediation, this paper provides a practical, potential-outcomes-based framework and software for applied researchers. It clearly defines the Natural Direct and Indirect Effects (NDE/NIE) and, crucially, highlights the strong "sequential ignorability" assumption needed for their identification.
+  - **Critique Focus:** Go beyond the definitions of NDE and NIE to grapple with the plausibility of the key identification assumption: sequential ignorability. This assumption requires unconfoundedness of both the exposure-mediator-outcome relationships. Understand why this is a much stronger assumption than is required for estimating a total effect and why sensitivity analysis is therefore essential.
+  - **Suggested Discussion Questions:**
+    1. How are the Natural Direct Effect (NDE) and Natural Indirect Effect (NIE) defined using nested potential outcomes?
+    2. What is the "sequential ignorability" assumption? Draw a DAG and explain why it involves two distinct "no unmeasured confounding" assumptions.
+    3. This paper introduced widely used software for mediation analysis. What are the practical advantages of an estimation approach that is directly linked to the theoretical definitions of causal effects?
+  - **Optional Alternative:** Frangakis, C. E., & Rubin, D. B. (2002). Principal stratification in causal inference. *Biometrics*, 58(1), 21–29.
+
+## **Week 12: Sensitivity Analysis**
+
+  - **Primary Paper:** VanderWeele, T. J., & Ding, P. (2017). Sensitivity Analysis in Observational Research: Introducing the E-Value. *Annals of Internal Medicine*, 167(4), 268–274.
+  - **DOI:** [https://doi.org/10.7326/M16-2607](https://doi.org/10.7326/M16-2607)
+  - **Reason for Inclusion:** This paper introduces the E-value, an intuitive and easy-to-calculate metric for sensitivity analysis to unmeasured confounding. It has quickly become a standard for reporting in many biomedical and public health journals due to its simplicity and clear interpretation.
+  - **Critique Focus:** Understand precisely what the E-value represents: the minimum strength of association that an unmeasured confounder would need to have with both the exposure and the outcome to fully explain away the observed association. Compare its ease of use with older, more complex sensitivity analysis techniques (like those of Rosenbaum).
+  - **Suggested Discussion Questions:**
+    1. What is the formal definition of the E-value? How is it calculated for a risk ratio?
+    2. A study reports a risk ratio of 2.5 with a 95% CI of (1.8, 3.4). The E-value for the point estimate is 4.36. How would you interpret this E-value in a sentence or two for a non-statistician?
+    3. What are the limitations of the E-value? Does it make any assumptions about the nature of the unmeasured confounder(s)?
+  - **Optional Alternative:** Rosenbaum, P. R., & Rubin, D. B. (1983). Assessing sensitivity to an unobserved binary covariate in an observational study with binary outcome. *Journal of the Royal Statistical Society: Series B*, 45(2), 212–218.
+
+## **Week 13: Target Trial Emulation**
+
+  - **Primary Paper:** Hernán, M. Á., & Robins, J. M. (2016). Using Big Data to Emulate a Target Trial When a Randomized Trial Is Not Available. *American Journal of Epidemiology*, 183(8), 758–764.
+  - **DOI:** [https://doi.org/10.1093/aje/kwv254](https://doi.org/10.1093/aje/kwv254)
+  - **Reason for Inclusion:** This paper formalizes the "target trial emulation" framework. It provides a structured process for using observational data to answer a causal question by explicitly designing the observational analysis to mimic a hypothetical, well-designed randomized trial, thereby minimizing common and often-overlooked biases.
+  - **Critique Focus:** Identify the key components of a target trial protocol (e.g., eligibility criteria, treatment strategies, outcome, follow-up, causal contrast). Analyze how ambiguities and biases in designing an observational study (such as immortal time bias or poorly defined interventions) can be avoided by explicitly mapping the design to these components.
+  - **Suggested Discussion Questions:**
+    1. What are the seven key components of a target trial's protocol that the authors argue should be explicitly specified and emulated in an observational analysis?
+    2. How does rigorously specifying a "time zero" (the start of follow-up) for each participant help prevent immortal time bias? Provide an example.
+    3. Emulating the "assignment procedure" of the target trial is the most difficult step. Which causal inference methods (e.g., propensity scores, IPTW) are used to accomplish this emulation?
+  - **Optional Alternative:** Caniglia, E. C., et al. (2018). Emulating a target trial of dynamic treatment strategies for HIV with a causal inference approach to observational data. *International Journal of Epidemiology*, 47(5), 1578–1588.

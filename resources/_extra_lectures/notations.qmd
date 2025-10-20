@@ -1,0 +1,92 @@
+---
+title: "Causal Inference Notation Guide"
+---
+
+This document summarizes the standard notation used throughout the Causal Inference course.
+
+## General Principles
+
+A critical convention in statistics is distinguishing between a *random
+variable* and its *observed value*.
+
+-   **Random Variables**: These are represented by **capital letters** (e.g., $Y$, $X_j$). They represent the full range of potential outcomes of a
+    variable before data is collected. Estimators (like $\hat{\beta}_j$) are
+    also random variables, as their value depends on the particular sample
+    drawn.
+
+-   **Observed Values (Realizations)**: These are represented by **lowercase
+    letters** (e.g., $y_i$, $x_{ij}$). They are the specific, fixed numerical
+    values that have been collected in a sample.
+
+This document provides a reference guide to the mathematical notations used in this course. Consistency in notation is key to clearly defining causal questions and understanding the assumptions needed to answer them.
+
+## Core Variables
+
+These are the fundamental building blocks of our causal models. We use single uppercase letters to represent **observed variables**—the actual data we collect for each individual.
+
+- **$Y$**: The **outcome** variable of interest (e.g., health status, income).
+- **$A$**: The **treatment** or exposure variable (e.g., taking a drug, receiving a scholarship). This is often binary ($1$ for treated, $0$ for control).
+- **$Z$**: An **instrumental variable**, which is a variable that influences the treatment but not the outcome directly (e.g., a doctor's encouragement, a draft lottery number).
+- **$X$ or $C$**: A vector of measured **covariates** or confounders (e.g., age, sex, pre-existing conditions).
+- **$U$**: A vector of **unmeasured confounders**, which are variables that affect both $A$ and $Y$ but are not observed in the data.
+
+## Potential Outcomes Notation
+
+This notation, central to the Neyman-Rubin causal model, is used to describe hypothetical "what-if" scenarios.
+
+- **$\Ya$**: Represents the **potential outcome** for an individual if their treatment level *were set to* $a$.
+    * **$\Yone$**: The potential outcome if the individual receives the treatment.
+    * **$\Yzero$**: The potential outcome if the individual does not receive the treatment (control). The causal effect for an individual is $\Yone - \Yzero$, which is fundamentally unobservable.
+- **$A^z$**: Represents the **potential treatment** an individual would choose if their instrument *were set to* $z$.
+    * **$A^1$**: The treatment status if the instrument is present ($Z=1$).
+    * **$A^0$**: The treatment status if the instrument is absent ($Z=0$).
+- **Consistency**: This crucial assumption links the unobservable potential outcomes to the observed data. It states that the outcome we see is the potential outcome corresponding to the treatment that was actually received.
+    * $Y = \Yone$
+    * $A = A^Z$
+
+## Probability and Expectation
+
+These are standard notations from statistics used to describe distributions and averages.
+
+| Symbol                                        | Custom LaTeX Command | Name / Abbreviation      | Description                                                                                            |
+| --------------------------------------------- | -------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| $\textcolor{green}{\operatorname{E}{X}}$      | `\E{X}`              | Expectation              | The expected value (or long-run average) of a random variable $X$.                                     |
+| $\textcolor{green}{\operatorname{Var}(X)}$    | `\Var(X)`            | Variance                 | A measure of the spread of a random variable $X$. Defined as $\E{(X - \E{X})^2}$.                      |
+| $\textcolor{green}{\operatorname{Cov}(X, Y)}$ | `\Cov(X, Y)`         | Covariance               | A measure of the joint variability of two random variables $X$ and $Y$.                                |
+| $\textcolor{green}{\operatorname{SD}(X)}$     | `\SD(X)`             | Standard Deviation       | The square root of the variance, $\sqrt{\Var(X)}$, expressed in the original units of $X$.             |
+| $\textcolor{green}{\operatorname{Cor}(X, Y)}$ | `\Cor(X, Y)`         | Correlation              | A standardized measure of the linear relationship between two random variables $X$ and $Y$.            |
+| $\textcolor{green}{\operatorname{SE}(X)}$     | `\SE(X)`             | Standard Error           | A measure of the variability of a statistic (e.g., a regression coefficient) across different samples. |
+| $\textcolor{green}{X \perp\!\!\!\perp Y}$     | `X \indep Y`         | Statistical Independence |                                                                                                        |
+
+* **$P(\cdot)$**: The **probability** of an event.
+* **$\E{\cdot|\cdot}$**: The **conditional expectation**. For example, $\E{Y|A=1}$ is read as "the expected outcome among the subgroup of individuals who were observed to have received the treatment." This represents an **association**.
+* **$\perp\!\!\!\perp$**: Represents **statistical independence** between two variables. For example, $Z \perp\!\!\!\perp U$ means the instrument is independent of unmeasured confounders.
+
+## Causal Estimands
+
+These are the specific causal quantities we aim to estimate from our data.
+
+* **ATE (Average Treatment Effect)**: The average causal effect for the entire population.
+    $$
+    \text{ATE} = \E{\Yone - \Yzero}
+    $$
+
+* **LATE (Local Average Treatment Effect)**: The average causal effect specifically for the subgroup of "compliers"—individuals whose treatment choice is changed by the instrument.
+    $$
+    \text{LATE} = \E{\Yone - \Yzero | A^1 > A^0}
+    $$
+
+* **ITT (Intent-to-Treat Effect)**: The effect of the *assignment* of the instrument on the outcome, regardless of whether the treatment was actually taken.
+    $$
+    \text{ITT} = \E{Y|Z=1} - \E{Y|Z=0}
+    $$
+
+## The do-operator
+
+This notation, from the work of Judea Pearl, provides an alternative way to express causal interventions. It distinguishes "seeing" from "doing."
+
+* **$\E{Y|\doop{A=a}}$**: Represents the expected outcome $Y$ if we were to **intervene** and set the treatment $A$ to the value $a$ for everyone in the population. This represents a **causal** effect.
+* **Equivalence**: A `do`-expression is equivalent to a potential outcome expectation.
+    $$
+    \E{Y|\doop{A=a}} = \E{\Ya}
+    $$

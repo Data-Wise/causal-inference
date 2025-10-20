@@ -1,0 +1,189 @@
+---
+title: "Week 10: The Art and Science of Causal Inference with Observational Data"
+---
+
+# Introduction
+
+Welcome to our final core lecture of STAT 579. Over the past nine weeks, you have built an impressive and powerful toolkit of methods for estimating causal effects. You've learned the logic of potential outcomes, the visual language of DAGs, and the mechanics of methods like propensity scores, instrumental variables, and marginal structural models.
+
+This week, we put it all together. Our focus shifts from learning a _single_ method to developing a complete, principled **analytical strategy**. This is where you transition from being a student of causal inference to a practitioner. The work of a data analyst in this field is much like that of a detective. You are presented with a case (a research question) and a messy set of clues (observational data). You must formulate a theory of the "crime" (a DAG), identify suspects (sources of bias), choose your forensic tools (analytical methods), and finally, present your case to the jury, acknowledging all the uncertainties and assumptions involved.
+
+## 🎯 Learning Objectives & Motivation
+
+By the end of this week, you will be equipped to:
+
+1. **Systematically review** the major causal inference methods and their core assumptions, strengths, and weaknesses.
+2. **Develop a structured workflow**, starting from a research question and a DAG, to select an appropriate analytical method from a suite of options.
+3. **Critically evaluate** the trade-offs between different methods for the same research question.
+4. **Identify and troubleshoot** common challenges in observational data analysis, such as positivity violations, model specification, and unmeasured confounding.
+5. **Structure and write** a research report that transparently communicates the causal question, assumptions, methods, diagnostics, and limitations of your analysis.
+
+The motivation for this week is to empower you to confidently tackle real-world research problems. The goal is not to find one "true" answer, but to conduct a thoughtful, transparent, and robust analysis that honestly represents the evidence and its limitations.
+
+## 🧠 The Causal Inference Toolkit: A Review
+
+Let's begin by laying out our tools on the workbench. Understanding what each tool is designed for is the first step in choosing the right one.
+
+| Method                               | Causal Estimand                        | Key Identifying Assumption(s)                                                                                                                    | Classic Application Example                                                                                                               |
+| ------------------------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Regression Adjustment**            | ATE, ATT                               | **Conditional Exchangeability**: All common causes of T and Y are measured and in the model. **Correct functional form**.                        | Effect of education on wages, adjusting for age and gender.                                                                               |
+| **Propensity Score (PS) Methods**    | ATE (Weighting), ATT (Matching/Strat.) | **Conditional Exchangeability**: All common causes of T and Y are in the PS model. **Positivity** (Overlap).                                     | Effect of a new medication (`T`) on patient recovery (`Y`), adjusting for a large set of pre-treatment health indicators.                 |
+| **Instrumental Variables (IV)**      | LATE (Local ATE)                       | **Relevance**: Instrument affects treatment. **Exclusion Restriction**: Instrument affects outcome _only_through treatment. **Exchangeability**. | Effect of military service (`T`) on earnings (`Y`), using Vietnam draft lottery number (`Z`) as an instrument.                            |
+| **Regression Discontinuity (RD)**    | Local ATE at the cutoff                | **Continuity**: Potential outcomes are continuous at the treatment cutoff.                                                                       | Effect of winning an election (`T`) on future wealth (`Y`), using vote share (`R`) as the running variable around the 50% cutoff.         |
+| **Marginal Structural Models (MSM)** | ATE of a treatment regime              | **Sequential Exchangeability**: At every time point, treatment is unconfounded given the _observed_past. **Positivity**.                         | Effect of time-varying HIV medication (`T_k`) on survival (`Y`), adjusting for time-varying CD4 counts (`L_k`).                           |
+| **Mediation Analysis**               | NDE, NIE                               | **Four-way Conditional Exchangeability** (no unmeasured T-Y, T-M, M-Y confounding, etc.).                                                        | Decomposing the effect of a smoking cessation program (`T`) on health (`Y`) into the pathway through reduced cigarette consumption (`M`). |
+
+## 🧭 The "Master Algorithm": A Strategy for Causal Analysis
+
+This is not a rigid algorithm but a structured way of thinking that will guide you from a question to a conclusion.
+
+### Step 1: Precisely Define the Causal Question
+
+This step is about discipline. Vague questions lead to vague answers. Be relentlessly specific.
+
+- **Poorly defined**: "Does smoking affect health?"
+- **Well defined**: "What is the average causal effect on 30-year mortality risk (`Y`) of a policy that encourages all current smokers aged 40-50 (`Population`) to quit (`T=0`), compared to a policy of continued smoking (`T=1`)?" This specifies the treatment, outcome, population, and sets up a comparison of potential outcomes.
+
+Your target **estimand** dictates what you are trying to learn. The ATE is a population-level question. The ATT is often more relevant for evaluating a program that has already been implemented. The LATE is what you get from an IV analysis—it's a very specific effect for a sub-population of "compliers," which you must be careful to define.
+
+### Step 2: Draw Your Assumed Causal Universe (The DAG)
+
+This is the most creative and critical step. Your DAG is the embodiment of your scientific expertise and assumptions.
+
+1. **Brainstorm & Draw**: List every variable that could plausibly be involved in the system. Don't worry about what you have measured yet. Just think about the science. Then, draw arrows based on your understanding of the causal relationships.
+2. **Iterate & Refine**: Show your DAG to a colleague or a domain expert. They might point out a missing arrow or a variable you hadn't considered. This is an iterative process.
+3. **Label Your Variables**: Clearly distinguish between measured covariates (`W`), the treatment (`T`), the outcome (`Y`), and crucially, any important **unmeasured confounders (`U`)**. Being honest about `U` is the hallmark of a good causal analyst.
+
+### Step 3: Use the DAG to Identify a Causal Strategy
+
+Your DAG is a roadmap. Navigate it systematically.
+
+1. **Isolate the T-Y Relationship**: Find the arrow from `T` to `Y`. This is the causal effect you want to estimate.
+2. **Hunt for Backdoor Paths**: Trace every non-causal path from `T` to `Y`. These paths are the sources of confounding.
+3. **Attempt to Close the Backdoors**:
+
+ - **Can you block all backdoor paths by conditioning on a set of _measured_ covariates `W`?**
+
+     - **YES:** Congratulations, you can assume **conditional exchangeability** is plausible. Your primary analytical options are **propensity scores** or **regression adjustment**. Propensity scores are generally preferred as they separate the design from analysis and make it easier to diagnose positivity violations. Proceed to the "Diabetes App" case study below.
+
+     - **NO:** A backdoor path remains open because it contains an **unmeasured confounder `U`** that you cannot condition on. Conditional exchangeability is violated. _Standard regression and propensity score methods are biased._ You must find another way. Proceed down this list.
+
+4. **Search for an "As-If Random" Opportunity**:
+
+    - **Is there an Instrumental Variable `Z`?** Look for a variable on your DAG that plausibly satisfies the three IV assumptions. This is your strategy if you suspect powerful unmeasured confounding. Proceed to the "Job Training Program" case study below.
+
+    - **Is there a Regression Discontinuity?** Is treatment assigned based on a cutoff? This design is powerful because it relies on a more localized and often more plausible assumption of continuity.
+
+    - **Is the problem longitudinal?** Does your DAG show a time-varying treatment and confounder feedback loop? If so, you are in the world of **MSMs** and G-computation.
+
+### ✅ Case Study 1: The Diabetes App (Conditional Exchangeability)
+
+Let's revisit our app example with more numerical detail.
+
+**1. Question**: ATE of a diabetes app on end-of-year HbA1c.
+
+**2. DAG**: As before, we assume the main confounders (Age, Income, Baseline HbA1c, Comorbidities) are measured, but we acknowledge the potential for an unmeasured confounder `U` (Health Consciousness).
+
+**3. Strategy**: Let's first proceed _assuming `U` is negligible_. This puts us in the conditional exchangeability camp. We choose propensity scores due to the multiple confounders.
+
+**4. Implementation & Diagnostics**:
+
+- **Fit the PS Model**: We model the probability of using the app: `glm(App_Use ~ Age + Income + Baseline_HbA1c + Comorbidities, family=binomial)`. Suppose the output looks like this:
+
+| Coefficient      | Estimate | Std. Error | p-value |
+| ---------------- | -------- | ---------- | ------- |
+| (Intercept)      | -4.50    | 0.80       | <0.001  |
+| Age              | 0.02     | 0.01       | 0.04    |
+| Income (in $10k) | 0.05     | 0.02       | 0.01    |
+| Baseline_HbA1c   | **0.85** | 0.15       | <0.001  |
+| Comorbidities    | 0.40     | 0.10       | <0.001  |
+
+The strong, positive coefficient for `Baseline_HbA1c` confirms our hypothesis of confounding by indication—patients with worse glycemic control are much more likely to be offered/use the app.
+
+- **Check Positivity (Overlap)**: We plot the predicted probabilities (the propensity scores) for the treated and untreated groups. The plot should show substantial overlap. If there are regions with no overlap (e.g., all patients with HbA1c > 10 use the app), then we can't make causal comparisons for those patients.
+
+- **Check Balance**: After calculating inverse probability weights ($w = T/ps + (1-T)/(1-ps)$), we check if the weighted groups are balanced on the covariates.
+
+| Covariate                                                                                                                                                                                                                                                           | SMD Before Weighting | SMD After Weighting |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- | ------------------- |
+| Age                                                                                                                                                                                                                                                                 | 0.25                 | 0.03                |
+| Income                                                                                                                                                                                                                                                              | 0.31                 | 0.05                |
+| Baseline_HbA1c                                                                                                                                                                                                                                                      | **0.78**             | 0.01                |
+| Comorbidities                                                                                                                                                                                                                                                       | 0.45                 | 0.02                |
+|                                                                                                                                                                                                                                                                     |                      |                     |
+| Success! The standardized mean differences (SMDs) were large before weighting, especially for `Baseline_HbA1c`, but after weighting, they are all well below the conventional threshold of 0.1. Our pseudo-population is now balanced on the _observed_confounders. |                      |                     |
+|                                                                                                                                                                                                                                                                     |                      |                     |
+
+**5. Result & Sensitivity Analysis**:
+
+- **Result**: We run a weighted regression: `lm(Final_HbA1c ~ App_Use, weights = w)`. The result is a coefficient for `App_Use` of **-0.45** (95% CI: -0.65, -0.25).
+    
+- **Interpretation**: "After adjusting for measured baseline confounders, use of the diabetes app was estimated to cause an average reduction of 0.45 points in HbA1c over one year."
+    
+- Sensitivity Analysis: But what about U (Health Consciousness)? We calculate the E-value for our point estimate of RR ≈ 0.95 on the HbA1c scale (this requires converting the mean difference to a risk ratio, which is complex, but let's assume it corresponds to an RR of 1/0.95 = 1.05 for the detrimental outcome of high HbA1c, for simplicity let's imagine our outcome was binary and the RR was 1.5). Let's use the formula on a hypothetical RR of 1.5 for clarity:
+
+    <!-- E-value=RRobs​+RRobs​×(RRobs​−1)![](data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.28em" viewBox="0 0 400000 1296" preserveAspectRatio="xMinYMin slice"><path d="M263,681c0.7,0,18,39.7,52,119c34,79.3,68.167,158.7,102.5,238c34.3,79.3,51.8,119.3,52.5,120c340,-704.7,510.7,-1060.3,512,-1067l0 -0c4.7,-7.3,11,-11,19,-11H40000v40H1012.3s-271.3,567,-271.3,567c-38.7,80.7,-84,175,-136,283c-52,108,-89.167,185.3,-111.5,232c-22.3,46.7,-33.8,70.3,-34.5,71c-4.7,4.7,-12.3,7,-23,7s-12,-1,-12,-1s-109,-253,-109,-253c-72.7,-168,-109.3,-252,-110,-252c-10.7,8,-22,16.7,-34,26c-22,17.3,-33.3,26,-34,26s-26,-26,-26,-26s76,-59,76,-59s76,-60,76,-60zM1001 80h400000v40h-400000z"></path></svg>)​=1.5+1.5×(0.5)![](data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.28em" viewBox="0 0 400000 1296" preserveAspectRatio="xMinYMin slice"><path d="M263,681c0.7,0,18,39.7,52,119c34,79.3,68.167,158.7,102.5,238c34.3,79.3,51.8,119.3,52.5,120c340,-704.7,510.7,-1060.3,512,-1067l0 -0c4.7,-7.3,11,-11,19,-11H40000v40H1012.3s-271.3,567,-271.3,567c-38.7,80.7,-84,175,-136,283c-52,108,-89.167,185.3,-111.5,232c-22.3,46.7,-33.8,70.3,-34.5,71c-4.7,4.7,-12.3,7,-23,7s-12,-1,-12,-1s-109,-253,-109,-253c-72.7,-168,-109.3,-252,-110,-252c-10.7,8,-22,16.7,-34,26c-22,17.3,-33.3,26,-34,26s-26,-26,-26,-26s76,-59,76,-59s76,-60,76,-60zM1001 80h400000v40h-400000z"></path></svg>)​≈1.5+0.87=2.37 -->
+
+- **Final Report**: "Our estimate of a -0.45 point reduction in HbA1c could be explained away by an unmeasured confounder that was associated with both app use and final HbA1c by a risk ratio of 2.37 each, above and beyond the covariates we adjusted for. We believe a confounder of this magnitude is possible but perhaps not probable."
+
+### ✅ Case Study 2: Job Training Program (Unmeasured Confounding)
+
+**1. Question**: What is the ATE of a voluntary government job training program on post-program annual earnings?
+
+**2. DAG**:
+
+Code snippet
+
+```{mermaid}
+graph TD
+    subgraph Covariates
+        Education
+        Prior_Experience
+    end
+
+    subgraph Treatment & Outcome
+        Program[T: Job Training Program]
+        Earnings[Y: Annual Earnings]
+    end
+
+    subgraph Unmeasured
+        U[U: Motivation / Ambition]
+    end
+    
+    subgraph Instrument
+        Z[Z: Proximity to Center]
+    end
+
+    %% Paths
+    Education --> Program
+    Prior_Experience --> Program
+    Education --> Earnings
+    Prior_Experience --> Earnings
+
+    Program --> Earnings
+    
+    %% The big problem: unmeasured confounding
+    U --> Program
+    U --> Earnings
+    
+    %% The proposed solution: an instrument
+    Z --> Program
+```
+
+**3. Strategy**: The DAG contains a powerful unmeasured confounder, `U` (Motivation). Highly motivated people are more likely to enroll in the program AND to have higher earnings regardless. This creates a spurious path `$Program \leftarrow U \rightarrow Earnings$` that we cannot close by conditioning. **Propensity scores will fail**. We must find an alternative. We hypothesize that **Proximity to a Training Center (`Z`)** could be a valid instrumental variable.
+
+**4. Checking IV Assumptions**:
+
+1. **Relevance**: Does living closer to a training center actually increase enrollment? We can test this directly with our data by regressing `Program` on `Z`. We find a strong relationship, with an **F-statistic of 47.2** (well above the rule-of-thumb value of 10). The relevance assumption holds. ✅
+    
+2. **Exchangeability**: Is `Z` itself unconfounded with the outcome `Y`? This means there are no backdoor paths from `Z` to `Y`. This could be violated if, for example, training centers were purposefully built in economically distressed areas. We would need to argue that, within a city, the location is effectively random with respect to an individual's earnings potential. This assumption is debatable. ⚠️
+    
+3. **Exclusion Restriction**: Does `Z` affect `Y` _only_ through its effect on `T`? Is it plausible that living close to the center doesn't affect your earnings in any other way (e.g., by being in a different labor market, having different social networks)? This is a strong, untestable assumption. ⚠️
+
+**5. Result & Interpretation**:
+
+- **Method**: We use two-stage least squares (2SLS).
+    
+- **Result**: The analysis yields an effect estimate of **+$3,100** (95% CI: +$850, +$5,350).
+    
+- **Interpretation**: This is a **LATE**. It is not the effect for everyone. The correct interpretation is: "Among the sub-population of individuals who would enroll in the job training program _if_ they lived close to a center but would _not_ enroll if they lived far away (the 'compliers'), the causal effect of the program was to increase annual earnings by an estimated $3,100." This is a valid causal effect, but for a very specific, data-defined group. It is crucial not to over-generalize this to the entire population.

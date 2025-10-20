@@ -1,0 +1,269 @@
+---
+title: "Using the tidyr Package in R"
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+
+# Tutorial: Using the tidyr Package in R
+
+## Introduction
+
+### Overview
+The `tidyr` package, part of the `tidyverse`, is designed for data tidying—reshaping data into a tidy format where each variable is a column, each observation is a row, and each value is a single cell.
+
+Key functions include:
+- `tidyr::pivot_longer()`: Reshape wide data into long format.
+- `tidyr::pivot_wider()`: Reshape long data into wide format.
+- `tidyr::separate()`: Split a column into multiple columns.
+- `tidyr::unite()`: Combine multiple columns into one.
+- `tidyr::drop_na()`: Remove rows with missing values.
+- `tidyr::replace_na()`: Replace missing values.
+
+### Use Cases
+- Reshaping data for analysis or visualization.
+- Cleaning and preparing raw datasets.
+- Combining or splitting columns for better data structure.
+
+### Benefits
+- Simplifies handling of messy or untidy data.
+- Ensures compatibility with other `tidyverse` tools.
+- Offers a consistent and intuitive syntax.
+
+## Getting Started
+
+### Loading the Package
+Load `tidyr` using `pacman::p_load()`:
+
+```{r}
+pacman::p_load(tidyr)
+```
+
+### Basic Usage
+
+Reshape a simple dataset:
+
+```{r}
+data <- data.frame(
+    ID = 1:3,
+    Gender = c("M", "F", "M"),
+    Age_2022 = c(25, 30, 35),
+    Age_2023 = c(26, 31, 36)
+)
+
+# Pivot longer
+data |> tidyr::pivot_longer(cols = starts_with("Age"), names_to = "Year", values_to = "Age")
+```
+
+## Key Functions and Features
+
+### tidyr::pivot_longer()
+
+#### Description
+
+Converts wide data into long format, making columns into rows.
+
+#### Syntax
+
+```r
+tidyr::pivot_longer(data, cols, names_to, values_to, ...)
+```
+
+- `data`: A data frame.
+- `cols`: Columns to pivot.
+- `names_to`: Name of the new column for column names.
+- `values_to`: Name of the new column for values.
+
+#### Example
+
+```{r}
+data |> tidyr::pivot_longer(cols = c(Age_2022, Age_2023), names_to = "Year", values_to = "Age")
+```
+
+### tidyr::pivot_wider()
+
+#### Description
+
+Converts long data into wide format, making rows into columns.
+
+#### Syntax
+
+```r
+tidyr::pivot_wider(data, names_from, values_from, ...)
+```
+
+- `data`: A data frame.
+- `names_from`: Column containing names for new columns.
+- `values_from`: Column containing values for new columns.
+
+#### Example
+
+```{r}
+long_data <- data |> tidyr::pivot_longer(cols = starts_with("Age"), names_to = "Year", values_to = "Age")
+long_data |> tidyr::pivot_wider(names_from = Year, values_from = Age)
+```
+
+### tidyr::separate()
+
+#### Description
+
+Splits a single column into multiple columns.
+
+#### Syntax
+
+```r
+tidyr::separate(data, col, into, sep = " ")
+```
+
+- `data`: A data frame.
+- `col`: Column to split.
+- `into`: Vector of new column names.
+- `sep`: Separator to split on.
+
+#### Example
+
+```{r}
+data <- data.frame(Name = c("Alice_2022", "Bob_2023"))
+data |> tidyr::separate(Name, into = c("Name", "Year"), sep = "_")
+```
+
+### tidyr::unite()
+
+#### Description
+
+Combines multiple columns into one.
+
+#### Syntax
+
+```r
+tidyr::unite(data, col, ..., sep = "_")
+```
+
+- `data`: A data frame.
+- `col`: Name of the new column.
+- `...`: Columns to combine.
+- `sep`: Separator between combined values.
+
+#### Example
+
+```{r}
+data <- data.frame(Name = c("Alice", "Bob"), Year = c(2022, 2023))
+data |> tidyr::unite("Name_Year", Name, Year, sep = "_")
+```
+
+## In-Depth Examples
+
+### Example 1: Reshaping and Summarizing
+
+#### Objective
+
+Summarize the mean age by gender and year.
+
+#### Steps
+
+```{r}
+data <- data.frame(
+    ID = 1:4,
+    Gender = c("M", "F", "F", "M"),
+    Age_2022 = c(25, 30, 27, 35),
+    Age_2023 = c(26, 31, 28, 36)
+)
+
+data_long <- data |> tidyr::pivot_longer(cols = starts_with("Age"), names_to = "Year", values_to = "Age")
+
+summary <- data_long |>
+    dplyr::group_by(Gender, Year) |>
+    dplyr::summarize(MeanAge = mean(Age), .groups = "drop")
+summary
+```
+
+#### Output
+
+A summary table of mean ages by gender and year.
+
+### Example 2: Combining and Cleaning Columns
+
+#### Objective
+
+Combine year and ID into a unique identifier.
+
+#### Steps
+
+```{r}
+data |>
+    tidyr::unite("UniqueID", ID, starts_with("Age"), sep = "-")
+```
+
+#### Output
+
+A new column `UniqueID` combines values.
+
+## Advanced Features
+
+### Customization
+
+#### Add Prefixes or Suffixes
+
+```{r}
+data_long |> dplyr::mutate(Year = paste0("Year_", Year))
+```
+
+### Integration
+
+Combine with `ggplot2` for visualization:
+
+```{r}
+library(ggplot2)
+
+data_long |>
+    ggplot(aes(x = Year, y = Age, fill = Gender)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(title = "Age Distribution by Year", x = "Year", y = "Age") +
+    theme_bw()
+```
+
+### Optimization Tips
+
+- Use `select()` before pivoting to limit unnecessary columns.
+- Avoid excessive pivoting by designing data collection appropriately.
+
+## Troubleshooting and FAQs
+
+### Common Issues
+
+#### Error: Columns Must Be Unique
+
+Ensure column names are unique before pivoting.
+
+#### Warning: NA Introduced
+
+Check the data for inconsistencies or missing values.
+
+### FAQs
+
+- **Can `tidyr` handle large datasets?** Yes, but consider chunking with `data.table` for very large data.
+    
+- **How do I preserve column types?** Use `tidyr::pivot_longer()` or `pivot_wider()` with `values_transform`.
+    
+
+## Best Practices
+
+- Start with well-structured raw data.
+- Use descriptive column names and standard formats.
+- Avoid overusing `pivot_longer()` or `pivot_wider()` for reversible tasks.
+
+## Conclusion
+
+### Summary
+
+`tidyr` simplifies reshaping and tidying data with a cohesive set of functions.
+
+### Next Steps
+
+Explore advanced tidying tasks with `tidyr` or integrate with other `tidyverse` tools like `ggplot2` and `dplyr`.
+
+## References and Resources
+
+- [tidyr Documentation](https://tidyr.tidyverse.org/)
+- [R for Data Science](https://r4ds.had.co.nz/)
+- [Tidyverse GitHub](https://github.com/tidyverse/tidyr)

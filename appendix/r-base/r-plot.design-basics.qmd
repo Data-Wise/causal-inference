@@ -1,0 +1,172 @@
+---
+title: "Tutorial on `plot.design()` in R"
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+
+# Comprehensive Tutorial on `plot.design()` in R
+
+## Introduction
+
+### Overview
+
+The `plot.design()` function in R, part of the base `graphics` package, is used to visualize univariate effects of one or more factors in experimental designs. It is commonly applied in the context of `aov()` analyses and supports understanding of how factors affect a numeric response variable.
+
+Key components:
+
+- **Package**: `graphics`
+- **Function**: `plot.design()`
+
+### Use Cases
+
+- Exploratory data analysis in experimental design.
+- Comparing the effects of factors on response variables.
+- Diagnosing potential outliers and interaction effects.
+
+### Benefits
+
+- Facilitates quick, visual understanding of main effects.
+- Handles multiple factors simultaneously.
+- Compatible with formulas and data frames for flexibility.
+
+## Getting Started
+
+### Basic Usage
+
+The simplest use involves plotting the default dataset `warpbreaks`:
+
+```{r}
+plot.design(warpbreaks)
+```
+
+This creates a series of vertical lines where each factor's levels are plotted against a response variable.
+
+## Key Functions and Features
+
+### Description
+
+`plot.design()` visualizes the effect of factors on a numeric response variable.
+
+### Syntax
+
+```r
+plot.design(x, y = NULL, fun = mean, data = NULL, ...,
+            ylim = NULL, xlab = "Factors", ylab = NULL,
+            main = NULL, ask = NULL, xaxt = par("xaxt"),
+            axes = TRUE, xtick = FALSE)
+```
+
+#### Arguments
+
+- **x**: A data frame, formula, or terms object.
+- **y**: The response variable (optional if included in `x`).
+- **fun**: Function applied to subsets (default is `mean`).
+- **data**: Data frame for variables referenced in `x` if formula-like.
+- **ylim**: Range of y values.
+- **xlab, ylab**: Axis labels.
+- **main**: Main plot title.
+- **axes, xtick**: Controls for axes and tick marks.
+
+### Example
+
+Basic plot for a formula and dataset:
+
+```{r}
+plot.design(breaks ~ wool + tension, data = warpbreaks)
+```
+
+This shows the effects of `wool` and `tension` on the response variable `breaks`.
+
+## In-Depth Examples
+
+### Title: Effects of Two Factors on Warp Breaks
+
+#### Objective
+
+Visualize and compare the effects of `wool` and `tension` on `breaks`.
+
+#### Steps
+
+1. **Prepare the data**:
+
+```{r}
+data("warpbreaks")
+```
+
+2. **Generate the plot**:
+
+```{r}
+plot.design(breaks ~ wool + tension, data = warpbreaks,
+            main = "Effects of Wool and Tension on Breaks",
+            col = c("red", "blue"))
+```
+
+#### Output
+
+The plot displays vertical lines for each factor's levels and their impact on `breaks`, with overall mean as a horizontal reference.
+
+## Advanced Features
+
+### Customization
+
+Adjust aesthetics and parameters:
+
+```{r}
+plot.design(breaks ~ wool + tension, data = warpbreaks,
+            col = c("green", "purple"), pch = 16, ylim = c(20, 70),
+            main = "Customized Plot")
+```
+
+### Integration with Other Packages
+
+Combine `plot.design()` with `dplyr` for preprocessing:
+
+```{r}
+library(dplyr)
+warpbreaks |> 
+  filter(tension != "M") |> 
+  plot.design(breaks ~ wool + tension, data = _,
+              fun = median)
+```
+
+## Troubleshooting and FAQs
+
+### Common Issues
+
+1. **Error: "No numeric variables"**: Ensure the response variable is numeric.
+
+```{r}
+warpbreaks$breaks <- as.numeric(warpbreaks$breaks)
+```
+
+2. **Plot not displaying**: Use `dev.off()` to reset plotting device.
+
+### FAQs
+
+- **Can it handle interaction terms?** No, use `interaction.plot()` for interactions.
+
+## Best Practices
+
+- Always verify numeric response variables.
+- Use `fun` parameter to explore summary statistics like `median`.
+- Combine with diagnostic plots for a thorough analysis.
+
+## Conclusion
+
+### Summary
+
+`plot.design()` is a versatile tool for visualizing factor effects in experimental data. It simplifies the analysis of variance by providing clear, interpretable plots.
+
+### Next Steps
+
+Explore:
+
+- `interaction.plot()` for interaction effects.
+- Advanced visualization packages like `ggplot2`.
+
+## References and Resources
+
+- [R Documentation for `plot.design`](https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/plot.design)
+- [Statistical Models in S](https://www.springer.com/gp/book/9780412830402)
+

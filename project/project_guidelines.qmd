@@ -1,0 +1,127 @@
+---
+title: "Overall Project Guidelines"
+---
+
+**Framed as a Target Trial Emulation**
+
+## Purpose
+
+The final project is designed to integrate **conceptual, methodological, and applied skills** in causal inference. Students will **pose and answer a causal question** using real or simulated data, grounding their analysis in the **target trial emulation framework**.
+
+The project should demonstrate:
+
+- Clear articulation of a **STAT 579 Final Project Guidelinesusal estimand** (not just a statistical parameter).
+- Careful **identification strategy** with explicit assumptions.
+- Implementation of at least one **modern estimation method** (e.g., IPW, matching, IV, MSM).
+- **Critical sensitivity checks** and interpretation within a real-world context.
+
+
+## Timeline & Deliverables
+
+1. **Week 1–2: Causal Question Definition**
+   - Submit a 1–2 paragraph causal question relevant to **biostatistics, epidemiology, or social/biomedical sciences**.
+   - Include justification of why the question is causal (not associational).
+
+2. **Week 3–4: Preliminary DAG**
+   - Provide a directed acyclic graph (using `dagitty` or `ggdag`).
+   - State which paths must be blocked for identification.
+   - Identify potential sources of bias (confounding, selection, measurement error).
+
+3. **Week 5–6: Identification Strategy**
+   - Explicitly state whether exchangeability, positivity, SUTVA, and consistency are plausible.
+   - Describe your strategy: backdoor adjustment, IV, MSM, or mediation.
+
+4. **Week 9: Project Proposal (10% of course grade)**
+   - 3–5 pages.
+   - Elements:
+     - Research question & target trial specification (eligibility, treatment strategies, follow-up, outcome).
+     - DAG & assumptions.
+     - Identification strategy.
+     - Planned data source (public dataset, your own research, or simulation).
+     - Anticipated challenges.
+
+5. **Weeks 10–13: Analysis**
+   - Implement at least one causal method (e.g., IPW, g-computation, IV, mediation, MSM).
+   - Provide R code and output with clear interpretation.
+   - Conduct diagnostics (balance checks, overlap, weak instrument tests, model fit).
+   - Perform at least one **sensitivity analysis** (e.g., E-values, Rosenbaum bounds, tipr).
+
+6. **Week 14: Presentation (10%)**
+   - 12–15 minutes, conference-style.
+   - Emphasize assumptions, robustness, and substantive conclusions—not just technical detail.
+
+7. **Final Paper (25%) – Due Finals Week**
+   - ~12–15 pages, structured as a research article:
+     1. **Introduction**: Causal question and motivation.
+     2. **Target Trial Protocol**: Eligibility, treatment, follow-up, outcome, causal estimand.
+     3. **Assumptions & Identification**: DAG, assumptions, strategy.
+     4. **Methods**: Data source, causal methods used, software.
+     5. **Results**: Estimates, sensitivity analyses, robustness checks.
+     6. **Discussion**: Interpretation, limitations, implications.
+     7. **Appendix**: R code (clean, annotated).
+
+---
+
+## Detailed Instructions
+
+### Step 1: Choosing a Question
+
+- Prefer **health, social, or biomedical contexts** (e.g., effect of smoking on lung cancer, impact of job training on income, role of diet on heart disease).
+- The question must be **causal**, not descriptive.
+  - *Bad*: “What factors are associated with depression?”
+  - *Good*: “What is the effect of exercise on reducing depression severity?”
+
+### Step 2: DAG Construction
+
+- Must use `dagitty` or `ggdag`.
+- Include **confounders, colliders, mediators, and selection mechanisms**.
+- Explicitly identify adjustment set(s) and whether positivity holds.
+
+### Step 3: Identification & Assumptions
+
+- Address the **three pillars**:
+  1. **Exchangeability** (unconfoundedness, or IV/exclusion restriction justification).
+  2. **Positivity** (overlap diagnostics, trimming if needed).
+  3. **Consistency & SUTVA** (intervention is well-defined).
+
+### Step 4: Method Implementation
+
+- Choose a method appropriate to your design:
+  - **Backdoor adjustment**: matching, stratification, regression, IPW.
+  - **IV**: LATE, 2SLS.
+  - **Mediation**: NDE/NIE decomposition.
+  - **MSM**: time-varying exposures.
+- Use R packages: `MatchIt`, `WeightIt`, `ivreg`, `mediation`, `EValue`, `tipr`.
+
+### Step 5: Sensitivity Analysis
+
+- Required to evaluate robustness. Options:
+  - E-value.
+  - Rosenbaum bounds.
+  - Simulated confounding (tipr).
+
+### Step 6: Writing & Presentation
+
+- Clarity of assumptions is more important than fancy methods.
+- Discussion must explicitly state: *“If assumption X fails, my estimate is biased because…”*
+
+---
+
+## Evaluation Criteria
+
+- **Question & Relevance (10%)**: Is the question causal and well-motivated?
+- **DAG & Identification (20%)**: Correct, complete, and clearly explained.
+- **Methodology (20%)**: Appropriate method, correct implementation, diagnostics.
+- **Sensitivity & Robustness (15%)**: At least one sensitivity analysis, well-interpreted.
+- **Results & Interpretation (15%)**: Clear, correct, cautious interpretation.
+- **Writing & Presentation (20%)**: Organization, clarity, reproducibility.
+
+---
+
+## References for Guidance
+
+- Hernán & Robins (2024). *Causal Inference: What If*.
+- Neal (2020). *Introduction to Causal Inference*.
+- Imbens & Rubin (2015). *Causal Inference for Statistics, Social, and Biomedical Sciences*.
+- Brumback (2022). *Fundamentals of Causal Inference with R*.
+- VanderWeele (2015). *Explanation in Causal Inference*.

@@ -1,0 +1,522 @@
+---
+title: "Quarto Tutorial"
+date: "1/8/2025"
+date-modified: last-modified
+date-format: long
+format: 
+  html:
+    toc: true
+    number_sections: true
+    theme: cosmo
+    highlight: pygments
+    code_folding: show
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+execute: 
+  eval: false
+---
+
+## Introduction
+
+### Overview
+
+Quarto is an open-source publishing system that integrates seamlessly with RStudio and Visual Studio Code (VS Code). It supports a variety of output formats, including reports, websites, presentations, and books, using a unified framework. Key packages include:
+
+- `quarto` for rendering documents.
+- `rmarkdown` for compatibility.
+- `knitr` for code chunks and outputs.
+
+
+### Use Cases
+
+- Academic papers and reports.
+- Interactive tutorials and books.
+- Data science dashboards and presentations.
+- Websites with integrated data visualizations.
+
+### Benefits
+
+- Unified workflows for diverse output formats.
+- Markdown simplicity with advanced functionality.
+- Integration with RStudio and VS Code for streamlined development.
+- Rich ecosystem supporting code in R, Python, and Julia.
+
+## Getting Started
+
+### Installing and Updating Quarto
+
+#### From the Web
+
+1. Visit the [Quarto Downloads Page](https://quarto.org/docs/get-started/).
+2. Choose the installer for your operating system:
+    - **Windows:** Download the `.exe` file and follow the on-screen instructions.
+    - **Mac:** Download the `.pkg` file and install.
+    - **Linux:** Follow the provided instructions to install using your package manager.
+
+#### From the Command Line
+
+1. **Windows:** Open a terminal (e.g., Command Prompt or PowerShell) and run:
+
+    ```cmd
+    winget install quarto
+    ```
+
+2. **Mac:** Use Homebrew:
+
+    ```bash
+    brew install quarto
+    ```
+
+3. **Linux:** Use your distribution's package manager. For example, on Ubuntu:
+
+    ```bash
+    sudo apt-get install quarto
+    ```
+
+#### Updating Quarto
+
+- **Web:** Download the latest version from the [Quarto Downloads Page](https://quarto.org/docs/get-started/) and reinstall.
+- **Command Line:**
+  - Windows:
+
+    ```cmd
+    winget upgrade quarto
+    ```
+
+  - Mac:
+
+    ```bash
+    brew upgrade quarto
+    ```
+
+  - Linux:
+
+    ```bash
+    sudo apt-get update && sudo apt-get upgrade quarto
+    ```
+
+
+# Using Quarto with RStudio
+
+## Create a New Quarto Document
+1. Open RStudio.
+2. Click **File > New File > Quarto Document**.
+3. In the dialog that appears:
+   - Choose a **Document** or **Presentation** format.
+   - Select **HTML**, **PDF**, or **Word** as the output format.
+4. Click **OK** to create the new `.qmd` file.
+
+### What Happens?
+RStudio generates a Quarto Markdown (`.qmd`) file with a sample YAML header and placeholder content.
+
+Example of the generated file:
+
+```yaml
+---
+title: "Untitled"
+format: html
+---
+```
+
+```markdown
+# Introduction
+
+Welcome to Quarto!
+```
+
+## Edit the Quarto File
+### Add Content
+- Write plain text for documentation.
+- Use Markdown syntax for formatting (e.g., headings, bold, italic, lists).
+- Add R code chunks for analysis and visualization.
+
+#### Markdown Syntax Examples:
+
+```markdown
+# Heading 1
+## Heading 2
+### Heading 3
+
+**Bold Text**
+
+*Italic Text*
+
+- Item 1
+- Item 2
+```
+
+#### R Code Chunk:
+Add an R code block using:
+
+```{r}
+#| echo: fenced
+
+summary(mtcars)
+```
+
+
+## Render the Document
+1. Save the `.qmd` file.
+2. Click the **Render** button at the top of the script editor in RStudio.
+3. The rendered document will open in the Viewer pane or your browser, depending on the output format.
+
+## Add Visualizations and Tables
+Use R packages like `ggplot2` for visualizations and `knitr::kable()` for tables.
+
+### Example with Visualization:
+
+```{r}
+#| echo: fenced
+library(ggplot2)
+ggplot(mtcars, aes(x = mpg, y = hp)) + geom_point()
+```
+
+
+### Example with a Table:
+
+```{r}
+#| echo: fenced
+library(knitr)
+kable(head(mtcars))
+```
+
+
+## Customize the YAML Header
+Edit the YAML metadata to specify title, author, date, and format.
+
+### Example YAML:
+
+```yaml
+---
+title: "My First Quarto Document"
+author: "John Doe"
+date: "2025-01-08"
+format:
+  html:
+    theme: cerulean
+    toc: true
+---
+```
+
+- **`theme`:** Changes the HTML theme (e.g., `cerulean`, `cosmo`).
+- **`toc`:** Adds a table of contents.
+
+## Work with Multiple Outputs
+To generate multiple output formats (e.g., HTML, PDF, Word), update the YAML header:
+
+```yaml
+---
+title: "My Report"
+format:
+  html: default
+  pdf: default
+  docx: default
+---
+```
+
+## Debug and Preview
+### Debugging
+If the document doesn’t render:
+- Check for syntax errors in the `.qmd` file.
+- Ensure all required R packages are installed.
+
+### Preview
+- Click **Preview** to see live updates in the Viewer pane as you edit.
+
+## Add Interactivity
+Quarto supports interactive documents using `shiny` or `htmlwidgets`.
+
+### Example with an Interactive Plot:
+
+```{r}
+#| echo: fenced
+library(plotly)
+plot_ly(data = mtcars, x = ~mpg, y = ~hp, type = "scatter", mode = "markers")
+```
+
+
+## Publish or Share
+- **HTML Output:** Use `html` to render the `.html` file.
+- **PDF Output:** Use `typst` to render the `.pdf` file.
+- **PDF Output:** Use `pdf` to render the `.pdf` file if LaTeX is already installed.
+- **Word Output:** Use `docx` to render the `.docx` file.
+- **Open Document:** Use `odt` to render the `.odt` file.
+
+
+# Tutorial on Quarto in R
+
+## **1. Installation of Quarto**
+
+First, download and install Quarto from the [official Quarto website](https://quarto.org/). If you use RStudio, update to the latest version, as Quarto is integrated into the newer versions of RStudio.
+
+## **2. Creating a Quarto Document**
+
+1. **Open RStudio** and select `File` -> `New File` -> `Quarto Document…`.
+2. Choose the type of document you want to create (e.g., Document, Presentation, Website/Blog, Book).
+3. Click **OK** to open a new Quarto document with default content.
+
+## **3. Understanding the Quarto YAML Header**
+
+The YAML header at the top of your document specifies metadata such as the title, author, date, and format. Here is an example:
+
+```yaml
+---
+title: "My First Quarto Document"
+author: "Your Name"
+date: "2024-08-30"
+format: html
+---
+```
+
+You can modify the format to `pdf`, `docx`, `pptx`, etc., depending on your output needs.
+
+## **4. Adding Content to Your Document**
+
+Quarto uses Markdown for text formatting. You can use standard Markdown syntax for headers, lists, bold, italics, and more.
+
+- **Headers:**
+
+  ```markdown
+  # Main Heading
+  ## Sub Heading
+  ### Sub Sub Heading
+  ```
+
+- **Lists:**
+
+  ```markdown
+  - Item 1
+  - Item 2
+      - Sub Item 1
+      - Sub Item 2
+  ```
+
+- **Bold and Italics:**
+
+    ```markdown
+    **Bold Text**
+    _Italic Text_
+    ```
+
+## **5. Code Chunks in Quarto**
+
+You can include code chunks to run R code. Here's an example with your preferred table label format:
+
+
+```{{r}}
+#| label:tbl-summary
+summary(cars)
+```
+
+This code chunk will run in R when the document is rendered.
+
+## **6. Callouts in Quarto**
+
+<!-- Callouts are a special feature in Quarto that lets you highlight specific content, such as notes, warnings, or tips. You can create callouts using the `::: {callout-type}` syntax. Quarto supports several callout types: `note`, `tip`, `warning`, and `important`.
+
+Here's how to use them:
+
+````markdown
+::: {note}
+This is a simple note to provide additional information to readers.
+:::
+
+::: {tip}
+**Tip:** Remember to save your work frequently!
+:::
+
+::: {warning}
+**Warning:** Make sure your data is backed up before proceeding.
+:::
+
+::: {important}
+This section contains crucial information that should not be skipped.
+:::
+````
+
+Each callout type has a specific visual style that helps distinguish its purpose in your document. -->
+
+## **7. Math Typesetting in Quarto**
+
+Quarto uses LaTeX syntax for math typesetting, which is similar to R Markdown. You can include inline math or display math using the `$` symbols.
+
+- **Inline Math:**
+
+To include inline math, wrap your expression in a single dollar sign:
+
+```markdown
+The formula for the area of a circle is $A = \pi r^2$.
+```
+
+- **Display Math:**
+
+For display math (centered on its own line), use double dollar signs:
+
+```tex
+$$
+E = mc^2
+$$
+```
+
+You can also use LaTeX environments like `align` for aligned equations:
+
+```tex
+$$
+\begin{align}
+a &= b + c \\
+d &= e - f
+\end{align}
+$$
+```
+
+Quarto will render these expressions beautifully in your output document.
+
+## **8. Running and Rendering Your Document**
+
+Click the **Render** button in RStudio to run all code chunks and generate the output in the specified format (e.g., HTML, PDF). This will execute the code, format text, and apply callouts and math typesetting.
+
+## **9. Using Ggplot2 for Plots in Quarto**
+
+To include a plot, you can use the `ggplot2` package:
+
+
+```{{r}}
+#| echo: fenced
+#| label:fig-logistic
+library(ggplot2)
+data <- data.frame(x = rnorm(100), y = rbinom(100, 1, 0.5))
+ggplot(data, aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE)
+```
+
+<!-- 
+This will create a logistic regression plot with a smooth curve.
+
+## **10. Customizing Output**
+
+You can customize the appearance of your document using various Quarto options. For example, to change the theme of an HTML document:
+
+```yaml
+---
+title: "My Customized Document"
+format:
+  html:
+    theme: cerulean
+---
+```
+
+## **11. Chunk Options in Quarto**
+
+In Quarto, chunk options are specified using the `#|` syntax inside a code cell. This is different from R Markdown, where chunk options are set within curly braces `{}`. The `#|` syntax allows you to control various aspects of the code chunk's behavior, appearance, and output.
+
+Here's how you can specify chunk options in Quarto:
+
+1. **Basic Syntax for Chunk Options:**
+
+   To set options for a chunk, you write them immediately after the code cell opening, each option preceded by `#|`. For example:
+
+
+   ```r
+   #| label: fig-example
+   #| echo: false
+   #| fig-width: 6
+   #| fig-height: 4
+   plot(cars)
+```
+
+   - `label`: Assigns a label to the chunk, which you can use for cross-referencing figures or tables.
+   - `echo: false`: Prevents the code from being displayed in the output.
+   - `fig-width` and `fig-height`: Set the width and height of the resulting figure.
+
+1. **Common Chunk Options in Quarto:**
+
+   Here are some frequently used chunk options in Quarto and how to use them:
+
+   - **Controlling Code Visibility and Evaluation:**
+     - `echo: false`—Hide the code but display the output.
+     - `eval: false`—Prevent the code from being executed.
+     - `include: false`—Exclude both the code and the output from the document.
+     - `warning: false`—Suppress warnings produced by the code.
+
+   Example:
+
+````markdown
+```r
+   #| echo: false
+   #| eval: true
+   #| warning: false
+   my_data <- rnorm(100)
+   summary(my_data)
+```
+````
+
+   - **Figure Options:**
+     - `fig-width` and `fig-height`: Set the width and height of the figures in inches.
+     - `fig-cap`: Provide a caption for the figure.
+     - `fig-align`: Align the figure (`left`, `center`, `right`).
+
+   Example:
+
+````markdown
+   ```r
+   #| label: fig-density
+   #| fig-width: 8
+   #| fig-height: 5
+   #| fig-cap: "Density plot of random normal data."
+   #| fig-align: center
+   plot(density(rnorm(100)))
+````
+
+1. **Advanced Chunk Options:**
+
+   - **Cross-referencing:** Use the `label` option to assign a label to figures or tables, allowing you to reference them elsewhere in your document.
+
+   Example:
+
+````markdown
+   ```r
+   #| label: tbl-summary
+   #| tbl-cap: "Summary statistics of the cars dataset."
+   summary(cars)
+```
+````
+
+   To reference the labeled table in your document:
+
+   ```markdown
+   As shown in Table @tbl-summary, the summary statistics indicate…
+   ```
+
+   - **Combining Multiple Options:**
+
+   You can combine multiple options within a chunk to customize the output fully:
+
+````markdown
+   ```r
+   #| label: fig-histogram
+   #| echo: false
+   #| fig-width: 7
+   #| fig-height: 4
+   #| fig-cap: "Histogram of Random Normal Data"
+   #| fig-align: center
+   hist(rnorm(100), col = "skyblue", main = "Histogram of Random Normal Data")
+```
+````
+
+   This chunk will create a histogram, hide the code, center the figure, set the figure size, and provide a caption.
+
+## **Additional Tips for Using Chunk Options in Quarto**
+
+- **Formatting and Readability:** Keep chunk options organized and readable by aligning them vertically after the `#|` symbol.
+- **Documentation and Debugging:** Use `echo: true` during development to see your code in the output, and switch to `echo: false` for the final document.
+- **Customization and Reproducibility:** Leverage these chunk options to create dynamic, customized, and reproducible documents that suit your specific needs.
+
+### **Conclusion**
+
+Quarto's `#|` syntax for chunk options provides a powerful and flexible way to control the behavior and appearance of code chunks in your documents. Whether you want to hide code, adjust figure dimensions, or include captions, these options allow you to create professional-quality outputs with ease.
+
+### **Further Learning Resources**
+
+- [Quarto Documentation](https://quarto.org/docs/): The official Quarto documentation is a great resource for advanced usage and examples. -->

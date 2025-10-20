@@ -1,0 +1,114 @@
+---
+title: "Tutorial on the Games-Howell Test Using PMCMRplus"
+---
+
+## Introduction to the Games-Howell Test
+
+The **Games-Howell test** is a post-hoc statistical procedure used to perform **all-pairs comparisons** between group means after a significant ANOVA result. It is particularly useful when the assumption of **equal variances across groups** is violated. Unlike the Tukey HSD test, which assumes homogeneity of variances, the Games-Howell test uses Welch's degrees of freedom to adjust for unequal variances, making it robust for such scenarios.
+
+This tutorial will guide you through using the `gamesHowellTest` function from the `PMCMRplus` package in R.
+
+## Installation
+
+First, install and load the `PMCMRplus` package if not already installed:
+
+```{r}
+pacman::p_load("PMCMRplus")
+```
+
+## Function Syntax
+
+The `gamesHowellTest` function has three primary methods:
+
+1. **Default method**:
+   `gamesHowellTest(x, g, …)`
+   - `x`: Numeric vector of data or a list of numeric vectors.
+   - `g`: Grouping vector/factor (ignored if `x` is a list).
+
+2. **Formula method**:
+   `gamesHowellTest(formula, data, …)`
+   - `formula`: Formula of the form `response ~ group`.
+   - `data`: Data frame containing variables in the formula.
+
+3. **`aov` method**:
+   `gamesHowellTest(x, …)`
+   - `x`: A fitted model object of class `aov`.
+
+## Step-by-Step Examples
+
+### Example 1: Using an `aov` Object
+
+We'll use the built-in `chickwts` dataset to compare chicken weights across feed types.
+
+#### Step 1: Check Assumptions
+
+1. **Normality**: Shapiro-Wilk test on residuals.
+2. **Equal Variances**: Bartlett test.
+
+```{r}
+# Fit ANOVA model
+fit <- aov(weight ~ feed, data = chickwts)
+
+# Check normality of residuals
+shapiro.test(residuals(fit))  # p > 0.05 → normality assumed
+
+# Check homogeneity of variances
+bartlett.test(weight ~ feed, data = chickwts)  # small p → unequal variances
+```
+
+#### Step 2: Run ANOVA
+
+```{r}
+anova(fit) 
+```
+
+#### Step 3: Perform Games-Howell Test
+
+```{r}
+res <- gamesHowellTest(fit)
+summary(res)  # Pairwise comparisons with p-values
+```
+
+#### Step 4: Interpret Results
+
+- **`feed`**: A significant effect of feed type on weight is observed. The Games-Howell test suggests that the means of weight are different between the different feed types.
+- **`Residuals`**: The remaining variance is due to random error.
+
+### Example 2: Using the Formula Method
+
+Simulate data with three groups (A, B, C) with unequal variances.
+
+```{r}
+# Create data
+set.seed(123)
+group <- factor(rep(c("A", "B", "C"), each = 20))
+values <- c(rnorm(20, mean=10, sd=2),  # Group A
+            rnorm(20, mean=15, sd=4),  # Group B
+            rnorm(20, mean=12, sd=3)) # Group C
+
+# Perform Games-Howell Test
+result <- gamesHowellTest(values ~ group)
+summary(result)
+```
+
+## Key Output Interpretation
+
+- **`statistic`**: Test statistic for each pair (t-value).
+- **`p.value`**: Adjusted p-values using the Tukey distribution.
+- Values are arranged in a lower-triangle matrix. A p-value <- 0.05 indicates a significant difference between groups.
+
+## Assumptions and Considerations
+
+1. **Normality**: The test assumes normality. Check using Shapiro-Wilk or QQ-plots.
+2. **Unequal Variances**: Use Games-Howell when variances are unequal (check via Bartlett/Levene test).
+3. **Post-Hoc Use**: Conduct only after a significant ANOVA result.
+
+## When to Use Games-Howell vs. Other Tests
+
+- **Tukey HSD**: Use when variances are equal.
+- **Dunnett's Test**: Compare all groups against a control.
+- **Bonferroni**: Conservative adjustment for any pairwise test.
+
+## Conclusion
+
+The `gamesHowellTest` is ideal for comparing group means when variances are unequal. Always validate assumptions before applying the test. Use the formula or `aov` method for cleaner syntax with data frames or model objects.

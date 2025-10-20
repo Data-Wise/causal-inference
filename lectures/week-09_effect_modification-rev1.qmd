@@ -1,0 +1,1331 @@
+---
+title: "Week 7: Effect Modification"
+subtitle: "Understanding Heterogeneity in Causal Effects"
+---
+
+## 📋 Overview and Learning Objectives
+
+**Goal:** To distinguish effect modification from confounding and understand its importance in causal inference.
+
+By the end of this session, you will be able to:
+
+1. Formally define effect modification and distinguish it from confounding
+2. Understand why the scale of measurement matters when assessing heterogeneity
+3. Identify and quantify effect modification using stratification and regression methods
+4. Interpret interaction effects on both additive and multiplicative scales
+
+::: {.callout-tip}
+## Learning Tip
+
+Effect modification is about **heterogeneity in causal effects**—the treatment works differently for different people. This is fundamentally different from confounding, which is about **bias in estimating a single average effect**. Keep this distinction clear as we proceed.
+:::
+
+## 🎯 Defining Effect Modification
+
+### Fundamental Concept
+
+**Effect modification** (also called **effect heterogeneity** or **interaction**) occurs when the causal effect of a treatment $A$ on an outcome $Y$ differs across levels of a third variable $V$.
+
+::: {.callout-important}
+## 📌 Formal Definition
+
+Let $V$ be a variable (the **effect modifier**) that takes values in some set (e.g., $V \in \{0, 1\}$ for binary, or $V \in \RR$ for continuous).
+
+**Effect modification is present** when:
+
+$$
+\E{Y^{a=1} - Y^{a=0} \mid V = v} \neq \E{Y^{a=1} - Y^{a=0} \mid V = v'}
+$$
+
+for some values $v \neq v'$.
+
+In words: the average causal effect differs across strata defined by $V$.
+:::
+
+### Effect Modification vs. Confounding
+
+This distinction is **critical** and often confused:
+
+| Aspect               | Effect Modification                                        | Confounding                                             |
+| :------------------- | :--------------------------------------------------------- | :------------------------------------------------------ |
+| **What it is**       | Heterogeneity in the causal effect across subgroups        | Bias in estimating the average causal effect            |
+| **The question**     | "Does the effect differ for different people?"             | "Is our estimate of the average effect biased?"         |
+| **Variable role**    | $V$ modifies the effect of $A$ on $Y$                      | $C$ affects both $A$ and $Y$, creating bias             |
+| **Causal structure** | $A \rightarrow Y$ relationship varies by $V$               | $C \rightarrow A$ and $C \rightarrow Y$ (backdoor path) |
+| **Can both exist?**  | Yes! $V$ can be both a confounder AND an effect modifier   | Yes! Same variable can play both roles                  |
+| **Analysis goal**    | Estimate stratum-specific effects $\E{Y^1 - Y^0 \mid V=v}$ | Estimate marginal effect $\E{Y^1 - Y^0}$ without bias   |
+
+::: {.callout-tip}
+## 🧠 Conceptual Analogy
+
+Think of **confounding** as a "distorted lens" that makes you see the wrong average effect.
+
+Think of **effect modification** as recognizing that different groups genuinely experience different effects—like how a medication works differently for children vs. adults.
+:::
+
+**Example to illustrate the difference:**
+
+Consider the effect of aspirin ($A$) on heart attack risk ($Y$), with age ($V$) as a third variable.
+
+- **Age as a confounder:** Older people are more likely to take aspirin AND more likely to have heart attacks (regardless of aspirin). If we don't adjust for age, we might wrongly conclude aspirin increases heart attack risk.
+- **Age as an effect modifier:** Even after adjusting for confounding, aspirin might reduce heart attacks more strongly in older adults than in younger adults. The *causal effect itself* differs by age.
+
+### Why Effect Modification Matters
+
+Understanding effect modification is crucial for:
+
+1. **Personalized medicine:** Identifying who benefits most (or least) from treatment
+2. **Policy targeting:** Allocating resources to subgroups with largest benefits
+3. **Understanding mechanisms:** Different effects often reveal underlying biology or social processes
+4. **Generalizability:** Effects in one population may not transfer to another
+5. **Equity considerations:** Ensuring treatments don't exacerbate health disparities
+
+## 📏 The Importance of Scale
+
+One of the most subtle and important aspects of effect modification is that **interaction depends on the scale** of measurement. Two effects can be "the same" on one scale but "different" on another.
+
+### Additive vs. Multiplicative Scales
+
+We can measure effects on different scales:
+
+**Additive scale (Risk Difference):**
+
+$$
+\text{RD}_v = \E{Y^{a=1} \mid V=v} - \E{Y^{a=0} \mid V=v}
+$$
+
+**Multiplicative scale (Risk Ratio):**
+
+$$
+\text{RR}_v = \frac{\E{Y^{a=1} \mid V=v}}{\E{Y^{a=0} \mid V=v}}
+$$
+
+**Multiplicative scale (Odds Ratio):**
+
+$$
+\text{OR}_v = \frac{\E{Y^{a=1} \mid V=v} / (1 - \E{Y^{a=1} \mid V=v})}{\E{Y^{a=0} \mid V=v} / (1 - \E{Y^{a=0} \mid V=v})}
+$$
+
+::: {.callout-important}
+## Key Insight: Scale Matters
+
+**Effect modification can be present on one scale but absent on another.**
+
+- No interaction on additive scale: $\text{RD}_{v=1} = \text{RD}_{v=0}$
+- No interaction on multiplicative scale: $\text{RR}_{v=1} = \text{RR}_{v=0}$
+
+These conditions are **generally incompatible** unless the effect is exactly zero or in special edge cases.
+:::
+
+### Detailed Numerical Example: Scale Dependency
+
+Let's work through a concrete example to see how the same data can show interaction on one scale but not another.
+
+**Scenario:** We study the effect of a new drug ($A$: 1 = treated, 0 = control) on disease occurrence ($Y$: 1 = disease, 0 = no disease), stratified by sex ($V$: 1 = female, 0 = male).
+
+**Observed data** (under conditional exchangeability):
+
+| Group           | Treatment       | $\Prob{Y=1 \mid A, V}$ | Sample size |
+| :-------------- | :-------------- | :--------------------- | :---------- |
+| Males ($V=0$)   | Control ($A=0$) | 0.10                   | 1000        |
+| Males ($V=0$)   | Treated ($A=1$) | 0.05                   | 1000        |
+| Females ($V=1$) | Control ($A=0$) | 0.20                   | 1000        |
+| Females ($V=1$) | Treated ($A=1$) | 0.10                   | 1000        |
+
+**Step 1: Calculate risk differences (additive scale)**
+
+For males:
+
+$$
+\text{RD}_{\text{male}} = 0.05 - 0.10 = -0.05
+$$
+
+For females:
+
+$$
+\text{RD}_{\text{female}} = 0.10 - 0.20 = -0.10
+$$
+
+**Comparison:**
+
+$$
+\text{RD}_{\text{female}} - \text{RD}_{\text{male}} = -0.10 - (-0.05) = -0.05
+$$
+
+The risk difference is **twice as large** for females. There IS interaction on the additive scale.
+
+**Step 2: Calculate risk ratios (multiplicative scale)**
+
+For males:
+
+$$
+\text{RR}_{\text{male}} = \frac{0.05}{0.10} = 0.50
+$$
+
+For females:
+
+$$
+\text{RR}_{\text{female}} = \frac{0.10}{0.20} = 0.50
+$$
+
+**Comparison:**
+
+$$
+\text{RR}_{\text{female}} / \text{RR}_{\text{male}} = 0.50 / 0.50 = 1.0
+$$
+
+The risk ratio is **identical** for both groups. There is NO interaction on the multiplicative scale.
+
+**Step 3: Interpretation**
+
+- **Additive perspective:** The treatment provides 5 percentage points of absolute risk reduction for males but 10 percentage points for females. From a public health perspective (preventing cases), the treatment is more beneficial for females.
+- **Multiplicative perspective:** The treatment cuts risk in half (50% reduction) for both males and females. The relative efficacy is the same.
+
+Both statements are **simultaneously true**. The choice of scale affects:
+
+- Statistical testing for interaction
+- Communication to patients/policymakers
+- Resource allocation decisions
+
+::: {.callout-warning}
+## Common Pitfall: "No Interaction" Depends on Scale
+
+Never say simply "there is no interaction" without specifying the scale. A study might report "no evidence of interaction" because they tested on the odds ratio scale, while meaningful interaction exists on the risk difference scale (which may be more policy-relevant).
+:::
+
+### Which Scale Should We Use?
+
+The choice depends on context:
+
+**Additive scale (Risk Difference) preferred when:**
+
+- Making public health decisions about population impact
+- Considering absolute number of cases prevented
+- Allocating limited resources
+- Assessing sufficient-component causes (mechanistic interactions)
+
+**Multiplicative scale (Risk Ratio/Odds Ratio) preferred when:**
+
+- Comparing relative efficacy across different baseline risks
+- Analyzing case-control studies (OR is natural)
+- Effects are thought to act proportionally
+- Traditional in some fields (epidemiology, clinical trials)
+
+::: {.callout-tip}
+## Practical Guidance
+
+In most public health and policy applications, **additive interaction is more meaningful** because:
+
+1. It directly answers "how many more cases are prevented?"
+2. It aligns with cost-effectiveness analyses
+3. It's more interpretable to non-statisticians
+
+However, always report both when possible, and be explicit about which scale you're using.
+:::
+
+### Mathematical Relationship Between Scales
+
+To understand why interaction on one scale implies interaction on another (except in special cases), consider the mathematical relationship.
+
+For simplicity, let $p_0^v = \Prob{Y=1 \mid A=0, V=v}$ (baseline risk) and $p_1^v = \Prob{Y=1 \mid A=1, V=v}$ (treated risk).
+
+**No additive interaction means:**
+
+$$
+(p_1^{v=1} - p_0^{v=1}) = (p_1^{v=0} - p_0^{v=0})
+$$
+
+**No multiplicative interaction means:**
+
+$$
+\frac{p_1^{v=1}}{p_0^{v=1}} = \frac{p_1^{v=0}}{p_0^{v=0}}
+$$
+
+These can only both be true simultaneously if:
+
+- The effect is zero: $p_1^v = p_0^v$ for all $v$
+- Special boundary cases (risks near 0 or 1)
+
+**Proof sketch for incompatibility:**
+
+Suppose no multiplicative interaction: $\frac{p_1^1}{p_0^1} = \frac{p_1^0}{p_0^0} = \text{RR}$
+
+Then: $p_1^1 = \text{RR} \cdot p_0^1$ and $p_1^0 = \text{RR} \cdot p_0^0$
+
+Additive effects:
+
+$$
+\text{RD}^1 = p_1^1 - p_0^1 = \text{RR} \cdot p_0^1 - p_0^1 = p_0^1(\text{RR} - 1)
+$$
+
+$$
+\text{RD}^0 = p_1^0 - p_0^0 = \text{RR} \cdot p_0^0 - p_0^0 = p_0^0(\text{RR} - 1)
+$$
+
+For no additive interaction: $\text{RD}^1 = \text{RD}^0$
+
+$$
+p_0^1(\text{RR} - 1) = p_0^0(\text{RR} - 1)
+$$
+
+This requires $p_0^1 = p_0^0$ (same baseline risk) or $\text{RR} = 1$ (no effect).
+
+Thus, except in special cases, **we cannot have both no additive and no multiplicative interaction.**
+
+## 🔍 Assessing Heterogeneity: Statistical Methods
+
+### Stratification Approach
+
+The most transparent method for assessing effect modification is **stratification**: estimate the treatment effect separately within each level of the potential modifier $V$.
+
+**Algorithm:**
+
+1. Partition the data into strata defined by $V$ (e.g., $V=0$ and $V=1$)
+2. Within each stratum, estimate the causal effect of $A$ on $Y$
+3. Compare effects across strata
+4. Test for statistical significance of differences
+
+**Advantages:**
+
+- Transparent and easy to interpret
+- No parametric assumptions about the form of interaction
+- Shows actual effect estimates in each subgroup
+
+**Disadvantages:**
+
+- Requires sufficient sample size in each stratum
+- Cannot handle continuous modifiers easily
+- Doesn't provide a single test statistic
+
+### Regression with Interaction Terms
+
+Alternatively, we can use **regression models with product terms** to test for and estimate effect modification.
+
+#### Binary Treatment and Binary Modifier
+
+**Model for the outcome:**
+
+$$
+\E{Y \mid A, V} = \beta_0 + \beta_1 A + \beta_2 V + \beta_3 (A \times V)
+$$
+
+**Interpretation of coefficients:**
+
+- $\beta_0$: Expected outcome when $A=0$ and $V=0$ (reference group)
+- $\beta_1$: Effect of treatment when $V=0$ (the "main effect" of $A$)
+- $\beta_2$: Difference in outcome between $V=1$ and $V=0$ when $A=0$
+- $\beta_3$: **Interaction term** — additional effect of treatment when $V=1$ compared to $V=0$
+
+**Causal effects in each stratum:**
+
+When $V=0$:
+
+$$
+\E{Y^{a=1} - Y^{a=0} \mid V=0} = \beta_1
+$$
+
+When $V=1$:
+
+$$
+\E{Y^{a=1} - Y^{a=0} \mid V=1} = \beta_1 + \beta_3
+$$
+
+**Test for effect modification:**
+
+- $H_0: \beta_3 = 0$ (no effect modification)
+- $H_1: \beta_3 \neq 0$ (effect modification present)
+
+Use standard t-test or Wald test on $\beta_3$.
+
+::: {.callout-important}
+### 📌 Key Point: Interactions Are Scale-Dependent
+
+The regression model above tests for **additive interaction** (on the scale of the outcome). If you use:
+
+- **Linear regression:** Tests additive interaction on the scale of $Y$
+- **Logistic regression:** Tests multiplicative interaction on the **log-odds scale** (not risk ratio or risk difference!)
+- **Log-linear (Poisson) regression:** Tests multiplicative interaction on the log-risk scale
+
+Be very careful about interpretation!
+:::
+
+#### Detailed Numerical Example: Binary-Binary Interaction
+
+Let's use the data from Section 2.2 and fit a linear probability model.
+
+**Data structure:**
+
+| Person | $A$ | $V$ | $Y$ |
+| :----- | :-- | :-- | :-- |
+| 1      | 0   | 0   | 0   |
+| 2      | 0   | 0   | 1   |
+| ...    | ... | ... | ... |
+
+With group-level summaries:
+
+| $A$ | $V$ | $\bar{Y}$ | $n$  |
+| :-- | :-- | :-------- | :--- |
+| 0   | 0   | 0.10      | 1000 |
+| 1   | 0   | 0.05      | 1000 |
+| 0   | 1   | 0.20      | 1000 |
+| 1   | 1   | 0.10      | 1000 |
+
+**Step 1: Fit the linear model**
+
+$$
+\E{Y \mid A, V} = \beta_0 + \beta_1 A + \beta_2 V + \beta_3 (A \times V)
+$$
+
+**Predicted values for each group:**
+
+- $A=0, V=0$: $\hat{\E{Y}} = \beta_0 = 0.10$
+- $A=1, V=0$: $\hat{\E{Y}} = \beta_0 + \beta_1 = 0.05$
+- $A=0, V=1$: $\hat{\E{Y}} = \beta_0 + \beta_2 = 0.20$
+- $A=1, V=1$: $\hat{\E{Y}} = \beta_0 + \beta_1 + \beta_2 + \beta_3 = 0.10$
+
+**Step 2: Solve for coefficients**
+
+From $A=0, V=0$:
+
+$$
+\beta_0 = 0.10
+$$
+
+From $A=1, V=0$:
+
+$$
+\beta_1 = 0.05 - 0.10 = -0.05
+$$
+
+From $A=0, V=1$:
+
+$$
+\beta_2 = 0.20 - 0.10 = 0.10
+$$
+
+From $A=1, V=1$:
+
+$$
+\beta_3 = 0.10 - (0.10 + (-0.05) + 0.10) = 0.10 - 0.15 = -0.05
+$$
+
+**Step 3: Interpretation**
+
+- $\hat{\beta}_0 = 0.10$: Baseline risk for untreated males
+- $\hat{\beta}_1 = -0.05$: Treatment reduces risk by 5 percentage points for males
+- $\hat{\beta}_2 = 0.10$: Females have 10 percentage points higher baseline risk
+- $\hat{\beta}_3 = -0.05$: Treatment provides an **additional** 5 percentage point reduction for females
+
+**Causal effects:**
+
+- Males: $\hat{\beta}_1 = -0.05$
+- Females: $\hat{\beta}_1 + \hat{\beta}_3 = -0.05 + (-0.05) = -0.10$
+
+The treatment effect is **twice as large** for females (in absolute terms).
+
+**Statistical test:** Test $H_0: \beta_3 = 0$
+
+```{r}
+# R code example with simulated data matching the proportions
+set.seed(123)
+n_per_group <- 1000
+
+# Create data
+A <- rep(c(0, 1, 0, 1), each = n_per_group)
+V <- rep(c(0, 0, 1, 1), each = n_per_group)
+
+# Generate outcomes based on the specified probabilities
+Y <- numeric(4 * n_per_group)
+Y[A == 0 & V == 0] <- rbinom(n_per_group, 1, prob = 0.10)
+Y[A == 1 & V == 0] <- rbinom(n_per_group, 1, prob = 0.05)
+Y[A == 0 & V == 1] <- rbinom(n_per_group, 1, prob = 0.20)
+Y[A == 1 & V == 1] <- rbinom(n_per_group, 1, prob = 0.10)
+
+# Create data frame
+data <- data.frame(Y = Y, A = A, V = V)
+
+# Fit linear probability model with interaction
+model <- lm(Y ~ A + V + A:V, data = data)
+summary(model)
+
+# View coefficients
+coef(model)
+
+# Test for interaction
+# The interaction term is A:V
+summary(model)$coefficients["A:V", ]
+
+# Calculate stratum-specific effects
+# Effect in V=0 group (males)
+effect_V0 <- coef(model)["A"]
+
+# Effect in V=1 group (females)
+effect_V1 <- coef(model)["A"] + coef(model)["A:V"]
+
+cat("Treatment effect for V=0 (males):", effect_V0, "\n")
+cat("Treatment effect for V=1 (females):", effect_V1, "\n")
+cat("Difference in effects:", coef(model)["A:V"], "\n")
+```
+
+**Expected output interpretation:**
+
+- The coefficient for `A:V` should be close to $-0.05$ (with sampling variability)
+- The p-value tests whether this interaction is statistically significant
+- Confidence intervals quantify uncertainty in the interaction effect
+
+#### Continuous Modifier
+
+When $V$ is continuous (e.g., age, BMI), the interaction term represents how the treatment effect changes per unit increase in $V$.
+
+**Model:**
+
+$$
+\E{Y \mid A, V} = \beta_0 + \beta_1 A + \beta_2 V + \beta_3 (A \times V)
+$$
+
+**Interpretation:**
+
+- $\beta_3$: Change in treatment effect per 1-unit increase in $V$
+- Treatment effect at specific value $V=v$: $\beta_1 + \beta_3 v$
+
+**Example:** Effect of exercise program ($A$) on weight loss ($Y$), modified by baseline BMI ($V$)
+
+If $\hat{\beta}_1 = -2$ kg and $\hat{\beta}_3 = -0.1$ kg per BMI unit:
+
+- At BMI = 25: Effect = $-2 + (-0.1)(25) = -4.5$ kg
+- At BMI = 35: Effect = $-2 + (-0.1)(35) = -5.5$ kg
+
+The program is more effective for people with higher baseline BMI.
+
+### Assumptions and Causal Interpretation
+
+To interpret estimated effect modification **causally**, we need:
+
+1. **Conditional exchangeability** within strata of $V$:
+
+$$
+Y^a \indep A \mid V
+$$
+
+No unmeasured confounding within levels of the modifier.
+
+2. **Positivity** within strata:
+
+$$
+0 < \Prob{A=a \mid V=v} < 1 \text{ for all } v
+$$
+
+Both treatment levels observed at all modifier levels.
+
+3. **Correct model specification:** The interaction term captures the true heterogeneity.
+
+::: {.callout-warning}
+## ⚠️ Common Pitfall: Confounding of Interaction
+
+If there are **unmeasured confounders that differ across strata of $V$**, what appears to be effect modification may actually be **confounding of the interaction**.
+
+**Example:** Studying drug effectiveness by hospital. Sicker patients go to specialized hospitals. The drug appears less effective at specialized hospitals, but this could be because those patients are sicker (confounding), not because the drug truly works differently by hospital type (effect modification).
+
+**Solution:** Control for confounders within each stratum of $V$, or use methods like targeted maximum likelihood estimation (TMLE).
+:::
+
+## ✅ Worked Example: Complete Analysis
+
+Let's work through a full analysis of effect modification from start to finish.
+
+### Research Question
+
+Does the effect of a job training program ($A$: 1 = enrolled, 0 = not enrolled) on earnings one year later ($Y$, in thousands of dollars) differ by participants' baseline education level ($V$: 1 = college degree, 0 = no degree)?
+
+### Dataset
+
+Assume we have an observational study with $n = 1000$ participants. For simplicity, assume conditional exchangeability holds after accounting for baseline covariates (age, previous earnings, etc.), which we'll suppress in this example.
+
+**Summary statistics:**
+
+| Education ($V$) | Training ($A$) | Mean $Y$ | SD $Y$ | $n$ |
+| :-------------- | :------------- | :------- | :----- | :-- |
+| No degree (0)   | No (0)         | 25       | 10     | 300 |
+| No degree (0)   | Yes (1)        | 32       | 12     | 200 |
+| College (1)     | No (0)         | 55       | 15     | 300 |
+| College (1)     | Yes (1)        | 58       | 14     | 200 |
+
+### Step 1: Stratified Analysis
+
+**Estimate effects within each education stratum:**
+
+For $V=0$ (no college degree):
+
+$$
+\widehat{\text{Effect}}_{V=0} = 32 - 25 = 7 \text{ thousand dollars}
+$$
+
+For $V=1$ (college degree):
+
+$$
+\widehat{\text{Effect}}_{V=1} = 58 - 55 = 3 \text{ thousand dollars}
+$$
+
+**Difference in effects:**
+
+$$
+7 - 3 = 4 \text{ thousand dollars}
+$$
+
+The training program appears to increase earnings more for those without a college degree.
+
+### Step 2: Regression with Interaction
+
+**Fit the model:**
+
+$$
+\E{Y \mid A, V} = \beta_0 + \beta_1 A + \beta_2 V + \beta_3 (A \times V)
+$$
+
+**Predicted means (solving system of equations):**
+
+From $A=0, V=0$: $\beta_0 = 25$
+
+From $A=1, V=0$: $\beta_0 + \beta_1 = 32 \Rightarrow \beta_1 = 7$
+
+From $A=0, V=1$: $\beta_0 + \beta_2 = 55 \Rightarrow \beta_2 = 30$
+
+From $A=1, V=1$: $\beta_0 + \beta_1 + \beta_2 + \beta_3 = 58$
+
+$$
+25 + 7 + 30 + \beta_3 = 58 \Rightarrow \beta_3 = -4
+$$
+
+**Results:**
+
+- $\hat{\beta}_0 = 25$: Average earnings for untreated non-college group
+- $\hat{\beta}_1 = 7$: Training effect for non-college group (+$7,000)
+- $\hat{\beta}_2 = 30$: College graduates earn $30,000 more at baseline
+- $\hat{\beta}_3 = -4$: Interaction term (training effect is $4,000 less for college graduates)
+
+**Causal effects by stratum:**
+
+- Non-college: $\hat{\beta}_1 = 7$ thousand
+- College: $\hat{\beta}_1 + \hat{\beta}_3 = 7 + (-4) = 3$ thousand
+
+### Step 3: Statistical Testing
+
+**Test $H_0: \beta_3 = 0$ (no effect modification)**
+
+```{r}
+# Simulate Data Matching the Summary Statistics
+set.seed(456)
+
+# Function to Generate Normal Data with Specified Mean and SD
+generate_group <- function(n, mean, sd, A, V) {
+  data.frame(
+    Y = rnorm(n, mean = mean, sd = sd),
+    A = A,
+    V = V
+  )
+}
+
+# Generate Each Group
+data <- rbind(
+  generate_group(300, mean = 25, sd = 10, A = 0, V = 0),
+  generate_group(200, mean = 32, sd = 12, A = 1, V = 0),
+  generate_group(300, mean = 55, sd = 15, A = 0, V = 1),
+  generate_group(200, mean = 58, sd = 14, A = 1, V = 1)
+)
+
+# Fit Interaction Model
+model_int <- lm(Y ~ A + V + A:V, data = data)
+summary(model_int)
+
+# Extract Interaction Coefficient and Test
+interaction_result <- summary(model_int)$coefficients["A:V", ]
+cat("\nInteraction term (A:V):\n")
+cat("Estimate:", interaction_result["Estimate"], "\n")
+cat("Std. Error:", interaction_result["Std. Error"], "\n")
+cat("t-value:", interaction_result["t value"], "\n")
+cat("p-value:", interaction_result["Pr(>|t|)"], "\n")
+
+# Calculate Stratum-specific Effects with Confidence Intervals
+library(emmeans)
+
+# Estimate Marginal means
+emm <- emmeans(model_int, ~ A | V)
+pairs(emm)
+
+# Or Manually Calculate:
+# Effect in V=0
+beta_A <- coef(model_int)["A"]
+se_A <- summary(model_int)$coefficients["A", "Std. Error"]
+
+# Effect in V=1
+beta_A_V1 <- coef(model_int)["A"] + coef(model_int)["A:V"]
+se_A_V1 <- sqrt(
+  vcov(model_int)["A", "A"] +
+    vcov(model_int)["A:V", "A:V"] +
+    2 * vcov(model_int)["A", "A:V"]
+)
+
+cat("\n--- Stratum-Specific Effects ---\n")
+cat("V=0 (No College):\n")
+cat("  Effect:", beta_A, "\n")
+cat("  95% CI: [", beta_A - 1.96 * se_A, ",", beta_A + 1.96 * se_A, "]\n")
+
+cat("\nV=1 (College):\n")
+cat("  Effect:", beta_A_V1, "\n")
+cat(
+  "  95% CI: [",
+  beta_A_V1 - 1.96 * se_A_V1,
+  ",",
+  beta_A_V1 + 1.96 * se_A_V1,
+  "]\n"
+)
+```
+
+### Step 4: Interpretation and Reporting
+
+**Statistical conclusion:**
+If $p < 0.05$ for $\beta_3$, we reject the null hypothesis of no effect modification. There is statistically significant evidence that education level modifies the effect of job training on earnings.
+
+**Substantive interpretation:**
+The job training program increases earnings for both groups, but the benefit is larger (by approximately $4,000) for individuals without a college degree. This suggests:
+
+1. **Targeting:** Programs may be more cost-effective when targeted to non-college populations
+2. **Mechanisms:** College graduates may already have skills that the training provides, leading to smaller marginal benefits
+3. **Policy:** This is evidence of **heterogeneous treatment effects** relevant for resource allocation
+
+**Report format:**
+
+> "We found significant effect modification by education level (interaction p = 0.XX). Among participants without a college degree, the training program increased earnings by \$7,000 (95% CI: [X, Y]). Among college graduates, the effect was smaller: \$3,000 (95% CI: [X, Y]). The difference in effects was statistically significant ($\beta_3 = -4$, SE = Z, p = 0.XX), indicating that the training program is more beneficial for those without prior college education."
+
+## 📊 Visualizing Effect Modification
+
+Effective visualization is crucial for communicating heterogeneous effects.
+
+<!-- ### Forest Plots
+
+Show estimated effects and confidence intervals for each subgroup:
+
+```r
+# Create Data for Forest Plot
+library(ggplot2)
+
+subgroup_results <- data.frame(
+    Subgroup = c("No College Degree", "College Degree"),
+    Effect = c(7, 3),
+    Lower = c(5.5, 1.2), # hypothetical CIs
+    Upper = c(8.5, 4.8)
+)
+
+ggplot(subgroup_results, aes(x = Subgroup, y = Effect)) +
+    geom_point(size = 3) +
+    geom_errorbar(aes(ymin = Lower, ymax = Upper), width = 0.2) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+    coord_flip() +
+    labs(
+        title = "Job Training Effect on Earnings by Education Level",
+        y = "Treatment Effect (thousands of dollars)",
+        x = ""
+    ) +
+    theme_minimal()
+``` 
+-->
+
+### Interaction Plots
+
+For continuous modifiers, plotthe predicted treatment effect as a function of the modifier:
+
+```{r}
+# Example with Continuous Modifier (e.g., age)
+# Assume We Have Age as a Continuous Variable instead of Education
+
+pacman::p_load(ggplot2, dplyr, viridis)
+# Simulate Data with Age as Modifier
+set.seed(789)
+n <- 1000
+age <- runif(n, 18, 65)
+A <- rbinom(n, 1, 0.5)
+Y <- 30 + 5 * A - 0.2 * age + 0.15 * A * age + rnorm(n, 0, 10)
+
+data_age <- data.frame(Y = Y, A = A, age = age)
+
+# Fit Model with Continuous Interaction
+model_age <- lm(Y ~ A + age + A:age, data = data_age)
+
+# Create Prediction Data
+pred_data <- expand.grid(
+  A = c(0, 1),
+  age = seq(18, 65, by = 1)
+)
+
+pred_data$Y_pred <- predict(model_age, newdata = pred_data)
+
+# Plot
+ggplot(
+  pred_data,
+  aes(x = age, y = Y_pred, color = factor(A), linetype = factor(A))
+) +
+  geom_line(size = 1) +
+  scale_color_manual(
+    values = c("0" = "blue", "1" = "red"),
+    labels = c("Control", "Treated"),
+    name = "Treatment"
+  ) +
+  scale_linetype_manual(
+    values = c("0" = "solid", "1" = "solid"),
+    labels = c("Control", "Treated"),
+    name = "Treatment"
+  ) +
+  labs(
+    title = "Predicted Outcomes by Treatment and Age",
+    subtitle = "Interaction between treatment and age",
+    x = "Age (years)",
+    y = "Predicted Earnings (thousands)"
+  ) +
+  theme_minimal()
+
+# Calculate and Plot Treatment Effect as Function of Age
+effect_data <- data.frame(
+  age = seq(18, 65, by = 1)
+)
+effect_data$effect <- coef(model_age)["A"] +
+  coef(model_age)["A:age"] * effect_data$age
+
+ggplot(effect_data, aes(x = age, y = effect)) +
+  geom_line(size = 1, color = "darkgreen") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(
+    title = "Treatment Effect as a Function of Age",
+    x = "Age (years)",
+    y = "Treatment Effect (thousands)"
+  ) +
+  theme_minimal()
+```
+
+### Heatmaps for Multiple Modifiers
+
+When examining multiple potential effect modifiers simultaneously:
+
+```{r}
+# Example with Two Modifiers: Education and Baseline Income
+# This is for Illustration only
+
+library(viridis)
+
+# Create Hypothetical Effect Estimates across Two Modifiers
+effect_matrix <- expand.grid(
+  education = c("No HS", "HS", "Some College", "College+"),
+  income_quartile = c("Q1", "Q2", "Q3", "Q4")
+)
+
+# Simulate Effect Sizes (for illustration)
+set.seed(101)
+effect_matrix$effect <- rnorm(16, mean = 5, sd = 2)
+
+ggplot(effect_matrix, aes(x = education, y = income_quartile, fill = effect)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(effect, 1)), color = "white", size = 4) +
+  scale_fill_viridis(name = "Treatment\nEffect") +
+  labs(
+    title = "Treatment Effect by Education and Income",
+    x = "Education Level",
+    y = "Baseline Income Quartile"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## 🧮 Mathematical Framework and Derivations
+
+### Formal Definition of Effect Modification
+
+Let's formalize effect modification in the potential outcomes framework.
+
+**Definition (Effect Modification on Additive Scale):**
+
+Effect modification by $V$ is present when there exist values $v, v' \in \mathcal{V}$ such that:
+
+$$
+\E{Y^{a=1} - Y^{a=0} \mid V = v} \neq \E{Y^{a=1} - Y^{a=0} \mid V = v'}
+$$
+
+Equivalently:
+
+$$
+\E{Y^{a=1} \mid V = v} - \E{Y^{a=0} \mid V = v} \neq \E{Y^{a=1} \mid V = v'} - \E{Y^{a=0} \mid V = v'}
+$$
+
+**Definition (Effect Modification on Multiplicative Scale):**
+
+Effect modification by $V$ is present on the ratio scale when:
+
+$$
+\frac{\E{Y^{a=1} \mid V = v}}{\E{Y^{a=0} \mid V = v}} \neq \frac{\E{Y^{a=1} \mid V = v'}}{\E{Y^{a=0} \mid V = v'}}
+$$
+
+### Identification Under Conditional Exchangeability
+
+**Assumption (Conditional Exchangeability within Strata of $V$):**
+
+$$
+Y^a \indep A \mid V \quad \text{for all } a
+$$
+
+**Theorem (Identification of Stratum-Specific Effects):**
+
+Under conditional exchangeability and positivity within strata, the stratum-specific average causal effect is identified:
+
+$$
+\E{Y^{a=1} - Y^{a=0} \mid V = v} = \E{Y \mid A=1, V=v} - \E{Y \mid A=0, V=v}
+$$
+
+**Proof:**
+
+Start with the left-hand side:
+
+$$
+\E{Y^{a=1} - Y^{a=0} \mid V = v}
+$$
+
+By linearity of expectation:
+
+$$
+= \E{Y^{a=1} \mid V = v} - \E{Y^{a=0} \mid V = v}
+$$
+
+Under conditional exchangeability ($Y^a \indep A \mid V$), we have:
+
+$$
+\E{Y^a \mid V = v} = \E{Y^a \mid A=a, V = v}
+$$
+
+By consistency ($Y = Y^A$ when $A=a$ is realized):
+
+$$
+\E{Y^a \mid A=a, V = v} = \E{Y \mid A=a, V = v}
+$$
+
+Therefore:
+
+$$
+\E{Y^{a=1} \mid V = v} - \E{Y^{a=0} \mid V = v} = \E{Y \mid A=1, V=v} - \E{Y \mid A=0, V=v}
+$$
+
+This shows we can estimate causal effects within strata using observed data. $\square$
+
+### Variance of Interaction Effects
+
+When we estimate $\beta_3$ in the regression model, understanding its variance is important for inference.
+
+**Linear Model:**
+
+$$
+Y_i = \beta_0 + \beta_1 A_i + \beta_2 V_i + \beta_3 (A_i \times V_i) + \epsilon_i
+$$
+
+where $\epsilon_i \sim N(0, \sigma^2)$ independently.
+
+**Design matrix** (for $n$ observations):
+
+$$
+\mathbf{X} =
+\begin{bmatrix} 1 & A_1 & V_1 & A_1 V_1 \\
+1 & A_2 & V_2 & A_2 V_2 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & A_n & V_n & A_n V_n \end{bmatrix}
+$$
+
+**Variance-covariance matrix of $\hat{\boldsymbol{\beta}}$:**
+
+$$
+\var{\hat{\boldsymbol{\beta}}} = \sigma^2 (\mathbf{X}^\top \mathbf{X})^{-1}
+$$
+
+The variance of the interaction coefficient is the $(4,4)$ element:
+
+$$
+\var{\hat{\beta}_3} = \sigma^2 [(\mathbf{X}^\top \mathbf{X})^{-1}]_{44}
+$$
+
+::: {.callout-tip}
+### 🧠 Intuition for Interaction Variance
+
+The variance of $\hat{\beta}_3$ depends on:
+
+1. **Sample size:** Larger $n$ reduces variance
+2. **Distribution of $(A, V)$:** Variance is smallest when we have balanced samples across all four combinations $(A=0, V=0)$, $(A=1, V=0)$, $(A=0, V=1)$, $(A=1, V=1)$
+3. **Outcome variance $\sigma^2$:** More noise in $Y$ increases uncertainty
+4. **Correlation structure:** If $A$ and $V$ are highly correlated, interaction estimation becomes difficult (multicollinearity)
+
+**Practical implication:** Testing for interactions requires larger sample sizes than testing main effects. As a rule of thumb, you need **4 times the sample size** to detect an interaction of the same magnitude as a main effect with the same power.
+:::
+
+### Relationship to Sufficient-Component Causes
+
+In epidemiology, **sufficient-component cause models** provide a mechanistic interpretation of interaction.
+
+**Framework:**
+- A **sufficient cause** is a set of conditions that inevitably produce the outcome
+- Each sufficient cause consists of multiple **component causes**
+- The outcome occurs when any sufficient cause is completed
+
+**Example:** Disease ($Y=1$) occurs if:
+- Sufficient cause 1: Genetic susceptibility ($G$) AND environmental exposure ($E$)
+- Sufficient cause 2: High viral load ($V$) alone
+
+**Additive interaction** corresponds to **synergism** in the sufficient-component cause framework:
+
+Two factors $A$ and $V$ show synergism if they work together in at least one sufficient cause.
+
+**Measure of synergism:**
+
+The **Relative Excess Risk due to Interaction (RERI)**:
+
+$$
+\text{RERI} = \text{RR}_{11} - \text{RR}_{10} - \text{RR}_{01} + 1
+$$
+
+where $\text{RR}_{av}$ denotes the risk ratio for $A=a, V=v$ relative to $A=0, V=0$.
+
+If $\text{RERI} > 0$: **Synergism** (positive additive interaction)
+If $\text{RERI} < 0$: **Antagonism** (negative additive interaction)
+If $\text{RERI} = 0$: No interaction on additive scale
+
+**Derivation of RERI:**
+
+Let $p_{av} = \Prob{Y=1 \mid A=a, V=v}$ and $p_{00} = \Prob{Y=1 \mid A=0, V=0}$ be the baseline risk.
+
+Risk ratios:
+
+$$
+\text{RR}_{11} = \frac{p_{11}}{p_{00}}, \quad \text{RR}_{10} = \frac{p_{10}}{p_{00}}, \quad \text{RR}_{01} = \frac{p_{01}}{p_{00}}
+$$
+
+Risk differences:
+
+$$
+\text{RD}_{11} = p_{11} - p_{00}, \quad \text{RD}_{10} = p_{10} - p_{00}, \quad \text{RD}_{01} = p_{01} - p_{00}
+$$
+
+Additive interaction is:
+
+$$
+\text{RD}_{11} - \text{RD}_{10} - \text{RD}_{01} = (p_{11} - p_{00}) - (p_{10} - p_{00}) - (p_{01} - p_{00})
+$$
+
+$$
+= p_{11} - p_{10} - p_{01} + p_{00}
+$$
+
+Converting to relative scale by dividing by $p_{00}$:
+
+$$
+\frac{p_{11} - p_{10} - p_{01} + p_{00}}{p_{00}} = \frac{p_{11}}{p_{00}} - \frac{p_{10}}{p_{00}} - \frac{p_{01}}{p_{00}} + 1
+$$
+
+$$
+= \text{RR}_{11} - \text{RR}_{10} - \text{RR}_{01} + 1 = \text{RERI}
+$$
+
+**Example calculation:**
+
+| $A$ | $V$ | $p_{av}$ | $\text{RR}_{av}$ |
+| :-- | :-- | :------- | :--------------- |
+| 0   | 0   | 0.01     | 1.00             |
+| 1   | 0   | 0.03     | 3.00             |
+| 0   | 1   | 0.02     | 2.00             |
+| 1   | 1   | 0.08     | 8.00             |
+
+$$
+\text{RERI} = 8.00 - 3.00 - 2.00 + 1 = 4.00
+$$
+
+Interpretation: 4 times as many cases occur due to the joint action of $A$ and $V$ than would be expected from their independent effects. This indicates strong synergism.
+
+## ⚠️ Common Pitfalls and Misconceptions
+
+### Confusing Statistical and Biological Interaction
+
+::: {.callout-warning}
+### ⚠️ Pitfall: Interaction Terminology
+
+The term "interaction" is used differently across disciplines:
+
+- **Statistical interaction:** Departure from additivity in a statistical model (scale-dependent)
+- **Biological interaction:** Joint action of causes in producing disease (mechanistic)
+- **Pharmacological interaction:** When drugs affect each other's mechanisms
+
+These are related but distinct concepts. Statistical interaction doesn't necessarily imply a biological mechanism, and vice versa.
+:::
+
+### Multiple Testing Problem
+
+When examining many potential effect modifiers, false positives become likely.
+
+**Problem:** If you test 20 subgroup effects at $\alpha = 0.05$, you expect 1 false positive even if no true effect modification exists.
+
+**Solutions:**
+
+1. **Pre-specification:** Declare effect modifiers of interest a priori based on theory
+2. **Multiple testing correction:** Use Bonferroni, FDR, or hierarchical testing procedures
+3. **Replication:** Confirm findings in independent datasets
+4. **Effect size consideration:** Don't rely solely on p-values; consider magnitude and clinical relevance
+
+::: {.callout-tip}
+### 🧠 Best Practice
+
+In your analysis plan, specify:
+
+- Primary effect modifier(s) to be tested with full $\alpha = 0.05$
+- Secondary (exploratory) modifiers tested at adjusted significance levels
+- How results will be interpreted differently for confirmatory vs. exploratory analyses
+
+This prevents "fishing" for significant subgroups post-hoc.
+:::
+
+### 6.3 Power for Interaction Detection
+
+::: {.callout-important}
+### 📌 Critical Statistical Fact
+
+Detecting interactions requires much larger sample sizes than detecting main effects.
+
+**Rule of thumb:** To achieve the same power to detect an interaction of size $\delta$ as a main effect of size $\delta$, you need approximately **4 times the sample size**.
+
+**Why?** The interaction term $A \times V$ has less variance explained because it's the product of two variables, and fewer observations inform the interaction parameter.
+:::
+
+**Example:**
+
+- To detect a main effect of $\delta = 0.3$ with 80% power requires $n = 176$
+- To detect an interaction of $\delta = 0.3$ with 80% power requires $n = 704$
+
+**Implication:** Many studies are underpowered for subgroup analyses. Non-significant interaction tests should be interpreted cautiously—absence of evidence is not evidence of absence.
+
+### Simpson's Paradox and Collider Bias
+
+::: {.callout-warning}
+### ⚠️ Danger: Conditioning on Colliders
+
+Stratifying by certain variables can **induce** spurious associations or mask true ones.
+
+If $V$ is a **collider** (caused by both $A$ and $Y$, or by their common causes), conditioning on $V$ opens a non-causal path and biases effect estimates.
+:::
+
+**Example:**
+
+```
+A → Y
+↓   ↓
+  V
+```
+
+Here, $V$ is a collider. Stratifying by $V$ induces a spurious association between $A$ and $Y$ even if there's no causal effect.
+
+**Implication:** Not every variable is a valid effect modifier for causal analysis. Use causal diagrams (DAGs) to determine whether conditioning on $V$ is appropriate.
+
+### Measurement Error in Modifiers
+
+If the effect modifier $V$ is measured with error, interaction effects may be attenuated (bias toward the null) or distorted.
+
+**Example:** If age is the true modifier but is self-reported with error, the estimated interaction $\hat{\beta}_3$ will underestimate the true interaction.
+
+## 🎓 Advanced Topics: Multiple Effect Modifiers
+
+### Three-Way Interactions
+
+When multiple variables modify effects, we can have higher-order interactions.
+
+**Model with two modifiers $V$ and $W$:**
+
+$$
+\E{Y \mid A, V, W} = \beta_0 + \beta_1 A + \beta_2 V + \beta_3 W + \beta_4 (A \times V) + \beta_5 (A \times W) + \beta_6 (V \times W) + \beta_7 (A \times V \times W)
+$$
+
+**Interpretation of $\beta_7$:** The three-way interaction captures whether the effect modification by $V$ itself differs across levels of $W$.
+
+**Example:**
+
+- Drug effect ($A$) modified by genotype ($V$) and sex ($W$)
+- $\beta_7 \neq 0$ means: "The genotype's modification of the drug effect is different for males vs. females"
+
+**Caution:** Three-way interactions are hard to interpret and require very large samples. Use sparingly and only when theoretically motivated.
+
+### Machine Learning for Heterogeneous Effects
+
+Modern methods allow flexible discovery of effect modification without pre-specifying functional forms:
+
+**Approaches:**
+
+1. **Causal trees/forests:** Partition covariate space to find subgroups with different effects
+   - Random forests adapted for treatment effect estimation
+   - Algorithms: `grf` package in R (Generalized Random Forests)
+
+2. **BART (Bayesian Additive Regression Trees):** Nonparametric Bayesian method
+   - Automatically captures interactions
+   - Provides uncertainty quantification
+
+3. **Meta-learners:** Two-stage approaches
+   - S-learner: Single model with treatment-covariate interactions
+   - T-learner: Separate models for treated and control
+   - X-learner: More efficient combination
+
+**Example with Causal Forests:**
+
+```{r}
+# Install if Needed: install.packages("grf")
+pacman::p_load(grf)
+
+# Simulate Data
+set.seed(999)
+n <- 2000
+X <- matrix(runif(n * 5), n, 5) # 5 covariates
+W <- rbinom(n, 1, 0.5) # Treatment
+
+# True Heterogeneous Effect: Effect Depends on X1 and X2
+tau <- 1 + 2 * X[, 1] + 3 * (X[, 2] > 0.5)
+Y <- tau * W + X[, 1] + X[, 2] + rnorm(n)
+
+# Fit Causal Forest
+cf <- causal_forest(X, Y, W)
+
+# Predict Individual Treatment Effects
+tau_hat <- predict(cf)$predictions
+
+# Variable Importance for Effect Heterogeneity
+var_imp <- variable_importance(cf)
+plot(var_imp)
+
+# Estimate Average Treatment Effect
+average_treatment_effect(cf)
+
+# Best Linear Projection: Which Variables Drive Heterogeneity?
+blp <- best_linear_projection(cf, X)
+print(blp)
+```
+
+**Advantages:**
+
+- Data-driven discovery of effect modifiers
+- Handles complex, nonlinear interactions
+- No need to pre-specify interaction terms
+
+**Disadvantages:**
+
+- Less interpretable than simple regression
+- Requires larger samples
+- Risk of overfitting without proper validation
+
+## 📝 Summary and Key Takeaways
+
+::: {.callout-tip}
+## 🧠 Key Concepts to Remember
+
+1. **Effect modification** is about heterogeneity in causal effects, NOT bias in estimation (that's confounding)
+2. **Scale matters critically:** Interaction on additive scale ≠ interaction on multiplicative scale (except in special cases)
+3. **Additive scale** (risk difference) is usually more relevant for public health and policy decisions
+4. **Identification requires:** Conditional exchangeability within strata of the effect modifier
+5. **Analysis methods:**
+   - Stratification: Transparent but limited to categorical modifiers
+   - Regression interactions: Flexible but requires correct specification
+   - Machine learning: Data-driven but less interpretable
+
+6. **Pitfalls to avoid:**
+   - Multiple testing without correction
+   - Underpowered interaction tests
+   - Conditioning on colliders
+   - Confusing statistical and biological interaction
+
+7. **Reporting:** Always specify the scale, provide stratum-specific effects with confidence intervals, and be transparent about pre-specification vs. exploratory analyses
+:::
+
+## ❓ Check Your Understanding
+
+::: {.callout-question}
+## Question 1: Distinguishing Concepts
+
+A study finds that age is associated with both statin use and cardiovascular disease risk. Additionally, statins reduce CVD risk more in older patients than younger patients.
+
+**Which of the following is true?**
+
+A) Age is only a confounder
+B) Age is only an effect modifier
+C) Age is both a confounder and an effect modifier
+D) Age is neither a confounder nor an effect modifier
+
+<details>
+<summary>Click for answer</summary>
+
+**Answer: C**
+
+Age is a **confounder** because it affects both treatment (older people more likely to take statins) and outcome (older people at higher baseline risk). It's also an **effect modifier** because the causal effect of statins differs by age group. The same variable can play both roles simultaneously. To estimate unbiased stratum-specific effects, we need to account for age as a confounder within each age stratum if there are other age-related confounders.
+</details>
+:::
+
+::: {.callout-question}
+## Question 2: Scale Dependency
+
+A vaccine reduces disease risk from 20% to 10% in adults and from 10% to 5% in children.
+
+**Calculate:**
+a) Risk differences in each group
+b) Risk ratios in each group
+c) Is there effect modification on the additive scale?
+d) Is there effect modification on the multiplicative scale?
+
+<details>
+<summary>Click for answer</summary>
+
+**a) Risk differences:**
+- Adults: $0.10 - 0.20 = -0.10$ (10 percentage point reduction)
+- Children: $0.05 - 0.10 = -0.05$ (5 percentage point reduction)
+
+**b) Risk ratios:**
+- Adults: $0.10 / 0.20 = 0.50$ (50% of original risk)
+- Children: $0.05 / 0.10 = 0.50$ (50% of original risk)
+
+**c) Additive scale:** YES, effect modification present
+The absolute risk reduction differs ($-0.10$ vs $-0.05$)
+
+**d) Multiplicative scale:** NO effect modification
+The relative risk is identical ($0.50$ in both groups)
+
+**Interpretation:** The vaccine cuts risk in half for both groups (same relative efficacy), but prevents twice as many cases per 100 people in adults because their baseline risk is higher. For resource allocation, the additive perspective may be more relevant.
+</details>
+:::
+
+::: {.callout-question}
+## Question 3: Regression Interpretation
+
+You fit the model: $\E{Y \mid A, V} = 50 + 10A + 20V - 5(A \times V)$
+
+where $Y$ is blood pressure, $A$ is medication (1=yes, 0=no), and $V$ is diabetes status (1=yes, 0=no).
+
+**What is the treatment effect for:**
+a) Non-diabetic patients ($V=0$)?
+b) Diabetic patients ($V=1$)?
+c) Interpret the interaction coefficient $-5$.
+
+<details>
+<summary>Click for answer</summary>
+
+**a) Non-diabetic patients ($V=0$):**
+
+$$
+\E{Y \mid A=1, V=0} - \E{Y \mid A=0, V=0} = (50 + 10) - (50) = 10
+$$
+
+The medication reduces blood pressure by 10 units.
+
+**b) Diabetic patients ($V=1$):**
+
+$$
+\E{Y \mid A=1, V=1} - \E{Y \mid A=0, V=1} = (50 + 10 + 20 - 5) - (50 + 20) = 5
+$$
+
+The medication reduces blood pressure by only 5 units.
+
+**c) Interpretation of $-5$:**
+
+The interaction coefficient of $-5$ means that the medication is 5 units less effective for diabetic patients compared to non-diabetic patients. Equivalently, diabetes reduces the treatment effect by 5 units. This suggests diabetes may interfere with the medication's mechanism or that diabetic patients have different underlying pathophysiology.
+</details>
+:::

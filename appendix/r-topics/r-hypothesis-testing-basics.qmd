@@ -1,0 +1,254 @@
+---
+title: "Hypothesis Testing Basics"
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+
+
+# Hypothesis Testing in R
+
+## Introduction
+
+Hypothesis testing is a cornerstone of statistical analysis, used to evaluate assumptions about population parameters based on sample data. In R, several functions and packages provide extensive tools for hypothesis testing, ranging from basic tests in base R to more specialized tests available in external packages.
+
+### Overview
+
+- **Packages/Functions:**
+  - Base R: `t.test()`, `chisq.test()`, `var.test()`, `wilcox.test()`
+  - Additional Packages: `stats::ks.test()`, `MASS::leveneTest()`
+- **Purpose:**
+  - To evaluate assumptions or hypotheses about data distributions and relationships.
+- **Common Functions:**
+  - `t.test()` for t-tests.
+  - `chisq.test()` for Chi-square tests.
+  - `ks.test()` for Kolmogorov-Smirnov tests.
+  - `wilcox.test()` for non-parametric Wilcoxon tests.
+
+### Use Cases
+
+- Comparing means between two groups.
+- Assessing the goodness-of-fit for categorical data.
+- Testing for equal variances across groups.
+- Non-parametric comparisons for skewed or ordinal data.
+
+### Benefits
+
+- Easy to implement with a range of built-in functions.
+- Highly extensible for complex scenarios.
+- Seamless integration with visualization and other analytical tools.
+
+## Getting Started
+
+### Loading the Package
+
+Base R provides most hypothesis testing tools. Additional packages like `MASS` can be used for specialized tests.
+
+```{r}
+library(MASS)
+```
+
+### Basic Usage
+
+#### Example: One-Sample T-test
+
+Testing whether the mean of a sample is equal to a specific value.
+
+```{r}
+set.seed(42)
+sample_data <- rnorm(30, mean = 5, sd = 2)
+
+t.test(sample_data, mu = 5)
+```
+
+---
+
+## Key Functions and Features
+
+### `t.test()`
+
+#### Description
+
+Performs one-sample, two-sample, and paired t-tests to compare means.
+
+#### Syntax
+
+```r
+t.test(x, y = NULL, alternative = c("two.sided", "less", "greater"),
+       mu = 0, paired = FALSE, var.equal = FALSE, conf.level = 0.95)
+```
+
+- `x, y`: Numeric vectors of data values.
+- `alternative`: Type of hypothesis ("two.sided", "greater", "less").
+- `mu`: Hypothesized mean (default is 0).
+- `paired`: Whether the test is paired (default is `FALSE`).
+- `var.equal`: Assume equal variances (default is `FALSE`).
+
+#### Example: Two-Sample T-test
+
+```{r}
+group1 <- rnorm(20, mean = 5)
+group2 <- rnorm(20, mean = 6)
+
+t.test(group1, group2, alternative = "two.sided", var.equal = TRUE)
+```
+
+### `chisq.test()`
+
+#### Description
+
+Tests for independence or goodness-of-fit in categorical data.
+
+#### Syntax
+
+```r
+chisq.test(x, y = NULL, correct = TRUE, simulate.p.value = FALSE, rescale.p = FALSE)
+```
+
+#### Example: Independence Test
+
+```{r}
+observed <- matrix(c(30, 20, 50, 40), ncol = 2)
+
+chisq.test(observed)
+```
+
+### `wilcox.test()`
+
+#### Description
+
+Performs the Wilcoxon rank-sum test (non-parametric alternative to the t-test).
+
+#### Syntax
+
+```r
+wilcox.test(x, y = NULL, alternative = c("two.sided", "less", "greater"), mu = 0, paired = FALSE, exact = NULL)
+```
+
+#### Example: Wilcoxon Test
+
+```{r}
+x <- rnorm(30)
+y <- rnorm(30, mean = 1)
+
+wilcox.test(x, y, alternative = "less")
+```
+
+## In-Depth Examples
+
+### Comparing Means Across Groups
+
+#### Title: Paired T-test for Preand Post-Treatment Data
+
+#### Objective
+
+Evaluate the effect of a treatment by comparing preand post-treatment scores.
+
+#### Steps
+
+1. Prepare the data.
+2. Apply the paired t-test.
+3. Visualize the differences.
+
+```{r}
+pre <- c(12, 14, 11, 10, 13, 15)
+post <- c(14, 16, 12, 11, 15, 17)
+
+t.test(pre, post, paired = TRUE)
+```
+
+#### Output
+
+Interpret the p-value to determine if there is a significant difference between preand post-treatment scores.
+
+### Goodness-of-Fit Test
+
+#### Title: Testing Dice Fairness
+
+#### Objective
+
+Check if a six-sided die is fair.
+
+#### Steps
+
+1. Collect observed frequencies of each side.
+2. Specify expected frequencies.
+3. Apply the Chi-square goodness-of-fit test.
+
+```{r}
+observed <- c(12, 15, 14, 13, 16, 10)
+expected <- rep(1/6, 6) * sum(observed)
+
+chisq.test(observed, p = expected / sum(expected))
+```
+
+#### Output
+
+Evaluate the p-value to determine if the die is fair.
+
+## Advanced Features
+
+### Customization
+
+#### Adjusting Confidence Levels
+
+Set custom confidence levels in tests:
+
+```{r}
+t.test(group1, group2, conf.level = 0.99)
+```
+
+### Integration
+
+#### Using Hypothesis Testing with `dplyr`
+
+```{r}
+library(dplyr)
+
+mtcars |>
+  group_by(cyl) |>
+  summarise(t_result = list(t.test(mpg ~ as.factor(am))$p.value))
+```
+
+### Optimization
+
+#### Managing Large Datasets
+
+Use vectorized operations or summary statistics for efficiency:
+
+```{r}
+large_data <- rnorm(1e6)
+t.test(large_data, mu = 0)
+```
+
+## Troubleshooting and FAQs
+
+### Common Issues
+
+1. **Error: Data must be numeric**
+	- Ensure data is numeric by using `as.numeric()`.
+2. **Warning: p-value approximation**
+	- Increase the sample size or use `simulate.p.value = TRUE`.
+
+### FAQs
+
+1. **What is the minimum sample size for a t-test?**
+	- At least 5 observations per group are recommended.
+2. **Can I test for normality before t-tests?**
+	- Use `shapiro.test()` to check normality.
+
+## Best Practices
+
+- Always visualize your data before performing tests.
+- Check assumptions (e.g., normality for t-tests, independence for Chi-square tests).
+- Use appropriate alternatives (e.g., Wilcoxon test for non-normal data).
+
+## Conclusion
+
+Hypothesis testing in R is a versatile and powerful tool for statistical analysis. From basic t-tests to advanced non-parametric methods, R provides comprehensive support for validating assumptions and making data-driven decisions.
+
+## References and Resources
+
+- [R Documentation](https://www.rdocumentation.org/)
+- [R Graph Gallery](https://www.r-graph-gallery.com/)
+- [R Hypothesis Testing Guide](https://www.datacamp.com/)

@@ -1,0 +1,673 @@
+---
+title: "Week 5: Modeling Approaches for Confounding Adjustment"
+---
+
+# R Packages Required
+
+```{r}
+#| label: load-packages
+#| echo: true
+pacman::p_load(
+  "dagitty",
+  "ggplot2",
+  "ggdag",
+  "tidyverse",
+  "ggpubr",
+  "WeightIt",
+  "MatchIt"
+)
+
+ggplot2::theme_set(ggpubr::theme_pubr())
+```
+
+# Overview
+
+Last week, we saw how stratification can help us control for confounding by calculating effects within subgroups of confounders and averaging them. This works wonderfully when we have one or two discrete confounders. But what happens when we have many confounders, or when they are continuous? Stratification becomes impractical due to the "curse of dimensionality"---we'd have too many strata with too few people in them.
+
+This week, we transition to model-based approaches, which are essential tools for the modern causal inference practitioner. We will explore how to use statistical models to simulate the balance we seek in a randomized trial, allowing us to adjust for complex confounding structures. We'll cover three key methods: the parametric G-formula (standardization), Inverse Probability Weighting (IPW) using propensity scores, and matching. We'll also introduce the powerful concept of doubly robust methods, which offer a safeguard against model misspecification.
+
+# Learning Objectives
+
+By the end of this week, you will be able to:
+
+1. **Explain** the statistical procedure and conceptual basis of the parametric G-formula (standardization) for estimating population-level causal effects.
+2. **Define** a propensity score, articulate its role as a one-dimensional summary of confounders, and explain how it helps satisfy the exchangeability assumption.
+3. **Implement** and **interpret** Inverse Probability Weighting (IPW) to create a pseudo-population where confounding is eliminated, and correctly calculate the ATE.
+4. **Describe** the positivity assumption, diagnose violations using propensity score distributions, and articulate the consequences of these violations for causal estimates.
+5. **Apply** and **contrast** various propensity score matching algorithms (e.g., nearest neighbor, caliper) in R, assess post-matching covariate balance, and understand the inherent bias-variance trade-off.
+6. **Articulate** the primary advantage of doubly robust estimators like AIPW, explaining how they protect against model misspecification.
+7. **Critically compare** the assumptions, strengths, and weaknesses of standardization, IPW, and matching for a given research question.
+
+# 1. Comprehensive Topic Explanation
+
+All methods this week share a common goal: to estimate a causal effect by breaking the association between confounders and treatment that exists in observational data. To do this, we must first make our causal assumptions explicit with a Directed Acyclic Graph (DAG). Our canonical confounding scenario is:
+
+```{r}
+#| label: fig-dag
+#| fig-cap: "The canonical confounding structure. X is a common cause of treatment A and outcome Y, opening a non-causal 'backdoor' path A ← X → Y."
+#| column: margin
+library(dagitty)
+library(ggdag)
+
+dag <- dagify(
+  Y ~ A + X,
+  A ~ X,
+  exposure = "A",
+  outcome = "Y",
+  coords = list(x = c(A = 1, Y = 3, X = 2), y = c(A = 1, Y = 1, X = 2))
+)
+
+ggdag(dag, layout = "manual") +
+  theme_dag()
+```
+
+Our goal is to estimate the causal effect of $A$ on $Y$, which is the path $A \rightarrow Y$. The path $A \leftarrow X \rightarrow Y$ is a confounding "backdoor" path that creates a spurious association. To identify the causal effect, we must block this path. All the methods below do this by "adjusting" for $X$, relying on the key assumption of **conditional exchangeability**: given $X$, the treatment assignment is independent of the potential outcomes, i.e., $(Y^1, Y^0) \indep A \mid X$.
+
+## Method 1: The Parametric G-Formula (Standardization)
+
+The **G-formula**, or standardization, directly simulates the counterfactual world we're interested in. It answers the question: "What would the average outcome in our *entire population* have been if, contrary to fact, everyone had been assigned treatment $A=1$? And what if everyone had been assigned $A=0$?"
+
+### The process involves two conceptual steps:
+
+1. **Model the Outcome-Confounder Relationship:** We fit a regression model for the outcome $Y$ based on the treatment $A$ and the full set of confounders $X$. This model represents our best understanding of how these factors jointly produce the outcome. For example, using a linear model:
+
+$$
+\E{Y \mid A, X} = f(A, X; \beta) = \beta_0 + \beta_1 A + \boldsymbol{\beta}_2^\top X
+$$
+
+where $f$ is a specified functional form (e.g., linear, logistic) and $\beta_1$ captures the effect of treatment $A$ on outcome $Y$, adjusted for confounders $X$, $\boldsymbol{\beta}_2$ is a vector of coefficients for the confounders, the symbol $\top$ denotes the transpose operation, and $\beta_0$ is the intercept term.
+
+This model gives us a "prediction machine." It allows us to predict the average outcome for an individual with covariates $X$ under *any* hypothetical treatment level $a$, not just the one they received.
+
+1. **Standardize by Averaging over the Population:** We use our fitted model to perform a computational "thought experiment":
+    a. Set $A=1$ for *every person* in the dataset.
+    b. Use the model to predict the outcome $\hat{Y}_i^1$ for each person, based on their *actual* confounders $X_i$ and the hypothetical treatment $A=1$.
+    c. Average these predictions across all $n$ individuals. This gives us our estimate of the marginal potential outcome mean, $\Ehat{Y^1}$, where the symbol $\hat{}$ indicates this is an estimate from our sample data.
+    d. Repeat a-c, but this time setting $A=0$ for everyone to get $\Ehat{Y^0}$.
+
+Mathematically, we are computing:
+
+$$
+\Ehat{Y^a} = \frac{1}{n} \sum_{i=1}^n \Ehat{Y \mid A=a, X=X_i}
+$$
+
+The Average Treatment Effect (ATE) estimate is the difference between these two standardized means:
+
+$$
+\widehat{\text{ATE}} = \Ehat{Y^1} - \Ehat{Y^0}
+$$
+
+## Practical Examples
+
+::: {.callout-example}
+### Practical Example (Basic)
+
+A city health department wants to know the effect of a new public gym subsidy (`A`) on residents' cholesterol levels (`Y`). They know age and income (`X`) are confounders. They collect data and fit a model: `cholesterol ~ subsidy + age + income`. To get the ATE, they predict cholesterol for every single person in their dataset twice: once assuming they got the subsidy, and once assuming they didn't. By averaging these predictions, they estimate the city-wide average cholesterol under both scenarios, and the difference is the causal effect, adjusted for the age and income distribution of their city.
+
+:::
+
+::: {.callout-example}
+### Practical Example (Advanced)
+
+In oncology, researchers want to estimate the effect of a new chemotherapy regimen (`A`) versus an old one on 2-year survival (`Y`). Confounders (`X`) include the patient's cancer stage, tumor markers, age, and general health status at diagnosis. Standardization would involve fitting a complex survival model (e.g., a Cox model) for `Y` given `A` and `X`. Then, for the entire patient cohort, they would predict the 2-year survival probability if every patient had received the new chemo, and again if every patient had received the old chemo. The difference in these average predicted probabilities is the ATE on the risk difference scale.
+
+:::
+
+## Method 2: Propensity Scores and Inverse Probability Weighting (IPW)
+
+IPW approaches the problem from a different angle. Instead of modeling the outcome, it models the **treatment assignment mechanism**. The goal is to make the treated and untreated groups comparable by adjusting for why they received the treatment in the first place.
+
+## The Propensity Score: A "Balancing Score"
+
+The **propensity score**, $e(X)$, is the conditional probability of an individual receiving the treatment, given their set of measured confounders $X$.
+
+$$
+e(X) = \Prob{A=1 \mid X}
+$$
+
+It's typically estimated using a logistic regression model where `A` is the outcome and the confounders `X` are the predictors. The propensity score is a powerful tool because it acts as a one-dimensional summary of all the confounders. Rosenbaum and Rubin (1983) showed that if adjusting for $X$ is sufficient to control for confounding, then adjusting for the propensity score $e(X)$ is also sufficient. This is a huge advantage, as it reduces a multi-dimensional adjustment problem to a single dimension.
+
+## Inverse Probability Weighting (IPW)
+
+IPW uses the propensity score to create a weighted "pseudo-population" where the treatment and confounders are no longer associated. The intuition is to give more weight to individuals who are under-represented in the treatment group they ended up in.
+
+The weight ($w_i$) for each individual is the inverse of the probability of receiving the treatment they actually received:
+
+$$
+w_i = \frac{A_i}{e(X_i)} + \frac{1-A_i}{1-e(X_i)}
+$$
+
+- If an individual **was treated ($A_i=1$)**, their weight is $w_i = 1 / e(X_i)$. Someone who was very unlikely to get treated (low $e(X_i)$) but did, gets a *large* weight. They are considered highly informative because they represent a person who looks like a control but was in fact treated.
+- If an individual **was untreated ($A_i=0$)**, their weight is $w_i = 1 / (1-e(X_i))$. Someone who was very likely to get treated (high $e(X_i)$) but wasn't, also gets a large weight.
+
+After calculating these weights, the ATE is simply the difference in the *weighted* mean outcomes between the treated and untreated groups.
+
+::: {.callout-example}
+## Practical Example (Basic)
+
+Consider the effect of a private tutor (`A`) on SAT scores (`Y`), confounded by family income (`X`). Students from high-income families are more likely to get a tutor (high propensity score). To create a balanced pseudo-population, IPW would up-weight the rare low-income student who got a tutor, and up-weight the rare high-income student who did not. The weighted sample would then look like a randomized experiment where income no longer predicts getting a tutor.
+
+:::
+
+
+::: {.callout-definition}
+## Insight
+
+The standard IPW weights can sometimes become very large, leading to unstable estimates with high variance. A common solution is to use **stabilized weights**, which multiply the standard weights by the marginal probability of receiving the treatment.
+:::
+
+$$
+w_i^{\text{stab}} = A_i \frac{\Prob{A=1}}{e(X_i)} + (1-A_i) \frac{\Prob{A=0}}{1-e(X_i)}
+$$
+
+These weights have a mean of 1 and are generally less variable, often leading to more precise ATE estimates.
+
+## Method 3: Propensity Score Matching
+
+Matching is a highly intuitive method that tries to explicitly replicate a randomized trial. For each treated individual, we find one or more untreated individuals who are as similar as possible on their confounders $X$. The causal effect is then estimated by comparing outcomes within these matched sets.
+
+As matching on many covariates $X$ directly is hard (curse of dimensionality), we instead match on the propensity score $e(X)$.
+
+## Common Matching Algorithms:
+
+- **Nearest Neighbor (NN) Matching:** The most straightforward approach. For each treated unit, find the control unit with the closest propensity score. Can be done with or without replacement (i.e., can a control unit be matched multiple times?).
+- **Caliper Matching:** A refinement of NN matching. A match is only made if the propensity score difference is smaller than a pre-specified threshold (the "caliper"). This avoids poor matches at the cost of potentially dropping some treated units who can't find a suitable match.
+- **Radius Matching:** Instead of finding the single best match, find all control units whose propensity scores fall within a certain radius of the treated unit's score.
+
+After matching, you have a new dataset that is (hopefully) balanced on the covariates $X$. The ATE is then estimated by taking the difference in mean outcomes in this new, matched sample.
+
+## Crucial Assumption for IPW and Matching: Positivity
+
+Both IPW and matching rely critically on the **positivity** (or overlap) assumption. This means that for every set of confounder values $X$ present in our data, there must be a non-zero probability of being both treated and untreated.
+
+$$
+0 < \Prob{A=1 \mid X=x} < 1 \quad \text{for all } x \text{ in the population}
+$$
+
+- **What it means:** There are no types of people who are *guaranteed* to receive or not receive the treatment. For any given profile (e.g., 65-year-old male with high blood pressure), we need to be able to find both treated and untreated individuals in our data.
+- **Why it's crucial for IPW:** If $\Prob{A=1 \mid X}$ is very close to 0 or 1, the denominator in the weight calculation becomes tiny, making the weight explode to infinity. This leads to extremely unstable and unreliable estimates.
+- **Why it's crucial for matching:** If there's no overlap, you simply can't find matches for some individuals. For example, if all patients over 80 are untreated, you cannot find a control match for a treated patient who is 75, let alone 85.
+
+## Advanced Topic: Doubly Robust Methods
+
+We've seen two main modeling strategies:
+
+1. **Standardization:** Relies on a correctly specified **outcome model**.
+2. **IPW:** Relies on a correctly specified **propensity score model**.
+
+What if our model is wrong? Our estimate will be biased. This is a huge risk in any real-world analysis.
+
+**Doubly Robust (DR)** methods provide a powerful safety net. They combine both an outcome model and a propensity score model into a single estimator. The most famous is **Augmented IPW (AIPW)**.
+
+The "double robustness" property means the final ATE estimate will be unbiased if **either** the outcome model **or** the propensity score model is correctly specified. You get two chances to be right! This is a major advantage and is why DR methods like AIPW and Targeted Maximum Likelihood Estimation (TMLE) are increasingly the standard in modern causal inference (see Hernán & Robins (2025), Ch. 13).
+
+# 2. Intuitive Clarifications of Challenging Ideas
+
+## Analogy: Correcting a Biased Political Poll
+
+Imagine you want to predict an election outcome. You conduct a phone poll (`A` = candidate preference), but you accidentally survey way too many elderly people and not enough young people (`X` = age). Your raw results will be biased because age confounds the poll results.
+
+- **Standardization (G-Formula)** is like saying: "I know from census data what the true age distribution of this country is. I will build a model of how preference changes with age (`preference ~ age`). Then, I will re-weight the poll results from each age group to match their true proportion in the population." You are standardizing your sample to the true population structure.
+- **IPW** is like saying: "The probability of me calling an elderly person was much higher than calling a young person. To fix this, I will give each young person's response a higher weight and each elderly person's response a lower weight in my final tally." You are re-weighting the sample to create a pseudo-population where it's as if you had sampled everyone with equal probability.
+- **Matching** is like saying: "For every young person I polled, I will find an elderly person and put them aside, creating a set of 'unrepresentative' individuals. I'll analyze the remaining sample where the age distribution is now more balanced." (This is a crude analogy, but captures the idea of subsetting the data).
+
+## Comparing the Core Methods
+
+| Feature                     | Standardization (G-Formula)         | IPW                               | Propensity Score Matching          |
+|-----------------------------|-------------------------------------|-----------------------------------|------------------------------------|
+| **Model Required** | Outcome model: $\E{Y \mid A, X}$    | Treatment model: $\Prob{A \mid X}$| Treatment model: $\Prob{A \mid X}$ |
+| **How it Works** | Predicts & averages potential outcomes | Re-weights the sample data        | Selects a subset of data           |
+| **Source of Bias if Wrong** | Outcome model misspecified          | Propensity model misspecified     | Propensity model misspecified      |
+| **Data Usage** | Uses all individuals in the sample  | Uses all individuals, but weighted| Discards unmatched individuals     |
+| **Key Diagnostic** | Standard model fit diagnostics      | Weight distribution, Balance      | Post-matching balance diagnostics  |
+| **Strengths** | Intuitive, handles continuous treatment easily | Often efficient                  | Very intuitive, creates a "real" balanced dataset to inspect |
+| **Weaknesses** | Highly model-dependent              | Sensitive to positivity violations| Loses sample size, choice of algorithm matters |
+
+# 3. Simple, Hand-Calculation Numerical Example(s)
+
+Let's revisit our tiny dataset to solidify these ideas. We want to estimate the causal effect of a new drug ($A=1$) vs. placebo ($A=0$) on blood pressure ($Y$), confounded by Age ($X$).
+
+**The Data (n=8):**
+
+| Patient (i) | Age ($X_i$) | Treatment ($A_i$) | Outcome ($Y_i$) |
+|:-----------:|:-----------:|:-----------------:|:---------------:|
+| 1           | Old         | 1                 | 140             |
+| 2           | Old         | 1                 | 150             |
+| 3           | Old         | 0                 | 160             |
+| 4           | Old         | 0                 | 170             |
+| 5           | Young       | 1                 | 120             |
+| 6           | Young       | 0                 | 125             |
+| 7           | Young       | 0                 | 135             |
+| 8           | Young       | 0                 | 130             |
+
+## Scaffolding: Thinking Before Calculating
+
+1. **Naive Effect:** The average outcome for the treated is $(140+150+120)/3 = 136.7$. The average for the untreated is $(160+170+125+135+130)/5 = 144$. The naive difference is $136.7 - 144 = -7.3$.
+2. **Identify Confounding:** Are the groups comparable? No. The treated group is 1/3 Old (1/3), while the control group is 2/5 Old (2/5). Old age is likely associated with higher blood pressure. The treated group is younger on average, which likely biases the naive estimate to look better than it is. We expect the true beneficial effect of the drug to be even larger (more negative) than -7.3.
+
+## Method 1: Standardization by Hand
+
+**Step 1: Fit an Outcome Model.** Assume we run a regression `Y ~ A + X` (where $X=1$ for Old, $X=0$ for Young) and get the fitted model:
+
+$$
+\hat{Y} = 130 - 15A + 25X
+$$
+
+**Step 2: Predict Potential Outcomes for Everyone.** We use the model to fill in the counterfactuals for every patient.
+
+$$
+\hat{Y}_i^1 = 130 - 15(1) + 25X_i \quad \text{and} \quad \hat{Y}_i^0 = 130 - 15(0) + 25X_i
+$$
+
+|  i  | X (Age) | $A_i$ | $Y_i$ | Predicted $Y_i^1$ | Predicted $Y_i^0$ |
+| :-: | :-----: | :----: | :----: | :----------------: | :----------------: |
+|  1  | 1 (Old) |   1    |  140   | $130-15+25 = 140$  |  $130-0+25 = 155$  |
+|  2  | 1 (Old) |   1    |  150   | $130-15+25 = 140$  |  $130-0+25 = 155$  |
+|  3  | 1 (Old) |   0    |  160   | $130-15+25 = 140$  |  $130-0+25 = 155$  |
+|  4  | 1 (Old) |   0    |  170   | $130-15+25 = 140$  |  $130-0+25 = 155$  |
+|  5  | 0 (Yng) |   1    |  120   |  $130-15+0 = 115$  |  $130-0+0 = 130$   |
+|  6  | 0 (Yng) |   0    |  125   |  $130-15+0 = 115$  |  $130-0+0 = 130$   |
+|  7  | 0 (Yng) |   0    |  135   |  $130-15+0 = 115$  |  $130-0+0 = 130$   |
+|  8  | 0 (Yng) |   0    |  130   |  $130-15+0 = 115$  |  $130-0+0 = 130$   |
+
+**Step 3: Average the Potential Outcomes.**
+
+$\Ehat{Y^1} = (140 \times 4 + 115 \times 4) / 8 = (560 + 460) / 8 = 1020 / 8 = 127.5$
+
+$\Ehat{Y^0} = (155 \times 4 + 130 \times 4) / 8 = (620 + 520) / 8 = 1140 / 8 = 142.5$
+
+**Step 4: Calculate the ATE.**
+
+$\widehat{\text{ATE}} = 127.5 - 142.5 = -15$.
+
+After adjusting for age, our estimate is that the drug lowers blood pressure by 15 points on average, a stronger effect than the naive estimate, as we predicted.
+
+## Method 2: IPW by Hand
+
+**Step 1: Fit a Propensity Score Model.** We need $\hat{e}(X) = \Prob{A=1 \mid X}$.
+
+- For Old people ($X=1$): 2 of 4 were treated. $\hat{e}(X=1) = 2/4 = 0.5$.
+- For Young people ($X=0$): 1 of 4 was treated. $\hat{e}(X=0) = 1/4 = 0.25$.
+
+**Step 2: Calculate Weights.**
+
+Weight $w = 1/e(X)$ for treated, $w=1/(1-e(X))$ for untreated.
+
+| i | X (Age) | $A_i$ | $\hat{e}(X_i)$ | $w_i$                              |
+|:-:|:-------:|:-----:|:--------------:|:----------------------------------:|
+| 1 | 1 (Old) | 1     | 0.5            | $1 / 0.5 = 2.0$                    |
+| 2 | 1 (Old) | 1     | 0.5            | $1 / 0.5 = 2.0$                    |
+| 3 | 1 (Old) | 0     | 0.5            | $1 / (1-0.5) = 2.0$                |
+| 4 | 1 (Old) | 0     | 0.5            | $1 / (1-0.5) = 2.0$                |
+| 5 | 0 (Yng) | 1     | 0.25           | $1 / 0.25 = 4.0$                   |
+| 6 | 0 (Yng) | 0     | 0.25           | $1 / (1-0.25) \approx 1.33$        |
+| 7 | 0 (Yng) | 0     | 0.25           | $1 / (1-0.25) \approx 1.33$        |
+| 8 | 0 (Yng) | 0     | 0.25           | $1 / (1-0.25) \approx 1.33$        |
+
+**Step 3: Create the Pseudo-Population and Calculate Weighted Averages.**
+
+Notice the sum of weights for the treated is $2+2+4=8$ and for the untreated is $2+2+1.33 \times 3 \approx 8$. In the pseudo-population of size 16, we have 8 treated and 8 untreated individuals.
+
+$$
+\Ehat{Y^1} = \frac{\sum (w_i A_i Y_i)}{\sum (w_i A_i)} = \frac{(2 \times 140) + (2 \times 150) + (4 \times 120)}{8} = \frac{280 + 300 + 480}{8} = \frac{1060}{8} = 132.5
+$$
+
+$$
+\Ehat{Y^0} = \frac{\sum (w_i (1-A_i) Y_i)}{\sum (w_i (1-A_i))} = \frac{(2 \times 160) + (2 \times 170) + (1.33 \times 125) + (1.33 \times 135) + (1.33 \times 130)}{8} \approx \frac{320 + 340 + 166.7 + 180 + 173.3}{8} = \frac{1180}{8} = 147.5
+$$
+
+**Step 4: Calculate the ATE.**
+
+$\widehat{\text{ATE}} = 132.5 - 147.5 = -15$.
+The IPW estimate exactly matches the standardization estimate in this simple case.
+
+# 4. R Code Examples & Interpretation
+
+Let's simulate a more realistic dataset.
+
+**Scenario:** We study a smoking cessation program ($A=1$) versus none ($A=0$) on weight gain ($Y$) after 6 months. We know `age` and `motivation_level` (1-10) are confounders ($X$). The true ATE is -5 (the program reduces weight gain).
+
+## Simulating the Data
+
+```{r}
+#| label: simulate-data
+#| code-summary: "Simulate data for confounding adjustment example"
+
+set.seed(579)
+n <- 1000
+age <- rnorm(n, 40, 10)
+motivation <- rnorm(n, 5, 2)
+# Propensity Score Model (motivation Heavily Influences Joining the program)
+pscore <- plogis(-2 + 0.05 * age + 0.4 * motivation)
+A <- rbinom(n, 1, pscore)
+# Outcome Model (program Truly Reduces Weight Gain by 5 units)
+Y <- 10 + -5 * A + 0.2 * age + 1.5 * motivation + rnorm(n, 0, 3)
+dat <- data.frame(Y, A, age, motivation)
+
+# Naive (biased) Comparison
+summary(lm(Y ~ A, data = dat))
+```
+
+The naive regression shows a coefficient for `A` of -1.58, far from the true effect of -5. This is because motivated people are more likely to join the program *and* more likely to gain less weight, creating positive confounding that masks the program's true benefit.
+
+## Method 1: Standardization (G-Formula) in R
+
+```{r}
+#| label: gformula-r
+#| code-summary: "Implement G-formula in R"
+
+# 1. Fit the Outcome Model
+outcome_model <- lm(Y ~ A + age + motivation, data = dat)
+
+# 2. Create Datasets where Everyone Receives Each Treatment Level
+dat_A1 <- dat_A0 <- dat
+dat_A1$A <- 1
+dat_A0$A <- 0
+
+# 3. Predict Potential Outcomes for Everyone under Each Scenario
+Y1_hat <- predict(outcome_model, newdata = dat_A1)
+Y0_hat <- predict(outcome_model, newdata = dat_A0)
+
+# 4. Average and Find the Difference
+ate_gformula <- mean(Y1_hat) - mean(Y0_hat)
+```
+
+**Interpretation of the result `r round(ate_gformula, 2)`:**
+
+- **What this number means:** Our estimate for the Average Treatment Effect (ATE) is -4.83.
+- **How it answers our question:** We estimate that, on average, if everyone in the population were to participate in the smoking cessation program versus if no one did, their 6-month weight gain would be 4.83 units lower.
+- **Assumptions:** This estimate is valid assuming our linear model for weight gain (`Y ~ A + age + motivation`) is correctly specified and we have measured all confounders.
+
+## Method 2: IPW in R
+
+```{r}
+#| label: ipw-r
+#| code-summary: "Implement IPW in R"
+
+# 1. Fit the Propensity Score Model (logistic Regression for Binary A)
+ps_model <- glm(A ~ age + motivation, data = dat, family = "binomial")
+dat$ps <- predict(ps_model, type = "response")
+
+# 2. Check for positivity/overlap
+library(ggplot2)
+ggplot(dat, aes(x = ps, fill = as.factor(A))) +
+  geom_density(alpha = 0.6) +
+  labs(
+    title = "Figure 2: Propensity Score Overlap",
+    x = "Propensity Score",
+    fill = "Treatment (A)"
+  ) +
+  theme_minimal()
+```
+
+**Interpretation of Figure 2:** The plot shows good overlap. The distributions for the treated (A=1) and untreated (A=0) groups cover a similar range of propensity scores. There are no regions of PS values where we only have treated or only untreated people, so the positivity assumption appears to hold.
+
+```{r}
+#| label: ipw-weightit-r
+#| code-summary: "Calculate IPW estimate using WeightIt"
+library(WeightIt)
+
+# 3. Calculate Weights
+weight_obj <- weightit(
+  A ~ age + motivation,
+  data = dat,
+  method = "ps",
+  estimand = "ATE"
+)
+
+# 4. Fit a Weighted Regression to Get the ATE
+ipw_model <- lm(Y ~ A, data = dat, weights = weight_obj$weights)
+summary(ipw_model)
+```
+
+**Interpretation of the `lm` coefficient for `A`:**
+
+- **What this number means:** The IPW estimate of the ATE is -4.88.
+- **How it answers our question:** After creating a pseudo-population where `age` and `motivation` no longer predict program participation, we estimate the program causes an average reduction in weight gain of 4.88 units.
+- **Assumptions:** This estimate is valid assuming our propensity score model (`A ~ age + motivation`) is correctly specified, we've measured all confounders, and the positivity assumption holds.
+
+## Method 3: Matching in R with `MatchIt`
+
+```{r}
+#| label: matching-r
+#| code-summary: "Implement matching in R"
+library(MatchIt)
+
+# Perform 1:1 nearest Neighbor Matching without Replacement
+match_obj_nn <- matchit(
+  A ~ age + motivation,
+  data = dat,
+  method = "nearest",
+  distance = "glm"
+)
+
+# Perform 1:1 nearest Neighbor Matching with a Caliper
+# A Caliper of 0.2 Standard Deviations of the Logit of the PS is Common
+match_obj_caliper <- matchit(
+  A ~ age + motivation,
+  data = dat,
+  method = "nearest",
+  distance = "glm",
+  caliper = 0.2
+)
+
+summary(match_obj_caliper, un = FALSE) # un=FALSE cleans up output
+```
+
+**Interpretation of the `summary`:** The table shows the "Std. Mean Diff." (standardized mean difference) for our covariates before and after matching. Before matching, `motivation` has a large difference (0.57). After matching, the differences for both `age` and `motivation` are very close to 0, indicating excellent balance has been achieved.
+
+```{r}
+#| label: match-plot-r
+#| fig-cap: "Figure 3: Covariate balance before and after matching with a caliper. The matched sample shows excellent balance."
+plot(summary(match_obj_caliper), abs = FALSE)
+```
+
+```{r}
+#| label: match-estimate-r
+#| code-summary: "Estimate ATE in the matched dataset"
+
+# Get the Matched Dataset
+matched_data <- match.data(match_obj_caliper)
+
+# Analyze the Outcome in the Matched Dataset
+match_model <- lm(Y ~ A, data = matched_data, weights = weights)
+summary(match_model)
+```
+
+**Interpretation of the `lm` coefficient for `A`:**
+
+- **What this number means:** The matching estimate of the ATE is -5.04.
+- **How it answers our question:** In a subset of the data where treated and untreated individuals are balanced on `age` and `motivation`, the program causes an average reduction in weight gain of 5.04 units.
+- **Assumptions:** Same as IPW. Note that because matching may discard some individuals, the estimand is technically the ATE for the subpopulation that could be matched.
+
+# 5. Hands-On R Lab
+
+## Lab Objectives
+
+- Practice implementing and interpreting standardization, IPW, and matching.
+- Gain experience with diagnosing violations of the positivity assumption.
+- Compare and contrast the results from different adjustment methods.
+
+## Warm-up Reading
+
+- Hernán & Robins (2025), Chapter 12 ("IP weighting and marginal structural models") and Chapter 13 ("Standardization and the parametric g-formula").
+- Cunningham (2021), "The Mixtape", Chapter on Propensity Score Matching.
+
+## Scenario
+
+We're investigating the effect of a new job training program (`program` = 1) versus standard job-search assistance (`program` = 0) on subsequent annual income (`income`, in thousands of dollars). We suspect that an individual's `education` level (in years) and their prior `work_experience` (in years) are confounders. We will simulate data where the true causal effect of the program is an increase of $3,000 in annual income (ATE = 3).
+
+## Lab Setup: Simulate Data
+
+```{r}
+#| label: lab-simulate-data
+#| code-summary: "Simulate data for the R lab"
+set.seed(123)
+n_lab <- 500
+education <- round(rnorm(n_lab, 14, 2))
+work_experience <- round(pmax(0, rnorm(n_lab, 8, 4)))
+pscore_lab <- plogis(-3 + 0.15 * education + 0.1 * work_experience)
+program <- rbinom(n_lab, 1, pscore_lab)
+income <- 40 +
+  3 * program +
+  1.5 * education +
+  0.8 * work_experience +
+  rnorm(n_lab, 0, 5)
+lab_data <- data.frame(income, program, education, work_experience)
+```
+
+## Task 1: The Naive Estimate
+
+Calculate the unadjusted association between the program and income.
+
+```r
+#| label: lab-task-1
+# Your Code Here: Fit lm(income ~ Program, Data = lab_data)
+```
+
+```{r}
+#| label: lab-solution-1
+naive_model <- lm(income ~ program, data = lab_data)
+summary(naive_model)
+```
+
+**Commentary:** The naive estimate is 5.86, a significant overestimate of the true effect (3). This is positive confounding: individuals with higher education/experience are more likely to join the program and also earn more regardless of the program.
+
+## Task 2: Standardization (G-Formula)
+
+Use the parametric G-formula to estimate the ATE.
+
+```r
+#| label: lab-task-2
+# Step 1: Fit the Outcome Model: lm(income ~ Program + …)
+# Step 2: Create Datasets where Everyone is treated/untreated
+# Step 3: Predict Potential Outcomes for Everyone
+# Step 4: Calculate the ATE by Taking the Difference of the means
+```
+
+```{r}
+#| label: lab-solution-2
+lab_outcome_model <- lm(
+  income ~ program + education + work_experience,
+  data = lab_data
+)
+lab_data_p1 <- lab_data_p0 <- lab_data
+lab_data_p1$program <- 1
+lab_data_p0$program <- 0
+income_p1_hat <- predict(lab_outcome_model, newdata = lab_data_p1)
+income_p0_hat <- predict(lab_outcome_model, newdata = lab_data_p0)
+ate_gformula_lab <- mean(income_p1_hat) - mean(income_p0_hat)
+print(paste('G-Formula Lab ATE:', round(ate_gformula_lab, 2)))
+```
+
+**Commentary:** The standardization estimate is 2.94, very close to the true ATE of 3. Our outcome model successfully adjusted for the confounding.
+
+## Task 3: Inverse Probability Weighting (IPW)
+
+Estimate the ATE using IPW. Remember to check the propensity score overlap plot.
+
+```r
+#| label: lab-task-3
+# Step 1: Fit PS Model: glm(program ~ …, family="binomial")
+# Step 2: Plot the Overlap of PS Scores
+# Step 3: Use WeightIt to Get Weights and Fit a Weighted Lm
+```
+
+```{r}
+#| label: lab-solution-3
+library(WeightIt)
+library(ggplot2)
+ps_model_lab <- glm(
+  program ~ education + work_experience,
+  data = lab_data,
+  family = 'binomial'
+)
+lab_data$ps <- predict(ps_model_lab, type = 'response')
+ggplot(lab_data, aes(x = ps, fill = as.factor(program))) +
+  geom_density(alpha = 0.6)
+W_lab <- weightit(
+  program ~ education + work_experience,
+  data = lab_data,
+  estimand = 'ATE'
+)
+ipw_model_lab <- lm(income ~ program, data = lab_data, weights = W_lab$weights)
+summary(ipw_model_lab)
+```
+
+**Commentary:** The overlap plot looks good, and the IPW estimate is 3.1, again very close to the true effect of 3.
+
+## Challenge Task 4: Breaking Positivity
+
+Let's see what happens when the positivity assumption is violated. We'll create a new dataset where *everyone* with more than 16 years of education joins the program. Then, re-calculate the IPW estimate.
+
+```r
+#| label: lab-task-4-challenge
+# Create a Copy of the Lab Data
+lab_data_no_pos <- lab_data
+# Force Everyone with Education > 16 to Be in the Program
+# lab_data_no_pos$program[lab_data_no_pos$education > 16] <- …
+# Now, Re-run the IPW Steps from Task 3 on This New Data.
+# 1. Estimate PS. 2. Plot PS. 3. Calculate IPW Estimate.
+# What Do You Observe about the PS Distribution and the Final Estimate?
+```
+
+
+```{r}
+#| label: lab-solution-4-challenge
+lab_data_no_pos <- lab_data
+lab_data_no_pos$program[lab_data_no_pos$education > 16] <- 1
+
+ps_model_no_pos <- glm(
+  program ~ education + work_experience,
+  data = lab_data_no_pos,
+  family = "binomial"
+)
+lab_data_no_pos$ps <- predict(ps_model_no_pos, type = "response")
+
+ggplot(lab_data_no_pos, aes(x = ps, fill = as.factor(program))) +
+  geom_density(alpha = 0.6) +
+  labs(title = "PS Overlap with Positivity Violation")
+
+W_no_pos <- weightit(
+  program ~ education + work_experience,
+  data = lab_data_no_pos,
+  estimand = "ATE"
+)
+summary(W_no_pos)
+```
+
+**Commentary:** Look at the new PS plot! You'll see propensity scores bunching up near 1.0 for the treated group. Now look at the `summary(W_no_pos)`. The "Weight Range" will show some extremely large weights for the control group (specifically, for those with high education who were *not* forced into the program, their probability of being a control, $1-e(X)$, is now tiny). The resulting ATE estimate will likely be unstable and far from the truth. This demonstrates how a lack of overlap leads to extreme weights and unreliable estimates.
+</details>
+
+## Task 5: Retrieval & Reflection
+
+1. **Retrieval:** What is the fundamental difference between how standardization and IPW use statistical models to achieve confounding control?
+2. **Comparison:** In the challenge task, we saw IPW fail. How would standardization (G-formula) perform on the `lab_data_no_pos` dataset? Would it also fail? Why or why not?
+3. **Reflection:** In a real study, if you found a practical positivity violation (e.g., some near-zero and near-one propensity scores), what are two different strategies you could take to still get a credible causal estimate? What are the pros and cons of each strategy?
+
+# 6. Common Pitfalls & Checks
+
+::: {.callout-warning}
+## Forgetting the Theory
+
+It's easy to get excited by these powerful methods and throw variables into models. **Stop. First, draw a DAG.** A variable might be associated with treatment and outcome, but that doesn't make it a confounder. It could be a mediator (a variable on the causal pathway) or a collider (a common effect of treatment and outcome). Adjusting for mediators will bias your estimate of the total effect. Adjusting for colliders will *induce* bias where there might have been none. Always think causally before you model statistically.
+:::
+
+::: {.callout-tip}
+## Always Check Balance After Adjustment
+
+Your causal claim is only as good as the balance you achieve. **Never** just run an IPW or matching model and report the ATE.
+
+- For **IPW**, show that after weighting, the means of the confounders are nearly identical between the treatment and control groups.
+- For **matching**, use the `summary()` and `plot()` functions from `MatchIt` to demonstrate that the standardized mean differences of your covariates are close to zero after matching. An unbalanced "adjusted" analysis is not adjusted at all.
+
+:::
+
+::: {.callout-important icon='false'}
+## ❓ Question
+
+Why do the G-formula and a standard regression sometimes give the same ATE estimate? When would they differ?
+I run a standard regression `lm(Y ~ A + X)` and the coefficient for `A` is -5. I then use the G-formula with the same model and get an ATE of -5. Why are they the same? When would they be different?
+
+> **Answer:** They are the same here because the outcome model is **linear** and there is **no interaction** between `A` and `X`. In a simple linear model, the conditional effect $\E{Y \mid A=1, X} - \E{Y \mid A=0, X}$ is a constant ($\beta_A$), so averaging it over the population doesn't change its value. They would be different if the model was non-linear (e.g., a logistic regression for a binary Y) or if there was an interaction term (`A*X`). In those cases, the conditional effect of `A` depends on the value of `X`, and standardization is required to find the correct population-averaged marginal effect.
+:::

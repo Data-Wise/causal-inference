@@ -1,0 +1,67 @@
+---
+title: "Appendix"
+subtitle: "Additional Resources and Help"
+date: "7/12/2025"
+date-modified: last-modified
+date-format: long
+---
+
+This appendix provides supplementary resources and support materials to help you succeed in the course.
+
+## R Help and Documentation
+
+For the whole list of R functions and packages, refer to the [R help Page for the Course].
+
+  [R help Page for the Course]: r_help.html
+
+### R Functions and Packages Provided by the Instructor
+
+The following resources will provide you with a comprehensive understanding of R functions and packages used in the course.
+
+1.  **R Subjects and Topics**:
+    -   [Subjects and Topics]
+    -   [R Base Functions]
+    -   [R Packages]
+2.  **Online R Help**:
+    -   [CRAN R Documentation]
+    -   [RStudio Cheat Sheets]
+3.  **Video Tutorials**:
+    -   [R Programming for Beginners (YouTube)]
+
+  [Subjects and Topics]: r_help.html#r-subjects-topics
+  [R Base Functions]: r_help.html#r-base-functions
+  [R Packages]: r_help.html#r-packages
+  [CRAN R Documentation]: https://cran.r-project.org/manuals.html
+  [RStudio Cheat Sheets]: https://posit.co/resources/cheatsheets/
+  [R Programming for Beginners (YouTube)]: https://www.youtube.com/results?search_query=r+programming+tutorial
+
+## Software Tools and Resources
+
+To complete assignments and analyses, you will need access to R and related tools.
+
+-   **R Installation:** [Download R]\
+-   **RStudio IDE:** [Download RStudio]\
+-   **VS Code IDE:** [Download VS Code]
+-   **Positron IDE**: [Positron]
+
+  [Download R]: https://cran.r-project.org/
+  [Download RStudio]: https://www.rstudio.com/products/rstudio/download/
+  [Download VS Code]: https://code.visualstudio.com/
+  [Positron]: https://positron.posit.co/download
+
+### Additional Resources
+
+-   **Quarto Documentation**: [Learn Quarto]
+-   **R for Data Science**: [R4DS Book]
+-   **Online R Help**:
+    -   [CRAN R Documentation]
+    -   [RStudio Cheat Sheets]
+-   **Video Tutorials**:
+    -   [R Programming for Beginners (YouTube)]
+
+  [Learn Quarto]: https://quarto.org/docs/
+  [R4DS Book]: https://r4ds.had.co.nz/
+  [CRAN R Documentation]: https://cran.r-project.org/manuals.html
+  [RStudio Cheat Sheets]: https://posit.co/resources/cheatsheets/
+  [R Programming for Beginners (YouTube)]: https://www.youtube.com/results?search_query=r+programming+tutorial
+

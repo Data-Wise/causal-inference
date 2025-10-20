@@ -1,0 +1,50 @@
+# Quarto project files
+.quarto/
+_site/
+_freeze/
+_book/
+
+# RStudio files
+.Rproj.user
+.Rhistory
+.RData
+
+# VSCode
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+**/*.quarto_ipynb
+.luarc.json
+
+# renv
+renv/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*~
+*.tmp
+*.bak
+
+/.quarto/
+
+# Generated files
+/_extensions/
+/_manuscript/
+/*_cache/
+/*_files/
+/diagram-cache/
+/.vsc.ipynb/
+/_publish.yml
+*.log
+*.aux
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.synctex(busy)
+*.pdf
+*.docx
+*.tex

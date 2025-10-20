@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Davood Tofighi, Ph.D.">
+
+<title>G-Computation: Intuition and Math – Introduction to Causal Inference</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../assets/images/icon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script>
+    MathJax = {
+        tex: {
+            macros: {
+                RR: "{\\mathbb{R}}",
+                NN: "{\\mathbb{N}}",
+                QQ: "{\\mathbb{Q}}",
+                ZZ: "{\\mathbb{Z}}",
+                PP: "{\\mathbb{P}}",
+                // expectation & probability
+                E: ["{\\EE\\left[ #1 \\right]}", 1],
+                Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
+                EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
+                EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
+                EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
+                Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
+                ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
+                Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                pr: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
+                ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
+                ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
+                ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
+                ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
+                // operators (both lower & upper case)
+                var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
+                Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
+                cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
+                Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
+                cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
+                Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
+                logit: "{\\operatorname{logit}}",
+                expit: "{\\operatorname{expit}}", // inverse logit
+                sgn: "{\\operatorname{sgn}}",
+                EE: "{\\operatorname{\\mathbb{E}}}",
+
+
+                // vector & basic constructs
+                vect: ["{\\mathbf{#1}}", 1],
+                abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
+                norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
+                ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
+
+                // indicator variants
+                indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
+                ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+
+                // independence & non-independence (bare + braced forms via separate names)
+                indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
+                nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+
+                // do-operator & d-separation
+                doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
+                dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+
+                // potential outcomes & notational conveniences
+                Y: ["{Y^{#1}}", 1],
+                Ya: "{Y^a}",
+                Yone: "{Y^1}",
+                Yzero: "{Y^0}",
+
+                // estimands
+                ATE: "{\\tau_{\\text{ATE}}}",
+                ATT: "{\\tau_{\\text{ATT}}}",
+                ATC: "{\\tau_{\\text{ATC}}}",
+                CATE: "{\\tau_{\\text{CATE}}}",
+
+                DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
+                DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
+                DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
+                DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
+
+                // identification blocks
+                gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
+                ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
+
+                // risk measures
+                RD: "{\\operatorname{RD}}",
+                OR: "{\\operatorname{OR}}",
+
+                // optimization operators
+                argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
+                argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
+            }
+        }
+    };
+</script>
+<link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="G-Computation: Intuition and Math – Introduction to Causal Inference">
+<meta property="og:description" content="Introduction to Causal Inference">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:site_name" content="Introduction to Causal Inference">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo light-content">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Introduction to Causal Inference</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Syllabus</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.pdf">
+ <span class="dropdown-text">PDF</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.html">
+ <span class="dropdown-text">HTML</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../syllabus/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_lectures.html"> 
+<span class="menu-text">Lecture Notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_project.html"> 
+<span class="menu-text">Project</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_readings.html"> 
+<span class="menu-text">Readings</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_assignments.html"> 
+<span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../r_help.html"> 
+<span class="menu-text">R Help</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">G-Computation: Intuition and Math</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">G-Computation: Intuition and Math</h1>
+                      </div>
+  </div>
+    
+  <div class="quarto-title-meta-author">
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Affiliation</div>
+    
+      <div class="quarto-title-meta-contents">
+      <p class="author"><a href="https://Data-Wise.github.io/regression">Davood Tofighi, Ph.D.</a> <a href="mailto:dtofighi@unm.edu" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-8523-7776" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              Department of Mathematics and Statistics, University of New Mexico
+            </p>
+        </div>
+    </div>
+
+  <div class="quarto-title-meta">
+
+        
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Oct-13-2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Overview</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Syllabus</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PDF</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HTML</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schedule</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Materials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lecture Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_assignments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignments</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_project.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_readings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">R Code and Datasets</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../r_help.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R Help</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#r-packages" id="toc-r-packages" class="nav-link" data-scroll-target="#r-packages">R Packages</a></li>
+  <li><a href="#comprehensive-topic-explanation" id="toc-comprehensive-topic-explanation" class="nav-link" data-scroll-target="#comprehensive-topic-explanation">1. Comprehensive Topic Explanation</a>
+  <ul class="collapse">
+  <li><a href="#the-logic-of-g-computation-standardization" id="toc-the-logic-of-g-computation-standardization" class="nav-link" data-scroll-target="#the-logic-of-g-computation-standardization">The Logic of G-Computation (Standardization)</a></li>
+  <li><a href="#the-g-formula-mathematical-foundation" id="toc-the-g-formula-mathematical-foundation" class="nav-link" data-scroll-target="#the-g-formula-mathematical-foundation">The G-Formula: Mathematical Foundation</a></li>
+  <li><a href="#key-assumptions-for-identification" id="toc-key-assumptions-for-identification" class="nav-link" data-scroll-target="#key-assumptions-for-identification">Key Assumptions for Identification</a></li>
+  </ul></li>
+  <li><a href="#intuitive-clarifications-of-challenging-ideas" id="toc-intuitive-clarifications-of-challenging-ideas" class="nav-link" data-scroll-target="#intuitive-clarifications-of-challenging-ideas">2. Intuitive Clarifications of Challenging Ideas</a>
+  <ul class="collapse">
+  <li><a href="#analogy-the-plant-scientist" id="toc-analogy-the-plant-scientist" class="nav-link" data-scroll-target="#analogy-the-plant-scientist">Analogy: The Plant Scientist</a></li>
+  <li><a href="#g-computation-vs.-ip-weighting-a-comparison" id="toc-g-computation-vs.-ip-weighting-a-comparison" class="nav-link" data-scroll-target="#g-computation-vs.-ip-weighting-a-comparison">G-Computation vs.&nbsp;IP Weighting: A Comparison</a></li>
+  </ul></li>
+  <li><a href="#simple-hand-calculation-numerical-examples" id="toc-simple-hand-calculation-numerical-examples" class="nav-link" data-scroll-target="#simple-hand-calculation-numerical-examples">3. Simple, Hand-Calculation Numerical Example(s)</a></li>
+  <li><a href="#r-code-examples-interpretation" id="toc-r-code-examples-interpretation" class="nav-link" data-scroll-target="#r-code-examples-interpretation">4. R Code Examples &amp; Interpretation</a>
+  <ul class="collapse">
+  <li><a href="#step-1-simulate-confounded-data" id="toc-step-1-simulate-confounded-data" class="nav-link" data-scroll-target="#step-1-simulate-confounded-data">Step 1: Simulate Confounded Data</a></li>
+  <li><a href="#step-2-implement-g-computation-with-bootstrapped-confidence-intervals" id="toc-step-2-implement-g-computation-with-bootstrapped-confidence-intervals" class="nav-link" data-scroll-target="#step-2-implement-g-computation-with-bootstrapped-confidence-intervals">Step 2: Implement G-Computation with Bootstrapped Confidence Intervals</a></li>
+  </ul></li>
+  <li><a href="#hands-on-r-lab" id="toc-hands-on-r-lab" class="nav-link" data-scroll-target="#hands-on-r-lab">5. Hands-On R Lab</a>
+  <ul class="collapse">
+  <li><a href="#lab-estimating-the-effect-of-a-diet-plan-on-cholesterol" id="toc-lab-estimating-the-effect-of-a-diet-plan-on-cholesterol" class="nav-link" data-scroll-target="#lab-estimating-the-effect-of-a-diet-plan-on-cholesterol">Lab: Estimating the Effect of a Diet Plan on Cholesterol</a></li>
+  </ul></li>
+  <li><a href="#common-pitfalls-checks" id="toc-common-pitfalls-checks" class="nav-link" data-scroll-target="#common-pitfalls-checks">6. Common Pitfalls &amp; Checks</a></li>
+  <li><a href="#advanced-teaching-activities-interactivity" id="toc-advanced-teaching-activities-interactivity" class="nav-link" data-scroll-target="#advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</a></li>
+  <li><a href="#appendix-advanced-theory-derivations" id="toc-appendix-advanced-theory-derivations" class="nav-link" data-scroll-target="#appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</a>
+  <ul class="collapse">
+  <li><a href="#derivation-of-the-g-formula-standardization-formula" id="toc-derivation-of-the-g-formula-standardization-formula" class="nav-link" data-scroll-target="#derivation-of-the-g-formula-standardization-formula">Derivation of the G-Formula (Standardization Formula)</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-07_g_computation-rev1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-07_g_computation-rev1.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>Welcome to Week 7. In our previous sessions, we explored how to control for confounding using methods that operate on the probability of treatment, namely Inverse Probability (IP) Weighting. This week, we turn to a powerful and conceptually distinct alternative: <strong>G-Computation</strong>.</p>
+<p>Also known as the g-formula, standardization, or the substitution estimator, g-computation is one of the oldest and most intuitive methods for confounding adjustment. At its core, g-computation works by building a model of the world—specifically, a model of how the outcome depends on the treatment and confounders. It then uses this model to simulate a perfect randomized trial. We will ask our model: “What would the average outcome have been in our entire population if everyone had received the treatment?” and “What would it have been if, instead, no one had received the treatment?”</p>
+<p>The difference between the answers to these two questions is our estimate of the average causal effect. This approach is powerful because it directly estimates the quantities of interest from the potential outcomes framework, <span class="math inline">\(\E{Y^{a=1}}\)</span> and <span class="math inline">\(\E{Y^{a=0}}\)</span>. However, its validity rests heavily on a critical, untestable assumption: that our model of the world is correctly specified. We will dedicate significant time to understanding this trade-off and its practical implications for our research.</p>
+</section>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<p>By the end of this week’s module and lab, you will be able to:</p>
+<ol type="1">
+<li><strong>Describe</strong> the three-step g-computation algorithm (model, predict, average) and explain how it simulates a target trial to control for confounding.</li>
+<li><strong>State</strong> and <strong>interpret</strong> the three key identification assumptions required for g-computation: conditional exchangeability, positivity, and consistency.</li>
+<li><strong>Derive</strong> the g-formula (standardization formula) and connect each of its mathematical terms to the practical steps of the g-computation algorithm.</li>
+<li><strong>Implement</strong> parametric g-computation in R by fitting an outcome model, generating counterfactual predictions, and averaging to estimate the Average Treatment Effect (ATE).</li>
+<li><strong>Critically assess</strong> the primary limitation of parametric g-computation—its reliance on correct model specification—and discuss its implications for causal inference.</li>
+</ol>
+</section>
+<section id="r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="r-packages">R Packages</h2>
+<p>This week, we’ll focus on outcome modeling and prediction. The <code>boot</code> package will be essential for calculating confidence intervals for our g-computation estimates.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  tidyverse, <span class="co"># For data manipulation and visualization</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ggdag, <span class="co"># For plotting DAGs</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  broom, <span class="co"># For tidying model outputs</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  knitr, <span class="co"># For table formatting</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  boot <span class="co"># For bootstrapping confidence intervals</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># A consistent plot theme</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="comprehensive-topic-explanation" class="level2">
+<h2 class="anchored" data-anchor-id="comprehensive-topic-explanation">1. Comprehensive Topic Explanation</h2>
+<section id="the-logic-of-g-computation-standardization" class="level3">
+<h3 class="anchored" data-anchor-id="the-logic-of-g-computation-standardization">The Logic of G-Computation (Standardization)</h3>
+<p>G-computation tackles confounding from the opposite direction of IP weighting. While weighting methods create a pseudo-population by modeling the <em>treatment assignment process</em> (<code>A ~ L</code>), g-computation works by modeling the <em>outcome generating process</em> (<code>Y ~ A + L</code>).</p>
+<p>The method is best understood as a three-step algorithm that directly operationalizes the concept of standardization, a classic technique in epidemiology.</p>
+<p><strong>The Algorithm:</strong></p>
+<ol type="1">
+<li><strong>Fit an Outcome Model:</strong> First, using your observational data, fit a regression model for the outcome <span class="math inline">\(Y\)</span> as a function of the treatment <span class="math inline">\(A\)</span> and the full set of confounders <span class="math inline">\(L\)</span>. This model, often called the “Q-model,” learns the conditional expectation of the outcome, <span class="math inline">\(\E{Y|A, L}\)</span>.</li>
+<li><strong>Predict Potential Outcomes under Interventions:</strong>
+<ul>
+<li><strong>Intervention 1 (Everyone Treated):</strong> Create a new dataset where the treatment variable <span class="math inline">\(A\)</span> is set to 1 for <em>every individual</em> in your study. The confounder values <span class="math inline">\(L\)</span> remain at their observed, real-world levels for each person. Use the model from Step 1 to predict the outcome for every person in this hypothetical dataset. These are the predicted potential outcomes under treatment, <span class="math inline">\(\hat{Y}^{a=1}\)</span>.</li>
+<li><strong>Intervention 2 (No one Treated):</strong> Create a second new dataset where <span class="math inline">\(A\)</span> is set to 0 for everyone, again keeping their observed <span class="math inline">\(L\)</span> values. Use the model from Step 1 to predict the outcome for everyone in this second hypothetical dataset. These are the predicted potential outcomes under no treatment, <span class="math inline">\(\hat{Y}^{a=0}\)</span>.</li>
+</ul></li>
+<li><strong>Average and Contrast:</strong>
+<ul>
+<li>Calculate the average of all the predicted outcomes from Intervention 1. This is your estimate of the standardized mean outcome under treatment, <span class="math inline">\(\Ehat{Y^{a=1}}\)</span>.</li>
+<li>Calculate the average of all the predicted outcomes from Intervention 2. This is your estimate of the standardized mean outcome under no treatment, <span class="math inline">\(\Ehat{Y^{a=0}}\)</span>.</li>
+<li>The Average Treatment Effect (ATE) is the difference between these two means: <span class="math inline">\(\text{ATE} = \Ehat{Y^{a=1}} - \Ehat{Y^{a=0}}\)</span>.</li>
+</ul></li>
+</ol>
+<p>This procedure breaks the confounding link between <span class="math inline">\(L\)</span> and <span class="math inline">\(A\)</span> not by re-weighting, but by forcing the distribution of <span class="math inline">\(L\)</span> to be identical in the two scenarios we compare (since both scenarios use the exact same population with their observed values of <span class="math inline">\(L\)</span>).</p>
+</section>
+<section id="the-g-formula-mathematical-foundation" class="level3">
+<h3 class="anchored" data-anchor-id="the-g-formula-mathematical-foundation">The G-Formula: Mathematical Foundation</h3>
+<p>The algorithm described above is the computational implementation of the <strong>g-formula</strong>, or standardization formula. This formula provides the mathematical bridge from the unobservable world of potential outcomes to the observable world of data, under key assumptions.</p>
+<p>The goal is to identify <span class="math inline">\(\E{Y^a}\)</span>. The g-formula for a discrete set of confounders <span class="math inline">\(L\)</span> is:</p>
+<p><span class="math display">\[
+\E{Y^a} = \sum_l \E{Y | A=a, L=l} \times P(L=l)
+\]</span></p>
+<p>For continuous confounders, the sum becomes an integral:</p>
+<p><span class="math display">\[
+\E{Y^a} = \int \E{Y | A=a, L=l} f(l) dl
+\]</span></p>
+<p><strong>Connecting the Math to the Algorithm:</strong></p>
+<ul>
+<li><span class="math inline">\(\E{Y | A=a, L=l}\)</span>: This is the conditional expectation of the outcome. In parametric g-computation, this is precisely what our regression model from <strong>Step 1</strong> aims to estimate. The model gives us a way to get this value for any combination of <span class="math inline">\(a\)</span> and <span class="math inline">\(l\)</span>.</li>
+<li><span class="math inline">\(\sum_l ... \times P(L=l)\)</span>: This part of the formula represents averaging over the entire population’s distribution of confounders. In our algorithm, we accomplish this in <strong>Steps 2 and 3</strong>. By predicting the outcome for every single person in our original dataset (first under <span class="math inline">\(A=1\)</span>, then under <span class="math inline">\(A=0\)</span>), and then taking the mean of those predictions, we are effectively calculating the weighted average, where the weights are simply <span class="math inline">\(1/N\)</span> for each person, thus perfectly representing the empirical distribution of <span class="math inline">\(L\)</span> in our sample.</li>
+</ul>
+</section>
+<section id="key-assumptions-for-identification" class="level3">
+<h3 class="anchored" data-anchor-id="key-assumptions-for-identification">Key Assumptions for Identification</h3>
+<p>For the g-formula to hold and for g-computation to yield a valid causal estimate, three core assumptions are required:</p>
+<ol type="1">
+<li><strong>Conditional Exchangeability (Ignorability):</strong> <span class="math inline">\(Y^a \indep A | L\)</span>. We must have measured and adjusted for a set of covariates <span class="math inline">\(L\)</span> that is sufficient to break all backdoor paths between treatment <span class="math inline">\(A\)</span> and outcome <span class="math inline">\(Y\)</span>. This is the crucial “no unmeasured confounding” assumption.</li>
+<li><strong>Positivity (Overlap):</strong> <span class="math inline">\(P(A=a|L=l) &gt; 0\)</span> for all <span class="math inline">\(l\)</span> with <span class="math inline">\(P(L=l) \neq 0\)</span>. For every type of person in our population (i.e., for every level of <span class="math inline">\(L\)</span>), there must be a non-zero chance of being both treated and untreated. If a certain type of person is <em>always</em> treated, we can never learn from the data what would have happened to them had they not been treated.</li>
+<li><strong>Consistency:</strong> An individual’s observed outcome is their potential outcome corresponding to the treatment they actually received. This links the potential outcomes framework to the observed data.</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>The Achilles’ Heel of G-Computation: Model Specification
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In addition to the three causal assumptions, parametric g-computation carries a fourth, statistical assumption: <strong>correct model specification</strong>. The entire method hinges on the Q-model (<span class="math inline">\(Y \sim A+L\)</span>) being a correct representation of reality. If the true relationship between the confounders and the outcome is non-linear, but we fit a linear model, our predictions in Step 2 will be wrong, and our final ATE estimate will be biased due to <strong>residual confounding</strong>. This is the fundamental trade-off compared to IPW, which instead relies on a correctly specified <em>treatment</em> model.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="intuitive-clarifications-of-challenging-ideas" class="level2">
+<h2 class="anchored" data-anchor-id="intuitive-clarifications-of-challenging-ideas">2. Intuitive Clarifications of Challenging Ideas</h2>
+<section id="analogy-the-plant-scientist" class="level3">
+<h3 class="anchored" data-anchor-id="analogy-the-plant-scientist">Analogy: The Plant Scientist</h3>
+<p>Imagine a scientist wants to know the causal effect of a new fertilizer (<span class="math inline">\(A=1\)</span>) vs.&nbsp;a standard one (<span class="math inline">\(A=0\)</span>) on crop yield (<span class="math inline">\(Y\)</span>). The scientist knows that soil quality (<span class="math inline">\(L\)</span>) is a major confounder: better soil both improves yield directly and might influence which plots get the new, expensive fertilizer.</p>
+<p>She has observational data from 100 different farm plots. A naive comparison of yield from plots that got the new fertilizer vs.&nbsp;the old one would be biased.</p>
+<p><strong>The G-Computation Approach:</strong></p>
+<ol type="1">
+<li><strong>Model the Farm:</strong> The scientist fits a regression model: <code>Yield ~ Fertilizer + Soil_Quality</code>. This model learns the fundamental relationship between these variables from the 100 observed plots.</li>
+<li><strong>Simulate a Universe-Wide Experiment:</strong>
+<ul>
+<li><strong>Scenario 1:</strong> She takes her list of 100 plots, with their <em>actual observed soil quality</em>, and asks her model: “What would the yield have been for each of these 100 plots if they had <em>all</em> received the new fertilizer (<span class="math inline">\(A=1\)</span>)?”.</li>
+<li><strong>Scenario 2:</strong> She does the same, but this time asks: “What would the yield have been for each of these 100 plots if they had <em>all</em> received the standard fertilizer (<span class="math inline">\(A=0\)</span>)?”.</li>
+</ul></li>
+<li><strong>Average the Results:</strong> She calculates the average predicted yield across all 100 plots in Scenario 1 to get <span class="math inline">\(\E{Y^{a=1}}\)</span>. She does the same for Scenario 2 to get <span class="math inline">\(\E{Y^{a=0}}\)</span>. The difference is her causal effect estimate.</li>
+</ol>
+<p>This works because she is comparing two hypothetical universes that are identical in every way (they have the same 100 plots with the same soil quality distribution), except for the fertilizer they received.</p>
+</section>
+<section id="g-computation-vs.-ip-weighting-a-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="g-computation-vs.-ip-weighting-a-comparison">G-Computation vs.&nbsp;IP Weighting: A Comparison</h3>
+<p>These two methods are the foundational pillars of confounding adjustment. They approach the problem from opposite directions.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 38%">
+<col style="width: 51%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th><strong>G-Computation (Standardization)</strong></th>
+<th><strong>IP Weighting (IPTW)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Core Idea</strong></td>
+<td>Outcome Modeling &amp; Simulation</td>
+<td>Treatment Modeling &amp; Re-weighting</td>
+</tr>
+<tr class="even">
+<td><strong>Model Required</strong></td>
+<td>A model for the outcome: <strong><code>Y ~ A + L</code></strong> (the Q-model)</td>
+<td>A model for the treatment: <strong><code>A ~ L</code></strong> (the propensity score model)</td>
+</tr>
+<tr class="odd">
+<td><strong>Main Vulnerability</strong></td>
+<td><strong>Outcome model misspecification.</strong> If the Q-model is wrong, the estimate is biased.</td>
+<td><strong>Positivity violations.</strong> If propensity scores are near 0 or 1, weights become extreme and estimates unstable.</td>
+</tr>
+<tr class="even">
+<td><strong>Intuition</strong></td>
+<td>“What would the outcome look like in a standardized population?”</td>
+<td>“What would the A-Y association look like in a pseudo-population where L no longer predicts A?”</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="simple-hand-calculation-numerical-examples" class="level2">
+<h2 class="anchored" data-anchor-id="simple-hand-calculation-numerical-examples">3. Simple, Hand-Calculation Numerical Example(s)</h2>
+<p>Let’s use a very simple dataset to perform g-computation by hand. We want to find the effect of a Tutoring program (<span class="math inline">\(A\)</span>) on a final Exam Score (<span class="math inline">\(Y\)</span>), adjusting for a binary confounder, Prior Grades (<span class="math inline">\(L\)</span>).</p>
+<p><strong>Observed Data (8 Students):</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Student</th>
+<th style="text-align: center;">Prior Grades (L)</th>
+<th style="text-align: center;">Tutoring (A)</th>
+<th style="text-align: center;">Exam Score (Y)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Good</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">95</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">Good</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">90</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">Good</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">88</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">Good</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">85</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">Weak</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">80</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">Weak</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">78</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">Weak</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">70</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">Weak</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">68</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 1: Fit an Outcome Model.</strong> Let’s fit a simple linear model to our data. Let <code>L_good</code> be an indicator variable (1 if “Good”, 0 if “Weak”). Suppose our model fit is:</p>
+<p><span class="math display">\[
+\widehat{Score} = 69 + 11 \times A + 16 \times L_{good}
+\]</span></p>
+<ul>
+<li><strong>Interpretation:</strong> The baseline score for a weak student without tutoring is 69. Tutoring adds 11 points, and having good prior grades adds 16 points.</li>
+</ul>
+<p><strong>Step 2: Predict Potential Outcomes for the Entire Population.</strong></p>
+<p><strong>Scenario 1: Everyone gets Tutoring (</strong><span class="math inline">\(A=1\)</span>) We use our model to predict the score for all 8 students, forcing <span class="math inline">\(A=1\)</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 32%">
+<col style="width: 18%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Student</th>
+<th style="text-align: center;">Prior Grades (<span class="math inline">\(L_{good}\)</span>)</th>
+<th style="text-align: center;">Hypothetical A</th>
+<th style="text-align: center;">Predicted Score <span class="math inline">\(\hat{Y}^{a=1}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(1) + 16(1) = 96\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(1) + 16(1) = 96\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(1) + 16(1) = 96\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(1) + 16(1) = 96\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(1) + 16(0) = 80\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(1) + 16(0) = 80\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(1) + 16(0) = 80\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(1) + 16(0) = 80\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Scenario 2: No one gets Tutoring (</strong><span class="math inline">\(A=0\)</span>) Now we predict for all 8 students, forcing <span class="math inline">\(A=0\)</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 32%">
+<col style="width: 18%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Student</th>
+<th style="text-align: center;">Prior Grades (<span class="math inline">\(L_{good}\)</span>)</th>
+<th style="text-align: center;">Hypothetical A</th>
+<th style="text-align: center;">Predicted Score <span class="math inline">\(\hat{Y}^{a=0}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(0) + 16(1) = 85\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(0) + 16(1) = 85\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(0) + 16(1) = 85\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(0) + 16(1) = 85\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(0) + 16(0) = 69\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(0) + 16(0) = 69\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(0) + 16(0) = 69\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(69 + 11(0) + 16(0) = 69\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 3: Average and Contrast.</strong></p>
+<ul>
+<li><span class="math inline">\(\Ehat{Y^{a=1}} = \frac{96+96+96+96+80+80+80+80}{8} = \frac{4 \times 96 + 4 \times 80}{8} = 88\)</span></li>
+<li><span class="math inline">\(\Ehat{Y^{a=0}} = \frac{85+85+85+85+69+69+69+69}{8} = \frac{4 \times 85 + 4 \times 69}{8} = 77\)</span></li>
+<li><span class="math inline">\(\text{ATE} = 88 - 77 = 11\)</span></li>
+</ul>
+<p><strong>Conclusion:</strong> Our g-computation estimate of the causal effect of tutoring is an 11-point increase in exam scores. This correctly matches the coefficient for <code>A</code> in our outcome model, because the model was linear and had no interactions.</p>
+</section>
+<section id="r-code-examples-interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="r-code-examples-interpretation">4. R Code Examples &amp; Interpretation</h2>
+<p>Let’s implement the g-computation algorithm in R and, crucially, use the bootstrap method to obtain a confidence interval.</p>
+<section id="step-1-simulate-confounded-data" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-simulate-confounded-data">Step 1: Simulate Confounded Data</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># L is a Continuous Confounder (e.g., age)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">50</span>, <span class="at">sd =</span> <span class="dv">10</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Treatment A Depends on L (confounding)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>prob_A <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">5</span> <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> L)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, prob_A)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Outcome Y Depends on A and L. True ATE = -15</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">-</span> <span class="dv">15</span> <span class="sc">*</span> A <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> L <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">8</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(Y, A, L)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Naive (biased) Analysis for Comparison</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>naive_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> df)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(naive_model) <span class="sc">|&gt;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"A"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">1.14</td>
+<td style="text-align: right;">1.26</td>
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">0.37</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Interpretation:</strong> The naive analysis shows an effect of 1.14 on the outcome, which is biased towards the null compared to the true effect of -15. This is because older people (higher L) are more likely to get the treatment and also tend to have higher outcomes, making the treatment look less effective than it truly is.</p>
+</section>
+<section id="step-2-implement-g-computation-with-bootstrapped-confidence-intervals" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-implement-g-computation-with-bootstrapped-confidence-intervals">Step 2: Implement G-Computation with Bootstrapped Confidence Intervals</h3>
+<p>The best way to get a confidence interval for a g-computation estimate is via the bootstrap. This involves repeatedly resampling our data and running the entire algorithm on each resample to see how much the ATE estimate varies.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, Write a Function that Performs the G-computation Steps.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This Function Will Be Called by the boot() Function.</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>calculate_ate <span class="ot">&lt;-</span> <span class="cf">function</span>(data, indices) {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Allow Boot to Select Resampled Datasets</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> data[indices, ]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. Fit the Outcome Model on the Resampled Data</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  q_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> L, <span class="at">data =</span> d)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Create Counterfactual Datasets</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  d_a1 <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">A =</span> <span class="dv">1</span>) <span class="co"># Everyone treated</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  d_a0 <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">A =</span> <span class="dv">0</span>) <span class="co"># No one treated</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Predict Potential Outcomes</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  y_hat_a1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(q_model, <span class="at">newdata =</span> d_a1)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  y_hat_a0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(q_model, <span class="at">newdata =</span> d_a0)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Average and Contrast</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  mean_y1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(y_hat_a1)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  mean_y0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(y_hat_a0)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(mean_y1 <span class="sc">-</span> mean_y0)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, Run the Bootstrap</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>bootstrap_results <span class="ot">&lt;-</span> <span class="fu">boot</span>(</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> calculate_ate,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">R =</span> <span class="dv">999</span> <span class="co"># Number of bootstrap replications</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co"># View the Results</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bootstrap_results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = df, statistic = calculate_ate, R = 999)
+
+
+Bootstrap Statistics :
+    original       bias    std. error
+t1* -15.2348 -0.009824715   0.5744005</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate a 95% Percentile Confidence Interval</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ci_boot_gcomp <span class="ot">&lt;-</span> <span class="fu">boot.ci</span>(bootstrap_results, <span class="at">type =</span> <span class="st">"perc"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ci_boot_gcomp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 999 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = bootstrap_results, type = "perc")
+
+Intervals : 
+Level     Percentile     
+95%   (-16.40, -14.08 )  
+Calculations and Intervals on Original Scale</code></pre>
+</div>
+</div>
+<p><strong>Interpretation:</strong></p>
+<ul>
+<li><strong><code>original</code></strong>: This value (<code>t1*</code>) is the ATE calculated on our original, un-resampled dataset. It should be very close to the true effect of -15.</li>
+<li><strong><code>bias</code></strong>: This is the difference between the average of the bootstrap estimates and the original estimate. We want this to be small.</li>
+<li><strong><code>std. error</code></strong>: This is the standard deviation of the bootstrap estimates, which is our bootstrap standard error for the ATE.</li>
+<li><strong><code>boot.ci</code> output</strong>: This provides the 95% confidence interval. A correct interpretation would be: “Using parametric g-computation, the estimated average causal effect of the treatment is -15.23. We are 95% confident that the true average causal effect lies between -16.4 and -14.08, based on our bootstrap. Since this interval is far from 0, we can conclude there is a statistically significant, negative causal effect.</li>
+</ul>
+</section>
+</section>
+<section id="hands-on-r-lab" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-r-lab">5. Hands-On R Lab</h2>
+<section id="lab-estimating-the-effect-of-a-diet-plan-on-cholesterol" class="level3">
+<h3 class="anchored" data-anchor-id="lab-estimating-the-effect-of-a-diet-plan-on-cholesterol">Lab: Estimating the Effect of a Diet Plan on Cholesterol</h3>
+<p><strong>Purpose:</strong> This lab will provide hands-on experience implementing the full parametric g-computation workflow, including fitting an outcome model that includes interactions and using the bootstrap to generate confidence intervals.</p>
+<p><strong>Lab Objectives:</strong></p>
+<ol type="1">
+<li>Fit a parametric outcome model (Q-model) to observational data.</li>
+<li>Implement the g-computation algorithm to estimate the ATE.</li>
+<li>Write a function to perform g-computation that is compatible with the <code>boot</code> package.</li>
+<li>Generate and interpret bootstrapped confidence intervals for the ATE.</li>
+</ol>
+<p><strong>Scenario:</strong> You are a health analyst examining the effect of a new, intensive diet plan (<span class="math inline">\(A=1\)</span>) versus standard advice (<span class="math inline">\(A=0\)</span>) on cholesterol reduction (<span class="math inline">\(Y\)</span>, measured in mg/dL). You have observational data and suspect that <strong>baseline BMI</strong> (<span class="math inline">\(L\)</span>) is a major confounder, as individuals with higher BMI might be more likely to be assigned to the intensive plan and also have different cholesterol outcomes. Furthermore, you suspect the diet plan might be <em>more effective</em> for people with higher BMI (i.e., there is effect modification).</p>
+<section id="task-1-simulate-data-and-examine-the-naive-effect" class="level4">
+<h4 class="anchored" data-anchor-id="task-1-simulate-data-and-examine-the-naive-effect">Task 1: Simulate Data and Examine the Naive Effect</h4>
+<p><strong>Instructions:</strong></p>
+<ol type="1">
+<li>Generate the confounded data using the block below.</li>
+<li>Run a naive linear model (<code>lm(Y ~ A, ...)</code>) to see the biased association.</li>
+<li>The true ATE in this simulation is -10. How does the naive estimate compare?</li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>n_lab <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># L = Baseline BMI (confounder)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_lab, <span class="dv">28</span>, <span class="dv">4</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># A = Assigned to Intensive Diet Plan</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>prob_A <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">3</span> <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> L)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, prob_A)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Y = Cholesterol Reduction. Note the Interaction Term A*L (effect modification)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="sc">-</span> <span class="dv">10</span> <span class="sc">*</span> A <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> L <span class="sc">-</span> <span class="fl">0.2</span> <span class="sc">*</span> A <span class="sc">*</span> L <span class="sc">+</span> <span class="fu">rnorm</span>(n_lab, <span class="dv">0</span>, <span class="dv">5</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>lab_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(Y, A, L)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<details>
+<summary>
+Solution to Task 1
+</summary>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>naive_lab_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> lab_df)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(naive_lab_model) <span class="sc">|&gt;</span> <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"A"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["std.error"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["statistic"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"A","2":"-13.6413","3":"0.4737788","4":"-28.79256","5":"4.667386e-108"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p><strong>Interpretation:</strong> The naive estimate is around -5.5, which is severely biased towards the null compared to the true ATE of -10. This is because people with high BMI (who are more likely to get the diet plan) have smaller cholesterol reductions in this scenario, making the plan look less effective than it is.</p>
+</details>
+</section>
+<section id="task-2-fit-the-outcome-model-q-model" class="level4">
+<h4 class="anchored" data-anchor-id="task-2-fit-the-outcome-model-q-model">Task 2: Fit the Outcome Model (Q-model)</h4>
+<p><strong>Instructions:</strong> Based on the data-generating process, we know there is an interaction between the diet plan <code>A</code> and baseline BMI <code>L</code>. Fit a linear model for the outcome <code>Y</code> that includes <code>A</code>, <code>L</code>, and their interaction term (<code>A * L</code> or <code>A:L</code>). Examine the coefficients.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Fit the Q-model with the Interaction Term</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>q_model_lab <span class="ot">&lt;-</span> <span class="fu">lm</span>(...)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Tidy the Model and Look at the Coefficients</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<details>
+<summary>
+Solution to Task 2
+</summary>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>q_model_lab <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A <span class="sc">*</span> L, <span class="at">data =</span> lab_df)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(q_model_lab)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["std.error"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["statistic"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"(Intercept)","2":"4.8615234","3":"2.22742273","4":"2.182578","5":"2.953521e-02"},{"1":"A","2":"-7.2557083","3":"3.45187284","4":"-2.101963","5":"3.606018e-02"},{"1":"L","2":"0.4892053","3":"0.08088487","4":"6.048169","5":"2.886538e-09"},{"1":"A:L","2":"-0.2509521","3":"0.12063424","4":"-2.080272","5":"3.801334e-02"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p><strong>Interpretation:</strong> The model has successfully recovered coefficients that are close to the true parameters in our simulation (<code>Intercept=5</code>, <code>A=-10</code>, <code>L=0.5</code>, <code>A:L=-0.2</code>). This correctly specified Q-model is the foundation for our g-computation.</p>
+</details>
+</section>
+<section id="task-3-implement-the-g-computation-bootstrap" class="level4">
+<h4 class="anchored" data-anchor-id="task-3-implement-the-g-computation-bootstrap">Task 3: Implement the G-Computation Bootstrap</h4>
+<p><strong>Instructions:</strong> Following the lecture example, write a function <code>calculate_ate_diet</code> that takes <code>data</code> and <code>indices</code> as input. Inside the function, you should:</p>
+<ol type="1">
+<li>Fit the correct Q-model (<code>Y ~ A * L</code>).</li>
+<li>Create the two counterfactual datasets.</li>
+<li>Predict the outcomes for both.</li>
+<li>Return the difference in the mean predictions.</li>
+</ol>
+<p>Then, call the <code>boot()</code> function using your new function to get the bootstrapped results and a 95% confidence interval.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Write the G-computation Function</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>calculate_ate_diet <span class="ot">&lt;-</span> <span class="cf">function</span>(data, indices) {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> data[indices, ]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 1: Fit Model</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  q_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(...)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 2: Create Counterfactual Data</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  d_a1 <span class="ot">&lt;-</span> ...</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  d_a0 <span class="ot">&lt;-</span> ...</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: Predict</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  y1_hat <span class="ot">&lt;-</span> ...</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  y0_hat <span class="ot">&lt;-</span> ...</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 4: Average and Contrast</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(...)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Call boot() with Your Function</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>boot_results_lab <span class="ot">&lt;-</span> <span class="fu">boot</span>(...)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Print the Results and the Confidence Interval</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(...)</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<details>
+<summary>
+Solution to Task 3
+</summary>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>calculate_ate_diet <span class="ot">&lt;-</span> <span class="cf">function</span>(data, indices) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> data[indices, ]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 1: Fit Model</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  q_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A <span class="sc">*</span> L, <span class="at">data =</span> d)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 2: Create Counterfactual Data</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  d_a1 <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">A =</span> <span class="dv">1</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  d_a0 <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">A =</span> <span class="dv">0</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: Predict</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  y1_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(q_model, <span class="at">newdata =</span> d_a1)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  y0_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(q_model, <span class="at">newdata =</span> d_a0)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 4: Average and Contrast</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  mean_y1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(y1_hat)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  mean_y0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(y0_hat)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(mean_y1 <span class="sc">-</span> mean_y0)</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">321</span>)</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>boot_results_lab <span class="ot">&lt;-</span> <span class="fu">boot</span>(</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> lab_df,</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> calculate_ate_diet,</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">R =</span> <span class="dv">999</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(boot_results_lab)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = lab_df, statistic = calculate_ate_diet, R = 999)
+
+
+Bootstrap Statistics :
+     original      bias    std. error
+t1* -14.31709 -0.00969678   0.4702048</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(boot_results_lab, <span class="at">type =</span> <span class="st">"perc"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 999 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = boot_results_lab, type = "perc")
+
+Intervals : 
+Level     Percentile     
+95%   (-15.23, -13.40 )  
+Calculations and Intervals on Original Scale</code></pre>
+</div>
+</div>
+</details>
+</section>
+<section id="task-4-final-reflection-and-interpretation" class="level4">
+<h4 class="anchored" data-anchor-id="task-4-final-reflection-and-interpretation"><strong>Task 4: Final Reflection and Interpretation</strong></h4>
+<ol type="1">
+<li><strong>Interpretation:</strong> Look at the <code>original</code> estimate from your bootstrap output. How close is it to the true ATE of -10? Write a one-sentence conclusion for a collaborator, reporting your point estimate and 95% confidence interval.</li>
+<li><strong>Conceptual:</strong> Why did we have to include an interaction term (<code>A*L</code>) in our Q-model for this lab, but not in the main lecture example? What would have happened to our ATE estimate if we had forgotten it?</li>
+<li><strong>Retrieval Quiz:</strong>
+<ul>
+<li>What are the three main steps of the g-computation algorithm?</li>
+<li>What is the name of the key untestable assumption that states we have measured all common causes of the treatment and outcome?</li>
+<li>G-computation is to the <strong>outcome model</strong> as IP Weighting is to the <strong>__________ model</strong>.</li>
+</ul></li>
+</ol>
+</section>
+</section>
+</section>
+<section id="common-pitfalls-checks" class="level2">
+<h2 class="anchored" data-anchor-id="common-pitfalls-checks">6. Common Pitfalls &amp; Checks</h2>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>The Peril of Model Misspecification
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The single greatest risk in parametric g-computation is that your outcome model is wrong. If you omit important confounders, forget to model non-linearities (e.g., using <code>L + I(L^2)</code>), or miss key interaction terms, your Q-model will be misspecified. This means your predictions of potential outcomes will be biased, and this bias will be directly inherited by your final ATE estimate. Always conduct standard model diagnostics on your Q-model and consider flexible approaches like splines or machine learning models if you suspect complex relationships.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>G-Computation Handles Effect Modification Naturally
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A major strength of g-computation is that it correctly estimates the <em>average</em> causal effect even when the true effect differs across subgroups (effect modification). By including interaction terms (e.g., <code>A*L</code>) in your Q-model, you allow the effect of <code>A</code> to vary by <code>L</code>. The algorithm’s final step—averaging over the entire population’s distribution of <code>L</code>—automatically computes the correct population-averaged ATE.</p>
+</div>
+</div>
+</section>
+<section id="advanced-teaching-activities-interactivity" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</h2>
+<ol type="1">
+<li><p><strong>Live Coding: The Cost of Misspecification.</strong></p>
+<ul>
+<li><strong>Activity:</strong> Using the lab data, I will deliberately fit the wrong Q-model: <code>lm(Y ~ A + L, data = lab_df)</code>, leaving out the crucial interaction term. We will run the bootstrap and compare the ATE and its confidence interval to the correct result.</li>
+<li><strong>Goal:</strong> This provides a live demonstration of how sensitive g-computation is to model misspecification and makes the abstract concept of “bias” tangible.</li>
+</ul></li>
+<li><p><strong>Think-Pair-Share: Causal Assumptions vs.&nbsp;Statistical Assumptions.</strong></p>
+<ul>
+<li><strong>Think:</strong> “We’ve discussed four assumptions for parametric g-computation: exchangeability, positivity, consistency, and correct model specification. Which of these are <em>causal</em> assumptions about the world, and which are <em>statistical</em> assumptions about our methods? Which are testable with the data?”</li>
+<li><strong>Pair:</strong> Discuss with a neighbor.</li>
+<li><strong>Share:</strong> We will classify the assumptions. Exchangeability is causal and untestable. Positivity is causal and testable. Consistency is causal/definitional. Correct model specification is statistical and partially testable with model diagnostics.</li>
+</ul></li>
+</ol>
+</section>
+<section id="appendix-advanced-theory-derivations" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</h2>
+<section id="derivation-of-the-g-formula-standardization-formula" class="level3">
+<h3 class="anchored" data-anchor-id="derivation-of-the-g-formula-standardization-formula">Derivation of the G-Formula (Standardization Formula)</h3>
+<p>The g-formula allows us to express the unobservable potential outcome mean, <span class="math inline">\(E[Y^a]\)</span>, in terms of observable quantities. The derivation for a discrete confounder <span class="math inline">\(L\)</span> is as follows:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\E{Y^a} &amp; = \sum_l \E{Y^a | L=l} P(L=l) &amp;&amp; \text{(1. By the Law of Total Expectation)} \\
+&amp; = \sum_l \E{Y^a | A=a, L=l} P(L=l) &amp;&amp; \text{(2. Using Conditional Exchangeability)} \\
+&amp; = \sum_l \E{Y | A=a, L=l} P(L=l) &amp;&amp; \text{(3. Using Consistency)}
+\end{aligned}
+\]</span></p>
+<p>Let’s break this down:</p>
+<ol type="1">
+<li><strong>Step 1:</strong> This is a fundamental rule of probability. We can express the overall average of <span class="math inline">\(Y^a\)</span> as a weighted average of the stratum-specific means of <span class="math inline">\(Y^a\)</span>, where the weights are the probability of being in each stratum <span class="math inline">\(l\)</span>.</li>
+<li><strong>Step 2:</strong> This is the critical step where we invoke our main causal assumption. Because we assume potential outcomes <span class="math inline">\(Y^a\)</span> are independent of the actual treatment received <span class="math inline">\(A\)</span> <em>within levels of L</em>, conditioning on <span class="math inline">\(A=a\)</span> provides no new information about the expected value of <span class="math inline">\(Y^a\)</span>. So, <span class="math inline">\(\E{Y^a | L=l}\)</span> is the same as <span class="math inline">\(\E{Y^a | A=a, L=l}\)</span>.</li>
+<li><strong>Step 3:</strong> By the consistency assumption, for the group of people who actually received treatment <span class="math inline">\(a\)</span> (i.e., where <span class="math inline">\(A=a\)</span>), their observed outcome <span class="math inline">\(Y\)</span> is precisely their potential outcome <span class="math inline">\(Y^a\)</span>. Therefore, we can substitute the unobservable <span class="math inline">\(\E{Y^a | A=a, L=l}\)</span> with the observable quantity <span class="math inline">\(\E{Y | A=a, L=l}\)</span>, which is the average outcome among those with treatment <span class="math inline">\(a\)</span> and confounder value <span class="math inline">\(l\)</span>.</li>
+</ol>
+<p>The final expression is the g-formula.</p>
+</section>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/Data-Wise\.github\.io\/causal-inference\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-07_g_computation-rev1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

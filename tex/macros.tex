@@ -1,0 +1,190 @@
+% ==========================
+% Required packages for macros
+% (kept minimal to avoid clashes with page style)
+% ==========================
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{mathtools} % \DeclarePairedDelimiter
+\usepackage{multicol}  % multi-column support (if needed)
+\usepackage{graphicx}  % images
+\usepackage{float}     % figure placement
+\usepackage{microtype}
+\microtypecontext{spacing=nonfrench}
+
+% Numbers & units alignment (optional but useful)
+\usepackage{siunitx}
+\sisetup{detect-all}
+
+%===========================
+% Verbatim settings for code wrapping (Pandoc highlight)
+%===========================
+\usepackage{fvextra}
+\fvset{breaklines,breakanywhere,breaksymbol=}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+  commandchars=\\\{\},
+  breaklines,
+  breakanywhere,
+  breaknonspaceingroup
+}
+
+% ==========================
+% Sets & Blackboard bold
+% ==========================
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\NN}{\mathbb{N}}
+%\newcommand{\PP}{\mathbb{P}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\ZZ}{\mathbb{Z}}
+
+% ==========================
+% Expectation & Probability
+% ==========================
+\DeclareMathOperator{\EE}{\mathbb{E}}  % expectation operator
+\newcommand{\E}[1]{\EE\!\left[ #1 \right]}
+\newcommand{\Es}[2]{\EE_{#1}\!\left[ #2 \right]}
+\newcommand{\ESub}[2]{\EE_{#1}\!\left[ #2 \right]}
+\newcommand{\ESup}[2]{\EE^{#1}\!\left[ #2 \right]}
+\newcommand{\ESubSup}[3]{\EE^{#1}_{#2}\!\left[ #3 \right]}
+\newcommand{\Ehat}[1]{\hat{\EE}\left[#1\right]}
+\newcommand{\EHat}[1]{\hat{\EE}\left[#1\right]}
+\newcommand{\EHatSup}[2]{\hat{\EE}^{#1}\!\left[#2\right]}
+\newcommand{\EHatSub}[2]{\hat{\EE}_{#1}\!\left[#2\right]}
+\newcommand{\EHatSS}[3]{\hat{\EE}^{#1}_{#2}\!\left[#3\right]}
+
+\DeclareMathOperator{\PP}{\mathbb{P}}  % probability operator
+\newcommand{\Prob}[1]{\PP\!\left( #1 \right)}
+\newcommand{\prob}[1]{\PP\!\left( #1 \right)}
+\newcommand{\pr}[1]{\PP\!\left( #1 \right)}
+\newcommand{\ProbSub}[2]{\PP_{#1}\!\left( #2 \right)}
+\newcommand{\ProbSup}[2]{\PP^{#1}\!\left( #2 \right)}
+\newcommand{\ProbSS}[3]{\PP^{#1}_{#2}\!\left( #3 \right)}
+\newcommand{\ProbHat}[1]{\hat{\PP}\!\left( #1 \right)}
+\newcommand{\ProbHatSub}[2]{\hat{\PP}_{#1}\!\left( #2 \right)}
+\newcommand{\ProbHatSup}[2]{\hat{\PP}^{#1}\!\left( #2 \right)}
+\newcommand{\ProbHatSS}[3]{\hat{\PP}^{#1}_{#2}\!\left( #3 \right)}
+
+% ==========================
+% Propensity symbols (optional)
+% ==========================
+\newcommand{\PPhi}{\mathcal{P}}
+\newcommand{\PPhiHat}{\hat{\mathcal{P}}}
+
+% ==========================
+% Vectors
+% ==========================
+\newcommand{\vect}[1]{\mathbf{#1}}
+
+% ==========================
+% Operators (variance/covariance/correlation/logit/sgn)
+% ==========================
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Cor}{Cor}
+\DeclareMathOperator{\logit}{logit}
+\DeclareMathOperator{\expit}{expit}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\plim}{plim}
+\newcommand{\var}[1]{\Var\!\left( #1 \right)}
+\newcommand{\cov}[2]{\Cov\!\left( #1,\, #2 \right)}
+\newcommand{\cor}[2]{\Cor\!\left( #1,\, #2 \right)}
+
+% ==========================
+% Regression-specific operators
+% ==========================
+\DeclareMathOperator{\SE}{SE}
+\DeclareMathOperator{\Bias}{Bias}
+\DeclareMathOperator{\sse}{SSE}
+\DeclareMathOperator{\mse}{MSE}
+\DeclareMathOperator{\mae}{MAE}
+\DeclareMathOperator{\rmse}{RMSE}
+\DeclareMathOperator{\mape}{MAPE}
+\newcommand{\se}[1]{\SE \lbrace #1 \rbrace}
+
+% ==========================
+% Matrix-specific operators
+% ==========================
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\colsp}{colsp}
+\DeclareMathOperator{\rowsp}{rowsp}
+\DeclareMathOperator{\nullsp}{null}
+\DeclareMathOperator{\vectop}{vec}
+\DeclareMathOperator{\vech}{vech}
+
+% =============================
+% Distribution names (upright)
+% =============================
+\newcommand{\Normal}{\mathcal{N}}
+\newcommand{\Bern}{\operatorname{Bern}}
+\newcommand{\Binom}{\operatorname{Binom}}
+\newcommand{\Poiss}{\operatorname{Pois}}
+\newcommand{\Unif}{\operatorname{Unif}}
+\newcommand{\Gam}{\operatorname{Gamma}}
+\newcommand{\InvGam}{\operatorname{Inv\text{-}Gamma}}
+\newcommand{\BetaDist}{\operatorname{Beta}}
+
+% ==========================
+% Norms, abs, inner product
+% ==========================
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\ip}{\langle}{\rangle}
+
+% ==========================
+% Indicator
+% ==========================
+\newcommand{\indf}[1]{\mathbf{1}\left\{ #1 \right\}}
+\newcommand{\ind}[1]{\mathbb{I}\left\{ #1 \right\}}
+\newcommand{\I}[1]{\ind{#1}}
+
+% ==========================
+% Independence symbols
+% ==========================
+\makeatletter
+\newcommand{\indep}{\@ifnextchar\bgroup\indep@two\indep@bare}
+\newcommand{\indep@two}[2]{#1 \, \mathrel{\perp\!\!\!\perp} \, #2}
+\newcommand{\indep@bare}{\mathrel{\perp\!\!\!\perp}}
+\newcommand{\nindep}{\@ifnextchar\bgroup\nindep@two\nindep@bare}
+\newcommand{\nindep@two}[2]{#1 \, \not\!\perp\!\!\!\perp \, #2}
+\newcommand{\nindep@bare}{\not\!\perp\!\!\!\perp}
+\newcommand{\notindep}{\@ifnextchar\bgroup\notindep@two\notindep@bare}
+\newcommand{\notindep@two}[2]{#1 \, \not\!\perp\!\!\!\perp \, #2}
+\newcommand{\notindep@bare}{\not\!\perp\!\!\!\perp}
+\makeatother
+
+% ==========================
+% Interventions / Graphical
+% ==========================
+\newcommand{\doop}[1]{\mathrm{do}\!\left( #1 \right)}
+\newcommand{\dsep}{\mathrel{\perp\!\!\!\perp}}
+
+% ==========================
+% Potential outcomes & estimands
+% ==========================
+\newcommand{\Y}[1]{Y^{#1}}
+\newcommand{\Ya}{Y^a}
+\newcommand{\Yone}{Y^1}
+\newcommand{\Yzero}{Y^0}
+\newcommand{\DefATE}{\E\!\left[ \Yone - \Yzero \right]}
+\newcommand{\DefATT}{\E\!\left[ \Yone - \Yzero \mid A=1 \right]}
+\newcommand{\DefATC}{\E\!\left[ \Yone - \Yzero \mid A=0 \right]}
+\newcommand{\DefCATE}[1]{\E\!\left[ \Yone - \Yzero \mid #1 \right]}
+
+% ==========================
+% Identification building blocks
+% ==========================
+\newcommand{\gform}[1]{\sum_{l} \E\!\left[ Y \mid A=#1,\, L=l \right] \, \PP(L=l)}
+\newcommand{\ipw}[2]{\frac{\indf{#1}}{\PP(#1\mid #2)}}
+
+% ==========================
+% Risk measures
+% ==========================
+\DeclareMathOperator{\RD}{RD}
+\DeclareMathOperator{\OR}{OR}
+
+% ==========================
+% Optimization operators
+% ==========================
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}

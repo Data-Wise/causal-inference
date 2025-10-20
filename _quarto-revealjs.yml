@@ -1,0 +1,43 @@
+project:
+  type: default
+  output-dir: _revealjs
+  render:
+  - "slides/"
+  - "!lectures/*.qmd"
+  - "!index.qmd"
+  - "!contents.qmd"
+  - "!home*.qmd"
+  - "!r_help.qmd"
+  # - "!r-code-data-book.qmd"
+  # - "!data-files-book.qmd"
+  - "!appendix/"
+  - "!assignments/"
+  - "!resources/"
+  - "!syllabus/"
+  - "!blog/"
+  - "!exams/"
+format:
+  unm-revealjs:
+    slide-level: 2
+    embed-resources: true
+    incremental: false
+    slide-number: c/t
+    smaller: true
+    scrollable: true
+    menu:
+      side: left
+      numbers: true
+    # chalkboard:
+    #   theme: chalkboard
+    quiz:
+      checkKey: "c"
+      resetKey: "q"
+      shuffleKey: "t"
+      allowNumberKeys: true
+      disableOnCheck: false
+      shuffleOptions: false
+      defaultCorrect: "Correct!"
+      defaultIncorrect: "Incorrect!"
+revealjs-plugins:
+- quiz
+code-overflow: scroll

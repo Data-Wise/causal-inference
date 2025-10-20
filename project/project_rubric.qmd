@@ -1,0 +1,41 @@
+---
+title: "Rubric & Checklist"
+---
+
+# Rubric Breakdown (100 points)
+
+| Category | Weight | Criteria |
+|----------|--------|----------|
+| **Question & Relevance** | 10 pts | Is the question causal? Clearly motivated? |
+| **DAG & Identification** | 20 pts | DAG correct & justified, assumptions transparent, adjustment sets valid |
+| **Methodology** | 20 pts | Appropriate causal method chosen, correctly implemented, diagnostics included |
+| **Sensitivity & Robustness** | 15 pts | At least one sensitivity analysis, well-explained |
+| **Results & Interpretation** | 15 pts | Estimates clearly reported, assumptions tied to conclusions, limitations addressed |
+| **Writing & Presentation** | 20 pts | Paper clarity, organization, reproducibility (R code provided), presentation quality |
+
+# Instructor Checklist
+
+## Proposal (Week 9)
+- [ ] Causal question is precise and relevant  
+- [ ] Target trial framework specified  
+- [ ] Preliminary DAG provided  
+- [ ] Identification assumptions stated  
+
+## Final Paper
+- [ ] Title & abstract present research clearly  
+- [ ] Introduction frames question causally  
+- [ ] DAG correct and explained  
+- [ ] Assumptions (exchangeability, positivity, consistency) explicitly justified  
+- [ ] Identification strategy appropriate  
+- [ ] Correct causal method implemented  
+- [ ] Diagnostics shown (balance, overlap, IV strength, etc.)  
+- [ ] Sensitivity analysis included  
+- [ ] Results reported with CIs and interpretation  
+- [ ] Discussion connects assumptions to real-world plausibility  
+- [ ] Annotated R code in appendix  
+
+## Presentation (Week 14)
+- [ ] Clear articulation of causal question & assumptions  
+- [ ] DAG presented visually  
+- [ ] Results summarized without excessive technical detail  
+- [ ] Interpretation emphasized over mechanics  

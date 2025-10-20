@@ -1,0 +1,72 @@
+website:
+  image: "assets/images/logo-causal.png"
+  favicon: "assets/images/icon.png"
+  title: "Introduction to Causal Inference"
+  bread-crumbs: true
+  site-url: https://Data-Wise.github.io/causal-inference/
+  description: "Introduction to Causal Inference"
+  repo-url: https://github.com/Data-Wise/causal-inference
+  repo-actions: [ edit, issue ]
+  open-graph: true
+  navbar:
+    title: "Introduction to Causal Inference"
+    logo: assets/images/icon.png
+    search: true
+    collapse: true
+    left:
+    - text: Home
+      href: index.qmd
+    - text: Syllabus
+      menu:
+      - text: PDF
+        href: syllabus/syllabus-final.pdf
+      - text: HTML
+        href: syllabus/syllabus-final.qmd
+    - text: Schedule
+      href: syllabus/schedule.qmd
+    - text: "Lecture Notes"
+      href: home_lectures.qmd
+    - text: Project
+      href: home_project.qmd
+    - text: Readings
+      href: home_readings.qmd
+    - text: Assignments
+      href: home_assignments.qmd
+    - text: "R Help"
+      href: r_help.qmd
+    right:
+    - icon: github
+      href: https://github.com/Data-Wise/causal-inference
+      aria-label: GitHub
+  sidebar:
+    style: docked
+    collapse-level: 1
+    pinned: true
+    contents:
+    - section: "Course Overview"
+      contents:
+      - text: Home
+        href: index.qmd
+      - section: Syllabus
+        contents:
+        - text: PDF
+          href: syllabus/syllabus-final.pdf
+        - text: HTML
+          href: syllabus/syllabus-final.qmd
+      - text: Schedule
+        href: syllabus/schedule.qmd
+    - section: "Course Materials"
+      contents:
+      - text: "Lecture Notes"
+        href: home_lectures.qmd
+      - text: Assignments
+        href: home_assignments.qmd
+      - text: Project
+        href: home_project.qmd
+      - text: Readings
+        href: home_readings.qmd
+    - section: "R Code and Datasets"
+      contents:
+      - text: "R Help"
+        href: r_help.qmd
+# Copy the templates directory verbatim to the output:

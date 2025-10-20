@@ -1,0 +1,40 @@
+---
+title: "STAT 579: Final Project Proposal"
+author: "[Your Name]"
+date: "October 18, 2025"
+format: 
+  pdf:
+    documentclass: article
+  html:
+    theme: cosmo
+---
+
+_This document serves as the proposal for the STAT 579 final project. The goal is to provide a clear, concise, and feasible plan for your target trial emulation. Please replace the instructional text (in italics) with your own content. The final proposal should be approximately 2-3 pages._
+
+### 1. The Causal Question
+
+> _State your primary research question in a single, clear sentence. It must be a causal question (e.g., "What is the causal effect of X on Y?") and not merely associational._
+
+### 2. Scientific Background and Motivation
+
+> _In 1-2 paragraphs, explain the public health or scientific relevance of your question. Why is this an important question to answer? What is already known on the topic? Briefly cite 2-3 key references that motivate your study._
+
+### 3. Data Source
+
+> _Identify the observational dataset you will use. Describe the source of the data (e.g., NHANES 2017-2018 cycle, MIMIC-IV v2.0). List the key variables you plan to use for your exposure (A), outcome (Y), and the primary confounders (L) you identified in your DAG._
+
+### 4. Preliminary Causal Model (DAG)
+
+> _Insert an image of your Directed Acyclic Graph (DAG) here. The DAG should represent your current understanding of the causal relationships between the exposure, outcome, and key covariates. Below the image, provide a brief (1 paragraph) justification for the structure, explaining the most important causal pathways and confounding variables._
+
+### 5. Target Trial Emulation Protocol
+
+> _Briefly outline the key components of your target trial protocol. You can do this in a bulleted list. This does not need to be exhaustive at this stage, but it should be specific._
+> 
+> -   **Eligibility Criteria:** _e.g., "Adults aged 40-75 with no prior history of CVD."_
+> -   **Treatment Strategies:** _e.g., "Initiate a statin within 30 days of the index date" vs. "Do not initiate a statin."_
+> -   **Outcome:** _e.g., "Incidence of myocardial infarction or stroke within 5 years of follow-up."_
+
+### 6. Proposed Causal Method(s)
+
+> _In one paragraph, state the primary causal method you intend to use to estimate the effect (e.g., propensity score weighting, g-computation). Briefly explain why this method is appropriate for your question and data structure. Mention any key diagnostics you plan to perform (e.g., covariate balance checks)._

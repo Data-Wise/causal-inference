@@ -1,0 +1,275 @@
+---
+title: "Propensity Score Methods"
+---
+
+
+## 🎯 Motivation and Learning Objectives
+
+In a perfect world, we would answer all causal questions using a **Randomized Controlled Trial (RCT)**. By randomly assigning treatment, we ensure that, on average, the treated and control groups are identical on all background characteristics (both observed and unobserved). Any difference in their outcomes can therefore be attributed to the treatment.
+
+However, in public health and clinical research, RCTs are often unethical, impractical, or too expensive. We must rely on **observational data**, where individuals select their own treatments. This leads to a critical problem: people who choose treatment are often systematically different from those who do not.
+
+This week, we introduce **propensity score methods**, a powerful toolkit designed to address this selection bias. Propensity scores allow us to **mimic the properties of an RCT** by creating balanced comparison groups, helping us to isolate the causal effect of a treatment from the confounding effects of other variables.
+
+**By the end of this module, you will be able to:**
+
+1. **Define** the propensity score and explain its central role in causal inference.
+2. **Understand and explain** the **balancing property** of the propensity score and why it is crucial for creating comparable groups.
+3. **Estimate** propensity scores using logistic regression and other methods.
+4. **Implement** three core propensity score methods: **matching**, **inverse probability of treatment weighting (IPTW)**, and **stratification**.
+5. **Assess** whether a propensity score model has successfully balanced the covariates between the treated and control groups using diagnostic plots and tables.
+6. **Critically evaluate** the advantages and limitations of propensity score methods and their underlying assumptions.
+
+## 🧠 Key Concepts: The Why and How of Propensity Scores
+
+### The Fundamental Problem: Apples and Oranges 🍎🍊
+
+Imagine we want to know the effect of a new fitness program (treatment `A=1`) on weight loss (outcome `Y`). In our observational data, people who joined the program lost more weight. But can we conclude the program *caused* the weight loss?
+
+Probably not. The people who chose to join are likely different. They might be younger, more health-conscious, or have better access to healthy food. This is **confounding**. We are comparing a group of motivated "apples" to a general population of "oranges."
+
+The goal of propensity scores is to solve this problem by creating a "handicap" system. Instead of trying to match people on dozens of characteristics (age, gender, income, diet, etc.), we can boil all of that information down into a single number: the **propensity score**.
+
+### What is a Propensity Score?
+
+> The **propensity score** is the probability that a unit (e.g., a person) receives the treatment, given their observed baseline covariates.
+
+$$
+e(X_i) = P(A_i = 1 | X_i)
+$$
+
+Where:
+
+  - $A_i = 1$ if person *i* receives the treatment.
+  - $X_i$ is the vector of all observed pre-treatment covariates for person *i* (e.g., age, gender, baseline health status).
+
+Think of it like this: if someone has a propensity score of 0.8, it means that based on their observed characteristics, they had an 80% chance of being in the treatment group. A person with a score of 0.1 had only a 10% chance.
+
+### The Magic: The Balancing Property of the Propensity Score
+
+This is the theoretical cornerstone that makes propensity scores so powerful.
+
+> **Theorem (Rosenbaum & Rubin, 1983):** If we correctly specify the propensity score model, then within strata of the propensity score, the distribution of the observed covariates `X` is independent of treatment status `A`.
+
+$$
+(Y^1, Y^0) \perp A | X \implies (Y^1, Y^0) \perp A | e(X)
+$$
+
+**In plain language:** If you take a treated person and an untreated person who have the **exact same propensity score**, you can think of them as being "statistically equivalent" on all the observed covariates that went into the score. It's as if, for that pair of individuals, the treatment was randomly assigned. By conditioning on this single score, we have "balanced" all the observed confounders simultaneously.
+
+::: {.callout-tip}
+
+## Key Assumption: Ignorability & Positivity
+
+1. **Ignorability (or Unconfoundedness):** We must assume that we have measured and included **all** common causes of the treatment and the outcome in our propensity score model. Propensity scores *cannot* balance unobserved confounders (e.g., genetic factors, motivation).
+2. **Positivity (or Overlap):** For any set of covariates X, there must be a non-zero probability of being both treated and untreated. $0 < P(A=1 | X=x) < 1$. If a certain type of person *always* gets the treatment, we have no one to compare them to.
+:::
+
+
+## ✍️ A Pen-and-Paper Numerical Example
+
+Let's make this extremely simple. Imagine we have 6 patients. We want to know if a new drug (`A=1`) helps reduce blood pressure (`Y`). We know that **age** (`X`) is a confounder: older people have higher blood pressure and are also more likely to get the new drug.
+
+| Patient | Age (X) | Treatment (A) | Outcome (Y) |
+| :------ | :------ | :------------ | :---------- |
+| 1       | 50      | 1 (Treated)   | 140         |
+| 2       | 55      | 1 (Treated)   | 145         |
+| 3       | 60      | 1 (Treated)   | 155         |
+| 4       | 30      | 0 (Control)   | 120         |
+| 5       | 35      | 0 (Control)   | 125         |
+| 6       | 40      | 0 (Control)   | 130         |
+
+A **naive analysis** would be biased:
+
+  - Mean outcome for treated: (140 + 145 + 155) / 3 = **146.7**
+  - Mean outcome for control: (120 + 125 + 130) / 3 = **125**
+  - Naive "effect": 146.7 - 125 = **21.7**. This is confounded by age.
+
+**Step 1: Estimate the Propensity Score**
+We'll run a simple logistic regression: `A ~ X` (Treatment \~ Age). Let's say our model gives us the following (hypothetical) propensity scores:
+
+| Patient | Age (X) | Treatment (A) | Outcome (Y) | Propensity Score e(X) |
+| :------ | :------ | :------------ | :---------- | :-------------------- |
+| 1       | 50      | 1 (Treated)   | 140         | **0.60** |
+| 2       | 55      | 1 (Treated)   | 145         | **0.75** |
+| 3       | 60      | 1 (Treated)   | 155         | **0.85** |
+| 4       | 30      | 0 (Control)   | 120         | **0.15** |
+| 5       | 35      | 0 (Control)   | 125         | **0.25** |
+| 6       | 40      | 0 (Control)   | 130         | **0.40** |
+
+**Step 2: Propensity Score Matching (Nearest Neighbor)**
+For each treated patient, let's find the control patient with the *closest* propensity score.
+
+  - **Treated Patient 1 (e(X)=0.60):** The closest control is **Patient 6 (e(X)=0.40)**.
+  - **Treated Patient 2 (e(X)=0.75):** The closest control is also **Patient 6 (e(X)=0.40)**.
+  - **Treated Patient 3 (e(X)=0.85):** The closest control is also **Patient 6 (e(X)=0.40)**.
+
+Our new **matched dataset** (allowing Patient 6 to be used multiple times, which is called "matching with replacement"):
+
+| Treated Patient | Treated Y | Matched Control | Control Y |
+| :-------------- | :-------- | :-------------- | :-------- |
+| 1               | 140       | 6               | 130       |
+| 2               | 145       | 6               | 130       |
+| 3               | 155       | 6               | 130       |
+
+**Step 3: Calculate the Matched Effect**
+Now we calculate the effect only in this matched sample.
+
+  - Mean outcome for treated: (140 + 145 + 155) / 3 = **146.7**
+  - Mean outcome for matched controls: (130 + 130 + 130) / 3 = **130**
+  - **Matched ATE Estimate:** 146.7 - 130 = **16.7**
+
+By matching on the propensity score, we've created a control group that is "more similar" to the treated group, and our effect estimate is less biased.
+
+## 💻 A More Detailed R Example
+
+Let's expand our R example to be more realistic. We'll simulate data where `Age` and `Comorbidity` (a measure of baseline health) are confounders. The true treatment effect is **10**.
+
+```r
+# Load necessary libraries
+library(dplyr)
+library(MatchIt)
+library(WeightIt)
+library(cobalt) # For balance checking
+
+# --- 1. Simulate a richer dataset with confounding ---
+set.seed(42)
+n <- 1000
+data <- tibble(
+  # Two confounders: Age and a comorbidity score
+  X_age = round(runif(n, 40, 75)),
+  X_comorbidity = round(runif(n, 0, 5)),
+  # Probability of treatment depends on BOTH confounders
+  propensity_true = 1 / (1 + exp(-( -4 + 0.05 * X_age + 0.1 * X_comorbidity ))),
+  # Treatment status A (1=Treated, 0=Control)
+  A = rbinom(n, 1, propensity_true),
+  # Outcome Y depends on confounders and treatment. True ATE = 10.
+  Y = 50 + 0.5 * X_age + 2 * X_comorbidity + 10 * A + rnorm(n, 0, 5)
+)
+
+# --- 2. Estimate propensity scores using logistic regression ---
+# The formula A ~ X_age + X_comorbidity means we are modeling the probability
+# of receiving treatment A based on a patient's age and comorbidity score.
+ps_model <- glm(A ~ X_age + X_comorbidity, data = data, family = "binomial")
+data$propensity_est <- predict(ps_model, type = "response")
+
+# --- 3. Implement Propensity Score Matching ---
+# The MatchIt package does all the heavy lifting for us.
+# method = "nearest" means we're doing 1-to-1 nearest neighbor matching.
+# distance = "logit" means we match on the logit of the propensity score, which often works better.
+matched_data_obj <- matchit(A ~ X_age + X_comorbidity, data = data,
+                            method = "nearest", distance = "logit")
+
+# --- 4. ASSESS BALANCE ---
+# This is a critical step! Did the matching work?
+# We want to see that the means of the covariates are now similar between
+# the treated and control groups in our matched sample.
+# A "Love Plot" is a great way to visualize this.
+love.plot(matched_data_obj, thresholds = c(m = 0.1), abs = TRUE,
+          var.order = "unadjusted",
+          title = "Covariate Balance Before and After Matching")
+```
+
+The Love Plot shows the **Standardized Mean Difference (SMD)** for each covariate before and after matching. An SMD close to 0 indicates good balance. A common rule of thumb is that the absolute SMD should be less than 0.1.
+
+```r
+# --- 5. Estimate the Causal Effect from the Matched Data ---
+# Extract the new dataset of matched individuals
+matched_data <- match.data(matched_data_obj)
+
+# Run a simple regression on the matched data to get the ATE
+# This automatically handles the matched pairs correctly.
+matched_model <- lm(Y ~ A, data = matched_data, weights = weights)
+summary(matched_model) # The coefficient for A is our ATE estimate!
+```
+
+### Deeper Dive: Inverse Probability of Treatment Weighting (IPTW)
+
+Matching can be inefficient because it discards unmatched control units. IPTW uses *all* the data, but weights it to create a balanced "pseudo-population."
+
+**The Intuition:**
+
+  - A **treated person** with a high propensity score (e.g., 0.9) was "very likely" to get the treatment. They are common, so we give them a small weight: `weight = 1 / 0.9 = 1.11`.
+  - A **treated person** with a low propensity score (e.g., 0.1) was "unlikely" to get the treatment. They are rare and thus highly informative. We give them a large weight: `weight = 1 / 0.1 = 10`.
+  - Similarly, **untreated people** get a weight of `1 / (1 - e(X))`.
+
+This weighting scheme creates a new sample where the treatment is no longer associated with the covariates `X`.
+
+```r
+# --- 6. Implement IPTW ---
+# The WeightIt package simplifies this process.
+# It automatically calculates the weights based on our propensity score model.
+weight_obj <- weightit(A ~ X_age + X_comorbidity, data = data, method = "ps")
+
+# Add the weights to our original dataframe
+data$iptw <- weight_obj$weights
+
+# --- 7. Estimate the Causal Effect using Weighted Regression ---
+# Run a regression on the FULL dataset, but tell it to use the weights.
+iptw_model <- lm(Y ~ A, data = data, weights = iptw)
+summary(iptw_model) # The coefficient for A is our IPTW ATE estimate.
+```
+
+## 📚 Appendix: Advanced Statistical Derivations and Theory
+
+### 📕 Derivation of the Simple IPTW Estimator
+
+**Motivation:** This derivation shows how the simple inverse probability weighting formula mathematically removes confounding bias and isolates the average treatment effect (ATE).
+
+**Goal:** We want to estimate the ATE, which is defined as $E[Y^1] - E[Y^0]$.
+
+**Derivation for $E[Y^1]$:**
+
+1. We start with the observed mean for the treated, but we want the population mean. We can write $E[Y^1]$ using the law of total expectation:
+
+$$
+E[Y^1] = E[E[Y^1|X]]
+$$
+
+2.  Under the assumption of **consistency** ($Y = A \cdot Y^1 + (1-A) \cdot Y^0$), for people who actually received the treatment ($A=1$), their observed outcome $Y$ is equal to their potential outcome $Y^1$.
+
+$$
+E[Y|A=1, X] = E[Y^1|A=1, X]
+$$
+
+3. Under the assumption of **ignorability** ($Y^1 \perp A | X$), conditioning on X is enough to break the link between treatment and potential outcomes.
+
+$$
+E[Y^1|A=1, X] = E[Y^1|X]
+$$
+
+Therefore, $E[Y|A=1, X] = E[Y^1|X]$. We can now express the population mean $E[Y^1]$ in terms of observed quantities.
+
+4. Let's define the propensity score $e(X) = P(A=1|X)$. We can cleverly rewrite the expectation of the weighted outcome for treated people:
+$$
+E\left[\frac{A \cdot Y}{e(X)}\right] = E\left[ E\left[ \frac{A \cdot Y}{e(X)} \Bigg| X \right] \right] \quad \text{(by Law of Iterated Expectations)}
+$$
+
+5. Let's focus on the inner expectation. Since $e(X)$ is a function of $X$, it can be treated as a constant within this expectation.
+
+$$
+E\left[ \frac{A \cdot Y}{e(X)} \Bigg| X \right] = \frac{1}{e(X)} E[A \cdot Y | X]
+$$
+
+$E[A \cdot Y | X] = P(A=1|X)E[Y|A=1,X] + P(A=0|X)E[Y|A=0,X] \cdot 0$
+
+$$
+= e(X) E[Y|A=1,X]
+$$
+6. Substituting this back in:
+$$
+\frac{1}{e(X)} \cdot e(X) E[Y|A=1,X] = E[Y|A=1,X]
+$$
+
+7. From our earlier steps, we know $E[Y|A=1,X] = E[Y^1|X]$. So, the inner expectation simplifies to $E[Y^1|X]$.
+8. Substituting this back into the outer expectation:
+$$
+E\left[\frac{A \cdot Y}{e(X)}\right] = E[E[Y^1|X]] = E[Y^1]
+$$
+
+**Conclusion:** We have shown that the expectation of the inverse-probability-weighted outcome for the treated group is an unbiased estimator for the population average potential outcome under treatment, $E[Y^1]$. A parallel derivation shows that $E\left[\frac{(1-A) \cdot Y}{1-e(X)}\right] = E[Y^0]$.
+
+Therefore, the simple IPTW estimator for the ATE is:
+$$
+\widehat{ATE}_{IPTW} = \frac{1}{N} \sum_{i=1}^N \frac{A_i Y_i}{e(X_i)} - \frac{1}{N} \sum_{i=1}^N \frac{(1-A_i) Y_i}{1-e(X_i)}
+$$

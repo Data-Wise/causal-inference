@@ -1,0 +1,477 @@
+
+## 1. Learning Objectives and Motivation
+
+Welcome to Week 8. Our journey in causal inference has so far centered on a fundamental question: What is the _total effect_ of an exposure ($A$) on an outcome ($Y$)? We have invested heavily in methods—propensity scores, standardization, IPW—to answer "if" and "how much" a treatment works. Now, we pivot to a question that is often of greater scientific importance: _How_ does it work?
+
+Mediation analysis is the statistical methodology for investigating causal mechanisms. It allows us to open up the "black box" between an exposure and an outcome to understand the pathways, or intermediate steps, through which a causal effect is transmitted. We decompose a total effect into its constituent parts, isolating the portion that acts _through_ a specific intermediate variable (the mediator) from the portion that acts through all other channels.
+
+Consider a public health campaign ($A$) designed to increase weekly physical activity ($Y$). The program's designers hypothesize that the campaign works primarily by increasing participants' self-efficacy ($M$) to overcome barriers to exercise. Mediation analysis provides the tools to formally test this hypothesis. We can ask:
+
+1. What is the total effect of the campaign on physical activity?
+2. How much of that effect is transmitted _through_ changes in self-efficacy? This is the indirect effect, representing the specific mechanism we want to quantify.
+3. How much of that effect is due to other pathways? (e.g., the campaign also builds social support networks, or simply reminds people to exercise). This is the direct effect.
+
+Understanding mechanisms is not merely an academic exercise; it is crucial for building better science and more effective policy.
+
+- Scientific Theory: Mediation analysis allows us to test hypotheses derived from scientific theory. If a drug is thought to work by targeting a specific biological receptor, we can test if the biomarker for that receptor's activity mediates the drug's effect on the disease.
+    
+- Intervention Optimization: If we find that 90% of the campaign's effect is mediated through self-efficacy, future versions could be streamlined to focus on this core component, potentially saving costs and increasing impact. Conversely, if the direct effect is large, it suggests other powerful mechanisms are at play that we should identify and leverage.
+    
+- Identifying Harmful Pathways: An intervention could have a beneficial total effect, but one of its pathways could be harmful. For example, a weight-loss drug might have a beneficial direct effect on metabolism but also a harmful indirect effect by increasing blood pressure. Mediation analysis can uncover these competing effects.
+
+This chapter will equip you with the conceptual and practical tools to conduct mediation analysis. However, a word of caution: this power comes at a cost. As we will see, identifying mediated effects requires strong, untestable assumptions, particularly about unmeasured confounding between the mediator and the outcome. Therefore, a critical and humble approach is essential.
+
+By the end of this chapter, you will be able to:
+
+- Define and distinguish between direct, indirect, and total effects using the potential outcomes framework.
+- Represent and interpret mediation pathways using Directed Acyclic Graphs (DAGs).
+- Differentiate between "controlled" and "natural" effects and understand their respective policy implications.
+- Estimate mediated effects using both traditional (product-of-coefficients) and modern (causal mediation) approaches in R.
+- Clearly state and critically evaluate the key assumptions for identifying mediation effects, particularly the four assumptions of sequential ignorability.
+- Conduct and interpret a sensitivity analysis to assess the robustness of your findings to violations of key assumptions.
+
+## 2. Key Concepts and Causal Pathways
+
+### The Mediation Triangle
+
+The foundational structure of a mediation analysis is the "mediation triangle," a simple DAG that illustrates the hypothesized causal relationships between the exposure (A), the mediator (M), and the outcome (Y).
+
+```
+      A (Exposure)
+      /   \
+     /     \
+    v       v
+   M (Mediator) -> Y (Outcome)
+```
+
+- Exposure ($A$): The treatment, intervention, or exposure of interest.
+    
+- Mediator ($M$): An intermediate variable on a causal path from A to Y. For a variable to be a mediator, it must be causally influenced by A and, in turn, causally influence Y. The temporal ordering is critical: A must precede M, and M must precede $Y$.
+    
+- Outcome ($Y$): The final outcome of interest.
+
+The DAG encodes specific causal hypotheses:
+
+1. The Direct Pathway ($A\rightarrow Y$): This arrow represents the causal effect of the exposure on the outcome that does _not_ pass through the mediator M. It is the sum of all other causal mechanisms.
+2. The Indirect Pathway ($A\rightarrow M\rightarrow Y$): This two-arrow path represents the causal effect of the exposure on the outcome that is transmitted _through_ the specified mediator M.
+
+### Total, Direct, and Indirect Effects: A Potential Outcomes Perspective
+
+To define these effects rigorously, we turn to the potential outcomes framework.
+
+- Total Causal Effect (TE): This is the familiar effect of changing the exposure from a reference level (0) to an active level (1) on the outcome.
+
+$$
+\text{TE} = E[Y^1 - Y^0]
+$$
+
+Where Y(a) is the potential outcome for Y that would be observed if an individual were assigned exposure level a.
+
+- Decomposing the Total Effect: To decompose the TE, we must introduce a more complex type of potential outcome that depends on both the exposure and the mediator: $Y(a,m)$. This represents the potential outcome that would be realized if the exposure were set to level $a$ _and_, simultaneously, the mediator were set to level m. We also define $M(a)$ as the potential value of the mediator if the exposure were set to level $a$.
+
+#### Controlled vs. Natural Effects
+
+This distinction is fundamental to modern mediation analysis and clarifies the precise causal question being asked.
+
+- Controlled Direct Effect (CDE): The CDE quantifies the effect of the exposure while the mediator is experimentally controlled or fixed to a specific level, m, for all individuals in the population.
+
+$$
+\text{CDE}(m) = E[Y^{1,m} - Y^{0,m}]
+$$
+
+Causal Question: "What would be the effect of the treatment if we could intervene to hold everyone's mediator value constant at level m?" For example, in a study of a statin drug (A) on heart attacks (Y) mediated by LDL cholesterol (M), the CDE(100) would be the drug's effect if everyone's cholesterol could be forced to 100 mg/dL. This is policy-relevant for setting clinical targets but may not be biologically or practically feasible.
+
+- Natural Direct and Indirect Effects (NDE & NIE): These effects are often of greater scientific interest because they are defined by the "natural" levels of the mediator that would occur under treatment or control, rather than a single fixed value.
+    
+- Natural Indirect Effect (NIE): This is the core quantity for assessing mediation. It captures the portion of the treatment's effect that works by changing the mediator.
+
+$$
+\text{NIE} = E[Y^{1, M^1} - Y^{1, M^1}]
+$$
+
+Causal Question: "What change in the outcome would be observed if we held an individual's exposure status constant at 'treated' ($A=1$) but could change their mediator from the level it would naturally take under control ($M^0$) to the level it would naturally take under treatment ($M^1$)?" This isolates the effect transmitted _only_ through the $A \rightarrow M$ pathway.
+
+- Natural Direct Effect (NDE): This captures the portion of the treatment's effect that does not operate through the mediator $M$.
+
+$$
+\text{NDE} = E[Y^{1, M^1} - Y^{0, M^0}]
+$$
+
+Causal Question: "What would be the effect of the treatment if we could somehow block the pathway through $M$ by holding the mediator for everyone at the level it would have naturally taken in the absence of treatment ($M^0$)?"
+
+Under the assumption of no interaction between the exposure and the mediator on the outcome, the total effect decomposes perfectly:
+
+$$
+TE=NIE+NDE
+$$
+
+When an interaction exists, a third term representing the joint effect of both pathways is also present. The modern causal mediation framework handles this decomposition gracefully.
+
+## 3. Methods and Estimation Approaches
+
+### The Traditional Approach: Product and Difference Methods
+
+The classical approach to mediation, popularized by Baron and Kenny (1986) and rooted in path analysis, provides an intuitive method for linear models without exposure-mediator interaction.
+
+Consider the following system of linear equations:
+
+1. Mediator Model: $E[M∣A]=\alpha_0+\alpha_{1}A$
+2. Outcome Model: $E[Y∣A,M]=\beta_0+\beta_{1}A+\beta_{2}M$
+3. Total Effect Model:$E[Y∣A]=\tau_{0}+\tau_{A}$
+
+The effects are estimated as follows:
+
+- Indirect Effect:
+- Product of Coefficients: The indirect effect is the product of the path coefficients from $A$ to $M$ ($\alpha_1$) and from $M$ to $Y$ ($\beta_2$).
+
+$$
+\text{Indirect Effect} = \alpha_1 \times \beta_2
+$$
+
+- Difference in Coefficients: The indirect effect is the difference between the total effect ($\tau$) and the direct effect ($\beta_1$).
+
+$$
+\text{Indirect Effect} = \tau - \beta_1
+$$
+
+In a linear system without omitted variables, these two methods are mathematically equivalent. By substituting the mediator model into the outcome model, we see that $\tau=\beta_1+(\alpha_1\times\beta_2)$, which proves their equivalence.
+
+- Direct Effect: The coefficient for $A$ in the outcome model that controls for $M$.
+
+$$
+\text{Direct Effect} = \beta_1 
+$$
+
+::: {.callout-note}
+
+#### Example: The Difference Method
+
+Suppose we are studying a weight loss intervention (A). We want to see if its effect on weight loss (Y) is mediated by an increase in weekly exercise hours (M).
+
+1. We first regress $Y$ on $A$:
+
+    `lm(Y ~ A)` yields a coefficient for $A$ of $\hat\tau=−5.0$. This is the total effect: the program is associated with a 5 kg weight loss.
+
+2. We then regress Y on both A and M:
+
+    `lm(Y ~ A + M)` yields a coefficient for A of $\hat\beta_1=−2.0$. This is the direct effect.
+
+3. The indirect effect is the difference: $\text{IE}=\tau−\beta_1=−5.0−(−2.0)=−3.0$.
+
+Interpretation: Of the total 5 kg weight loss, 3 kg is estimated to be due to the pathway through increased exercise, and 2 kg is due to other pathways.
+
+:::
+
+::: {.callout-warning}
+
+Limitations of the Traditional Approach
+
+This method is simple but fragile. Its validity hinges on strong assumptions:
+
+1. Linearity: All relationships must be correctly specified as linear.
+2. No Interaction: The effect of the mediator on the outcome ($\beta_2$) cannot depend on the level of the exposure A. If it does, the decomposition fails.
+3. Model Compatibility: The method struggles with incompatible model types, such as a continuous mediator and a binary outcome (logistic regression).
+
+:::
+
+### The Modern Approach: Causal Mediation Analysis
+
+The framework by Imai, Keele, and Tingley (2010) overcomes these limitations. It is a simulation-based approach grounded in the potential outcomes definitions of NDE and NIE.
+
+The estimation algorithm proceeds as follows:
+
+1. Fit a model for the mediator given the exposure and pre-treatment covariates: $P(M∣A,X)$.
+2. Fit a model for the outcome given the exposure, mediator, and pre-treatment covariates: $P(Y∣A,M,X)$. These models can be of any standard type (`lm`, `glm`, etc.).
+3. Simulate Potential Outcomes: The algorithm uses the fitted models to simulate potential outcomes for each individual under different counterfactual scenarios. For example, to calculate $E[Y(1,M^0)]$:
+
+    a. For each individual $i$, predict their mediator value under control: $\hat M_i(0)$ using the mediator model with $A=0$.
+
+    b. Predict their outcome using the outcome model with $A=1$ but with the mediator value set to $\hat M_i(0)$.
+
+4. Average and Decompose: Average these simulated potential outcomes across all individuals to compute the Average Causal Mediated Effect (ACME, which is the NIE) and Average Direct Effect (ADE, which is the NDE).
+5. Uncertainty Estimation: Repeat steps 3-4 many times via non-parametric bootstrapping to generate empirical confidence intervals for the ACME, ADE, and Total Effect.
+
+This approach is powerful because it is flexible, directly estimates the quantities of interest (NDE and NIE), and correctly handles interactions and various data types.
+
+## 4. Assumptions and Identification
+
+For our estimates to have a causal interpretation, we must satisfy four key assumptions, collectively known as Sequential Ignorability. These are strong and untestable.
+
+Let's consider a DAG that includes a set of pre-exposure covariates, $X$.
+
+```
+      X (Covariates)
+     /|\
+    / | \
+   v  v  v
+  A -> M -> Y
+  ^--------'
+```
+
+::: {.callout-tip}
+
+#### Assumption 1: No Unmeasured Confounding of the Exposure-Outcome Relationship
+
+$$
+Y(a,m)⊥A∣X
+$$
+
+Explanation: Conditional on the pre-exposure covariates X, the assignment to exposure level A is independent of the potential outcomes. This is the standard "no unmeasured confounding" assumption for total effects. We need to have measured and adjusted for all common causes (X) of the exposure and the outcome.
+
+:::
+
+::: {.callout-tip}
+
+#### Assumption 2: No Unmeasured Confounding of the Exposure-Mediator Relationship
+
+$$
+M(a)⊥A∣X
+$$
+
+Explanation: Conditional on the pre-exposure covariates $X$, the assignment to exposure level $A$ is independent of the potential value of the mediator. We need to have measured and adjusted for all common causes ($X$) of the exposure and the mediator. Assumptions 1 and 2 are often combined.
+
+:::
+
+::: {.callout-tip}
+
+#### Assumption 3: No Unmeasured Confounding of the Mediator-Outcome Relationship
+
+$$
+Y(a,m)⊥M∣A,X
+$$
+
+Explanation: This is the most critical and fragile assumption. It states that, conditional on the observed exposure ($A$) and pre-treatment covariates ($X$), there are no unmeasured factors that are common causes of the mediator ($M$) and the outcome ($Y$).
+
+Example of a Violation: In our job training study, imagine an unmeasured trait like "intrinsic motivation" (U). A highly motivated person might respond better to the training, leading to higher interview confidence (M). That same motivation might also lead them to network more effectively, independently boosting their earnings (Y). This creates a spurious association between M and Y that would be incorrectly attributed to mediation.
+
+```
+  A -> M -> Y
+       ^   ^
+       |   |
+       +---U---+
+```
+
+:::
+
+::: {.callout-tip}
+
+#### Assumption 4: No Mediator-Outcome Confounder is Itself Affected by the Exposure
+
+Explanation: There must be no common cause of the mediator and outcome that is, itself, on the causal pathway from the exposure. Suppose the job training program (A) not only boosts confidence (M) but also causes participants to develop a new social network (L). If this new network (L) both helps them prepare for interviews (affecting M) and provides job leads (affecting Y), then L is a post-treatment confounder of the $M-Y$ relationship. We cannot adjust for L, because doing so would block a portion of the very causal effect we want to estimate.
+
+::: {.callout-warning}
+
+Consequences of Violating Assumptions 3 & 4
+
+Violating assumption 3 or 4 will lead to biased estimates of the direct and indirect effects. Because these assumptions involve unmeasured variables or complex post-treatment dynamics, they can never be definitively proven. This is why sensitivity analysis is not optional; it is a required component of any credible mediation analysis.
+
+:::
+
+:::
+
+## 5. Numerical and Code-Based Example (R)
+
+Let's implement a full causal mediation analysis using the `mediation` package. We'll use a simulated dataset where a job training program (A) is hypothesized to increase annual earnings (Y) by improving an individual's confidence in job interviews (M). We also control for a pre-treatment measure of education (X).
+
+### Step 1: Simulate the Data
+
+```r
+# Load Necessary Library
+# install.packages("mediation")
+library(mediation)
+
+# Set Seed for Reproducibility
+set.seed(123)
+
+# Number of Individuals
+n <- 500
+
+# Pre-treatment Covariate: Education (in years)
+X <- rnorm(n, mean = 12, sd = 2)
+
+# Treatment Assignment (1 = Program, 0 = control)
+# Assume Treatment is More Likely for Those with less Education
+A <- rbinom(n, 1, prob = plogis(1 - 0.2 * X))
+
+# Mediator: Interview Confidence (scale 1-10)
+# A Has a Positive Effect on M
+# X also Has a Positive Effect on M
+M <- 3 + 2.5 * A + 0.5 * X + rnorm(n, sd = 1.5)
+
+# Outcome: Annual Earnings (in $1000s)
+# A Has a Direct Effect
+# M Has an Effect
+# There is also an A*M Interaction
+Y <- 20 + 5 * A + 4 * M - 1.5 * A * M + 1.5 * X + rnorm(n, sd = 5)
+
+# Create a Data Frame
+sim_data <- data.frame(Y, A, M, X)
+head(sim_data)
+```
+
+### Step 2: Fit the Mediator and Outcome Models
+
+We fit the two regression models that form the basis of the analysis. Note that the outcome model `out.fit` correctly includes the exposure-mediator interaction term (`A * M`), which is crucial for flexibility.
+
+```r
+# Model 1: Mediator Model (regress M on A and X)
+med.fit <- lm(M ~ A + X, data = sim_data)
+# This Model Estimates the A -> M Path
+
+# Model 2: Outcome Model (regress Y on A, M, the Interaction, and X)
+out.fit <- lm(Y ~ A * M + X, data = sim_data)
+# This Model Estimates the A -> Y and M -> Y Paths
+
+summary(med.fit)
+summary(out.fit)
+```
+
+### Step 3: Run the Mediation Analysis
+
+We pass the two fitted models to the `mediate()` function. We specify the treatment (`treat = "A"`) and mediator (`mediator = "M"`) variables. We request bootstrapped confidence intervals, which are essential for robust inference.
+
+```r
+# Perform Causal Mediation Analysis
+# Sims = 500 is Good for a Quick Check, Use 1000+ for Final Results
+med.analysis <- mediate(med.fit, out.fit, treat = "A", mediator = "M", boot = TRUE, sims = 1000)
+```
+
+### Step 4: Interpret the Results
+
+The `summary()` function provides the key decomposition of effects.
+
+```r
+summary(med.analysis)
+```
+
+Example Output:
+
+```r
+Causal Mediation Analysis
+
+Potential Outcome Simulation based on the given models
+
+(Details about the models)
+
+                Estimate 95% CI Lower 95% CI Upper p-value
+ACME (control)     8.63         7.48         9.83    <2e-16 *
+ACME (treated)     4.88         3.83         6.02    <2e-16 *
+ADE (control)      8.75         6.93        10.51    <2e-16 *
+ADE (treated)      5.00         3.63         6.43    <2e-16 *
+Total Effect      13.63        11.93        15.42    <2e-16 *
+Prop. Mediated    0.63         0.54         0.74    <2e-16 *
+---
+Signif. codes:  0 ‘*’ 0.001 ‘’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+```
+
+The presence of an interaction term in `out.fit` means the effects differ depending on the reference group. The `(control)` and `(treated)` labels refer to which group's potential outcomes are used as the reference. Let's focus on the `(treated)` estimates, as they are often more policy-relevant (effects relative to the treated state).
+
+- ACME (Average Causal Mediated Effect / NIE): The average indirect effect is estimated to be $4.88k. This is our primary finding: we estimate that the job training program increased annual earnings by $4,880 _through its effect on interview confidence_. The 95% CI [3.83, 6.02] is well above zero, providing strong evidence for this mechanism.
+    
+- ADE (Average Direct Effect / NDE): The average direct effect is $5.00k. This means that an additional $5,000 of the program's earnings benefit comes from pathways _other than_ changes in interview confidence. The 95% CI [3.63, 6.43] is also clearly positive.
+    
+- Total Effect: The total effect of the program is an estimated $13.63k increase in earnings, which is the sum of the NIE and NDE (when defined carefully to account for interaction).
+    
+- Prop. Mediated: Approximately 63% of the total effect is mediated by interview confidence under one definition. This provides a simple, powerful summary: confidence-building is the dominant mechanism of this program's success.
+
+## 6. Sensitivity Analysis
+
+We must now challenge our result by assessing its vulnerability to violations of Assumption 3 (no unmeasured M-Y confounding). Sensitivity analysis asks: "How strong would an unmeasured confounder have to be to change our conclusion?"
+
+The `medsens()` function operationalizes this by examining rho, the correlation between the error terms of the mediator and outcome models. A non-zero rho represents the net effect of all unmeasured M-Y confounders.
+
+### Performing and Visualizing the Sensitivity Analysis
+
+```r
+# Perform Sensitivity Analysis
+sens.analysis <- medsens(med.analysis, rho.by = 0.05, sims = 200)
+
+# Get a Detailed Summary
+summary(sens.analysis)
+
+# Plot the Results for a Visual Check
+plot(sens.analysis, "rho")
+```
+
+Interpreting the Output:
+
+The plot shows the estimated ACME (indirect effect) on the y-axis as a function of rho on the x-axis. The solid line is the point estimate, and the dashed lines are the 95% confidence interval.
+
+The critical question is: At what value of rho does the 95% CI for the ACME cross zero?
+
+The summary output will state this value explicitly. For our example, let's say the summary reports: `ACME is zero at rho = 0.65`.
+
+Interpretation: This is a very reassuring result. It means that an unmeasured M-Y confounder would need to be strong enough to induce a correlation of 0.65 between the residuals of our mediator and outcome models to nullify our finding of a positive indirect effect. A confounder this powerful is often considered implausible in many social science contexts. We can therefore conclude that our finding is relatively robust to potential unmeasured confounding. Conversely, if the analysis showed the effect was zero at rho=0.1, our conclusion would be deemed sensitive and far less credible.
+
+## 7. End-of-Chapter Exercises
+
+::: {.callout-question}
+
+Conceptual Questions
+
+1. Draw a DAG for a study examining whether a new blood pressure medication (A) reduces the risk of heart attack (Y). Propose a plausible biological mediator (M) and at least one potential pre-treatment confounder (X) and one potential unmeasured M-Y confounder (U). Explain precisely which assumption the presence of U violates.
+2. Explain the difference between a Controlled Direct Effect and a Natural Direct Effect in intuitive terms, using the example from question 1. Which is usually of greater scientific interest and why?
+3. A colleague uses the Baron-Kenny method and finds no significant indirect effect. However, you suspect there is a strong interaction between the treatment and the mediator. Explain why their null finding might be misleading and what you would recommend they do instead.
+
+:::
+
+::: {.callout-question}
+
+Numerical Problem
+
+A researcher conducts a study on the effects of a mindfulness app (A=1 for app, A=0 for control) on student anxiety (Y, measured on a 100-point scale), mediated by hours of sleep per night (M). They use linear models with no interaction term and report the following coefficients from their lm() outputs:
+
+- Model `lm(Y ~ A)`: Coefficient for A is -12.0.
+- Model `lm(M ~ A)`: Coefficient for A is 1.5.
+- Model `lm(Y ~ A + M)`: Coefficient for A is -6.0; coefficient for M is -4.0.
+
+Using the product-of-coefficients and difference-in-coefficients methods, calculate the Total Effect, Direct Effect, and Indirect Effect. What proportion of the total effect is mediated by sleep?
+
+:::
+
+::: {.callout-question}
+
+R Coding Task
+
+Using the sim_data created in this chapter, create a binary outcome variable Y_binary <- ifelse(Y > median(Y), 1, 0). Fit a logistic regression model for the outcome (glm(…, family = "binomial")). Run the mediate() function and interpret the ACME and ADE. How does the interpretation of effects on a probability scale differ from the interpretation on a continuous scale?
+
+:::
+
+## 8. Appendix: Advanced Derivations
+
+### Formal Decomposition of the Total Effect
+
+The total effect, $\text{TE}=E[Y^1−Y(0)]$, can be decomposed by adding and subtracting a counterfactual quantity, $E[Y(1,M^0)]$.
+
+$$
+TE=E[Y^1−Y(0)]=E[Y^1−Y(1,M^0)]+E[Y(1,M^0)−Y(0)]
+$$
+
+By the consistency assumption, we can state that an individual's potential outcome Y^a is that which would be observed if their exposure is a and their mediator is the value it would naturally take on under exposure a, i.e., Y^a=Y(a,M(a)). Applying this:
+
+- The first term becomes $E[Y(1,M^1)−Y(1,M^0)]$, which is the definition of the NIE.
+    
+- The second term, $E[Y(1,M^0)−Y(0)]$, can be rewritten as $E[Y(1,M^0)−Y(0,M^0)]$ by applying consistency to Y^0, which is the definition of the NDE.
+
+    Thus, we arrive at the fundamental decomposition:
+
+$$
+TE=NIE+NDE
+$$
+
+### Delta Method for Variance of the Indirect Effect (Sobel Test)
+
+In the traditional product-of-coefficients approach ($\text{IE}=\alpha_1\times\beta_2$), the variance of the indirect effect is approximated using the multivariate delta method. Assuming the estimators $\hat\alpha_1$ and $\hat\beta_2$ are independent, the variance is:
+
+$$
+Var(α^{1​}β^{​2​})≈α^12​Var(β^​2​)+β^​22​Var(α^1​)
+$$
+
+The standard error is the square root of this quantity. A Z-statistic can then be formed for a hypothesis test ($Z=\frac{\hat\alpha_1\hat\beta_2}{\text{SE}(\hat\alpha_1\hat\beta_2)}$). This is known as the Sobel test. It is known to have poor performance in small samples and is generally superseded by bootstrapping, which does not rely on large-sample approximations.
+
+## References
+
+1. Baron, R. M., & Kenny, D. A. (1986). The moderator-mediator variable distinction in social psychological research: Conceptual, strategic, and statistical considerations. _Journal of Personality and Social Psychology, 51_(6), 1173–1182.
+2. Imai, K., Keele, L., & Tingley, D. (2010). A general approach to causal mediation analysis. _Psychological Methods, 15_(4), 309–334.
+3. Pearl, J. (2014). Interpretation and identification of causal mediation. _Psychological Methods, 19_(4), 459–481.
+4. VanderWeele, T. J. (2015). _Explanation in Causal Inference: Methods for Mediation and Interaction_. Oxford University Press.

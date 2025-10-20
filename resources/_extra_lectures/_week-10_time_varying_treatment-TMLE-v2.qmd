@@ -1,0 +1,356 @@
+---
+title: "Targeted Maximum Likelihood Estimation (TMLE) for the Average Treatment Effect (ATE)"
+format: 
+  html:
+    grid:
+      margin-width: 350px
+  pdf: default    
+---
+
+### The Rationale: Why We Need Something Better
+
+Let's quickly recap the strengths and weaknesses we've learned:
+
+- **MSM (via IPW)** gives an unbiased answer if your model for the **treatment** ($\Prob{A \mid L}$) is correct.
+- **G-computation** gives an unbiased answer if your model for the **outcome** ($\E{Y \mid A, L}$) is correct.
+
+The problem is, in real life, we are never certain that either of our models is perfectly correct. We are essentially forced to bet on one of them. What if we could get *two* chances to be right?
+
+This is the promise of TMLE. It is a **doubly robust** estimator.
+
+::: {.callout-important}
+
+### Double Robustness
+
+A doubly robust method will give you a correct (unbiased) causal effect estimate if **EITHER** your treatment model is correctly specified **OR** your outcome model is correctly specified. You don't need both to be right. This gives you two chances to get the right answer and provides a powerful safety net against model misspecification.
+:::
+
+### The TMLE Recipe: The Best of Both Worlds
+
+TMLE cleverly combines the G-computation recipe with information from the IPW approach. It starts like G-computation, but adds a brilliant "targeting" step to update and improve the initial estimate.
+
+#### Step 1: Get an Initial Prediction (Just like G-computation)
+
+First, you do exactly what you would for G-computation: you fit an initial model for the outcome (a "Q-model") based on the treatment and confounders.
+
+$$
+\E{Y \mid A, L} = \beta_0 + \beta_1 A + \beta_2 L + \dots
+$$
+
+From this, you get an initial prediction of the outcome for every person, let's call it $\hat{Q}(A,L)$.
+
+#### Step 2: Calculate a "Clever Covariate" (The IPW part)
+
+Now, you fit a model for the **treatment** based on the confounders, just like we did for MSM/IPW. You use this model to calculate the probability of each person getting the treatment they actually got, $\ProbHat{A \mid L}$, where $\ProbHat{A_i=1 \mid L_i}$ is the estimated probability that person $i$ received treatment given their confounders $L_i$.
+
+Then, you use this probability to create a special variable, sometimes called a "clever covariate," for each person:
+
+- If the person was **treated** ($A_i=1$): Clever Covariate $H_i(A,L) = \frac{1}{\ProbHat{A_i=1 \mid L_i}}$
+- If the person was **not treated** ($A_i=0$): Clever Covariate $H_i(A,L) = \frac{-1}{\ProbHat{A_i=0 \mid L_i}}$
+
+This covariate contains all the information from our treatment model.
+
+#### Step 3: Update the Initial Prediction (The "Targeting" Step)
+
+This is the magic of TMLE. Your initial outcome model ($\hat{Q}$) might be a little bit wrong. The goal of this step is to use the information from the treatment model (captured in the clever covariate $H$) to "nudge" the initial prediction in the right direction.
+
+You do this by fitting a simple logistic regression model:
+
+$$
+\logit(\E{Y \mid A,L}) = \logit(\hat{Q}(A,L)) + \epsilon H(A,L)
+$$
+
+where $\logit(p) = \log\left(\frac{p}{1-p}\right)$ is the log-odds transformation.
+
+Let's unpack this:
+
+- We are fitting a model where the outcome is the final outcome $Y$.
+- The `logit(Q)` part is used as a fixed **offset**. We are not re-estimating the initial prediction, just starting from it.
+- The only parameter we estimate is **epsilon ($\epsilon$)**, the coefficient for our clever covariate $H$.
+
+This tiny $\epsilon$ is the "nudge factor." It tells us how much we need to adjust our initial predictions based on any leftover information contained in the treatment model.
+
+#### Step 4: Calculate Final, "Targeted" Potential Outcomes
+
+You now use your estimated $\epsilon$ to update your initial predictions and get your final, targeted potential outcomes. For the "everyone treated" ($a=1$) scenario, the updated prediction for each person is:
+
+$$
+\EHatSup{*}{Y \mid A=1, L} = \expit\left(\logit\left(\hat{Q}(A=1,L) \right) + \epsilon \, H(A=1,L) \right)
+$$
+
+where $\expit= \logit^{-1}(x) = \frac{e^x}{1+e^x}$, where $x \in \mathbb{R}$ is the inverse logit function that converts log-odds back to probabilities. You do the same for the "no one treated" ($a=0$) scenario.
+
+::: {.callout-tip}
+In the above equations, $\EHatSup{*}{Y \mid A=1, L}$ represents the final, targeted potential outcome for the "everyone treated" group. The notation $\EHatSup{*}{\cdot}$ indicates that this is an estimate that has been adjusted using TMLE.
+:::
+
+::: {.aside}
+
+The **expit** function is the inverse of the logit function. It converts log-odds back to probabilities, defined as:
+$$
+\expit(x) = \frac{e^x}{1 + e^x}
+$$
+
+This function maps any real number $x$ to a value between 0 and 1, making it suitable for probabilities.
+:::
+
+#### Step 5: Average and Compare
+
+This is the same as before. You take the average of all your final, targeted potential outcomes for the "everyone treated" group and subtract the average for the "no one treated" group. This gives you the doubly robust TMLE estimate of the causal effect.
+
+### The Intuition: A Second Opinion
+
+Imagine an art expert (your outcome model) trying to appraise a painting. They give an initial estimate. To be more confident, they get a second opinion from a historian (your treatment model) who knows the painting's origin and how likely it was for the artist to paint such a work at that time.
+
+- If the historian's information perfectly aligns with the art expert's appraisal, the final price doesn't change ($\epsilon = 0$).
+- But if the historian says, "This painting is surprisingly rare for that artist," (a low probability event), this new information might slightly increase the painting's value. The expert "nudges" their initial estimate upwards ($\epsilon > 0$).
+
+TMLE works just like this. It uses the treatment model to give a "second opinion" on the initial predictions from the outcome model, nudging them just enough to reduce bias and improve accuracy. As you can see in the reference index for Hernán & Robins (2025), TMLE is a state-of-the-art method for these problems.
+
+### The Core Idea: Building a "What-If" Simulation Engine
+
+Imagine you want to know the effect of a new flight control software on fuel efficiency. You could:
+
+1. **The IPW Approach**: Look at past flight data. Find flights that, surprisingly, used the new software when they weren't expected to (and vice versa). Give these "surprising" flights more weight in your analysis to balance out the data.
+2. **The G-computation Approach**: Build a perfect flight simulator (a computer model) that understands the physics of the airplane. Then, run thousands of simulated flights—once with the new software active, and once with it off. Finally, compare the average fuel consumption between the two simulations.
+
+G-computation is the second approach. It works by first building a model of how the world works (the "simulation engine") and then using that model to predict what would happen under different, hypothetical scenarios.
+
+### The Math and Proof: From Potential Outcomes to a Practical Formula
+
+Our goal is to estimate the average potential outcome if everyone in the population were given treatment $a$, which we write as $\E{Y^a}$. The challenge is that we only observe the outcome $Y$ for the treatment people actually received. G-computation provides the theoretical bridge to get from the data we have to the causal quantity we want.
+
+**The G-Formula Identity**
+
+Under its key assumptions, we can prove that the potential outcome mean is equal to:
+
+$$
+\E{Y^a} = \E{\E{Y \mid A=a, L}}
+$$
+
+This is the **g-computation formula** (or "g-formula"). Let's break it down:
+
+- **Inner part: $\E{Y \mid A=a, L}$**: This is the average outcome for people with confounder values $L$ who were actually given treatment $a$. This is something we can estimate from our data with a regression model.
+- **Outer part: $\E[\dots]$**: This means "take the average of the inner part over the distribution of the confounders $L$ in our population."
+
+In plain English, the formula says: "Figure out the average outcome for each type of person (defined by their confounders $L$) under treatment $a$. Then, average those results together, weighted by how common each type of person is in our population."
+
+#### The Proof
+
+Let's see why this identity holds. We need three key assumptions:
+
+1. **Consistency**: If a person's actual treatment is $A=a$, their observed outcome $Y$ is their potential outcome $Y^a$.
+2. **Exchangeability (or Ignorability)**: Treatment assignment is independent of the potential outcomes, conditional on the confounders $L$. ($Y^a \indep A \mid L$). This means there is no unmeasured confounding.
+3. **Positivity**: Everyone with confounders $L$ has a non-zero chance of receiving treatment $a$.
+
+Here is the step-by-step derivation:
+
+1. **Start with what we want**:
+    $\E{Y^a}$
+
+2. **Use the Law of Total Expectation** to average over the confounders $L$:
+    $$
+    \E{Y^a} = \Es{L}{\E{Y^a \mid L}}
+    $$
+
+    *(This just says the overall average is the average of the group-specific averages)*
+
+3. **Apply Exchangeability**: Because treatment is random within levels of $L$, knowing someone's actual treatment $A=a$ gives us no new information about their potential outcome $Y^a$.
+    $$
+    \E{Y^a \mid L} = \E{Y^a \mid A=a, L}
+    $$
+
+4. **Apply Consistency**: For the group of people who actually received $A=a$, their potential outcome $Y^a$ is simply their observed outcome $Y$.
+    $$
+    \E{Y^a \mid A=a, L} = \E{Y \mid A=a, L}
+    $$
+
+5. **Substitute back**: We can now replace the term in our original equation:
+    $$
+    \E{Y^a} = \Es{L}{\E{Y \mid A=a, L}}
+    $$
+
+This completes the proof. We have shown how we can use our observable data (the right side) to identify the causal quantity we care about (the left side).
+
+### The G-Computation Recipe (The Practical Implementation)
+
+The three-step recipe is a practical way to implement the g-formula.
+
+1. **Fit an Outcome Model**: This step estimates the inner part of the formula, $\E{Y \mid A, L}$. We fit a regression model (the "Q-model") to learn this relationship from the data.
+2. **Predict Potential Outcomes**: This step applies our fitted model to every person $i$ in the sample, but with their treatment manually set to $a$: $\Ehat{Y \mid A=a, L=L_i}$.
+3. **Average the Predictions**: This step completes the outer expectation. By averaging these predictions over all $N$ people in our sample, we are averaging over the observed distribution of confounders $L$: $\frac{1}{N}\sum_{i=1}^{N} \Ehat{Y \mid A=a, L=L_i}$. This gives our final estimate.
+
+### Simple Numerical Example by Hand
+
+Let's use our 200-patient drug trial data again. The outcome, $Y$, is "recovered" (1=Yes, 0=No).
+
+**Observed Data Summary:**
+
+| Severity (L) | Treatment (A) | Patients | Mean Recovery (Y) |
+|:---|:---|:---|:---|
+| Mild ($L=0$) | Placebo ($A=0$) | 90 | 0.80 |
+| Mild ($L=0$) | Drug ($A=1$) | 10 | 0.90 |
+| Severe ($L=1$) | Placebo ($A=0$) | 20 | 0.20 |
+| Severe ($L=1$) | Drug ($A=1$) | 80 | 0.40 |
+
+: Observed Data Summary {#tbl-observed-data}
+
+The total population has 100 Mild patients and 100 Severe patients.
+
+#### Step 1: Fit the Outcome Model
+
+We fit a model for $\E{Y \mid A, L}$. To perfectly capture the data, we need an interaction term. Our fitted model is:
+
+$$
+\hat{Y} = 0.80 + 0.10A - 0.60L + 0.10 A L
+$$
+
+#### Step 2: Predict Potential Outcomes
+
+We now use this model to fill in the "what-if" outcomes for all 200 people.
+
+**Scenario 1: What if everyone got the Drug ($A=1$)?**
+- For the 100 Mild patients ($L=0$), their predicted potential outcome is:
+    $\hat{Y}^{a=1} = 0.80 + 0.10(1) - 0.60(0) + 0.10(1)(0) = 0.90$
+- For the 100 Severe patients ($L=1$), their predicted potential outcome is:
+    $\hat{Y}^{a=1} = 0.80 + 0.10(1) - 0.60(1) + 0.10(1)(1) = 0.40$
+
+**Scenario 2: What if everyone got the Placebo ($A=0$)?**
+- For the 100 Mild patients ($L=0$), their predicted potential outcome is:
+    $\hat{Y}^{a=0} = 0.80 + 0.10(0) - 0.60(0) + 0.10(0)(0) = 0.80$
+- For the 100 Severe patients ($L=1$), their predicted potential outcome is:
+    $\hat{Y}^{a=0} = 0.80 + 0.10(0) - 0.60(1) + 0.10(0)(1) = 0.20$
+
+#### Step 3: Average Over the Population and Compare
+
+Now we average these potential outcomes across our whole population of 200 people (100 Mild, 100 Severe).
+
+- **Mean outcome if everyone got the drug:**
+    $\Ehat{Y^{a=1}} = \frac{(100 \text{ Mild people} \times 0.90) + (100 \text{ Severe people} \times 0.40)}{200} = \frac{90 + 40}{200} = \mathbf{0.65}$
+
+- **Mean outcome if everyone got the placebo:**
+    $\Ehat{Y^{a=0}} = \frac{(100 \text{ Mild people} \times 0.80) + (100 \text{ Severe people} \times 0.20)}{200} = \frac{80 + 20}{200} = \mathbf{0.50}$
+
+The Average Causal Effect (ACE) is the difference:
+
+$$
+\text{ACE} = 0.65 - 0.50 = \mathbf{0.15}
+$$
+
+We estimate that the drug increases the average recovery rate by 15 percentage points. The crucial point is that this final average correctly reflects our population's mix of 50% mild and 50% severe patients.
+
+This detailed process—modeling the outcome, simulating interventions, and averaging over the population's confounder distribution—is the essence of G-computation.
+
+Now that you've seen the full derivation and a by-hand example, would you like to move on to Targeted Maximum Likelihood Estimation (TMLE), which cleverly combines G-computation with IPW?
+
+### The Rationale: Why TMLE? The Quest for Double Robustness
+
+We've established a critical duality:
+
+- **G-computation** relies on a correctly specified **outcome model** ($\E{Y \mid A, L}$).
+- **MSM/IPW** relies on a correctly specified **treatment model** ($\Prob{A \mid L}$).
+
+In the real world, our models are rarely perfect. This forces us into a difficult position: we have to bet that one of our models is right. A mistake in our chosen model leads to a biased answer.
+
+TMLE was designed to solve this dilemma. It is a **doubly robust** method.
+
+**Double Robustness: A Statistical Safety Net**
+An estimator is "doubly robust" if it gives a correct (unbiased and consistent) estimate of the causal effect if **EITHER** the outcome model is correct **OR** the treatment model is correct. You do not need both to be right.
+
+This is a massive advantage. It gives you two chances to get the right answer, making your analysis far more credible and less sensitive to the assumptions you make about your models.
+
+### The TMLE Recipe: An Enhanced G-Computation
+
+The best way to understand TMLE is as a clever, two-stage process. It starts like G-computation, but then adds a "targeting" step that uses information from the treatment model (like IPW) to refine the initial estimate.
+
+#### Step 1: Get an Initial Estimate of the Outcome (The G-computation Part)
+
+First, we build an initial model for the outcome, which we'll call the "Q-model." This can be a simple regression or a complex machine learning model.
+
+$$
+\hat{Q}(A, L) = \Ehat{Y \mid A, L}
+$$
+
+From this model, we get an initial prediction for every person's outcome based on their observed treatment and confounders.
+
+#### Step 2: Get a "Second Opinion" (The IPW Part)
+
+Next, we model the treatment process, sometimes called the "g-model." This is exactly what we do for IPW.
+
+$$
+\hat{g}(A \mid L) = \ProbHat{A \mid L}
+$$
+
+We use this model to create a special variable for each person called the **clever covariate**. This variable cleverly incorporates the inverse probability of treatment. For a binary treatment $A \in \{0, 1\}$:
+
+$$
+H(A,L) = \frac{\mathbb{I}(A=1)}{\hat{g}(1 \mid L)} - \frac{\mathbb{I}(A=0)}{\hat{g}(0 \mid L)}
+$$
+
+- $\mathbb{I}(\cdot)$ is an indicator function (it's 1 if the condition is true, 0 otherwise).
+- If a person was treated ($A=1$), their clever covariate is $1/\hat{g}(1 \mid L)$.
+- If a person was untreated ($A=0$), their clever covariate is $-1/\hat{g}(0 \mid L)$.
+
+This clever covariate contains all the information from our treatment model. A large absolute value means the person's treatment was "surprising."
+
+#### Step 3: Update the Initial Estimate (The "Targeting" Step)
+
+This is the core of TMLE. We use the information from the clever covariate ($H$) to "nudge" our initial outcome predictions ($\hat{Q}$) just enough to remove potential bias.
+
+We do this by fitting a simple logistic regression, but in a very specific way. We fit a model for the final outcome $Y$ using $H(A,L)$ as a predictor, while forcing our initial prediction $\hat{Q}(A,L)$ to be the starting point (this is called using an "offset").
+
+$$
+\logit(\E{Y \mid A, L}) = \logit(\hat{Q}(A, L)) + \epsilon \, H(A, L)
+$$
+
+The only thing this model estimates is a single number, **epsilon ($\epsilon$)**. This tiny number represents the amount of "residual bias" in our initial outcome model that was detected by our treatment model. If our initial outcome model was perfect, $\epsilon$ would be zero.
+
+#### Step 4: Calculate the Final, "Targeted" Predictions
+
+We now use our estimated "nudge factor" $\hat{\epsilon}$ to update the predictions for every person under our "what-if" scenarios. The final, targeted outcome prediction, $\hat{Q}^*(A,L)$, is:
+
+$$
+\hat{Q}^{*}(A,L) = \logit^{-1}(\logit(\hat{Q}(A, L)) + \hat{\epsilon} \, H(A,L))
+$$
+
+#### Step 5: Average and Compare
+
+This is exactly the same as the final step of G-computation. We use our new, improved $\hat{Q}^*$ to get potential outcomes, and then average them to get the causal effect.
+
+1. Calculate $\Ehat{Y^a} = \frac{1}{N}\sum_{i=1}^N \hat{Q}^*(a, L_i)$ for $a=1$ and $a=0$.
+2. The ACE is $\Ehat{Y^{a=1}} - \Ehat{Y^{a=0}}$.
+
+### Intuitive Numerical Example
+
+A full by-hand calculation of the logistic regression in Step 3 is too complex, but we can walk through the logic conceptually.
+
+**Scenario**: Imagine our initial outcome model (Q-model) is pretty good, but it slightly **underestimates** the recovery rate for a group of very sick patients who, surprisingly, received the drug.
+
+1. **Initial Prediction**: For this group, our $\hat{Q}(A=1, L=\text{severe})$ is a bit too low.
+2. **Clever Covariate**: Because receiving the drug was surprising for this group, their treatment probability $\hat{g}(1 \mid L=\text{severe})$ is low. This makes their clever covariate $H$ a **large positive number**.
+3. **Targeting**: The targeting step (Step 3) looks at the data. It sees that when the clever covariate $H$ is large and positive, the true outcome $Y$ tends to be a little higher than our initial prediction $\hat{Q}$. To close this gap, the model estimates a small, **positive $\epsilon$**.
+4. **Updating**: In Step 4, our final prediction for this group is updated. The new prediction is roughly (Initial Prediction) + ($\epsilon \times$ Large Positive Number). The initial prediction is "nudged" upwards, correcting the flaw in our original model.
+
+The final result is now more accurate because it used information from the treatment model to fix a mistake in the outcome model. This is the power of double robustness in action.
+
+### The Math and Proof Behind Double Robustness
+
+The reason TMLE is doubly robust is rooted in a concept called the **efficient influence function (EIF)**. The theory shows that the bias of the TMLE estimator is approximately proportional to a product of two terms:
+
+$$
+\text{Bias(TMLE)} \propto \E{(\hat{g}(A \mid L) - g_0(A \mid L)) \times (\hat{Q}(A,L) - Q_0(A,L))}
+$$
+
+Let's unpack this:
+
+- $g_0(A \mid L)$ is the *true* underlying treatment probability.
+- $Q_0(A,L)$ is the *true* underlying outcome expectation.
+- $(\hat{g} - g_0)$ represents the **error in your treatment model**.
+- $(\hat{Q} - Q_0)$ represents the **error in your outcome model**.
+
+For the total bias to be zero, the entire expression on the right needs to be zero. This happens if:
+
+1. Your treatment model is correct, making $(\hat{g} - g_0) = 0$. The whole product becomes zero.
+2. Your outcome model is correct, making $(\hat{Q} - Q_0) = 0$. The whole product becomes zero.
+
+The targeting step is specifically designed to solve the EIF equation, thereby guaranteeing this doubly robust property. As you can see in the foundational text by Hernán and Robins (2025, e.g., p. 181, 283), this property makes TMLE a preferred method in modern epidemiology.

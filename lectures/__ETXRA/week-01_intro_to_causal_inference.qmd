@@ -1,0 +1,623 @@
+---
+title: "Instrumental Variables (IV) Estimation"
+---
+
+## Overview
+
+This lecture introduces the fundamental concepts that form the bedrock of modern causal inference. We will move beyond the common refrain that "correlation is not causation" to build a formal language for defining, identifying, and estimating causal effects. The core of this framework is the **potential outcomes** model, often attributed to Neyman and Rubin. This model provides a precise way to define a causal effect for a single individual, even though we can never directly observe it. This leads us to the **Fundamental Problem of Causal Inference**, a central challenge we will spend the semester learning to address. We'll also define critical assumptions like the **Stable Unit-Treatment-Value Assumption (SUTVA)** and discuss the role of the **assignment mechanism** in our ability to learn about causal effects from data.
+
+## Learning Objectives
+
+By the end of this session and the associated lab, you will be able to:
+
+1. **Define** and differentiate between units, treatments, potential outcomes, and observed outcomes using formal notation.
+2. **Articulate** the Fundamental Problem of Causal Inference and explain why it makes unit-level causal effects unobservable.
+3. **Explain** the two components of the Stable Unit-Treatment-Value Assumption (SUTVA) -- consistency and no interference -- and provide examples of scenarios where each might be violated.
+4. **Calculate** a true population-level Average Causal Effect (ACE) from a hypothetical table of potential outcomes.
+5. **Distinguish** between a true causal effect and a naive associational difference in means, and use a Directed Acyclic Graph (DAG) to represent the confounding that leads to this difference.
+
+## R Packages
+
+We'll use the following packages for this lecture and lab. The `pacman` package will automatically install any missing packages.
+
+```{r}
+#| label: load-packages
+#| message: false
+#| warning: false
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  tidyverse, # For data manipulation and plotting
+  dagitty,   # For creating and analyzing DAGs
+  ggdag,     # For plotting DAGs with ggplot2
+  knitr,     # For creating nice tables
+  patchwork  # For combining plots
+)
+
+# Set a consistent theme for ggplot2
+theme_set(theme_minimal(base_size = 14))
+```
+
+## Comprehensive Topic Explanation
+
+### The Potential Outcomes Framework
+
+To rigorously define a causal effect, we need a formal framework. The most common one in statistics and epidemiology is the **potential outcomes** framework, also known as the Neyman-Rubin Causal Model (@hernan2020causalwhatif).
+
+  - **Unit**: The entity upon which a treatment acts. This could be a person, a patient, a school, a country, or even the same person at two different points in time. Let's index our units by $i=1, \dots, N$.
+  - **Treatment**: An intervention or exposure whose effect we want to assess. We'll start with a simple binary treatment, denoted by $A$. For each unit $i$, $A_i=1$ if they receive the treatment and $A_i=0$ if they receive the control (e.g., no treatment or a placebo).
+  - **Potential Outcomes**: For each unit $i$, there are two **potential outcomes** corresponding to the two possible treatment levels.
+	  - $Y_i^1$: The outcome that *would be observed* for unit $i$ if they were to receive the treatment ($A_i=1$).
+	  - $Y_i^0$: The outcome that *would be observed* for unit $i$ if they were to receive the control ($A_i=0$).
+		These outcomes are "potential" because, for any given unit, we can only ever observe one of them.
+
+### Defining Causal Effects
+
+With this notation, we can define a causal effect at the most fundamental level: the individual.
+
+  - **Unit-Level Causal Effect**: For unit $i$, the causal effect of treatment $A$ on outcome $Y$ is the difference between their two potential outcomes:
+
+$$
+\tau_i = Y_i^1 - Y_i^0 
+$$
+
+This is the difference between what would have happened to unit $i$ under treatment versus what would have happened to unit $i$ under control, at the same moment in time.
+
+This definition is powerful because it is precise. The causal effect is not about a change over time but about a comparison between two parallel, "counterfactual" worlds.
+
+### The Fundamental Problem of Causal Inference
+
+The definition of the unit-level causal effect immediately reveals a profound challenge. For any given unit $i$, we can only observe *one* of their potential outcomes. If unit $i$ received the treatment ($A_i=1$), we observe $Y_i^{obs} = Y_i^1$ but $Y_i^0$ is unobserved (counterfactual). If they received the control ($A_i=0$), we observe $Y_i^{obs} = Y_i^0$ but $Y_i^1$ is counterfactual.
+
+::: {.callout-note}
+### The Fundamental Problem of Causal Inference
+It is impossible to observe both potential outcomes for the same unit at the same time. Therefore, the unit-level causal effect $\tau_i$ is fundamentally unobservable [@hernan2020causalwhatif, Chapter 1].
+:::
+
+
+Because we cannot calculate individual causal effects, we shift our goal to estimating **population-level causal effects**, such as the Average Causal Effect (ACE), also called the Average Treatment Effect (ATE).
+
+  - **Average Causal Effect (ACE)**: The average of the unit-level causal effects across all units in the population.
+
+$$
+ACE = E[\tau_i] = E[Y^1 - Y^0] 
+$$
+
+In a finite sample of $N$ units, the sample ACE is $\frac{1}{N} \sum_{i=1}^{N} (Y_i^1 - Y_i^0)$.
+
+### The Stable Unit-Treatment-Value Assumption (SUTVA)
+
+To make progress, we need to make some assumptions about how units, treatments, and outcomes behave. The **Stable Unit-Treatment-Value Assumption (SUTVA)** is a critical one and has two parts [@neal2020]:
+
+1. **Consistency**: A unit's observed outcome under a specific treatment is precisely their potential outcome under that same treatment. Formally, if $A_i = a$, then $Y_i^{obs} = Y_i(a)$. This seems obvious, but it implies that there are no hidden versions of the treatment. For example, "aspirin" must be the same pill with the same dosage for everyone who takes it. If some people get a high dose and others a low dose, but we just call it "aspirin," consistency is violated.
+2. **No Interference**: The potential outcomes of one unit are not affected by the treatment assignment of any other unit. Formally, $Y_i(a)$ does not depend on the value of $A_j$ for any $j \neq i$. This assumption is often violated in settings with social interaction or competition. For example, the effectiveness of a vaccine for one person ($Y_i^1$) absolutely depends on whether other people are also vaccinated ($A_j=1$ for $j \neq i$).
+
+SUTVA allows us to write the potential outcomes for unit $i$ as $Y_i^1$ and $Y_i^0$, without having to worry about which other units received treatment.
+
+### The Assignment Mechanism
+
+The final piece of the puzzle is the **assignment mechanism**—the rule or process that determines which units receive the treatment and which receive the control. This mechanism is the key to whether we can estimate the ACE. In an ideal **randomized controlled trial (RCT)**, the assignment mechanism is a coin flip for each unit, which, as we will see, allows for unbiased estimation of the ACE. In observational studies, the assignment mechanism is often unknown and convoluted, leading to major challenges like confounding.
+
+## Intuitive Clarifications of Challenging Ideas
+
+### The "Sliding Doors" Analogy for the Fundamental Problem
+
+Think of the movie *Sliding Doors*. The main character's life splits into two parallel timelines based on one tiny event: whether she catches a train or not.
+
+  - **Timeline 1 (Catches Train)**: She gets home early, finds her boyfriend cheating, and her life goes one way. This is her $Y^1$.
+  - **Timeline 2 (Misses Train)**: She gets home late, the scene has passed, and her life proceeds very differently. This is her $Y^0$.
+
+The **causal effect** of catching the train is the difference in her life outcomes between these two timelines. The **Fundamental Problem of Causal Inference** is that in reality, we only get to live in one timeline. We can't see both. Causal inference is the set of tools we use to try to learn about the unseen timeline using data from a population of people, each of whom lived out only one of their own possible timelines.
+
+### SUTVA: "No Surprises, No Spillovers"
+
+SUTVA can feel abstract. Let's break it down with an analogy. Imagine a study on a new fertilizer.
+
+1. **Consistency ("No Surprises")**: When we say a farmer used the "new fertilizer" ($A=1$), we assume it's the *exact same formula* for every farmer. If Farmer Joe got "Fertilizer v1.1" and Farmer Sue got "Fertilizer v1.2 with extra nitrogen," we can't cleanly write their outcome as $Y^1$. There are hidden versions of the treatment, violating consistency.
+2. **No Interference ("No Spillovers")**: We assume the fertilizer on Farmer Joe's plot doesn't affect the crop yield on his neighbor Farmer Sue's plot. This might be a bad assumption\! What if the fertilizer seeps through the soil (a spillover effect)? Sue didn't get the treatment ($A_{Sue}=0$), but her outcome is affected by Joe's treatment ($A_{Joe}=1$). This violates the "no interference" assumption.
+
+## 3\. Simple, Hand-Calculation Numerical Example
+
+Let's imagine a tiny study with 4 people to investigate whether a new medication ($A=1$) reduces blood pressure compared to a placebo ($A=0$). The outcome $Y$ is systolic blood pressure (SBP).
+
+Critically, we will take a "God's-eye view" and assume we can see *both* potential outcomes for all 4 people. In the real world, this is impossible.
+
+| Unit (i) | $Y_i^1$  (SBP with Med) | $Y_i^0$  (SBP with Placebo) | $\tau_i = Y_i^1 - Y_i^0$  (Unit-level Effect) |
+| :------: | :----------------------------: | :--------------------------------: | :---------------------------------------------------: |
+|    1     |              130               |                140                 |                          -10                          |
+|    2     |              125               |                130                 |                          -5                           |
+|    3     |              150               |                165                 |                          -15                          |
+|    4     |              135               |                145                 |                          -10                          |
+
+> [!NOTE] God's-eye view
+> A "God's-eye view" refers to a perspective that assumes an all-knowing viewpoint, often used in literature, film, or philosophy to describe a situation where the observer has complete knowledge of events and characters that others do not. It can also relate to a filmmaking technique that captures scenes from an overhead angle, providing a broader view of the action.
+
+#### Step 1: Calculate the True Average Causal Effect (ACE)
+
+The true ACE is the average of the individual, unobservable causal effects ($\tau_i$).
+
+$$
+ACE = \frac{1}{N} \sum_{i=1}^{N} \tau_i = \frac{(-10) + (-5) + (-15) + (-10)}{4} = \frac{-40}{4} = -10
+$$
+
+The **true average causal effect** of the medication is a 10-point reduction in systolic blood pressure.
+
+#### Step 2: Introduce the "Veil of Ignorance"
+
+Now, let's step back from our God's-eye view and see what a researcher would see. Suppose units 1 and 3 were (somehow) assigned to the treatment ($A=1$) and units 2 and 4 were assigned to the control ($A=0$).
+
+The researcher only sees the **observed outcomes** ($Y^{obs}$):
+
+| Unit (i) | Treatment ($A_i$) | $Y_i^{obs}$ |
+| :------: | :---------------: | :---------: |
+|    1     |         1         |     130     |
+|    2     |         0         |     130     |
+|    3     |         1         |     150     |
+|    4     |         0         |     145     |
+
+> [!NOTE] Veil of Ignorance
+> The "Veil of Ignorance" is a philosophical concept introduced by John Rawls, which suggests that individuals should design a society without knowing their own personal circumstances, such as their gender, race, or social status. This thought experiment aims to promote fairness and impartiality in creating social contracts and principles of justice.
+
+#### Step 3: Calculate the Naive Associational Difference
+
+A naive researcher might just compare the average outcome in the treated group to the average outcome in the control group.
+
+- Average SBP for the Treated: $E[Y^{obs} | A=1] = \frac{130 + 150}{2} = 140$
+- Average SBP for the Control: $E[Y^{obs} | A=0] = \frac{130 + 145}{2} = 137.5$
+
+The naive difference of means is $140 - 137.5 = 2.5$.
+
+#### Step 4: Interpret the Disaster
+
+The naive estimate suggests the drug *increases* blood pressure by 2.5 points, while the true causal effect was a *decrease* of 10 points\!
+
+**Why did this happen?** This is **selection bias**. The people who received the treatment (units 1 and 3) were different from the people who received the control (units 2 and 4) *before the study even began*. Specifically, the treated group had a higher average baseline SBP under placebo ($E[Y^0|A=1] = (140+165)/2 = 152.5$) than the control group ($E[Y^0|A=0] = (130+145)/2 = 137.5$). They were sicker to begin with. This pre-existing difference is called **confounding**.
+
+## 4\. R Code Examples & Interpretation
+
+### Visualizing Causal Structures with DAGs
+
+Directed Acyclic Graphs (DAGs) are powerful tools for visualizing our causal assumptions (@pearl2009causality).
+
+A randomized controlled trial (RCT) has a very simple causal structure. Treatment ($A$) causes the Outcome ($Y$). There are no other arrows pointing into $A$, representing the fact that assignment was random and not influenced by any other factor.
+
+```tikz
+\begin{tikzpicture}
+\node (A) at (0,0) {$A$};
+\node (Y) at (2,0) {$Y$};
+\draw[->, thick] (A) -- (Y);
+\end{tikzpicture}
+```
+
+In our disastrous hand-calculation example, there was a **confounder** ($L$)—the baseline sickness of the patient. This confounder affects both who gets the treatment (sicker people might be more likely to seek treatment) and the final outcome (sicker people will have higher blood pressure regardless of treatment).
+
+```tikz
+\begin{tikzpicture}
+\node (A) at (0,0) {$A$};
+\node (Y) at (2,0) {$Y$};
+\node (L) at (1,1) {$L$};
+\draw[->, thick] (A) -- (Y);
+\draw[->, thick, red] (L) -- (A);
+\draw[->, thick, red] (L) -- (Y);
+\end{tikzpicture}
+```
+
+The red arrows represent the confounding path $L \rightarrow A \rightarrow Y \leftarrow L$, which creates a non-causal association between $A$ and $Y$.
+
+#### Using `dagitty` and `ggdag` in R
+
+We can create the same DAGs programmatically in R. This is highly recommended as `dagitty` can also be used to analyze the graph for confounding, selection bias, etc.
+
+```{r}
+#| label: fig-dags
+#| eval: false
+#| fig-cap: "Causal DAGs for a Randomized Trial vs. a Confounded Observational Study"
+#| fig-subcap:
+#|   - "Ideal Randomized Trial"
+#|   - "Confounded Observational Study"
+#| layout-ncol: 2
+
+# DAG for a Randomized Trial
+dag_rct <- dagify(
+Y ~ A,
+exposure = "A",
+outcome = "Y"
+)
+
+p_rct <- ggdag(dag_rct, text_col = "white", stylized = TRUE) +
+theme_dag()
+
+# DAG for a Confounded Study
+dag_confounded <- dagify(
+Y ~ A + L,
+A ~ L,
+exposure = "A",
+outcome = "Y",
+coords = list(x = c(A = 1, Y = 3, L = 2),
+y = c(A = 1, Y = 1, L = 2))
+)
+
+p_confounded <- ggdag_confounder_path(dag_confounded, from = "A", to = "Y") +
+theme_dag(base_size = 14)
+
+# Plot Side-by-side
+p_rct
+p_confounded
+```
+
+The plot on the left shows the ideal world of an RCT. The arrow from A to Y represents the causal effect we want to estimate. The plot on the right shows the observational study. The path $A \rightarrow Y$ is the direct causal effect. The "backdoor path" $A \leftarrow L \rightarrow Y$ is a confounding path that creates a spurious association between A and Y. To estimate the causal effect, we must "block" this backdoor path, typically by conditioning on (adjusting for) $L$.
+
+### Simulating Confounding in R
+
+Let's replicate our hand-calculation example with a simulation to see confounding in action.
+
+```{r}
+#| label: sim-data
+set.seed(123) # for reproducibility
+n <- 1000     # number of units
+
+# 1. Create a Confounder L (e.g., Baseline Health, from 0 to 10)
+l <- rnorm(n, mean = 5, sd = 2)
+
+# 2. Assign Treatment A Based on the Confounder L
+# People with Worse Health (higher L) Are More Likely to Get Treatment
+prob_a <- plogis(-2 + 0.8 * l) # Use logistic function for probability
+a <- rbinom(n, 1, prob_a)
+
+# 3. Define Potential Outcomes
+# The True Causal Effect is -10
+# The Confounder L also Affects the Outcome
+y0 <- 140 + 5 * l + rnorm(n, 0, 5)
+y1 <- y0 - 10 # True causal effect is a reduction of 10
+
+# 4. Create the Observed Data
+# The "fundamental problem" in Action
+y_obs <- ifelse(a == 1, y1, y0)
+
+sim_data <- tibble(L = l, A = a, Y_obs = y_obs, Y0 = y0, Y1 = y1)
+
+# Look at the First Few Rows
+knitr::kable(head(sim_data), digits = 2, caption = "Simulated Data (with Unobservable Potential Outcomes)")
+```
+
+Now, let's calculate the true ACE and the naive difference-in-means.
+
+```{r}
+#| label: calc-effects
+
+# Calculate the TRUE Average Causal Effect (from the Potential outcomes)
+true_ace <- mean(sim_data$Y1 - sim_data$Y0)
+
+# Calculate the NAIVE Association (from the Observed data)
+naive_assoc <- sim_data |>
+group_by(A) |>
+summarise(mean_Y = mean(Y_obs)) |>
+spread(A, mean_Y) |>
+mutate(diff = `1` - `0`) |>
+pull(diff)
+
+cat(
+"True Average Causal Effect:", round(true_ace, 2), "\n",
+"Naive Difference-in-Means:", round(naive_assoc, 2), "\n"
+)
+```
+
+**Interpretation**: The simulation shows exactly what we saw in the hand calculation. The **true causal effect** we built into the data was -10. However, the simple comparison of group means gives us an estimate of -0.76, which is heavily biased towards zero. This is because sicker people (higher L) were more likely to be treated, and sicker people also have worse outcomes. The confounding from L masks the true beneficial effect of the treatment.
+
+## 5\. Hands-On R Lab
+
+### Lab Objectives
+
+- **Practice** defining a causal question using potential outcomes.
+- **Calculate** the true ATE in a simulated dataset where you have access to the potential outcomes.
+- **Calculate** the associational difference-in-means from the "observed" data.
+- **Reflect** on why the ATE and the associational difference are not the same in this dataset.
+
+### Warm-Up & Reading
+
+Please read Chapter 1 and 2 of *Causal Inference: What If* by Hernán and Robins. Pay close attention to the definitions of potential outcomes, individual causal effects, and SUTVA.
+
+### 1\. Load Data
+
+For this lab, we will use a simulated dataset about a job training program.
+
+- `A`: Treatment (1 = received job training, 0 = did not).
+- `Y_obs`: Observed outcome (annual income in thousands of dollars).
+- `motivation`: A pre-treatment characteristic of each individual (scale 1-10).
+- `Y1`, `Y0`: The (usually unobservable) potential outcomes for income.
+
+```{r}
+#| label: lab-data
+#| echo: true
+
+# Skeleton Code for Students
+set.seed(42)
+n_lab <- 500
+motivation <- runif(n_lab, 1, 10)
+prob_a_lab <- plogis(-3 + 0.6 * motivation)
+a_lab <- rbinom(n_lab, 1, prob_a_lab)
+
+y0_lab <- 30 + 3 * motivation + rnorm(n_lab, 0, 4)
+y1_lab <- y0_lab + 5 # True effect of training is $5k
+
+y_obs_lab <- ifelse(a_lab == 1, y1_lab, y0_lab)
+
+lab_data <- tibble(
+motivation = motivation,
+A = a_lab,
+Y_obs = y_obs_lab,
+Y1 = y1_lab,
+Y0 = y0_lab
+)
+
+# --- Students Should Run This Code to Create the lab_data Tibble ---
+```
+
+### 2\. The "God's-Eye" View: Calculate the True ATE
+
+Imagine you are an omniscient being and can see both `Y1` and `Y0` for every person. Calculate the true Average Treatment Effect (ATE) of the job training program.
+
+```{r}
+#| label: lab-task1-skeleton
+#| echo: true
+
+# --- Skeleton Code ---
+# To Calculate the True ATE, You Need to First Find the Individual
+# Causal Effect for Each Person, then Find the Average.
+# Add a New Column 'tau' to lab_data for the Individual Effect.
+lab_data_with_tau <- lab_data |>
+mutate(tau = Y1 - Y0) # Your code here!
+
+# Now, Calculate the Mean of the 'tau' Column
+true_ate_lab <- mean(lab_data_with_tau$tau) # Your code here!
+
+# Print the Result
+# print(true_ate_lab) # Your Code Here!
+```
+
+```{r}
+#| label: lab-task1-solution
+#| echo: false
+#| include: false
+
+# --- Solution ---
+lab_data_with_tau <- lab_data |>
+mutate(tau = Y1 - Y0)
+
+true_ate_lab <- mean(lab_data_with_tau$tau)
+```
+
+```{r}
+#| label: lab-task1-solution-visible
+#| echo: true
+#| eval: false
+# --- Solution ---
+# To Calculate the True ATE, You Need to First Find the Individual
+# Causal Effect for Each Person, then Find the Average.
+# Add a New Column &#39;tau&#39; to lab_data for the Individual Effect.
+lab_data_with_tau &lt;- lab_data |&gt;
+mutate(tau = Y1 - Y0)
+
+# Now, Calculate the Mean of the 'tau' Column
+
+true_ate_lab \<- mean(lab_data_with_tau$tau)
+
+# Print the Result
+
+print(true_ate_lab)
+
+```
+
+The true ATE is exactly 5, as we designed in the simulation. This means the job training program, on average, increases annual income by $5,000.
+
+### 3. The Researcher's View: Calculate the Naive Association
+
+Now, put on your researcher hat. You can't see `Y1` and `Y0`. You can only see who got the training (`A`) and what their final income was (`Y_obs`). Calculate the simple difference in mean income between the group that received training and the group that did not.
+
+```{r}
+#| label: lab-task2-skeleton
+#| echo: true
+
+# --- Skeleton Code ---
+# Group the Data by the Treatment Variable 'A'
+# And Calculate the Mean of the Observed Outcome 'Y_obs' for Each Group.
+# Then, Calculate the Difference.
+naive_estimate <- lab_data |>
+group_by(A) |>
+summarize(mean_income = mean(Y_obs)) # Your code here!
+
+# print(naive_estimate) # Your Code Here!
+
+# You Can also Use the spread() and mutate() Trick from the Lecture
+# To Get the Difference Directly.
+```
+
+```{r}
+#| label: lab-task2-solution
+#| echo: false
+#| include: false
+
+# --- Solution ---
+naive_diff <- lab_data |>
+group_by(A) |>
+summarise(mean_Y = mean(Y_obs)) |>
+spread(A, mean_Y) |>
+mutate(diff = `1` - `0`) |>
+pull(diff)
+```
+
+```{r}
+#| label: lab-task2-solution-visible
+#| echo: true
+#| eval: false
+
+# \--- Solution ---
+
+naive_estimate \<- lab_data |>
+group_by(A) |>
+summarize(mean_income = mean(Y_obs))
+
+print(naive_estimate)
+
+# Difference is 54.4 - 45.4 = 9.0
+
+# Or Using the spread() Trick:
+
+naive_diff \<- lab_data |>
+group_by(A) |>
+summarise(mean_Y = mean(Y_obs)) |>
+spread(A, mean_Y) |>
+mutate(diff = `1` - `0`) |>
+pull(diff)
+
+print(paste("The naive difference is:", round(naive_diff, 2)))
+
+```
+
+The naive estimate is about $9,000. This is much larger than the true causal effect of $5,000!
+
+### 4. Retrieval & Reflection
+
+Answer the following questions to solidify your understanding.
+
+1. **Retrieval Quiz:**
+- What are the two components of SUTVA?
+- Why can we not calculate the unit-level causal effect for an individual?
+- What is the term for a pre-treatment variable that affects both treatment assignment and the outcome?
+
+2. **Reflection Prompt:**
+- In our lab simulation, the naive estimate ($9k) was much larger than the true ATE ($5k). Why did this happen? Look at the code that generated the data, specifically how treatment `A` was assigned. What real-world story does this data simulation tell?
+
+<details>
+<summary>Click for Answers</summary>
+
+1. **Quiz Answers:**
+- SUTVA has two components: **consistency** (no hidden versions of treatment) and **no interference** (no spillovers between units).
+- The **Fundamental Problem of Causal Inference**: we can only observe one potential outcome for each person (the one corresponding to the treatment they actually received).
+- This variable is a **confounder**.
+
+2. **Reflection Answer:**
+- The naive estimate is biased because of confounding by `motivation`. The simulation was set up so that more motivated individuals were more likely to sign up for the job training program (`prob_a_lab <- plogis(-3 + 0.6 * motivation)`). At the same time, more motivated individuals were going to have higher incomes anyway, regardless of the training (`y0_lab <- 30 + 3 * motivation + …`). The naive analysis incorrectly attributes the extra income that comes from motivation to the training program. This is a classic example of **selection bias**.
+
+</details>
+
+
+## 6. Common Pitfalls & Checks
+
+::: {.callout-warning}
+
+## Confounding Association with Causation
+
+The most fundamental error is to compute a simple difference in means between a treated and control group from observational data and interpret it as a causal effect. As our examples show, this difference is a mix of the true causal effect and bias from confounding. **Association is not causation!**
+
+:::
+
+::: {.callout-important}
+
+## SUTVA is a Strong, Untestable Assumption
+
+SUTVA is a foundational assumption that we must make to even write down potential outcomes in the simple $Y^1, Y^0$ form. It is often violated in the real world. You cannot test SUTVA with your data; you must justify it based on domain knowledge of the problem. Always ask yourself: "Could there be interference? Are there hidden versions of the treatment?"
+
+:::
+
+::: {.callout-tip}
+
+## Define Your Causal Question First
+
+Before you touch any data, clearly define your causal question.
+
+1. What are the **units**?
+2. What is the **treatment** ($A=1$) and **control** ($A=0$)?
+3. What is the **outcome** ($Y$)?
+4. What are the potential outcomes $Y^1$ and $Y^0$?
+
+This process, called specifying the "causal estimand," helps clarify your thinking and prevents you from simply mining the data for associations.
+
+:::
+
+::: {.callout-question}
+
+## Check Your Understanding
+
+**Question:** A city implements a new "after-school tutoring" program ($A=1$) to improve student test scores ($Y$). Students must sign up to participate. At the end of the year, the average test score for students in the program is 85, while the average for students not in the program is 75. A city official declares "The tutoring program caused a 10-point increase in test scores!"
+
+What is wrong with this conclusion? What is a likely confounder?
+
+**Answer:** The official is confusing association with causation. This is observational data. A likely confounder is **student motivation** or **parental involvement**. Highly motivated students are more likely to sign up for tutoring *and* more likely to get good grades anyway. The 10-point difference is likely a mix of the true (and probably smaller) effect of tutoring and this selection bias.
+:::
+
+## 7. Advanced Teaching Activities & Interactivity
+
+- **Think-Pair-Share:** Turn to a partner and brainstorm two real-world scenarios. In the first, the **no interference** part of SUTVA is likely violated. In the second, the **consistency** part of SUTVA is likely violated. Be prepared to share with the class.
+- *Example for interference: A study on the effect of a new teaching method in one classroom on student test scores. Students might talk to friends in other classrooms, causing spillovers.*
+- *Example for consistency: A study on the effect of "exercise" on weight loss. "Exercise" could mean running, swimming, or weightlifting; it's not a well-defined treatment.*
+- **Flipped Classroom Prompt:** Before the next class, watch [this video on the paradox of Simpson's Paradox](https://www.youtube.com/watch?v=vs_Z-3zI6sI). Come to class prepared to draw the DAG that explains how the paradox occurs.
+- **Problem-Based Learning Case:** A pharmaceutical company has just completed a Phase III randomized controlled trial for a new heart disease drug. However, 20% of the patients assigned to the treatment group stopped taking the drug due to side effects (non-compliance). How does this complicate the definition of the causal effect? What are we trying to estimate anymore? The effect of *being assigned* the drug (Intention-to-Treat) or the effect of *actually taking* the drug (Per-Protocol)? This introduces the concepts of ITT vs. PP analysis and the role of compliance as a post-treatment variable.
+
+
+## References
+
+
+## 8. Appendix: Advanced Theory & Derivations
+
+### Why Randomization Works: The Math
+
+The "magic" of a randomized controlled trial (RCT) is that it allows us to equate the naive difference in means with the Average Causal Effect (ACE). Let's see why.
+
+The quantity we can estimate from data is the associational difference:
+
+$$
+ \Delta_{assoc} = E[Y^{obs} | A=1] - E[Y^{obs} | A=0] 
+$$
+
+The quantity we want is the causal effect:
+
+$$
+ ACE = E[Y^1] - E[Y^0] 
+$$
+
+Let's expand the first term of the associational difference using the consistency assumption ($Y^{obs} = Y^1$ when $A=1$):
+
+$$
+ E[Y^{obs} | A=1] = E[Y^1 | A=1] 
+$$
+
+Similarly, $E[Y^{obs} | A=0] = E[Y^0 | A=0]$.
+
+So, the associational difference is really:
+
+$$
+ \Delta_{assoc} = E[Y^1 | A=1] - E[Y^0 | A=0]
+$$
+
+This does **not** equal the ACE, $E[Y^1] - E[Y^0]$. The problem is the conditioning on $A$. $E[Y^1 | A=1]$ is the average outcome under treatment *for those who chose to be treated*. This might be very different from the average outcome under treatment for the whole population, $E[Y^1]$.
+
+This is where randomization comes in. In an ideal RCT, the treatment $A$ is assigned completely at random (e.g., by a coin flip). This means that the assignment $A$ is statistically independent of any and all characteristics of the units, including their potential outcomes. Formally, randomization implies:
+
+$$
+ A \perp (Y^1, Y^0) 
+$$
+
+where $\perp$ means "is independent of".
+
+If this independence holds, then:
+
+$$
+ E[Y^1 | A=1] = E[Y^1] 
+$$
+
+and
+
+$$
+ E[Y^0 | A=0] = E[Y^0] 
+$$
+
+**In English:** The average potential outcome under treatment, $Y^1$, is the same for the group that happened to get the treatment as it is for the overall population, because getting the treatment was a matter of pure chance, unrelated to their potential outcome.
+
+By substituting these back into the equation for the associational difference, we get:
+
+$$
+ \Delta_{assoc}^{RCT} = E[Y^1] - E[Y^0] = ACE 
+$$
+
+This proves that under randomization, the simple, observable difference in means is an unbiased estimator for the unobservable Average Causal Effect. This is the primary reason why RCTs are considered the "gold standard" for causal inference.

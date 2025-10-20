@@ -1,0 +1,72 @@
+% ==========================
+% Fancy page style for Quarto PDFs
+% ==========================
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{xcolor}
+
+% Optional: brand color for rules (edit to taste)
+\definecolor{Accent}{HTML}{2451A6}
+
+% Ensure enough header height if you add logos or multi-line headers
+\setlength{\headheight}{14pt}
+
+% If Quarto YAML has page-style: fancy, it will emit \pagestyle{fancy}
+% Calling again is harmless but we avoid it:
+% \pagestyle{fancy}
+
+% Clear defaults
+\fancyhead{}
+\fancyfoot{}
+
+% Running marks: section on left, subsection on right
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+\renewcommand{\subsectionmark}[1]{\markright{#1}}
+
+% Header content (even/odd handled by fancyhdr)
+\fancyhead[LE]{\small \textsc{\leftmark}}
+\fancyhead[RO]{\small \textsc{\rightmark}}
+
+% Footer: left = course/site; right = page X of Y
+% Define convenient toggles you can set per-file with \renewcommand
+\providecommand{\coursecode}{STAT 440/540}
+\providecommand{\coursesite}{data-wise.github.io/regression}
+
+\fancyfoot[LO,RE]{\small \coursecode\ — \texttt{\coursesite}}
+\fancyfoot[LE,RO]{\small Page \thepage\ of \pageref{LastPage}}
+
+% Rules: thin colored header rule, no foot rule
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{Accent}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrulewidth}{0pt}
+
+% Make the first page (LaTeX 'plain' style) consistent
+\fancypagestyle{plain}{%
+  \fancyhead{}\fancyfoot{}
+  \fancyfoot[LE,RO]{\small Page \thepage\ of \pageref{LastPage}}
+  \fancyfoot[LO,RE]{\small \coursecode\ — \texttt{\coursesite}}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+% Optional alternates you can activate per document:
+\fancypagestyle{clean}{%
+  \fancyhead{}\fancyfoot{}
+  \fancyfoot[RO]{\small \thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+\fancypagestyle{exam}{%
+  \fancyhead{}\fancyfoot{}
+  \fancyhead[LO,LE]{\small \coursecode\ — Exam}
+  \fancyhead[RO,RE]{\small \today}
+  \fancyfoot[LO,LE]{\scriptsize \textcolor{gray}{Confidential — Do Not Distribute}}
+  \fancyfoot[RO,RE]{\small \thepage/\pageref{LastPage}}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+% In a .qmd body you may switch styles:
+%   \thispagestyle{clean}
+%   \pagestyle{fancy}    % or exam / clean

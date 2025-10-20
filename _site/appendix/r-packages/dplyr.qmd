@@ -1,0 +1,253 @@
+---
+title: "Using the dplyr Package in R"
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+
+# Tutorial: Using the Dplyr Package in R
+
+## Introduction
+
+### Overview
+
+The `dplyr` package is a powerful tool in the `tidyverse` suite designed for data manipulation. It simplifies and accelerates common data transformation tasks with an intuitive syntax.
+
+Key functions include:
+
+- `dplyr::select()`: Select specific columns.
+- `dplyr::filter()`: Filter rows based on conditions.
+- `dplyr::mutate()`: Add or modify columns.
+- `dplyr::summarize()`: Create summary statistics.
+- `dplyr::arrange()`: Sort rows.
+- `dplyr::group_by()`: Group data for grouped operations.
+
+### Use Cases
+
+- Filtering large datasets for analysis.
+- Summarizing data to extract insights.
+- Transforming variables or creating new ones.
+- Sorting or organizing data for visualization or reporting.
+
+### Benefits
+
+- User-friendly syntax, especially with the pipe operator `|>`.
+- Optimized for speed, making it suitable for large datasets.
+- Seamless integration with other `tidyverse` packages.
+
+## Getting Started
+
+### Loading the Package
+
+Use `pacman::p_load()` to load `dplyr`:
+
+```{r}
+pacman::p_load(dplyr)
+```
+
+### Basic Usage
+
+Create and manipulate a simple dataset:
+
+```{r}
+data <- data.frame(
+    Name = c("Alice", "Bob", "Charlie"),
+    Age = c(25, 30, 35),
+    Score = c(85.5, 90.3, 78.9)
+)
+
+# Select columns
+data |> dplyr::select(Name, Score)
+
+# Filter rows
+data |> dplyr::filter(Age > 25)
+```
+
+## Key Functions and Features
+
+### dplyr::select()
+
+#### Description
+
+Selects specified columns from a data frame.
+
+#### Syntax
+
+```r
+dplyr::select(.data, ...)
+```
+
+- `.data`: A data frame.
+- `…`: Columns to select.
+
+#### Example
+
+```{r}
+data |> dplyr::select(Name, Score)
+```
+
+This extracts the `Name` and `Score` columns.
+
+### dplyr::filter()
+
+#### Description
+
+Filters rows based on a logical condition.
+
+#### Syntax
+
+```r
+dplyr::filter(.data, ...)
+```
+
+- `.data`: A data frame.
+- `…`: Logical conditions.
+
+#### Example
+
+```{r}
+data |> dplyr::filter(Age > 25)
+```
+
+Filters rows where `Age` is greater than 25.
+
+### dplyr::mutate()
+
+#### Description
+
+Creates new columns or modifies existing ones.
+
+#### Syntax
+
+```r
+dplyr::mutate(.data, ...)
+```
+
+- `.data`: A data frame.
+- `…`: Expressions for new or modified columns.
+
+#### Example
+
+```{r}
+data |> dplyr::mutate(Grade = ifelse(Score > 80, "Pass", "Fail"))
+```
+
+Adds a `Grade` column based on `Score`.
+
+## In-Depth Examples
+
+### Example 1: Aggregating Data by Groups
+
+#### Objective
+
+Summarize scores by age groups.
+
+#### Steps
+
+```{r}
+data |>
+    dplyr::mutate(AgeGroup = ifelse(Age > 25, "Above 25", "25 and Below")) |>
+    dplyr::group_by(AgeGroup) |>
+    dplyr::summarize(MeanScore = mean(Score), .groups = "drop")
+```
+
+#### Output
+
+A table showing average scores for each age group.
+
+### Example 2: Sorting and Filtering
+
+#### Objective
+
+Find the top scorer in each age group.
+
+#### Steps
+
+```{r}
+data |>
+    dplyr::group_by(Age) |>
+    dplyr::arrange(desc(Score)) |>
+    dplyr::slice(1)
+```
+
+#### Output
+
+Top scorer details by age.
+
+## Advanced Features
+
+### Customization
+
+#### Rename Columns
+
+```{r}
+data |> dplyr::rename(FullName = Name)
+```
+
+#### Combine Multiple Mutations
+
+```{r}
+data |>
+    dplyr::mutate(
+        NormalizedScore = Score / max(Score),
+        Status = ifelse(Age > 30, "Senior", "Junior")
+    )
+```
+
+### Integration
+
+Combine with `ggplot2` for visualization:
+
+```{r}
+library(ggplot2)
+data |>
+    dplyr::mutate(Pass = Score > 80) |>
+    ggplot(aes(x = Age, y = Score, color = Pass)) +
+    geom_point() +
+    labs(title = "Scores by Age", x = "Age", y = "Score")
+```
+
+### Optimization Tips
+
+- Use `dplyr::filter()` early in a pipeline to reduce rows.
+- Chain operations with `|>` for clarity and efficiency.
+
+## Troubleshooting and FAQs
+
+### Common Issues
+
+#### Error: Object Not Found
+
+Ensure column names are correctly spelled and case-sensitive.
+
+#### Warning: No Rows Match
+
+This occurs when filtering results in zero rows. Check filter conditions.
+
+### FAQs
+
+- **Can `dplyr` handle large datasets?** Yes, but for very large data, consider `data.table` or databases with `dbplyr`.
+- **How to retain row names?** Convert them to a column with `tibble::rownames_to_column()`.
+
+## Best Practices
+
+- Use consistent column naming conventions.
+- Apply `group_by()` only when summarizing or calculating grouped statistics.
+- Document pipelines for reproducibility.
+
+## Conclusion
+
+### Summary
+
+- `dplyr` streamlines data manipulation with a readable syntax.
+- Key functions cover selecting, filtering, mutating, and summarizing data.
+
+### Next Steps
+
+Explore `dplyr` advanced features like joins and window functions, or integrate with `dbplyr` for database operations.
+
+## References and Resources
+
+- [dplyr Documentation](https://dplyr.tidyverse.org/)
+- [R for Data Science](https://r4ds.had.co.nz/)
+- [Tidyverse GitHub](https://github.com/tidyverse/dplyr)

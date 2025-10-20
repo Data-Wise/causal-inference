@@ -1,0 +1,322 @@
+---
+title: "Weekly Paper Critique Schedule"
+---
+
+## Instructions
+
+Each week, you are assigned two papers: a **Classic** paper that established a foundational concept and a **Modern** paper that extends, applies, or reframes that concept. You are expected to be familiar with both for our class discussions.  
+
+For each paper, read the provided summary and prepare written responses to the **three guiding questions**. Bring your notes to class to support discussion and critiques.  
+
+## Part I: Foundations
+
+### Week 1 – Causal Effects & SUTVA
+
+- **Classic:**
+  Rubin, D. B. (1974). Estimating causal effects of treatments in randomized and nonrandomized studies. *Journal of Educational Psychology, 66*(5), 688–701. https://doi.org/10.1037/h0037350  
+
+  **Summary:** Introduces the potential outcomes framework, defines causal effects as counterfactual contrasts, and articulates the "fundamental problem of causal inference."  
+
+  **Questions:**  
+
+  1. In your own words, what is the fundamental problem of causal inference?  
+  2. Why is the Stable Unit Treatment Value Assumption (SUTVA) necessary? Give a real-world example of violation.  
+  3. How does this framework clarify the difference between causal effects and observed associations?  
+
+- **Modern:**
+  Rubin, D. B. (2005). Causal inference using potential outcomes: Design, modeling, decisions. *Journal of the American Statistical Association, 100*(469), 322–331. https://doi.org/10.1198/016214504000001880  
+
+  **Summary:** Reflects on the evolution of the framework, emphasizing "design trumps analysis" and transparency of assumptions.  
+
+  **Questions:**  
+
+  1. What does Rubin mean by "design trumps analysis"? Provide an example.  
+  2. How does the framework make assumptions explicit compared to regression?  
+  3. What challenges arise when prioritizing design in observational studies?  
+
+
+### Week 2 – DAGs
+
+- **Classic:**
+  Greenland, S., Pearl, J., & Robins, J. M. (1999). Causal diagrams for epidemiologic research. *Epidemiology, 10*(1), 37–48. https://doi.org/10.1097/00001648-199901000-00008  
+
+  **Summary:** Introduces Directed Acyclic Graphs (DAGs) as a language for representing causal assumptions and identifying confounding, colliders, and valid adjustment sets.  
+
+  **Questions:**  
+
+  1. Draw a DAG for your own research area, identifying one confounder, one mediator, and one collider.  
+  2. What is the back-door criterion, and why does it justify covariate adjustment?  
+  3. Why is conditioning on a collider problematic? Provide an example.  
+
+- **Modern:**
+  Textor, J., van der Zander, B., Gilthorpe, M. S., Liśkiewicz, M., & Ellison, G. T. H. (2016). Robust causal inference using directed acyclic graphs: The R package dagitty. *International Journal of Epidemiology, 45*(6), 1887–1894. https://doi.org/10.1093/ije/dyw341  
+
+  **Summary:** Introduces `dagitty`, a tool to automate adjustment set selection, evaluate testable implications, and visualize DAGs.  
+
+  **Questions:** 
+
+  1. What are the advantages of using `dagitty` versus manual identification?  
+  2. How do testable implications help assess a DAG?  
+  3. What limitations remain in relying on software for causal modeling?  
+
+### Week 3 – Exchangeability / Positivity / Consistency
+
+- **Classic:**
+  Holland, P. W. (1986). Statistics and causal inference. *Journal of the American Statistical Association, 81*(396), 945–960. https://doi.org/10.1080/01621459.1986.10478354  
+
+  **Summary:** Clarifies Rubin’s model by distinguishing association vs. causation, stressing “no causation without manipulation,” and outlining assumptions of exchangeability, positivity, and consistency.  
+
+  **Questions:**  
+
+  1. How does “no causation without manipulation” distinguish causes from attributes?  
+  2. What are the three core assumptions for causal inference?  
+  3. Which assumption is hardest to verify in practice, and why?  
+
+- **Modern:**
+  Hernán, M. A. (2018). The C-word: Scientific euphemisms do not improve causal inference from observational data. *American Journal of Public Health, 108*(5), 616–619. https://doi.org/10.2105/AJPH.2018.304337  
+
+  **Summary:** Critiques euphemisms like “associated with,” arguing that explicit causal language enforces clarity about assumptions.  
+
+  **Questions:** 
+
+  1. What risks arise from using causal euphemisms?  
+  2. Do you agree with Hernán that researchers should always say “cause”? Why or why not?  
+  3. When might it be valid to avoid causal language?  
+
+### Week 4 – Confounding & Selection Bias
+
+- **Classic:**
+  Hernán, M. A., Hernández-Díaz, S., & Robins, J. M. (2004). A structural approach to selection bias. *Epidemiology, 15*(5), 615–625. https://doi.org/10.1097/01.ede.0000135174.63482.43  
+
+  **Summary:** Provides a unified framework for selection bias using DAGs, showing how many biases (Berkson’s bias, loss-to-follow-up) arise from conditioning on a collider.  
+
+  **Questions:**
+
+  1. Draw a DAG illustrating how restricting to hospitalized patients induces spurious associations.  
+  2. How can loss-to-follow-up be represented in a DAG, and under what conditions does it bias estimates?  
+  3. Why is collider bias a unifying explanation for many selection biases?  
+
+- **Modern:**
+  Cole, S. R., & Hernán, M. A. (2002). Fallibility in estimating direct effects. *International Journal of Epidemiology, 31*(1), 163–165. https://doi.org/10.1093/ije/31.1.163  
+
+  **Summary:** Demonstrates via DAGs that adjusting for mediators with regression can misestimate direct effects if there is unmeasured mediator–outcome confounding.  
+
+  **Questions:**  
+
+  1. Why does the standard regression approach to mediation often fail?  
+  2. How does unmeasured mediator–outcome confounding complicate direct effect estimation?  
+  3. How does this set the stage for modern causal mediation analysis?  
+
+## Part II: Estimation Methods
+
+### Week 5 – Propensity Scores
+
+**Classic **:
+**Rosenbaum, P. R., & Rubin, D. B. (1983).** The central role of the propensity score in observational studies for causal effects. *Biometrika*, 70(1), 41–55. <https://doi.org/10.1093/biomet/70.1.41>. **Stable links:** OUP; JSTOR. [Oxford Academic](https://academic.oup.com/biomet/article-abstract/70/1/41/240879?utm_source=chatgpt.com) [JSTOR](https://www.jstor.org/stable/2335942?utm_source=chatgpt.com)
+
+**Summary.**  
+Proves that the propensity score is a **balancing score**, and that conditioning on it suffices to remove bias from **observed** covariates under strong ignorability. Lays foundations for matching, subclassification, IPTW, and covariate adjustment via the score. [24Oxford Academic](https://academic.oup.com/biomet/article-abstract/70/1/41/240879?utm_source=chatgpt.com)
+
+**Critique questions.** 
+
+1) Provide diagnostics to verify the **balancing property** in finite samples—what failures most threaten bias/variance?  
+2) Under which sampling regimes does **trimming** (lack of overlap) improve MSE yet alter the estimand?  
+3) Discuss the limits of propensity scores under **interference** or **measurement error** in covariates.
+
+**Modern**:
+
+**Austin, P. C. (2011).** An introduction to propensity score methods for reducing the effects of confounding in observational studies. *Multivariate Behavioral Research*, 46(3), 399–424. <https://doi.org/10.1080/00273171.2011.568786>. **Stable links:** PubMed/PMC. [25PubMed](https://pubmed.ncbi.nlm.nih.gov/21818162/?utm_source=chatgpt.com) [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC3144483/?utm_source=chatgpt.com)
+
+**Summary.**  
+Reviews four implementations (matching, stratification, IPTW, regression adjustment) and stresses balance diagnostics and overlap checks. Offers pragmatic guidance for implementation choices and reporting. [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC3144483/?utm_source=chatgpt.com)
+
+
+**Critique questions.**  
+
+1) Compare **nearest-neighbor matching** vs. **IPTW** for ATE/ATT under severe imbalance; which estimand is recovered, and at what variance cost?  
+2) What constitutes adequate **common support**? Propose quantitative thresholds and a pre-registered trimming rule.  
+3) Evaluate **post-matching outcome modeling**: when does it help vs. reintroduce model dependence?
+
+
+### Week 6 – IPTW & Marginal Structural Models
+
+- **Classic:**  
+  Robins, J. M., Hernán, M. A., & Brumback, B. (2000). Marginal structural models and causal inference in epidemiology. *Epidemiology, 11*(5), 550–560. https://doi.org/10.1097/00001648-200009000-00011  
+
+  **Summary:** Introduces MSMs and IPTW to adjust for time-varying confounding affected by prior treatment.  
+
+  **Questions:**  
+
+  1. Why does standard regression fail when confounders are also mediators?  
+  2. What is the pseudo-population created by IPTW, and how does it help?  
+  3. What are key limitations of MSMs in practice?  
+
+- **Modern:**
+  Cole, S. R., & Hernán, M. A. (2008). Constructing inverse probability weights for marginal structural models. *American Journal of Epidemiology, 168*(6), 656–664. https://doi.org/10.1093/aje/kwn164  
+
+  **Summary:** Provides step-by-step guidance on constructing stabilized IPTWs and diagnostics.  
+
+  **Questions:**  
+
+  1. Why are stabilized weights preferred over unstabilized?  
+  2. What diagnostic checks are necessary after weighting?  
+  3. How do extreme weights undermine MSM results?  
+
+### Week 7 – G-computation & TMLE
+
+- **Classic:**
+  Robins, J. M. (1986). A new approach to causal inference in mortality studies with sustained exposure periods—application of the G-formula. *Mathematical Modelling, 7*(9–12), 1393–1512. https://doi.org/10.1016/0270-0255(86)90088-6  
+
+  **Summary:** Introduces the g-formula for estimating causal effects of time-varying exposures using outcome modeling under interventions.  
+
+  **Questions:** 
+
+  1. How does g-computation differ from IPTW?  
+  2. What is sequential exchangeability, and why is it critical?  
+  3. What are the pros/cons of outcome-modeling approaches?  
+
+- **Modern:**
+  Petersen, M. L., & van der Laan, M. J. (2014). Causal models and learning from data: Integrating causal modeling and statistical estimation. *Epidemiology, 25*(3), 418–426. https://doi.org/10.1097/EDE.0000000000000078  
+
+  **Summary:** Describes Targeted Maximum Likelihood Estimation (TMLE), a doubly robust method combining causal models with efficient estimation.  
+
+  **Questions:**  
+
+  1. What does “doubly robust” mean in practice?  
+  2. How does TMLE improve on g-computation?  
+  3. Why separate identification from estimation in causal analysis?  
+
+### Week 8 – Instrumental Variables
+
+- **Classic:**
+  Angrist, J. D. (1990). Lifetime earnings and the Vietnam era draft lottery: Evidence from social security administrative records. *American Economic Review, 80*(3), 313–336. http://www.jstor.org/stable/2006669  
+
+  **Summary:** Uses the Vietnam draft lottery as an instrument to estimate the causal effect of military service on earnings.  
+
+  **Questions:**  
+  1. What three assumptions must hold for a valid instrument?  
+  2. Who are the “compliers,” and why does IV identify their effect?  
+  3. Which IV assumption is least plausible here?  
+
+- **Modern:**
+  Angrist, J. D., & Pischke, J.-S. (2010). The credibility revolution in empirical economics. *Journal of Economic Perspectives, 24*(2), 3–30. https://doi.org/10.1257/jep.24.2.3  
+
+  **Summary:** Argues that modern applied economics has shifted to emphasize credible research designs (IV, RD, DiD).  
+
+  **Questions:**  
+  1. What is the “credibility revolution”?  
+  2. How does design alter the role of modeling in causal inference?  
+  3. What risks exist in over-reliance on quasi-experiments?  
+
+## Part III: Advanced Topics
+
+### Week 9 – Effect Modification & Interaction
+
+- **Classic:**  
+  Rothman, K. J. (1974). Synergy and antagonism in cause–effect relationships. *American Journal of Epidemiology, 99*(6), 385–388. https://doi.org/10.1093/oxfordjournals.aje.a121617  
+
+  **Summary:** Introduces the sufficient-component cause (“causal pies”) model, framing synergy and antagonism among causes.  
+
+  **Questions:**  
+  1. How can two factors show additive but not multiplicative interaction?  
+  2. How does the causal pie model explain effect heterogeneity?  
+  3. Why is additive interaction often more relevant in public health?  
+
+- **Modern:**
+  VanderWeele, T. J. (2019). Principles of effect modification and interaction. *International Journal of Epidemiology, 48*(1), 301–308. https://doi.org/10.1093/ije/dyy276  
+
+  **Summary:** Clarifies interaction concepts, advocating for additive-scale measures and subgroup reporting.  
+
+  **Questions:**  
+  1. Why report subgroup-specific effects instead of only an interaction p-value?  
+  2. Distinguish “effect modification” from “statistical interaction.”  
+  3. How does effect modification inform policy?  
+
+### Week 10 – Mediation I
+
+- **Classic:**  
+  Baron, R. M., & Kenny, D. A. (1986). The moderator–mediator variable distinction in social psychological research. *Journal of Personality and Social Psychology, 51*(6), 1173–1182. https://doi.org/10.1037/0022-3514.51.6.1173  
+
+  **Summary:** Proposes the traditional four-step regression-based framework for mediation.  
+
+  **Questions:**  
+  1. What are the four Baron–Kenny steps?  
+  2. What hidden assumptions are needed for causal interpretation?  
+  3. Why is this approach now considered insufficient?  
+
+- **Modern:**
+  Imai, K., Keele, L., & Tingley, D. (2010). A general approach to causal mediation analysis. *Psychological Methods, 15*(4), 309–334. https://doi.org/10.1037/a0020761  
+
+  **Summary:** Develops a potential outcomes framework for mediation, defining natural direct/indirect effects under sequential ignorability.  
+
+  **Questions:**  
+  1. What is sequential ignorability, and why is it strong?  
+  2. How do natural effects improve on Baron–Kenny?  
+  3. What challenges arise in applying this approach?  
+
+
+
+### Week 11 – Mediation II & Principal Stratification
+
+- **Classic:**  
+  Robins, J. M., & Greenland, S. (1992). Identifiability and exchangeability for direct and indirect effects. *Epidemiology, 3*(2), 143–155. https://doi.org/10.1097/00001648-199203000-00013  
+
+  **Summary:** Provides counterfactual definitions of direct/indirect effects, requiring sequential exchangeability and no exposure–mediator interaction.  
+
+  **Questions:**  
+  1. What are the two parts of sequential exchangeability?  
+  2. Why does exposure–mediator interaction block nonparametric identification?  
+  3. How does this extend mediation beyond Baron–Kenny?  
+
+- **Modern:**
+  Daniel, R. M., De Stavola, B. L., Cousens, S. N., & Vansteelandt, S. (2015). Causal mediation analysis with multiple mediators. *Epidemiology, 26*(3), 364–372. https://doi.org/10.1097/EDE.0000000000000253  
+
+  **Summary:** Extends mediation analysis to multiple, possibly correlated mediators, introducing assumptions for path-specific effects.  
+
+  **Questions:**  
+  1. Why can’t indirect effects from separate single-mediator models be summed?  
+  2. What new assumptions are needed for path-specific effects?  
+  3. How does this reflect real-world complexity?  
+
+### Week 12 – Sensitivity Analysis
+- **Classic:**  
+  Rosenbaum, P. R. (1987). Sensitivity analysis for matched observational studies. *Biometrika, 74*(1), 13–26. https://doi.org/10.1093/biomet/74.1.13  
+
+  **Summary:** Introduces sensitivity analysis for unmeasured confounding in matched studies, quantifying how strong a hidden confounder must be to change conclusions.  
+
+  **Questions:**  
+  1. What is the key idea behind Rosenbaum’s sensitivity analysis?  
+  2. Why is sensitivity analysis critical in observational causal studies?  
+  3. How might this framework be adapted for non-matched designs?  
+
+- **Modern:**
+  VanderWeele, T. J., & Ding, P. (2017). Sensitivity analysis in observational research: Introducing the E-value. *Annals of Internal Medicine, 167*(4), 268–274. https://doi.org/10.7326/M16-2607  
+
+  **Summary:** Proposes the E-value, a simple measure of how strong an unmeasured confounder would need to be to explain away an observed association.  
+
+  **Questions:**  
+  1. How do you interpret an E-value of 3.0 for a risk ratio of 2.0?  
+  2. What are the assumptions behind the E-value?  
+  3. What are its limitations compared to full sensitivity analyses?  
+
+### Week 13 – Target Trial Emulation
+
+- **Classic:**
+  Robins, J. M. (1987). A graphical approach to the identification and estimation of causal parameters in mortality studies with sustained exposure periods. *Journal of Chronic Diseases, 40*(Suppl. 2), 139S–161S. https://doi.org/10.1016/S0021-9681(87)80033-0  
+
+  **Summary:** Early graphical framework showing how observational data can emulate randomized trials with sequential treatments.  
+
+  **Questions:**  
+  1. Why emulate a randomized trial with observational data?  
+  2. What is this paper’s key conceptual contribution?  
+  3. How do DAGs/graphs assist in this setting?  
+
+- **Modern:**
+  Hernán, M. A., Alonso, A., Logan, R., Grodstein, F., Michels, K. B., Willett, W. C., Manson, J. E., & Robins, J. M. (2008). Specifying a target trial prevents immortal time bias and other self-inflicted injuries in observational analyses. *Journal of Clinical Epidemiology, 61*(1), 41–45. https://doi.org/10.1016/j.jclinepi.2007.03.014  
+
+  **Summary:** Outlines the target trial framework, showing how explicitly defining trial components prevents immortal time bias.  
+
+  **Questions:**  
+  1. What is immortal time bias, and how does a target trial prevent it?  
+  2. What are the seven key components of a target trial protocol?  
+  3. How does target trial emulation improve transparency?  

@@ -1,0 +1,24 @@
+project:
+  type: website
+  render:
+  - "lectures/"
+  - "!syllabus/"
+  - "!slides"
+  - "!index.qmd"
+  - "!contents.qmd"
+  - "!home*.qmd"
+  - "!r_help.qmd"
+  - "!appendix/"
+  - "!assignments/"
+  - "!resources/"
+  - "!blog/"
+  - "!exams/"
+  - "!macros/"
+  - "!code/"
+documenttype: Handout
+format:
+  html: default
+  tufte-inspired-typst: default
+filters:
+- diagram
+- assets/filters/ci-math-macros.lua

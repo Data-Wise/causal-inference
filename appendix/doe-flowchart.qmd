@@ -1,0 +1,102 @@
+---
+title: "Decision Flowchart for ANOVA Methods in Balanced and Unbalanced Designs"
+date: "April 28, 2025"
+# format:
+#   pdf:
+#     documentclass: article
+#     geometry: margin=1in
+#     toc: false
+#     number-sections: true
+---
+
+## Introduction
+
+Analysis of Variance (ANOVA) is a cornerstone of statistical analysis for comparing means across groups, applicable to fixed effects, random effects, and mixed effects models. The choice of method depends on the experimental design (balanced or unbalanced), the nature of the effects (fixed, random, or mixed), and the analysis goal (e.g., hypothesis testing or variance component estimation). This document provides two flowcharts to guide researchers in selecting appropriate methods, along with corresponding R syntax and packages. The flowcharts correct common pitfalls, emphasizing `aov()` for balanced designs, `lm()` for unbalanced fixed effects, and `lme4::lmer()` for unbalanced random or mixed effects models. 
+
+## Flowchart
+
+The flowchart below illustrates the decision-making process for selecting ANOVA methods based on the type of model and design. The flowchart is divided into two main branches: one for fixed effects models and another for random or mixed effects models. Each branch further splits based on whether the design is balanced or unbalanced, leading to specific R functions and packages for analysis.
+
+```{dot}
+//| label: fig-anova-dot
+//| fig-cap: "DOT flowchart for selecting ANOVA methods for balanced and unbalanced designs."
+//| fig-width: 8
+//| fig-height: 10
+//| echo: false
+
+digraph anova_decision {
+  node [shape=box, style=filled, fontsize=10, margin=0.1];
+  edge [fontsize=8];
+
+  A [label="Start: Model Type", fillcolor="#DDEEFF"];
+  B [label="Fixed Effects or\nRandom/Mixed Effects?", shape=diamond, fillcolor="#FFEEBB"];
+  C [label="Balanced Design?", shape=diamond, fillcolor="#CCFFCC"];
+  D [label="Balanced Design?", shape=diamond, fillcolor="#FFCCCC"];
+  C1 [label="Classical Fixed Effects ANOVA\naov(response ~ factor, data)\nPackage: stats", fillcolor="#CCFFCC"];
+  C2 [label="General Linear Model\nlm(response ~ factor, data)\ncar::Anova(lm_object, type='III')\nPackage: stats, car", fillcolor="#CCFFCC"];
+  D1 [label="Classical EMS ANOVA\naov(response ~ factor + Error(random_factor), data)\nManual Expected MS formulas\nPackage: stats", fillcolor="#FFCCCC"];
+  D2 [label="Goal?", shape=diamond, fillcolor="#FFFFCC"];
+  D3 [label="REML Estimation\nlmer(response ~ fixed + (1|random), data, REML=TRUE)\nPackage: lme4", fillcolor="#FFFFCC"];
+  D4 [label="Kenward-Roger or Satterthwaite F-tests\nlmerTest::anova(lmer_model)\nPackage: lmerTest", fillcolor="#FFFFCC"];
+  D5 [label="Profile Likelihood\nconfint(lmer_model)\nor Bootstrapping with bootMer()\nPackage: lme4", fillcolor="#FFFFCC"];
+
+  A -> B;
+  B -> C [label="Fixed"];
+  B -> D [label="Random or Mixed"];
+  C -> C1 [label="Yes"];
+  C -> C2 [label="No"];
+  D -> D1 [label="Yes"];
+  D -> D2 [label="No"];
+  D2 -> D3 [label="Variance Component\nEstimation"];
+  D2 -> D4 [label="Hypothesis Testing\non Fixed Effects"];
+  D2 -> D5 [label="Confidence Interval\nfor Variance Components"];
+}
+```
+
+## Explanation of the Flowcharts
+
+The flowcharts guide the selection of ANOVA methods based on three key decision points:
+
+1. **Model Type**:
+   - **Fixed Effects**: Factors with specific, repeatable levels (e.g., treatment types). Focus on comparing means.
+   - **Random or Mixed Effects**: Random effects represent a sample from a population (e.g., subjects, blocks), and mixed models combine fixed and random effects. Focus includes variance component estimation.
+
+2. **Design Type**:
+   - **Balanced**: Equal sample sizes across all groups (e.g., same number of replicates per treatment).
+   - **Unbalanced**: Unequal sample sizes, common in observational studies or with missing data.
+
+3. **Analysis Goal (for Unbalanced Random/Mixed Models)**:
+   - **Variance Component Estimation**: Estimating variances of random effects (e.g., $\sigma_a^2$).
+   - **Hypothesis Testing on Fixed Effects**: Testing significance of fixed effects in mixed models.
+   - **Confidence Intervals for Variance Components**: Quantifying uncertainty in variance estimates.
+
+## Flowchart Logic
+
+- **Fixed Effects Models**:
+  - **Balanced**: Use `aov(response ~ factor, data)` from the `stats` package for classical ANOVA. The `Error()` term can be included for blocking or randomization structures.
+  - **Unbalanced**: Use `lm(response ~ factor, data)` with `car::Anova(lm_object, type="III")` to handle unequal sample sizes using Type III sums of squares, which are robust to unbalanced designs.
+- **Random or Mixed Effects Models**:
+  - **Balanced**:
+    - Use `aov(response ~ factor + Error(random_factor), data)` to specify random effects strata.
+    - Estimate variance components manually using Expected Mean Squares (EMS), e.g., $\hat{\sigma}_a^2 = \frac{\text{MS}_A - \text{MS}_\text{Error}}{n}$.
+  - **Unbalanced**:
+    - **Variance Component Estimation**: Use `lmer(response ~ fixed + (1|random), data, REML=TRUE)` from `lme4` for REML estimation, which is less biased than maximum likelihood (ML).
+    - **Hypothesis Testing on Fixed Effects**: Use `lmerTest::anova(lmer_model)` to apply Kenward-Roger or Satterthwaite approximations for F-tests, accounting for unbalanced data.
+    - **Confidence Intervals for Variance Components**: Use `confint(lmer_model)` for profile likelihood intervals or `bootMer()` for bootstrapping, both from `lme4`.
+
+## R Packages
+
+- **`stats`**: Built-in R package for `aov()` and `lm()`, ideal for balanced designs and simple linear models.
+- **`car`**: Provides `Anova()` for Type III sums of squares in unbalanced fixed effects models.
+- **`lme4`**: Preferred for mixed effects models, supporting unbalanced designs, random slopes, and REML estimation.
+- **`lmerTest`**: Extends `lme4` with Kenward-Roger and Satterthwaite F-tests for hypothesis testing.
+- **`nlme`**: Alternative to `lme4` for complex correlation structures or variance functions.
+
+## Summary Table
+
+| Model Type           | Balanced                          | Unbalanced                       |
+| :------------------- | :-------------------------------- | :------------------------------- |
+| Fixed Effects        | `aov()`, `anova()`                | `lm()`, `car::Anova(type="III")` |
+| Random/Mixed Effects | `aov() + EMS`, manual MS formulas | `lmer()` with REML               |
+
+

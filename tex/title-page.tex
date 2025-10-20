@@ -1,0 +1,170 @@
+% ==========================
+% Title Page Template
+% ==========================
+% This template creates a professional title page that works with header-fancy-logo.tex
+% Usage: Include this file in your document and call \maketitlepage{Title}{Subtitle}{Author}{Date}
+
+% Define the title page command
+\newcommand{\maketitlepage}[4]{%
+  \thispagestyle{plain}  % Use plain style for title page (no header/footer)
+  
+  % Clear page and set up spacing
+  \clearpage
+  \vspace*{2cm}  % Top margin
+  
+  % Logo section (centered, larger than header)
+  \ifshowlogo
+    \ifx\resolvedlogopath\empty
+      % No logo found - skip this section
+    \else
+      \begin{center}
+        \vspace{1cm}
+        \includegraphics[height=2cm]{\resolvedlogopath}
+        \vspace{1.5cm}
+      \end{center}
+    \fi
+  \fi
+  
+  % Main title (large, bold, centered)
+  \begin{center}
+    \vspace{2cm}
+    {\Huge \textbf{#1}}
+    \vspace{1cm}
+    
+    % Subtitle (if provided)
+    \ifx#2\empty
+      % No subtitle
+    \else
+      {\Large \textit{#2}}
+      \vspace{1.5cm}
+    \fi
+    
+    % Author section
+    {\Large #3}
+    \vspace{2cm}
+    
+    % Date
+    {\large #4}
+    \vspace{2cm}
+    
+    % Course information
+    {\large \coursecode}
+    \vspace{0.5cm}
+    
+    {\large \coursesite}
+  \end{center}
+  
+  % Bottom spacing
+  \vfill
+  
+  % Optional: Add a decorative line
+  \begin{center}
+    \rule{0.4\textwidth}{0.4pt}
+  \end{center}
+  
+  \vspace{1cm}
+  
+  % Force new page
+  \newpage
+}
+
+% Alternative: Simple title page without logo
+\newcommand{\maketitlesimple}[4]{%
+  \thispagestyle{plain}
+  
+  \clearpage
+  \vspace*{3cm}
+  
+  \begin{center}
+    {\Huge \textbf{#1}}
+    \vspace{1.5cm}
+    
+    \ifx#2\empty
+      % No subtitle
+    \else
+      {\Large \textit{#2}}
+      \vspace{2cm}
+    \fi
+    
+    {\Large #3}
+    \vspace{2cm}
+    
+    {\large #4}
+    \vspace{2.5cm}
+    
+    {\large \coursecode}
+    \vspace{0.5cm}
+    
+    {\large \coursesite}
+  \end{center}
+  
+  \vfill
+  
+  \begin{center}
+    \rule{0.4\textwidth}{0.4pt}
+  \end{center}
+  
+  \vspace{1cm}
+  
+  \newpage
+}
+
+% Course-specific title page (uses course branding)
+\newcommand{\makecoursetitle}[4]{%
+  \thispagestyle{plain}
+  
+  \clearpage
+  \vspace*{2cm}
+  
+  % Course header
+  \begin{center}
+    {\Large \textsc{\coursecode}}
+    \vspace{0.5cm}
+    
+    {\large \textcolor{Accent}{\textbf{Applied Regression Analysis}}}
+    \vspace{1.5cm}
+  \end{center}
+  
+  % Logo (if available)
+  \ifshowlogo
+    \ifx\resolvedlogopath\empty
+      % No logo
+    \else
+      \begin{center}
+        \includegraphics[height=2.5cm]{\resolvedlogopath}
+        \vspace{2cm}
+      \end{center}
+    \fi
+  \fi
+  
+  % Main title
+  \begin{center}
+    {\Huge \textbf{#1}}
+    \vspace{1.5cm}
+    
+    \ifx#2\empty
+      % No subtitle
+    \else
+      {\Large \textit{#2}}
+      \vspace{2cm}
+    \fi
+    
+    {\Large #3}
+    \vspace{2.5cm}
+    
+    {\large #4}
+    \vspace{2cm}
+    
+    {\large \coursesite}
+  \end{center}
+  
+  \vfill
+  
+  \begin{center}
+    \textcolor{Accent}{\rule{0.5\textwidth}{0.6pt}}
+  \end{center}
+  
+  \vspace{1cm}
+  
+  \newpage
+}

@@ -1,0 +1,59 @@
+---
+pagetitle: "Course Content"
+---
+<!-- # Course Content - STAT 440/540
+
+This page organizes the key course materials, including lecture notes, assignments, supplemental readings, and important resources.  
+
+## Course Syllabus
+
+The course syllabus contains **all essential details** about the course structure, policies, assignments, and exam dates.  
+
+- 📄 [Download Full Course Syllabus (PDF)](https://Data-Wise.github.io/regression/syllabus/syllabus-final.pdf) 
+- Important: **You must read the syllabus carefully**, as it contains critical information not available elsewhere.  
+
+## Lecture Notes
+
+Lecture notes and slides will be posted on the **Course GitHub Page** in **HTML format**.  
+
+- 📚 [Access Lecture Notes](https://Data-Wise.github.io/regression/syllabus/lectures)  
+  - _Note: GitHub Pages may cache content. Refresh your browser if the notes appear outdated._  
+    - To refresh, use:  
+      - **Ctrl + Shift + R** (Windows/Linux)  
+      - **Cmd + Shift + R** (Mac)  
+
+## Course Schedule
+
+The course schedule provides a week-by-week breakdown of topics, reading assignments, and due dates.  
+
+- 📅 [View Course Schedule](https://Data-Wise.github.io/regression/syllabus/schedule)  
+
+
+## Assignments
+
+Assignments will be posted on Canvas as well as on the course website on the [Assignments](home_assignments.qmd) page. All the assignments must be submitted via Canvas. All assignments require the use of the **Quarto template** provided.  
+
+- 🔗 [Quarto Template](https://github.com/course-page-url/template)  
+
+## Supplemental Readings
+
+Supplemental readings will be provided as needed. Public domain readings will be posted on the [Contents](home_contents.qmd) page.  
+
+- 🔗 [Access Supplemental Readings on Canvas](https://canvasinfo.unm.edu/readings)  
+
+_Note: Some readings may not be shared due to copyright restrictions._  
+
+## Software Tools and Resources
+
+To complete assignments and analyses, you will need access to R and related tools.  
+
+- **R Installation:** [Download R](https://cran.r-project.org/)  
+- **RStudio IDE:** [Download RStudio](https://www.rstudio.com/products/rstudio/download/)  
+- **VS Code IDE:** [Download VS Code](https://code.visualstudio.com/)  
+
+### Additional Resources 
+
+- Quarto Documentation: [Learn Quarto](https://quarto.org/docs/)  
+- R Tutorials: [R Basics for Beginners](https://r4ds.had.co.nz/)  
+
+# R Code and Data Files from the Textbook -->

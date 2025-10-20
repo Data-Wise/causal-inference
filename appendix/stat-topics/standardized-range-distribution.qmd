@@ -1,0 +1,211 @@
+---
+title: "Tukey's Standardized Range Distribution"
+---
+
+
+Below is a conceptual overview and step-by-step tutorial on the Studentized Range distribution. This distribution arises frequently in multiple comparisons procedures in statistics, particularly in Tukey's Honestly Significant Difference (HSD) test. We'll cover the definition, context, properties, and practical computation of the Studentized Range distribution.
+
+## 1. What Is the Studentized Range Distribution?
+
+The **Studentized Range distribution** (often denoted $q$) describes the distribution of the range of a sample (i.e., the difference between the sample's maximum and minimum) standardized by the sample's estimated standard deviation.
+
+Formally, suppose we have:
+
+- A sample of $a$ observations, all from the same normal population with unknown variance $\sigma^2$.
+- An independent estimate of the variance based on $df_\text{Error}$ (sometimes denoted $df$) degrees of freedom.
+
+Define:
+
+$$
+\text{Range} = \max(X_1, \dots, X_k) - \min(X_1, \dots, X_k).
+$$
+
+Then the statistic
+
+$$
+q = \frac{\max(X_1, \dots, X_k) - \min(X_1, \dots, X_k)}{s},
+$$
+
+where $s$ is the estimated standard deviation (based on $df_\text{Error}$ degrees of freedom), follows a Studentized Range distribution with parameters $a$ (the number of means or groups being compared) and $df_\text{Error}$ (degrees of freedom).
+
+### Why "Studentized"?
+
+- "Studentized" means it has been scaled by an estimate of the standard deviation—analogous to how a $t$-distribution arises by dividing a (normal) mean difference by an estimated standard error.
+- The Studentized Range is a generalization of the $t$-distribution for comparing more than two means.
+
+## 2. Context: Tukey's HSD Test
+
+The most common use case for the Studentized Range distribution is in **Tukey's Honestly Significant Difference (HSD)** procedure, which is a multiple-comparison test for determining which means in a set of group means differ significantly:
+
+1. Start with an ANOVA for $a$ groups (each with sample size $n_i$), total number of degrees of freedom in error $df_\text{Error} = N - a$ (if each group has the same sample size $n$, then $df_\text{Error} = k(n - 1)$).
+2. After finding that the overall ANOVA is significant, we want to compare each pair of group means.
+3. The test statistic for comparing any two group means is
+
+$$
+q = \frac{\bar{X}_i - \bar{X}_j}{\sqrt{\frac{MSE}{n}}}
+$$
+
+where $MSE$ is the mean square error from the ANOVA, and $n$ is the per-group sample size (if balanced).
+
+4. We compare $q$ to critical values from the Studentized Range distribution with parameters $a$ and $df_\text{Error}$.
+
+Hence, the Studentized Range $q$ helps control the family-wise error rate across multiple pairwise comparisons.
+
+## 3. Defining the Distribution More Rigorously
+
+### 3.1 PDF or CDF Definitions
+
+The probability density function (PDF) and cumulative distribution function (CDF) of the Studentized Range are not as simple to express in closed form as, say, the normal or $t$-distribution. They involve integrals of the joint distribution of order statistics of normal variates.
+
+#### A simplified conceptual approach
+
+1. Let $Z_1, Z_2, \dots, Z_k$ be i.i.d. standard normal.
+2. Let $\bar{Z}$ be their mean, and let $S^2 = \sum_{i=1}^a (Z_i - \bar{Z})^2$ be an estimate of the variance (but note carefully how the degrees of freedom tie in).
+3. The difference $\max(Z) - \min(Z)$ is the "range" in the numerator.
+4. Scale that range by $\sqrt{S^2 / df_\text{Error}}$ to get $q$.
+
+This results in the Studentized Range distribution parameters $a$ (number of sample points) and $df_\text{Error}$ (degrees of freedom).
+
+In practice, **tables** (or software functions) for $q$ are used to find critical values rather than dealing with the PDF or CDF directly.
+
+## 4. Critical Values and Tables
+
+When you see references to $q_{\alpha, k, df_\text{Error}}$, it means:
+
+- $\alpha$ is the desired significance level (or tail probability),
+- $a$ is the number of groups,
+- $df_\text{Error}$ is the error degrees of freedom.
+
+For example, if you see $q_{0.05, 4, 20}$, it's the critical value such that
+
+$$
+P(Q \geq q_{0.05, 4, 20}) = 0.05
+$$
+
+where $Q \sim q$-distribution with parameters $a=4$, $df_\text{Error}=20$.
+
+These tables are typically used in Tukey's HSD test. Statistical software (R, Python, SAS, SPSS, etc.) also can provide these critical values.
+
+## 5. Properties and Uses
+
+1. **Multiple Comparisons Adjustments**
+   - Tukey's HSD is probably the best-known method leveraging the Studentized Range. It maintains the familywise error rate at a specified $\alpha$ for all pairwise comparisons.
+
+2. **Relationship to Other Distributions**
+   - For $k = 2$, the Studentized Range distribution is *identical* to the $t$-distribution, because the "range" between exactly two points is just their difference.
+   - When $k > 2$, the distribution is distinct; the critical value for a given $\alpha$ will be larger than the corresponding $t$-value to account for multiple comparisons.
+
+3. **Conservative Bound in Some Cases**
+   - The distribution is specifically tailored for pairwise range-based comparisons. In some cases (especially when group sizes are unequal or for non-pairwise contrasts), the distribution-based approach might be more conservative or only approximately correct. Adjustments exist for unbalanced designs.
+
+
+
+## 6. Practical Computation
+
+These days, manual table lookup is less common. Statistical software typically has built-in functions for either:
+
+- Generating quantiles (critical values),
+- Computing p-values for an observed Studentized Range statistic,
+- Directly implementing Tukey's HSD test.
+
+### 6.1 In R
+
+- **qtukey()** gives the quantiles of the Studentized Range distribution (critical values).
+- **ptukey()** gives the cumulative distribution function (CDF).
+- Functions like `TukeyHSD()` automatically handle calculations after an `aov()`.
+
+### 6.2 In Python
+
+While there is not always a direct built-in in `scipy.stats` for the Studentized Range, there are packages like `statsmodels` that implement `TukeyHSD`. Alternatively, one might use tables or approximate expansions.
+
+### 6.3 In Other Software
+
+- **SAS** has `PROC GLM` with `MEANS` statement: `MEANS group / TUKEY;`
+- **SPSS** has Post Hoc tests with a Tukey option as well.
+
+## 7. Step-by-Step Example
+
+Let's run through a conceptual example for clarity.
+
+**Scenario**
+You have 4 groups (A, B, C, D), each with 10 observations, and you've performed a one-way ANOVA. The ANOVA F-test is significant. You decide to do Tukey's HSD to compare each pair of group means.
+
+4. **Obtain MSE and $df_\text{Error}$**
+   - From your ANOVA table, suppose $MSE = 2.5$.
+   - Degrees of freedom for error, $df_\text{Error} = N - a = 40 - 4 = 36$.
+
+5. **Compute Pairwise Mean Differences**
+   - Suppose the sample means are:
+
+$$
+\bar{X}_A = 12.8,\; \bar{X}_B = 14.5,\; \bar{X}_C = 13.2,\; \bar{X}_D = 15.3.
+$$
+
+   - Pairwise differences (absolute values):
+
+| Pair                    | Difference |
+| ----------------------- | ---------- |
+| $\bar{X}_A - \bar{X}_B$ | - 1.7      |
+| $\bar{X}_A - \bar{X}_D$ | - 2.5      |
+| $\bar{X}_B - \bar{X}_C$ | 1.3        |
+| $\bar{X}_B - \bar{X}_D$ | - 0.8      |
+| $\bar{X}_C - \bar{X}_D$ | - 2.1      |
+
+
+
+1. **Calculate Standard Error**
+   - With equal sample size $n = 10$, the standard error for the difference is
+
+$$
+SE = \sqrt{\frac{MSE}{n}} = \sqrt{\frac{2.5}{10}} = \sqrt{0.25} = 0.5.
+$$
+
+7. **Form the Tukey $q$-Statistic**
+   - For each pair, $q = \frac{\text{difference}}{SE}$.
+   - For instance, for $\bar{X}_A - \bar{X}_D = 2.5$:
+
+$$
+q = \frac{2.5}{0.5} = 5.0.
+$$
+
+8. **Compare to Critical Value**
+   - Look up (or compute via software) $q_{0.05, a=4, df_\text{Error}=36}$.
+   - Suppose you find that $q_{0.05, 4, 36} \approx 3.80$.
+   - Since $q = 5.0$ for the A–D comparison is greater than 3.80, the difference between groups A and D is statistically significant at $\alpha=0.05$.
+
+```{r}
+qtukey(0.95, 4, 36)
+```
+
+1. **Interpretation**
+   - You would interpret each pair's $q$-value by comparing to the Studentized Range critical value. Any pair with $q$ above the critical threshold is considered to have a significant difference in means.
+
+## 8. Key Takeaways
+
+10. **Range-Based Multiple Comparisons**
+   - The Studentized Range distribution is the distribution of the range (max - min) of $a$ normally distributed variables, scaled by an estimate of standard deviation with $df_\text{Error}$ degrees of freedom.
+
+11. **Connection to Tukey's HSD**
+   - It underpins Tukey's HSD, a widely used method for controlling familywise error when comparing multiple group means post-ANOVA.
+
+12. **Critical Value Lookup**
+   - Values $q_{\alpha, k, df_\text{Error}}$ can be found in standard statistical tables or via statistical software.
+   - For large $df_\text{Error}$, the distribution converges somewhat to a normal-based range, but always consult the exact distribution for accurate results.
+
+13. **Software Implementation**
+   - Because the PDF and CDF are complex integrals, usage typically relies on tables or built-in software routines (e.g., `qtukey()`, `TukeyHSD()`, etc.).
+
+14. **Degrees of Freedom**
+   - Always match the appropriate error degrees of freedom, typically from an ANOVA's residual or error term.
+
+## 9. Further Reading
+
+- **Hochberg, Y. and Tamhane, A. C.** (1987). *Multiple Comparison Procedures.* Wiley.
+- **Montgomery, D. C.** (2012). *Design and Analysis of Experiments.* Wiley.
+- **Kirk, R. E.** (2013). *Experimental Design: Procedures for the Behavioral Sciences.* SAGE.
+
+These sources go into more technical depth on the Studentized Range distribution, multiple comparisons, and the context of Tukey's HSD.
+
+### Final Note
+
+The Studentized Range distribution is essential whenever you deal with **range-based** statistics, especially in the context of comparing multiple means simultaneously. Its principal role in **Tukey's HSD** makes it a standard tool in the statistician's toolbox for post-ANOVA analyses, ensuring control of the familywise error rate in pairwise comparisons.

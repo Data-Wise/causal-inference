@@ -1,0 +1,499 @@
+---
+title: "Fundamental Concepts in Causal Inference"
+description: "Understanding the Basics of Association and Causation"
+---
+
+Welcome. Let's begin our exploration of the fundamental concepts that form the bedrock of causal inference. Before we can navigate the complexities of methods like IP weighting or g-estimation, we must have a rock-solid understanding of the basic epidemiological measures used to quantify associations and, under specific assumptions, causal effects.
+
+Think of these concepts as the essential vocabulary of our field. Mastering them will allow you to precisely state your causal question, understand the measures reported in the scientific literature, and correctly interpret the output of your own analyses. We will draw heavily from Chapters 1 and 17 of Hernán and Robins (HR) to build this foundation.
+
+Let's start with the most critical distinction of all.
+
+## The Core Distinction: Association vs. Causation
+
+👨‍🏫 **Intuitive Understanding:**
+
+At its heart, epidemiology is often concerned with figuring out if an **exposure** (like a medication, a lifestyle choice, or an environmental factor) causes an **outcome** (like a disease, recovery, or death).
+
+An **association** is simply an observed statistical relationship. We observe that people with the exposure are more or less likely to have the outcome than people without the exposure. For example, we might observe that individuals who carry a lighter in their pocket are more likely to develop lung cancer than those who do not. This is a real, observable association.
+
+A **causal effect**, however, is a much stronger claim. It means that the exposure *itself* influences the outcome. For the lighter example, we intuitively know the lighter doesn't cause cancer. The association exists because a third factor, **smoking**, is a common cause of both carrying a lighter and developing lung cancer.
+
+This simple example illustrates the classic adage: **"Association is not causation."**
+
+Our central task in this course is to determine the conditions under which an observed association can be interpreted as a causal effect. To do this, we need a formal language.
+
+### Mathematical Foundations
+
+The language we use is that of **potential outcomes** (or counterfactuals), as introduced in HR Chapter 1\[cite: 38\]. For an individual $i$, and a binary exposure $A$ (1=exposed, 0=unexposed), we define two potential outcomes:
+
+-   $Y_i^{a=1}$: The outcome for individual $i$ *if* they were exposed.
+-   $Y_i^{a=0}$: The outcome for individual $i$ *if* they were unexposed.
+
+**Causation** is about comparing these potential outcomes *for the same individuals*. A causal effect exists for an individual if $Y_i^{a=1} \neq Y_i^{a=0}$\[cite: 38\]. Since we can't observe both potential outcomes for the same person at the same time (this is the **fundamental problem of causal inference**), we focus on the **average causal effect (ATE)** in a population:
+
+$$
+\text{Average Causal Effect} \iff E[Y^{a=1}] \neq E[Y^{a=0}]
+$$
+
+**Association**, on the other hand, is about comparing observed outcomes in different groups of people\[cite: 96\].
+
+$$
+\text{Association} \iff E[Y|A=1] \neq E[Y|A=0]
+$$
+
+The crucial link between these two concepts is the assumption of **exchangeability**, which we will discuss extensively. For now, understand that if the exposed and unexposed groups are exchangeable (i.e., they are comparable in every way except for the exposure), then the association we measure will equal the causal effect we seek. An ideal randomized trial achieves this. Our job with observational data is to try to achieve it through careful study design and analysis.
+
+## Quantifying Association and Causal Effects
+
+Whether we are describing an association or a causal effect, we use the same set of epidemiological measures. The only difference is the notation and, most importantly, the assumptions that justify the interpretation.
+
+For the following, let's consider a binary outcome $Y$ (1=event, 0=no event), where the mean $E[Y]$ is simply the probability of the event, $\Prob(Y=1)$, which we often call the **risk**.
+
+### Risk Difference (RD)
+
+-   **Intuitive Understanding:** The RD tells us the **absolute difference** in risk between two groups. It answers the question: "How many more (or fewer) cases of the outcome are there in the exposed group compared to the unexposed group, out of every 100 people?" It's a useful measure for public health because it directly translates to the number of cases that could be prevented.
+-   **Mathematical Foundations:**
+    -   **Associational Risk Difference:** $RD_{Assoc} = \Prob(Y=1|A=1) - \Prob(Y=1|A=0)$ \[cite: 84\]
+    -   **Causal Risk Difference:** $RD_{Causal} = \Prob(Y^{a=1}=1) - \Prob(Y^{a=0}=1)$ \[cite: 57\]
+
+### Risk Ratio (RR)
+
+-   **Intuitive Understanding:** The RR, also called relative risk, tells us the **relative difference** in risk. It answers the question: "How many times more (or less) likely are exposed individuals to develop the outcome compared to unexposed individuals?" It's often used to measure the strength of an association. An RR of 2 means the risk is "doubled," while an RR of 0.5 means the risk is "halved."
+-   **Mathematical Foundations:**
+    -   **Associational Risk Ratio:** $RR_{Assoc} = \frac{\Prob(Y=1|A=1)}{\Prob(Y=1|A=0)}$ \[cite: 84\]
+    -   **Causal Risk Ratio:** $RR_{Causal} = \frac{\Prob(Y^{a=1}=1)}{\Prob(Y^{a=0}=1)}$ \[cite: 57\]
+
+### Odds And the Odds Ratio (OR)
+
+-   **Intuitive Understanding:** This one is less intuitive. The **odds** of an event is the probability of it happening divided by the probability of it not happening. If the probability of an event is 0.75 (or 75%), the odds are $0.75 / (1-0.75) = 3$, often stated as "3 to 1." The **Odds Ratio (OR)** is simply the ratio of the odds in the exposed group to the odds in the unexposed group. A key property is that when the outcome is rare, the OR is a good approximation of the RR.
+-   **Mathematical Foundations:**
+    -   The odds of an event is $Odds = \frac{\Prob(Y=1)}{\Prob(Y=0)} = \frac{p}{1-p}$.
+    -   **Associational Odds Ratio:** $OR_{Assoc} = \frac{\Prob(Y=1|A=1) / \Prob(Y=0|A=1)}{\Prob(Y=1|A=0) / \Prob(Y=0|A=0)}$ \[cite: 85\]
+    -   **Causal Odds Ratio:** $OR_{Causal} = \frac{\Prob(Y^{a=1}=1) / \Prob(Y^{a=1}=0)}{\Prob(Y^{a=0}=1) / \Prob(Y^{a=0}=0)}$ \[cite: 57\]
+
+## Measures for Survival Analysis
+
+When our outcome is the **time until an event occurs** (e.g., death, disease diagnosis), we use slightly different measures, as detailed in HR Chapter 17\[cite: 892\].
+
+### Survival Probability and Risk (Cumulative Incidence)
+
+-   **Intuitive Understanding:** The **survival probability** at time $k$, denoted $S(k)$, is the probability of not having the event by that time (i.e., "surviving" past time $k$). A survival curve plots this probability over time. The **risk**, or **cumulative incidence**, at time $k$, denoted $F(k)$, is the opposite: the probability of having had the event by that time.
+-   **Mathematical Foundations:**
+    -   Let $T$ be the time to the event.
+    -   **Survival Probability:** $S(k) = \Prob(T \> k)$ \[cite: 893\]
+    -   **Risk / Cumulative Incidence:** $F(k) = \Prob(T \le k) = 1 - S(k)$ \[cite: 893\]
+
+### Hazard
+
+-   **Intuitive Understanding:** The **hazard** is the instantaneous potential for the event to occur at time $k$, given that an individual has survived up to that point. Think of it as the risk of the event happening *right now*, among those who are still at risk. Unlike cumulative risk which can only increase, the hazard can go up or down over time.
+-   **Mathematical Foundations:**
+    -   For discrete time (e.g., months), the hazard at month $k$ is the conditional probability: $h(k) = \Prob(T=k | T \> k-1)$\[cite: 895\].
+
+These measures form the basis for comparing groups in survival analysis, often through survival curves or hazard ratios.
+
+This concludes our foundational overview. The next crucial step is to understand the assumptions that allow us to move from measuring associations in our data to estimating these causal quantities.
+
+## Appendix: Comprehension and Application
+
+### Part A: Conceptual Questions
+
+1.  **The Adage:** Explain in your own words, using a simple public health example (other than lighters/smoking), why "association is not causation." Draw a simple causal diagram for your example.
+2.  **Choosing a Measure:** An intervention reduces the risk of a disease from 4 in 100 to 2 in 100. Another intervention reduces the risk from 40 in 100 to 30 in 100.
+    -   Calculate the Risk Ratio (RR) and Risk Difference (RD) for both interventions.
+    -   Which measure (RR or RD) better reflects the public health impact (number of cases prevented)? Which measure better reflects the strength of the effect relative to the baseline risk?
+3.  **Counterfactuals:** A patient took an aspirin and their headache went away. Why is it impossible to know for sure if the aspirin had a causal effect on that specific patient's headache? What is the specific term for this issue?
+
+### Part B: Computation from a Table
+
+Consider the following data from a hypothetical study of 2000 individuals on the effect of a new blood pressure drug ($A$) on the one-year risk of stroke ($Y$).
+
+|                     | Stroke ($Y=1$) | No Stroke ($Y=0$) | Total |
+|:--------------------|:---------------|:------------------|:------|
+| **Drug (**$A=1$)    | 80             | 920               | 1000  |
+| **No Drug (**$A=0$) | 50             | 950               | 1000  |
+
+: Effect of Blood Pressure Drug on Stroke Risk {#tbl:bp-drug-stroke}
+
+Calculate and interpret the following **associational** measures:
+
+1.  Risk of stroke in the treated and untreated groups.
+2.  Risk Difference (RD).
+3.  Risk Ratio (RR).
+4.  Odds Ratio (OR).
+
+### Part C: Application with R
+
+Let's simulate a small dataset to see how this works in R.
+
+**Scenario:** We will simulate a population where a treatment `A` has a true causal effect on a binary outcome `Y`. We'll start with a simple case: a randomized trial where there is no confounding.
+
+```{r}
+#| label: rct-simulation
+# Load the tidyverse package for data manipulation and plotting
+# If you don't have it, run: install.packages("tidyverse")
+library(tidyverse)
+
+# --- 1. Simulate a simple Randomized Controlled Trial (RCT) ---
+set.seed(579) # for reproducibility
+
+n <- 2000 # number of individuals in our study
+# In an RCT, treatment A is assigned randomly (e.g., with 50% probability)
+# It does not depend on any other characteristic of the individual.
+treatment <- rbinom(n, 1, 0.5)
+
+# The baseline risk of the outcome Y is 10%
+# The true causal effect of the treatment is to increase the probability by 15 percentage points
+# \Prob(Y=1 | A=0) = 0.10
+# \Prob(Y=1 | A=1) = 0.10 + 0.15 = 0.25
+# The true Causal Risk Ratio is 0.25 / 0.10 = 2.5
+# The true Causal Risk Difference is 0.25 - 0.10 = 0.15
+prob_y <- ifelse(treatment == 1, 0.25, 0.10)
+outcome <- rbinom(n, 1, prob_y)
+
+# Create a data frame (our dataset)
+rct_data <- data.frame(A = treatment, Y = outcome)
+
+# Let's inspect the first few rows
+head(rct_data)
+
+# --- 2. Calculate Associational Measures from the Data ---
+
+# We can create a 2x2 table to summarize the data
+rct_table <- table(rct_data$A, rct_data$Y)
+print("2x2 Table (Rows: Treatment A, Columns: Outcome Y)")
+print(rct_table)
+
+# Let's calculate the measures
+summary_stats <- rct_data %>%
+  group_by(A) %>%
+  summarise(
+    n = n(),
+    events = sum(Y),
+    risk = mean(Y) # For a binary 0/1 outcome, mean() is the same as risk
+  ) %>%
+  ungroup()
+
+print("Summary Statistics by Treatment Group:")
+print(summary_stats)
+
+# Extract risks for each group
+risk_treated <- summary_stats$risk[summary_stats$A == 1]
+risk_untreated <- summary_stats$risk[summary_stats$A == 0]
+
+# Calculate Associational RD and RR
+assoc_rd <- risk_treated - risk_untreated
+assoc_rr <- risk_treated / risk_untreated
+
+# Calculate Odds Ratio
+odds_treated <- risk_treated / (1 - risk_treated)
+odds_untreated <- risk_untreated / (1 - risk_untreated)
+assoc_or <- odds_treated / odds_untreated
+
+# --- 3. Interpretation ---
+
+cat("\n--- Results from our Simulated RCT ---\n")
+cat("Associational Risk Difference:", round(assoc_rd, 3), "\n")
+cat("Associational Risk Ratio:", round(assoc_rr, 3), "\n")
+cat("Associational Odds Ratio:", round(assoc_or, 3), "\n")
+```
+
+**R Syntax Explanation:**
+
+-   `set.seed(579)`: This function ensures that every time you run the code, the "random" numbers generated will be the same. This is crucial for making our results reproducible.
+-   `rbinom(n, 1, 0.5)`: This generates `n` random numbers from a binomial distribution. Here, it's like flipping a coin `n` times, where the probability of getting a 1 (heads) is 0.5. This simulates our random treatment assignment.
+-   `ifelse(test, yes, no)`: This is a conditional statement. It checks if `treatment == 1`. If true, it assigns the value `0.25`; if false, it assigns `0.10`. This is how we build the true causal effect into our simulation.
+-   `%>%`: This is the "pipe" operator from the `dplyr` package (part of `tidyverse`). It takes the output of the expression on its left and "pipes" it in as the first argument to the function on its right. It makes the code easier to read.
+-   `group_by(A)`: This tells R to perform the next set of operations separately for each group defined by the variable `A` (treated and untreated).
+-   `summarise(…)`: This creates a new data frame with summary statistics. `n()` counts the rows, `sum(Y)` counts the events, and `mean(Y)` calculates the risk.
+-   `cat(…)`: This function is like `print()`, but gives us more control over formatting the output text. The `\n` creates a new line.
+
+**Interpretation of R Output:**
+
+When you run this code, you will see that the associational measures you calculated from the simulated data are very close to the *true causal effects* we built into the simulation (Associational RD ≈ 0.15, Associational RR ≈ 2.5). This is because we simulated a perfect, infinitely large randomized trial. In this ideal scenario, where the treated and untreated groups are exchangeable by design, the association we measure is a consistent estimate of the causal effect.
+
+### Solutions
+
+\<details\>
+
+\<summary\>Click to view solutions\</summary\>
+
+#### Part A: Conceptual Questions
+
+1.  **Association vs. Causation:** Let's consider the observed association between drinking coffee ($A$) and heart disease ($Y$). Many studies show coffee drinkers have a higher risk. However, coffee drinkers are also more likely to be smokers ($L$). Smoking is a known cause of heart disease. Therefore, an association between coffee and heart disease may appear even if coffee has no effect, simply because smoking is a **common cause** of both. The association is real, but it is **confounded** by smoking.
+
+    -   **Causal Diagram:**
+
+2.  **Choosing a Measure:**
+
+    -   **Intervention 1:**
+        -   Risk in unexposed = 4/100 = 0.04. Risk in exposed = 2/100 = 0.02.
+        -   **RR:** 0.02 / 0.04 = 0.5 (The risk is halved).
+        -   **RD:** 0.02 - 0.04 = -0.02 (Prevents 2 cases per 100 people).
+    -   **Intervention 2:**
+        -   Risk in unexposed = 40/100 = 0.40. Risk in exposed = 30/100 = 0.30.
+        -   **RR:** 0.30 / 0.40 = 0.75 (A 25% risk reduction).
+        -   **RD:** 0.30 - 0.40 = -0.10 (Prevents 10 cases per 100 people).
+    -   **Interpretation:** The **Risk Difference (RD)** better reflects public health impact, as Intervention 2 prevents 5 times as many cases (10 vs. 2 per 100). The **Risk Ratio (RR)** better reflects the relative strength of the effect, as Intervention 1 cuts the risk in half, a stronger relative effect than the 25% reduction from Intervention 2.
+
+3.  **Counterfactuals:** It's impossible to know because we cannot observe the **counterfactual** outcome: what would have happened to *that specific patient* at *that specific time* if they had *not* taken the aspirin. Maybe the headache was going to resolve on its own at that exact moment. This is the **fundamental problem of causal inference**.
+
+#### Part B: Computation from a Table
+
+1.  **Risks:**
+
+    -   Risk in treated: $\Prob(Y=1|A=1) = 80 / 1000 = 0.08$ (or 8%).
+    -   Risk in untreated: $\Prob(Y=1|A=0) = 50 / 1000 = 0.05$ (or 5%).
+
+2.  **Risk Difference (RD):**
+
+    -   $RD = 0.08 - 0.05 = 0.03$.
+    -   *Interpretation:* There are 3 additional cases of stroke for every 100 people treated with the drug compared to those not treated.
+
+3.  **Risk Ratio (RR):**
+
+    -   $RR = 0.08 / 0.05 = 1.6$.
+    -   *Interpretation:* People who take the drug are 1.6 times as likely to have a stroke as people who do not.
+
+4.  **Odds Ratio (OR):**
+
+    -   Odds in treated: $(80/1000) / (920/1000) = 80/920 \approx 0.087$.
+    -   Odds in untreated: $(50/1000) / (950/1000) = 50/950 \approx 0.053$.
+    -   $OR = (80/920) / (50/950) = (80 \times 950) / (920 \times 50) \approx 1.65$.
+    -   *Interpretation:* The odds of having a stroke are 65% higher in the treated group compared to the untreated group. (Note that because the outcome is relatively rare, the OR of 1.65 is close to the RR of 1.6).
+
+\</details\>
+
+## Appendix: Comprehension and Application
+
+### Part A: Conceptual Questions 🧠
+
+1.  **The Adage:** Explain in your own words, using a simple public health example (other than lighters/smoking or coffee/heart disease), why "association is not causation." Draw a simple causal diagram for your example.
+
+2.  **Choosing a Measure:** An intervention reduces the risk of a disease from 4 in 100 to 2 in 100. Another intervention reduces the risk from 40 in 100 to 30 in 100.
+
+    -   Calculate the Risk Ratio (RR) and Risk Difference (RD) for both interventions.
+
+    -   Which measure (RR or RD) better reflects the public health impact (i.e., the number of cases prevented)? Which measure better reflects the strength of the effect relative to the baseline risk?
+
+3.  **Counterfactuals:** A patient took an aspirin and their headache went away. Why is it impossible to know for sure if the aspirin had a causal effect on that specific patient's headache? What is the specific term for this issue?
+
+------------------------------------------------------------------------
+
+### Part B: Computation from a Table 🔢
+
+Consider the following data from a hypothetical study of 2000 individuals on the effect of a new blood pressure drug (A) on the one-year risk of stroke (Y).
+
+|                   | Stroke (Y=1) | No Stroke (Y=0) | Total |
+|-------------------|--------------|-----------------|-------|
+| **Drug (A=1)**    | 80           | 920             | 1000  |
+| **No Drug (A=0)** | 50           | 950             | 1000  |
+
+: Effect of Blood Pressure Drug on Stroke Risk {#tbl:bp-drug-stroke}
+
+Calculate and interpret the following **associational** measures:
+
+1.  Risk of stroke in the treated and untreated groups.
+2.  Risk Difference (RD).
+3.  Risk Ratio (RR).
+4.  Odds Ratio (OR).
+
+------------------------------------------------------------------------
+
+### Part C: Application with R 💻
+
+Let's simulate a small dataset to see how this works in R.
+
+**Scenario:** We will simulate a population where a treatment `A` has a true causal effect on a binary outcome `Y`. We'll start with a simple case: a randomized trial where there is **no confounding**.
+
+```{r}
+# Load the tidyverse package for data manipulation and plotting
+# If you don't have it, run: install.packages("tidyverse")
+library(tidyverse)
+
+# --- 1. Simulate a simple Randomized Controlled Trial (RCT) ---
+set.seed(579) # for reproducibility
+
+n <- 2000 # number of individuals in our study
+# In an RCT, treatment A is assigned randomly (e.g., with 50% probability).
+# It does not depend on any other characteristic of the individual.
+treatment <- rbinom(n, 1, 0.5)
+
+# The baseline risk of the outcome Y is 10%
+# The true causal effect of the treatment is to increase the probability by 15 percentage points
+# \Prob(Y=1 | A=0) = 0.10
+# \Prob(Y=1 | A=1) = 0.10 + 0.15 = 0.25
+# The true Causal Risk Ratio is 0.25 / 0.10 = 2.5
+# The true Causal Risk Difference is 0.25 - 0.10 = 0.15
+prob_y <- ifelse(treatment == 1, 0.25, 0.10)
+outcome <- rbinom(n, 1, prob_y)
+
+# Create a data frame (our dataset)
+rct_data <- data.frame(A = treatment, Y = outcome)
+
+# Let's inspect the first few rows
+head(rct_data)
+
+# --- 2. Calculate Associational Measures from the Data ---
+
+# We can create a 2x2 table to summarize the data
+rct_table <- table(rct_data$A, rct_data$Y)
+print("2x2 Table (Rows: Treatment A, Columns: Outcome Y)")
+print(rct_table)
+
+# Let's calculate the measures
+summary_stats <- rct_data %>%
+  group_by(A) %>%
+  summarise(
+    n = n(),
+    events = sum(Y),
+    risk = mean(Y) # For a binary 0/1 outcome, mean() is the same as risk
+  ) %>%
+  ungroup()
+
+print("Summary Statistics by Treatment Group:")
+print(summary_stats)
+
+# Extract risks for each group
+risk_treated <- summary_stats$risk[summary_stats$A == 1]
+risk_untreated <- summary_stats$risk[summary_stats$A == 0]
+
+# Calculate Associational RD and RR
+assoc_rd <- risk_treated - risk_untreated
+assoc_rr <- risk_treated / risk_untreated
+
+# Calculate Odds Ratio
+odds_treated <- risk_treated / (1 - risk_treated)
+odds_untreated <- risk_untreated / (1 - risk_untreated)
+assoc_or <- odds_treated / odds_untreated
+
+# --- 3. Interpretation ---
+
+cat("\n--- Results from our Simulated RCT ---\n")
+cat("Associational Risk Difference:", round(assoc_rd, 3), "\n")
+cat("Associational Risk Ratio:", round(assoc_rr, 3), "\n")
+cat("Associational Odds Ratio:", round(assoc_or, 3), "\n")
+```
+
+**R Syntax Explanation:**
+
+-   `set.seed(579)`: This function ensures that every time you run the code, the "random" numbers generated will be the same. This is crucial for making our results reproducible.
+
+-   `rbinom(n, 1, 0.5)`: This generates `n` random numbers from a binomial distribution. Here, it's like flipping a coin `n` times, where the probability of getting a 1 (heads) is 0.5. This simulates our random treatment assignment.
+
+-   `ifelse(test, yes, no)`: This is a conditional statement. It checks if `treatment == 1`. If true, it assigns the value `0.25`; if false, it assigns `0.10`. This is how we build the true causal effect into our simulation.
+
+-   `%>%`: This is the "pipe" operator from the `dplyr` package (part of `tidyverse`). It takes the output of the expression on its left and "pipes" it in as the first argument to the function on its right. It makes the code easier to read.
+
+-   `group_by(A)`: This tells R to perform the next set of operations separately for each group defined by the variable `A` (treated and untreated).
+
+-   `summarise(…)`: This creates a new data frame with summary statistics. `n()` counts the rows, `sum(Y)`counts the events, and `mean(Y)` calculates the risk.
+
+-   `cat(…)`: This function is like `print()`, but gives us more control over formatting the output text. The `\n` creates a new line.
+
+**Interpretation of R Output:**
+
+When you run this code, you will see that the associational measures you calculated from the simulated data are very close to the *true causal effects* we built into the simulation (Associational RD ≈ 0.15, Associational RR ≈ 2.5). This is because we simulated a perfect, infinitely large randomized trial. In this ideal scenario, where the treated and untreated groups are exchangeable by design, the association we measure is a consistent estimate of the causal effect.
+
+### Solutions
+
+<details>
+
+<summary>Click to view solutions</summary>
+
+#### Part A: Conceptual Questions
+
+1.  **Association vs. Causation:** Let's consider the observed association between owning a yellow car (A) and being in a car accident (Y). Data might show that owners of yellow cars have a lower risk of accidents. However, it's unlikely the yellow paint itself provides a physical shield. A more plausible explanation is that people who choose to buy a yellow car (A) may be more cautious drivers in general (L). This personality trait of being cautious (L) is a **common cause** of both choosing a yellow car and having a lower risk of an accident. The association is real, but it is **confounded** by driver caution.
+
+    -   **Causal Diagram:** In this diagram, an unmeasured variable L (Cautious Personality) has an arrow pointing to A (Buys Yellow Car) and an arrow pointing to Y (Car Accident). There is no direct arrow from A to Y.
+
+2.  **Choosing a Measure:**
+
+    -   **Intervention 1:**
+
+        -   Risk in unexposed = 4/100 = 0.04. Risk in exposed = 2/100 = 0.02.
+
+        -   **RR:** 0.02 / 0.04 = **0.5** (The risk is halved).
+
+        -   **RD:** 0.02 - 0.04 = **-0.02** (Prevents 2 cases per 100 people).
+
+    -   **Intervention 2:**
+
+        -   Risk in unexposed = 40/100 = 0.40. Risk in exposed = 30/100 = 0.30.
+
+        -   **RR:** 0.30 / 0.40 = **0.75** (A 25% risk reduction).
+
+        -   **RD:** 0.30 - 0.40 = **-0.10** (Prevents 10 cases per 100 people).
+
+    -   **Interpretation:** The **Risk Difference (RD)** better reflects public health impact, as Intervention 2 prevents 5 times as many cases (10 vs. 2 per 100). The **Risk Ratio (RR)** better reflects the relative strength of the effect, as Intervention 1 cuts the risk in half, a stronger relative effect than the 25% reduction from Intervention 2.
+
+3.  **Counterfactuals:** It's impossible to know because we cannot observe the **counterfactual** outcome: what would have happened to *that specific patient* at *that specific time* if they had *not* taken the aspirin. Maybe the headache was going to resolve on its own at that exact moment. This is the **fundamental problem of causal inference**.
+
+#### Part B: Computation from a Table
+
+1.  **Risks:**
+
+    -   Risk in treated: Pr(Y=1∣A=1)=80/1000=0.08 (or 8%).
+
+    -   Risk in untreated: Pr(Y=1∣A=0)=50/1000=0.05 (or 5%).
+
+2.  **Risk Difference (RD):**
+
+    -   RD=0.08−0.05=0.03.
+
+    -   *Interpretation:* There are 3 additional cases of stroke for every 100 people treated with the drug compared to those not treated.
+
+3.  **Risk Ratio (RR):**
+
+    -   RR=0.08/0.05=1.6.
+
+    -   *Interpretation:* People who take the drug are 1.6 times as likely to have a stroke as people who do not.
+
+4.  **Odds Ratio (OR):**
+
+    -   Odds in treated: (80/1000)/(920/1000)=80/920approx0.087.
+
+    -   Odds in untreated: (50/1000)/(950/1000)=50/950approx0.053.
+
+    -   OR=(80/920)/(50/950)=(80times950)/(920times50)approx1.65.
+
+    -   *Interpretation:* The odds of having a stroke are 65% higher in the treated group compared to the untreated group. (Note that because the outcome is relatively rare, the OR of 1.65 is close to the RR of 1.6).
+
+#### Part C: R Code Output and Interpretation
+
+Here is the output from running the R code:
+
+```r
+> head(rct_data)
+  A Y
+1 1 0
+2 1 1
+3 0 0
+4 1 0
+5 1 0
+6 0 0
+
+> print("2x2 Table (Rows: Treatment A, Columns: Outcome Y)")
+[1] "2x2 Table (Rows: Treatment A, Columns: Outcome Y)"
+   
+      0   1
+  0 897 101
+  1 753 249
+
+> print("Summary Statistics by Treatment Group:")
+[1] "Summary Statistics by Treatment Group:"
+# A tibble: 2 × 4
+      A     n events  risk
+  <int> <int>  <dbl> <dbl>
+1     0   998    101 0.101
+2     1  1002    249 0.248
+
+--- Results from our Simulated RCT ---
+Associational Risk Difference: 0.147 
+Associational Risk Ratio: 2.454 
+Associational Odds Ratio: 2.89 
+```
+
+-   **Interpretation:** The calculated associational risk difference is 0.147, which is very close to the true causal RD of 0.15. The associational risk ratio is 2.454, which is very close to the true causal RR of 2.5. This demonstrates that in an ideal randomized setting without confounding, the association we can calculate directly from the data is a good estimate of the causal effect.
+
+</details>

@@ -1,0 +1,314 @@
+---
+title: "Tutorial for the stringr Package"
+date: '1/6/2025'
+date-modified: last-modified
+date-format: long
+---
+
+# Tutorial for the `stringr` Package
+
+## Introduction
+
+### Overview
+
+The `stringr` package, part of the `tidyverse`, simplifies string manipulation in R by providing a consistent and human-readable interface for common operations like pattern matching, extraction, replacement, and string metrics. It builds on the base R string functions but offers better integration with modern workflows and tools.
+
+Key functions include:
+
+- **Basic Manipulation**: `str_c()`, `str_length()`, `str_trim()`, `str_pad()`.
+- **Pattern Matching**: `str_detect()`, `str_extract()`, `str_match()`.
+- **Substitution**: `str_replace()`, `str_replace_all()`.
+- **Splitting and Joining**: `str_split()`, `str_flatten()`.
+- **Other Utilities**: `str_to_upper()`, `str_to_title()`, `str_sort()`.
+
+### Use Cases
+
+- Cleaning and formatting text data for analysis.
+- Extracting structured information from unstructured text.
+- Detecting and replacing patterns in strings.
+- Comparing and sorting textual data.
+
+### Benefits
+
+- Consistent and simple syntax.
+- Handles regular expressions for powerful pattern matching.
+- Fully vectorized for efficient processing of large datasets.
+- Easily integrates with other `tidyverse` tools.
+
+---
+
+## Getting Started
+
+### Loading the Package
+
+Ensure `stringr` is loaded using the `pacman` package:
+
+```{r}
+pacman::p_load(stringr)
+```
+
+### Basic Usage
+
+A simple example of string concatenation using `str_c()`:
+
+```{r}
+# Concatenate strings
+str_c("Hello", "World", sep = " ")
+```
+
+This outputs "Hello World", showcasing the basic functionality of combining strings.
+
+## Key Functions and Features
+
+### `str_c()`
+
+#### Description
+
+Combines strings into a single string or vector of strings.
+
+#### Syntax
+
+```r
+str_c(..., sep = "", collapse = NULL)
+```
+
+- `…`: Strings to combine.
+- `sep`: Separator between strings.
+- `collapse`: Collapses output into a single string.
+
+#### Example
+
+```{r}
+# Combine names with separators
+names <- c("John", "Jane", "Doe")
+str_c(names, collapse = ", ")
+```
+
+### `str_length()`
+
+#### Description
+
+Returns the number of characters in each string.
+
+#### Syntax
+
+```r
+str_length(string)
+```
+
+#### Example
+
+```{r}
+# Get string lengths
+strings <- c("apple", "banana", "cherry")
+str_length(strings)
+```
+
+### `str_detect()`
+
+#### Description
+
+Detects if a pattern exists in a string.
+
+#### Syntax
+
+```r
+str_detect(string, pattern)
+```
+
+#### Example
+
+```{r}
+# Detect strings containing "an"
+strings <- c("apple", "banana", "cherry")
+str_detect(strings, "an")
+```
+
+### `str_extract()`
+
+#### Description
+
+Extracts the first match of a pattern from a string.
+
+#### Syntax
+
+```r
+str_extract(string, pattern)
+```
+
+#### Example
+
+```{r}
+# Extract numbers from strings
+strings <- c("Item 1", "Price 20", "Count 100")
+str_extract(strings, "\\d+")
+```
+
+### `str_replace_all()`
+
+#### Description
+
+Replaces all occurrences of a pattern in a string.
+
+#### Syntax
+
+```r
+str_replace_all(string, pattern, replacement)
+```
+
+#### Example
+
+```{r}
+# Replace spaces with underscores
+strings <- c("apple pie", "banana split", "cherry tart")
+str_replace_all(strings, " ", "_")
+```
+
+## In-Depth Examples
+
+### Title: Extracting Phone Numbers from Text
+
+#### Objective
+
+Identify and extract phone numbers from text data.
+
+#### Steps
+
+1. **Prepare data**:
+
+```{r}
+text <- c("Call me at 555-123-4567", "My number is 987-654-3210", "No phone here")
+```
+
+2. **Define a regex pattern**:
+
+```{r}
+pattern <- "\\d{3}-\\d{3}-\\d{4}"
+```
+
+3. **Extract phone numbers**:
+
+```{r}
+phone_numbers <- str_extract(text, pattern)
+phone_numbers
+```
+
+4. **Output interpretation**: Non-matching strings return `NA`.
+
+### Title: Detecting Email Addresses
+
+#### Objective
+
+Check if a dataset contains email addresses.
+
+#### Steps
+
+1. **Input data**:
+
+```{r}
+strings <- c("Contact: john.doe@example.com", "Visit us", "Email: support@site.org")
+```
+
+2. **Detect emails**:
+
+```{r}
+email_pattern <- "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+email_detected <- str_detect(strings, email_pattern)
+email_detected
+```
+
+### Title: Splitting Strings into Words
+
+#### Objective
+
+Split sentences into individual words.
+
+#### Steps
+
+1. **Define sentences**:
+
+```{r}
+sentences <- c("This is an example", "R is great for text")
+```
+
+2. **Split into words**:
+
+```{r}
+words <- str_split(sentences, " ")
+words
+```
+
+3. **Visualize results**:
+
+```{r}
+str_flatten(words[[1]], ", ")
+```
+
+## Advanced Features
+
+### Customization
+
+Use additional parameters for flexible pattern matching, such as `fixed()` for fixed strings or `regex()` for advanced options:
+
+```{r}
+# Case-insensitive matching
+str_detect(c("Apple", "banana"), regex("apple", ignore_case = TRUE))
+```
+
+### Integration with Other Packages
+
+Combine with `dplyr` to process text in data frames:
+
+```{r}
+library(dplyr)
+
+data <- tibble(text = c("One 1", "Two 2", "Three 3"))
+data |> mutate(numbers = str_extract(text, "\\d+"))
+```
+
+## Troubleshooting and FAQs
+
+### Common Issues
+
+1. **Regex not matching**: Ensure patterns are correctly escaped. Use `\\` for special characters like `\d`.
+2. **Unexpected results**: Verify input data type and length. `NA` values in input may propagate.
+
+### FAQs
+
+- **Can `stringr` handle non-ASCII text?** Yes, it supports UTF-8 encoded text.
+- **How do I extract multiple matches?** Use `str_extract_all()`.
+
+## Best Practices
+
+- Leverage vectorization for efficient processing of large datasets.
+- Use clear and descriptive regex patterns.
+- Combine with tidyverse tools for seamless workflows.
+
+## Conclusion
+
+### Summary
+
+The `stringr` package offers powerful and intuitive tools for string manipulation in R. Its consistent syntax and comprehensive feature set make it a go-to package for text processing tasks.
+
+### Next Steps
+
+- Explore advanced regex patterns.
+- Learn about `glue` for string interpolation.
+
+## References and Resources
+
+- [Official Documentation](https://stringr.tidyverse.org/)
+- [Regex Cheatsheet](https://www.rstudio.com/resources/cheatsheets/)
+- [R for Data Science: String Manipulation](https://r4ds.had.co.nz/strings.html)
+
+```{mermaid}
+%%| label: fig-mermaid
+%%| fig-cap: "Text Data Workflow"
+%%| echo: false
+graph TD
+    A[Raw Text Data] --> B[Pattern Matching]
+    B --> C[Extraction]
+    B --> D[Substitution]
+    C --> E[Cleaned Data]
+    D --> E
+```

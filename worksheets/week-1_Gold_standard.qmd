@@ -1,0 +1,133 @@
+---
+title: "Worksheet 1: Uncovering Confounding with Simpson's Paradox"
+---
+
+Hello class. This worksheet is designed to give you hands-on practice with the concepts we discussed in Lecture 1. The goal is not just to get the right answer, but to understand the process of thinking causally.
+
+## Background / Scenario
+
+A hospital has conducted a study comparing two treatments for kidney stones:
+
+- Treatment A: A new, advanced surgical procedure.
+    
+- Treatment B: The standard, less invasive treatment.
+
+The hospital has provided you with data on 400 patients who received one of the two treatments. The outcome of interest is whether the treatment was a success (i.e., the kidney stones were completely removed).
+
+Here is the raw data:
+
+|         | Treatment A (New) | Treatment B (Standard) | Total |
+| ------- | ----------------- | ---------------------- | ----- |
+| Success | 170               | 150                    | 320   |
+| Failure | 30                | 50                     | 80    |
+| Total   | 200               | 200                    | 400   |
+
+## Learning Objective
+
+By the end of this worksheet, you will be able to:
+
+1. Calculate and compare crude (overall) rates of success.
+    
+2. Identify a potential confounding variable from a problem description.
+    
+3. Perform a stratified analysis to calculate group-specific rates.
+    
+4. Explain how confounding can lead to Simpson's Paradox, where group-specific trends are reversed in the aggregate data.
+    
+5. Draw a simple Directed Acyclic Graph (DAG) to represent the relationships between variables.
+
+## Step-by-Step Scaffolding Tasks
+
+### Step 1: The Naive (Overall) Comparison
+
+First, let's look at the data from a purely associational perspective, ignoring any other factors.
+
+- Task 1a: Calculate the overall success rate for patients who received Treatment A.
+    
+    - _Guiding Question:_ What is the total number of patients who had a success with Treatment A? What is the total number of patients who received Treatment A?
+        
+    - _Calculation:_ `(Number of Successes for A) / (Total Number receiving A) = ?`
+        
+- Task 1b: Calculate the overall success rate for patients who received Treatment B.
+    
+    - _Calculation:_ `(Number of Successes for B) / (Total Number receiving B) = ?`
+        
+- Task 1c: Based _only_ on these overall rates, which treatment appears to be more effective?
+
+---
+
+### Step 2: Identifying a Potential Confounder
+
+In our lecture, we discussed that observational comparisons can be misleading. A key piece of information was left out of the table above: doctors tend to assign the more invasive Treatment A to patients with large kidney stones, while patients with small stones often receive the standard Treatment B. Stone size is also known to affect the difficulty of the treatment.
+
+- Task 2a: In this scenario, what is the third variable that might be related to _both_ the treatment assigned and the treatment's success? This is our potential confounder.
+    
+- Task 2b: Explain _why_ this variable could be a confounder.
+    
+    - _Guiding Question:_ How might stone size influence a doctor's choice of treatment? How might stone size _independently_ influence whether a treatment is successful?
+
+---
+
+### Step 3: The Stratified Analysis (Controlling for the Confounder)
+
+Now, let's re-examine the data, but this time we will "stratify" it by stone size. This is like looking at the data for small stones and large stones separately.
+
+Here is the complete data, broken down by stone size:
+
+Group 1: Patients with Small Stones
+
+|         | Treatment A | Treatment B |
+| :------ | :---------: | :---------: |
+| Success |     81      |     135     |
+| Failure |      9      |     15      |
+| Total   |     90      |     150     |
+
+Group 2: Patients with Large Stones
+
+|         | Treatment A | Treatment B |
+| :------ | :---------: | :---------: |
+| Success |     89      |     15      |
+| Failure |     21      |     35      |
+| Total   |     110     |     50      |
+
+- Task 3a: Calculate the success rate for each treatment only for patients with small stones.
+    
+    - Success Rate for A (Small Stones): `? / ? = ?`
+        
+    - Success Rate for B (Small Stones): `? / ? = ?`
+        
+    - Which treatment is better for this group?
+        
+- Task 3b: Calculate the success rate for each treatment only for patients with large stones.
+    
+    - Success Rate for A (Large Stones): `? / ? = ?`
+        
+    - Success Rate for B (Large Stones): `? / ? = ?`
+        
+    - Which treatment is better for this group?
+
+### Step 4: Visualizing the Causal Structure (DAG)
+
+Let's draw a map of our causal assumptions.
+
+- Task 4: Create a Directed Acyclic Graph (DAG) with three nodes: Treatment Choice, Stone Size, and Success. Draw arrows to represent the causal relationships you uncovered in the steps above.
+    
+    - _Guiding Questions:_
+        
+        1. Does the treatment choice _cause_ a successful outcome? (This is the arrow we hope to understand). Draw it.
+            
+        2. Does the patient's stone size _cause_ the doctor to choose a particular treatment? Draw it.
+            
+        3. Does the stone size _cause_ a treatment to be more or less successful, regardless of which treatment is used? Draw it.
+
+## Reflection / Discussion Questions
+
+1. Compare your answer from Task 1c with your answers from Task 3a and Task 3b. What do you notice? This reversal is known as Simpson's Paradox.
+    
+2. Explain, in your own words, _why_ Treatment A looked worse in the overall analysis but better in both the small-stone and large-stone groups. (Hint: Think about which group of patients was disproportionately receiving Treatment A).
+    
+3. What does this exercise teach you about the danger of drawing causal conclusions from simple, overall comparisons of two groups in observational data?
+
+## Optional Challenge
+
+Imagine a different variable: Post-operative Care Unit. Suppose all patients who get Treatment A are sent to ICU Care, while patients getting Treatment B are sent to Standard Care. A researcher decides to "control" for this by stratifying the analysis by care unit. Why might this be a mistake? Think about the timing. Can the choice of care unit be a _common cause_ of both treatment and success, or is it something else? (This touches on the concept of a mediator, which we will discuss later in the course).

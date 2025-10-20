@@ -1,0 +1,1457 @@
+---
+title: "Week 1: What is a Causal Effect?"
+subtitle: "Framework: Units, Treatments, and Potential Outcomes"
+---
+
+## Overview
+
+This module introduces the fundamental framework for causal inference, establishing the core concepts that underpin all causal reasoning. We explore the potential outcomes framework (also known as the Rubin Causal Model), which provides a mathematically precise way to define causal effects. The framework centers on three key elements: units (the entities we study), treatments (the interventions we apply), and potential outcomes (what would happen under different treatment conditions).
+
+The potential outcomes framework, developed primarily by @rubin1974estimating and @holland1986statistics, offers a clear conceptual foundation for causal inference that bridges intuitive reasoning with rigorous statistical methods. This approach forms the backbone of modern causal inference methodology, as detailed in @hernan2020causalwhatif and @imbens2015causal.
+
+We will also examine the Stable Unit Treatment Value Assumption (SUTVA), which ensures that our causal comparisons are well-defined, and introduce the critical concept of assignment mechanisms that determine how units receive treatments.
+
+## Learning Objectives
+
+By the end of this module, students will be able to:
+
+1. **Define** the fundamental concepts of units, treatments, and potential outcomes with mathematical precision
+2. **Explain** why the Fundamental Problem of Causal Inference makes direct observation of causal effects impossible
+3. **Calculate** individual and population-level causal effects using potential outcomes notation
+4. **Apply** the Stable Unit Treatment Value Assumption (SUTVA) to assess when causal effects are well-defined
+5. **Distinguish** between different types of causal effects (simple differences, gain scores, percent changes)
+6. **Construct** causal inference problems using directed acyclic graphs (DAGs)
+7. **Evaluate** assignment mechanisms and their implications for causal inference
+
+## R Packages
+
+```{r}
+#| label: setup-packages
+#| message: false
+#| warning: false
+
+# Install and load required packages
+pacman::p_load(
+  tidyverse, # Data manipulation and visualization
+  dagitty, # DAG analysis
+  ggdag, # DAG visualization
+  knitr, # Document formatting
+  kableExtra, # Enhanced tables
+  patchwork, # Combining plots
+  fabricatr, # Data simulation
+  estimatr, # Robust estimation
+  tikzDevice, # LaTeX tikz graphics
+  DiagrammeR # Alternative DAG creation
+)
+
+# Set global options
+options(digits = 3)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center"
+)
+```
+
+## 1 Comprehensive Topic Explanation
+
+### 1.1 The Foundation: Units, Treatments, and Potential Outcomes
+
+The potential outcomes framework provides the mathematical foundation for all causal reasoning. This framework, pioneered by @neyman1923application and formalized by @rubin1974estimating, offers a precise way to define what we mean by "cause" and "effect."
+
+#### Units: The Building Blocks of Causal Analysis
+
+::: {.callout-important}
+
+## Definition: Unit
+
+A **unit** is the person, place, or thing upon which a treatment will operate, at a particular point in time.
+:::
+
+The concept of a unit is more nuanced than it first appears. Critically, the same physical entity at different times constitutes different units. This temporal specificity is essential because:
+
+1. **Temporal Independence**: A person's response to treatment may depend on their state at that specific moment
+2. **Avoiding Confounding**: Past treatments or experiences become part of the unit's characteristics
+3. **Clarity of Inference**: We can precisely specify what population our causal conclusions apply to
+
+For example, if we study the effect of a tutoring program on student performance, each student at the beginning of the academic year is a distinct unit from that same student at the end of the year.
+
+#### Treatments: Interventions Under Investigation
+
+::: {.callout-important}
+
+## Definition: Treatment
+
+A **treatment** is an intervention whose effects on some measurement of interest the investigator wishes to assess, typically compared to a control condition (no intervention).
+:::
+
+Treatments in causal inference are broader than medical interventions. They encompass any action, policy, or condition that can be assigned to units. Examples include:
+
+- Medical treatments (drug vs. placebo)
+- Educational interventions (new curriculum vs. standard)
+- Policy changes (minimum wage increase vs. status quo)
+- Environmental conditions (urban vs. rural residence)
+
+The key requirement is that treatments must be well-defined and, at least conceptually, assignable to units [@hernan2020whatif].
+
+#### Potential Outcomes: The Core of Causal Reasoning
+
+::: {.callout-important}
+
+## Definition: Potential Outcomes
+**Potential outcomes** are the values that would be observed for a unit's outcome of interest under each possible treatment condition.
+:::
+
+For unit $i$ and binary treatment $T \in \{0, 1\}$, we denote:
+
+- $Y_i(1)$: the potential outcome for unit $i$ under treatment
+- $Y_i(0)$: the potential outcome for unit $i$ under control
+
+This notation embeds a crucial counterfactual logic: for each unit, we consider what would happen under both treatment and control, even though we can observe only one of these outcomes in reality.
+
+### 1.2 Causal Effects: Comparisons of Potential Outcomes
+
+::: {.callout-important}
+
+## Definition: Causal Effect
+
+The **causal effect** of treatment versus control for unit $i$ is:
+
+$$
+\tau_i = Y_i(1) - Y_i(0)
+$$
+:::
+
+This definition captures our intuitive notion of causation: the effect is the difference between what would happen with treatment and what would happen without it, for the same unit, at the same time.
+
+### 1.3 The Fundamental Problem of Causal Inference
+
+::: {.callout-warning}
+
+## The Fundamental Problem
+
+For any unit, we can observe at most one potential outcome. If unit $i$ receives treatment ($T_i = 1$), we observe $Y_i(1)$ but not $Y_i(0)$, and vice versa.
+:::
+
+This fundamental problem, articulated by @holland1986statistics, means that individual causal effects $\tau_i = Y_i(1) - Y_i(0)$ cannot be directly observed. This impossibility drives the entire enterprise of causal inference methodology.
+
+### 1.4 Population-Level Causal Effects
+
+Since individual causal effects cannot be observed, we typically focus on population-level summaries:
+
+**Average Treatment Effect (ATE)**:
+
+$$
+\text{ATE} = E[Y_i(1) - Y_i(0)] = E[Y_i(1)] - E[Y_i(0)]
+$$
+
+**Average Treatment Effect on the Treated (ATT)**:
+
+$$
+\text{ATT} = E[Y_i(1) - Y_i(0) | T_i = 1]
+$$
+
+**Conditional Average Treatment Effects**:
+For covariate $X$:
+
+$$
+\text{CATE}(x) = E[Y_i(1) - Y_i(0) | X_i = x]
+$$
+
+### 1.5 The Stable Unit Treatment Value Assumption (SUTVA)
+
+::: {.callout-important}
+
+## SUTVA: Two Components
+1. **No Multiple Versions**: There is only one version of each treatment level
+2. **No Interference**: One unit's treatment assignment does not affect another unit's potential outcomes
+:::
+
+SUTVA, formalized by @rubin1990comment, ensures that potential outcomes are well-defined. Without SUTVA:
+
+- **Multiple Versions Problem**: If "aspirin" includes different doses or formulations, $Y_i(\text{aspirin})$ is ambiguous
+- **Interference Problem**: If my taking aspirin affects your headache, your potential outcomes depend on my treatment assignment
+
+Mathematically, SUTVA allows us to write:
+
+$$
+Y_i = Y_i(0) \cdot (1-T_i) + Y_i(1) \cdot T_i
+$$
+
+This equation, sometimes called the "switching equation," connects the observed outcome $Y_i$ to the potential outcomes.
+
+### 1.6 Assignment Mechanisms
+
+::: {.callout-important}
+
+## Definition: Assignment Mechanism
+
+The **assignment mechanism** is the process that determines which units receive treatment and which receive control.
+:::
+
+Assignment mechanisms can be:
+
+1. **Deterministic**: Assignment follows a fixed rule
+2. **Probabilistic**: Assignment involves randomness
+3. **Known**: We know the assignment rule
+4. **Unknown**: We must infer or assume the assignment rule
+
+The assignment mechanism is crucial because it determines what we can learn about causal effects from observed data [@imbens2015causal].
+
+## 2 Intuitive Clarifications of Challenging Ideas
+
+### 2.1 The Counterfactual Nature of Causation
+
+::: {.callout-tip}
+
+## Analogy: The Two-Path Journey
+
+Imagine you're standing at a fork in the road. The causal effect of taking the left path versus the right path is the difference between where you'd end up on each route. The fundamental problem is that you can only walk one path, but the causal effect requires knowing both destinations.
+:::
+
+This analogy helps students understand why causal inference is fundamentally about missing data—we're always missing the counterfactual outcome.
+
+### 2.2 Understanding SUTVA Through Violations
+
+**No Interference Violations**: 
+- **Social Media Example**: If I see an advertisement and tell you about the product, your outcome is affected by my treatment
+- **Vaccine Example**: If I get vaccinated, I provide indirect protection to you (herd immunity)
+
+**Multiple Versions Violations**:
+- **Education Example**: "Small class size" could mean 15 vs. 25 vs. 35 students—which comparison defines the effect?
+- **Exercise Example**: "Exercise" could be walking, running, weightlifting—each might have different effects
+
+### 2.3 Why Temporal Specification Matters for Units
+
+::: {.callout-example}
+
+## Time-Varying Units
+
+Consider studying the effect of coffee on productivity. "John Smith" on Monday morning (well-rested, motivated) is a different unit from "John Smith" on Friday afternoon (tired, distracted). Their responses to coffee might differ substantially.
+:::
+
+This perspective helps students understand why randomized experiments often focus on short time periods and why longitudinal causal inference requires special techniques.
+
+## 3 Simple, Hand-Calculation Numerical Example(s)
+
+### 3.1 Basic Potential Outcomes with Two Units
+
+::: {.callout-example}
+
+## Worked Example: Aspirin and Headache Relief
+
+Consider two people with headaches. We measure headache pain on a 0-100 scale (0 = no pain, 100 = severe pain).
+
+| Unit | Initial Pain (X) | Y(Aspirin) | Y(No Aspirin) | Causal Effect |
+|------|------------------|------------|---------------|---------------|
+| You  | 80              | 25         | 75            | 25 - 75 = -50 |
+| Me   | 60              | 30         | 55            | 30 - 55 = -25 |
+
+**Step-by-step calculation:**
+
+1. **Individual causal effects**:
+   - Your causal effect: $\tau_{\text{you}} = Y_{\text{you}}(\text{Asp}) - Y_{\text{you}}(\text{No Asp}) = 25 - 75 = -50$
+   - My causal effect: $\tau_{\text{me}} = Y_{\text{me}}(\text{Asp}) - Y_{\text{me}}(\text{No Asp}) = 30 - 55 = -25$
+
+2. **Average Treatment Effect**:
+
+$$
+\text{ATE} = \frac{1}{2}[(-50) + (-25)] = \frac{-75}{2} = -37.5
+$$
+
+3. **Interpretation**: On average, aspirin reduces headache pain by 37.5 points on the 0-100 scale.
+:::
+
+### 3.2 Gain Scores Example
+
+::: {.callout-example}
+## Worked Example: Gain Scores
+
+Same scenario, but now we're interested in pain reduction (gain scores):
+
+| Unit | Initial (X) | Pain Reduction with Aspirin | Pain Reduction without Aspirin | Causal Effect |
+|------|-------------|----------------------------|------------------------------|---------------|
+| You  | 80         | 80 - 25 = 55              | 80 - 75 = 5                  | 55 - 5 = 50   |
+| Me   | 60         | 60 - 30 = 30              | 60 - 55 = 5                  | 30 - 5 = 25   |
+
+**Key insight**: The causal effect on gain scores equals the causal effect on levels:
+- Your effect: $(X - Y(\text{Asp})) - (X - Y(\text{No Asp})) = Y(\text{No Asp}) - Y(\text{Asp}) = 75 - 25 = 50$
+- This equals the negative of the effect on pain levels: $-(-50) = 50$
+:::
+
+### 3.3 Percentage Change Example
+
+::: {.callout-example}
+## Worked Example: Fractional Reduction
+
+Define fractional pain reduction as $Y^* = 1 - \frac{Y}{\text{Initial Pain}}$:
+
+| Unit | Initial (X) | Y*(Aspirin) | Y*(No Aspirin) | Causal Effect |
+|------|-------------|-------------|----------------|---------------|
+| You  | 80         | 1 - 25/80 = 0.69 | 1 - 75/80 = 0.06 | 0.69 - 0.06 = 0.63 |
+| Me   | 60         | 1 - 30/60 = 0.50 | 1 - 55/60 = 0.08 | 0.50 - 0.08 = 0.42 |
+
+**Interpretation**: Aspirin increases your pain reduction rate by 63 percentage points and mine by 42 percentage points.
+:::
+
+## 4 R Code Examples & Interpretation
+
+### 4.1 Simulating Potential Outcomes
+
+```{r}
+#| label: simulate-potential-outcomes
+#| fig-cap: "Distribution of Individual Causal Effects"
+
+set.seed(12345)
+
+# Simulate Potential Outcomes for 1000 Units
+n <- 1000
+
+# Create Baseline Characteristics
+baseline_pain <- rnorm(n, mean = 70, sd = 15)
+baseline_pain <- pmax(0, pmin(100, baseline_pain)) # Constrain to 0-100
+
+# Simulate Potential Outcomes
+# Aspirin Effect Varies by Baseline Pain (those with More Pain Benefit more)
+aspirin_effect <- -20 - 0.3 * (baseline_pain - 70) + rnorm(n, 0, 10)
+
+# Potential Outcomes
+y_aspirin <- pmax(0, baseline_pain + aspirin_effect)
+y_no_aspirin <- pmax(0, baseline_pain + rnorm(n, -5, 8)) # Some natural recovery
+
+# Individual Causal Effects
+causal_effects <- y_aspirin - y_no_aspirin
+
+# Create Data Frame
+potential_outcomes_data <- tibble(
+  unit = 1:n,
+  baseline_pain = baseline_pain,
+  y_aspirin = y_aspirin,
+  y_no_aspirin = y_no_aspirin,
+  causal_effect = causal_effects
+)
+
+# Display First Few Rows
+head(potential_outcomes_data) %>%
+  kable(digits = 2, caption = "First 6 Units: Potential Outcomes") %>%
+  kable_styling()
+```
+
+```{r}
+#| label: plot-causal-effects
+#| fig-cap: "Distribution of Individual Causal Effects"
+
+# Plot Distribution of Causal Effects
+ggplot(potential_outcomes_data, aes(x = causal_effect)) +
+  geom_histogram(bins = 50, alpha = 0.7, fill = "steelblue") +
+  geom_vline(
+    xintercept = mean(causal_effects),
+    color = "red",
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  labs(
+    title = "Distribution of Individual Causal Effects",
+    subtitle = "Red line shows Average Treatment Effect",
+    x = "Individual Causal Effect (Y(Aspirin) - Y(No Aspirin))",
+    y = "Count"
+  ) +
+  theme_minimal()
+
+# Summary Statistics
+cat("Average Treatment Effect:", round(mean(causal_effects), 2), "\n")
+cat("Median Causal Effect:", round(median(causal_effects), 2), "\n")
+cat("SD of Causal Effects:", round(sd(causal_effects), 2), "\n")
+```
+
+**Interpretation**: The histogram shows the distribution of individual causal effects in our simulated population. The red dashed line indicates the Average Treatment Effect (ATE). Notice the heterogeneity—some individuals benefit much more from aspirin than others.
+
+### 4.2 Visualizing the Fundamental Problem
+
+```{r}
+#| label: fundamental-problem
+#| fig-cap: "The Fundamental Problem of Causal Inference"
+
+# Randomly Assign Treatment to Half the Units
+set.seed(67890)
+treatment_assignment <- sample(c(0, 1), n, replace = TRUE, prob = c(0.5, 0.5))
+
+# Create Observed Outcomes Based on Assignment
+observed_outcome <- ifelse(treatment_assignment == 1, y_aspirin, y_no_aspirin)
+
+# Create Visualization Data
+viz_data <- potential_outcomes_data %>%
+  mutate(
+    treatment = treatment_assignment,
+    observed_y = observed_outcome,
+    missing_y_aspirin = ifelse(treatment == 0, y_aspirin, NA),
+    missing_y_no_aspirin = ifelse(treatment == 1, y_no_aspirin, NA)
+  ) %>%
+  slice_head(n = 20) # Show only first 20 for clarity
+
+# Create the Visualization
+viz_data %>%
+  select(unit, treatment, y_aspirin, y_no_aspirin, observed_y) %>%
+  pivot_longer(
+    cols = c(y_aspirin, y_no_aspirin),
+    names_to = "potential_outcome",
+    values_to = "value"
+  ) %>%
+  mutate(
+    potential_outcome = case_when(
+      potential_outcome == "y_aspirin" ~ "Y(Aspirin)",
+      potential_outcome == "y_no_aspirin" ~ "Y(No Aspirin)"
+    ),
+    observed = case_when(
+      potential_outcome == "Y(Aspirin)" & treatment == 1 ~ "Observed",
+      potential_outcome == "Y(No Aspirin)" & treatment == 0 ~ "Observed",
+      TRUE ~ "Missing"
+    )
+  ) %>%
+  ggplot(aes(
+    x = factor(unit),
+    y = value,
+    color = observed,
+    shape = potential_outcome
+  )) +
+  geom_point(size = 3) +
+  geom_line(aes(group = unit), color = "gray", alpha = 0.5) +
+  scale_color_manual(values = c("Observed" = "black", "Missing" = "red")) +
+  scale_shape_manual(values = c("Y(Aspirin)" = 16, "Y(No Aspirin)" = 17)) +
+  labs(
+    title = "The Fundamental Problem of Causal Inference",
+    subtitle = "We observe only one potential outcome per unit",
+    x = "Unit",
+    y = "Pain Level",
+    color = "Status",
+    shape = "Potential Outcome"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+**Key Insight**: The red points represent the counterfactual outcomes we never observe. The gray lines connect each unit's potential outcomes—these individual causal effects are the differences we want to learn about but cannot directly observe.
+
+### 4.3 Creating DAGs for Causal Relationships
+
+```{r}
+#| label: basic-dag
+#| fig-cap: "Basic Treatment-Outcome DAG"
+
+# Create a Simple Treatment-outcome DAG
+dag1 <- dagify(
+  Y ~ T,
+  labels = c(
+    T = "Treatment\n(Aspirin)",
+    Y = "Outcome\n(Pain Level)"
+  )
+)
+
+# Plot the DAG
+ggdag(dag1) +
+  geom_dag_text() +
+  theme_dag_blank() +
+  labs(title = "Simple Treatment → Outcome Relationship")
+```
+
+```{r}
+#| label: confounded-dag
+#| fig-cap: "DAG with Confounding"
+
+# Create a More Complex DAG with Confounding
+dag2 <- dagify(
+  Y ~ T + X,
+  T ~ X,
+  labels = c(
+    T = "Treatment\n(Aspirin)",
+    Y = "Outcome\n(Pain Level)",
+    X = "Baseline Pain\n(Confounder)"
+  ),
+  exposure = "T",
+  outcome = "Y"
+)
+
+# Plot the Confounded DAG
+ggdag(dag2) +
+  geom_dag_text() +
+  theme_dag_blank() +
+  labs(title = "Treatment-Outcome with Confounding Variable")
+
+# Identify Adjustment Sets
+adjustmentSets(dag2)
+```
+
+**Interpretation**: The second DAG shows that baseline pain (X) affects both treatment assignment and outcome. This creates confounding—a non-causal path from T to Y through X. To identify the causal effect, we would need to adjust for X.
+
+### 4.4 Demonstrating SUTVA Violations
+
+```{r}
+#| label: sutva-violation
+#| fig-cap: "Interference Between Units"
+
+# Simulate Interference Scenario
+set.seed(11111)
+n_pairs <- 50
+interference_data <- tibble(
+  pair = rep(1:n_pairs, each = 2),
+  person = rep(c("A", "B"), n_pairs),
+  baseline_pain = rnorm(2 * n_pairs, 70, 15)
+)
+
+# Assign Treatment within Pairs
+interference_data <- interference_data %>%
+  group_by(pair) %>%
+  mutate(
+    # Random Assignment within Each Pair
+    treatment = sample(c(0, 1), 2, replace = FALSE),
+    partner_treatment = ifelse(person == "A", treatment[2], treatment[1])
+  ) %>%
+  ungroup()
+
+# Generate Potential Outcomes with Interference
+interference_data <- interference_data %>%
+  mutate(
+    # Own Treatment Effect
+    own_effect = ifelse(treatment == 1, -25, 0),
+    # Partner Treatment Effect (sharing Aspirin knowledge)
+    partner_effect = ifelse(partner_treatment == 1, -5, 0),
+    # Observed Outcome
+    observed_pain = baseline_pain +
+      own_effect +
+      partner_effect +
+      rnorm(2 * n_pairs, 0, 10)
+  )
+
+# Compare Estimates Ignoring vs. Accounting for Interference
+naive_ate <- interference_data %>%
+  group_by(treatment) %>%
+  summarise(mean_pain = mean(observed_pain)) %>%
+  summarise(ate = mean_pain[treatment == 0] - mean_pain[treatment == 1]) %>%
+  pull(ate)
+
+cat("Naive ATE estimate (ignoring interference):", round(naive_ate, 2), "\n")
+cat("True direct effect: 25 points\n")
+cat("Bias due to interference:", round(25 - naive_ate, 2), "points")
+```
+
+**Key Learning**: When SUTVA is violated through interference, our standard estimates may be biased. In this example, the naive estimate underestimates the true effect because treated individuals provide spillover benefits to their untreated partners.
+
+## 5 Hands-On R Lab
+
+### Lab Objectives
+
+By completing this lab, you will:
+1. Simulate potential outcomes under various scenarios
+2. Explore the relationship between individual and average causal effects
+3. Investigate violations of SUTVA
+4. Practice creating and interpreting DAGs
+5. Implement different assignment mechanisms
+
+### Reading Warm-up (Flipped Classroom Component)
+
+Before starting the lab exercises, review @hernan2020whatif Chapter 1, particularly:
+- Section 1.1 on individual causal effects
+- Section 1.3 on average causal effects
+- Section 1.4 on measures of causal effect
+
+Also skim @neal2020introduction Chapter 1 for alternative perspectives on the same concepts.
+
+### Lab Exercise 1: Exploring Heterogeneous Treatment Effects
+
+::: {.callout-question}
+## Your Task
+Simulate a scenario where treatment effects vary by baseline characteristics. Create a population where aspirin is more effective for people with higher baseline pain.
+:::
+
+```{r}
+#| label: lab1-skeleton
+#| eval: false
+
+# Lab 1: Your Code here
+set.seed(99999)
+n <- ___ # Choose sample size
+
+# Create Baseline Pain Levels
+baseline <- ___
+
+# Simulate Heterogeneous Treatment Effects
+# Hint: Make Effect Size Depend on Baseline Pain
+treatment_effect <- ___
+
+# Generate Potential Outcomes
+y_treated <- ___
+y_control <- ___
+
+# Calculate Individual Causal Effects
+individual_effects <- ___
+
+# Create Visualizations Comparing:
+# 1. Treatment Effects vs. Baseline Pain
+# 2. Distribution of Individual Effects
+# 3. ATE vs. Median Treatment Effect
+
+# Your Visualization Code here
+```
+
+::: {.callout-tip collapse="true"}
+## Solution to Lab 1
+
+```{r}
+#| label: lab1-solution
+
+set.seed(99999)
+n <- 500
+
+# Create Baseline Pain Levels
+baseline <- rgamma(n, shape = 2, rate = 0.03) # Right-skewed distribution
+
+# Simulate Heterogeneous Treatment Effects
+# Aspirin More effective for Higher Baseline Pain
+treatment_effect <- -10 - 0.4 * (baseline - 50) + rnorm(n, 0, 8)
+
+# Generate Potential Outcomes
+y_treated <- pmax(0, baseline + treatment_effect)
+y_control <- pmax(0, baseline + rnorm(n, -2, 5)) # Natural recovery
+
+# Calculate Individual Causal Effects
+individual_effects <- y_treated - y_control
+
+# Create Analysis Data
+lab1_data <- tibble(
+  baseline = baseline,
+  treatment_effect = individual_effects
+)
+
+# Visualization 1: Treatment Effects vs. Baseline
+p1 <- ggplot(lab1_data, aes(x = baseline, y = treatment_effect)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "loess", color = "red") +
+  labs(
+    title = "Treatment Effect Heterogeneity",
+    x = "Baseline Pain Level",
+    y = "Individual Treatment Effect"
+  ) +
+  theme_minimal()
+
+# Visualization 2: Distribution Comparison
+p2 <- ggplot(lab1_data, aes(x = treatment_effect)) +
+  geom_histogram(bins = 30, alpha = 0.7, fill = "lightblue") +
+  geom_vline(
+    aes(xintercept = mean(treatment_effect)),
+    color = "red",
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  geom_vline(
+    aes(xintercept = median(treatment_effect)),
+    color = "blue",
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  labs(
+    title = "Distribution of Individual Treatment Effects",
+    subtitle = "Red = Mean, Blue = Median",
+    x = "Individual Treatment Effect",
+    y = "Count"
+  ) +
+  theme_minimal()
+
+# Combine Plots
+p1 / p2
+
+# Summary Statistics
+cat("Average Treatment Effect:", round(mean(individual_effects), 2), "\n")
+cat("Median Treatment Effect:", round(median(individual_effects), 2), "\n")
+cat(
+  "Correlation with baseline:",
+  round(cor(baseline, individual_effects), 3),
+  "\n"
+)
+```
+
+**Key Insights**: 
+- Treatment effects are heterogeneous and correlated with baseline pain
+- The ATE summarizes but doesn't fully describe the distribution of individual effects
+- People with higher baseline pain benefit more from treatment
+:::
+:::
+
+### Lab Exercise 2: Assignment Mechanisms Matter
+
+::: {.callout-question}
+## Your Task
+Compare different assignment mechanisms and their implications for estimating causal effects. Implement:
+1. Complete randomization
+2. Systematic assignment (e.g., treat highest pain levels)
+3. Self-selection (people choose their own treatment)
+:::
+
+```{r}
+#| label: lab2-skeleton
+#| eval: false
+
+# Use the Potential Outcomes from Lab 1
+# Implement Three Different Assignment Mechanisms
+
+# 1. Complete Randomization
+treatment_random <- ___
+
+# 2. Systematic Assignment (treat Highest Baseline pain)
+treatment_systematic <- ___
+
+# 3. Self-selection (higher Baseline Pain More Likely to Seek treatment)
+treatment_selfselect <- ___
+
+# Calculate Observed Outcomes under Each Mechanism
+observed_random <- ___
+observed_systematic <- ___
+observed_selfselect <- ___
+
+# Estimate ATE under Each Mechanism
+ate_random <- ___
+ate_systematic <- ___
+ate_selfselect <- ___
+
+# Compare to True ATE
+true_ate <- ___
+```
+
+::: {.callout-tip collapse="true"}
+## Solution to Lab 2
+
+```{r}
+#| label: lab2-solution
+
+# Use Potential Outcomes from Lab 1
+set.seed(77777)
+
+# True ATE for Comparison
+true_ate <- mean(individual_effects)
+
+# 1. Complete Randomization
+treatment_random <- rbinom(n, 1, 0.5)
+observed_random <- ifelse(treatment_random == 1, y_treated, y_control)
+
+# 2. Systematic Assignment (treat Highest 50% Baseline pain)
+treatment_systematic <- ifelse(baseline > median(baseline), 1, 0)
+observed_systematic <- ifelse(treatment_systematic == 1, y_treated, y_control)
+
+# 3. Self-selection (probability Increases with Baseline pain)
+prob_selfselect <- plogis(-2 + 0.05 * baseline) # Logistic function
+treatment_selfselect <- rbinom(n, 1, prob_selfselect)
+observed_selfselect <- ifelse(treatment_selfselect == 1, y_treated, y_control)
+
+# Estimate ATE under Each Mechanism (naive Difference in means)
+ate_random <- mean(observed_random[treatment_random == 1]) -
+  mean(observed_random[treatment_random == 0])
+
+ate_systematic <- mean(observed_systematic[treatment_systematic == 1]) -
+  mean(observed_systematic[treatment_systematic == 0])
+
+ate_selfselect <- mean(observed_selfselect[treatment_selfselect == 1]) -
+  mean(observed_selfselect[treatment_selfselect == 0])
+
+# Results Comparison
+results <- tibble(
+  Mechanism = c("True ATE", "Randomization", "Systematic", "Self-Selection"),
+  Estimate = c(true_ate, ate_random, ate_systematic, ate_selfselect),
+  Bias = c(
+    0,
+    ate_random - true_ate,
+    ate_systematic - true_ate,
+    ate_selfselect - true_ate
+  )
+)
+
+results %>%
+  kable(
+    digits = 2,
+    caption = "ATE Estimates Under Different Assignment Mechanisms"
+  ) %>%
+  kable_styling()
+
+# Visualize the Assignment Mechanisms
+assignment_data <- tibble(
+  baseline = baseline,
+  random = treatment_random,
+  systematic = treatment_systematic,
+  selfselect = treatment_selfselect
+) %>%
+  pivot_longer(
+    cols = -baseline,
+    names_to = "mechanism",
+    values_to = "treatment"
+  )
+
+ggplot(assignment_data, aes(x = baseline, y = treatment)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~mechanism) +
+  labs(
+    title = "Treatment Assignment by Baseline Pain Level",
+    x = "Baseline Pain Level",
+    y = "Probability of Treatment"
+  ) +
+  theme_minimal()
+```
+
+**Key Learning Points**:
+
+- Only randomization gives an unbiased estimate of the ATE
+- Systematic assignment creates selection bias
+- Self-selection leads to confounding by baseline pain level
+:::
+:::
+
+### Lab Exercise 3: Exploring SUTVA Violations
+
+::: {.callout-question}
+## Your Task
+Create scenarios that violate each component of SUTVA:
+
+1. Multiple treatment versions
+2. Interference between units
+Explore how these violations affect causal inference.
+:::
+
+```{r}
+#| label: lab3-skeleton
+#| eval: false
+
+# Scenario 1: Multiple Treatment Versions
+# Simulate "aspirin" with Different Dosages (low, high)
+set.seed(55555)
+
+# Create Potential Outcomes for Each Dosage Level
+y_low_dose <- ___
+y_high_dose <- ___
+y_control <- ___
+
+# Random Assignment to Three Conditions
+treatment_dose <- ___
+
+# Estimate Effects Ignoring Dosage Differences
+naive_estimate <- ___
+
+# Estimate Effects Accounting for Dosage
+dose_specific_estimates <- ___
+
+# Scenario 2: Network Interference
+# Create a Small Network where Friends Influence Each other
+# Your Network Simulation Code here
+```
+
+::: {.callout-tip collapse="true"}
+## Solution to Lab 3
+
+```{r}
+#| label: lab3-solution
+
+set.seed(55555)
+n <- 300
+
+# Scenario 1: Multiple Treatment Versions
+baseline <- rnorm(n, 70, 15)
+
+# Different Aspirin Dosages Have Different Effects
+y_control <- baseline + rnorm(n, -2, 8)
+y_low_dose <- baseline - 15 + rnorm(n, 0, 8) # 15 point reduction
+y_high_dose <- baseline - 30 + rnorm(n, 0, 10) # 30 point reduction, more variable
+
+# Random Assignment to Three Conditions (control, Low Dose, High dose)
+treatment_dose <- sample(
+  c(0, 1, 2),
+  n,
+  replace = TRUE,
+  prob = c(1 / 3, 1 / 3, 1 / 3)
+)
+
+# Observed Outcomes
+observed_dose <- case_when(
+  treatment_dose == 0 ~ y_control,
+  treatment_dose == 1 ~ y_low_dose,
+  treatment_dose == 2 ~ y_high_dose
+)
+
+# Naive Estimate: Treat All Aspirin as the Same
+naive_estimate <- mean(observed_dose[treatment_dose > 0]) -
+  mean(observed_dose[treatment_dose == 0])
+
+# Dose-specific Estimates
+low_dose_effect <- mean(observed_dose[treatment_dose == 1]) -
+  mean(observed_dose[treatment_dose == 0])
+high_dose_effect <- mean(observed_dose[treatment_dose == 2]) -
+  mean(observed_dose[treatment_dose == 0])
+
+cat("Multiple Versions Problem:\n")
+cat("True low dose effect: 13\n")
+cat("True high dose effect: 28\n")
+cat("Naive 'any aspirin' effect:", round(naive_estimate, 2), "\n")
+cat("Low dose effect estimate:", round(low_dose_effect, 2), "\n")
+cat("High dose effect estimate:", round(high_dose_effect, 2), "\n\n")
+
+# Scenario 2: Network Interference
+# Create Pairs of Friends
+n_pairs <- 50
+network_data <- tibble(
+  pair_id = rep(1:n_pairs, each = 2),
+  person_id = 1:(2 * n_pairs),
+  baseline = rnorm(2 * n_pairs, 70, 12)
+)
+
+# Random Treatment Assignment within Pairs
+network_data <- network_data %>%
+  group_by(pair_id) %>%
+  mutate(
+    treatment = sample(c(0, 1), 2),
+    partner_treatment = ifelse(
+      row_number() == 1,
+      treatment[2],
+      treatment[1]
+    )
+  ) %>%
+  ungroup()
+
+# Generate Outcomes with Spillover Effects
+network_data <- network_data %>%
+  mutate(
+    direct_effect = ifelse(treatment == 1, -20, 0),
+    spillover_effect = ifelse(partner_treatment == 1, -5, 0), # Friend's treatment helps
+    observed_outcome = baseline +
+      direct_effect +
+      spillover_effect +
+      rnorm(2 * n_pairs, 0, 8)
+  )
+
+# Naive Estimate Ignoring Spillovers
+naive_spillover <- network_data %>%
+  group_by(treatment) %>%
+  summarise(mean_outcome = mean(observed_outcome)) %>%
+  summarise(
+    effect = mean_outcome[treatment == 0] - mean_outcome[treatment == 1]
+  ) %>%
+  pull(effect)
+
+cat("Interference Problem:\n")
+cat("True direct effect: 20\n")
+cat("True spillover effect: 5\n")
+cat("Naive estimate:", round(naive_spillover, 2), "\n")
+cat("Bias due to spillover:", round(20 - naive_spillover, 2), "\n")
+
+# Visualize Interference Patterns
+network_viz <- network_data %>%
+  mutate(
+    treatment_combo = case_when(
+      treatment == 1 & partner_treatment == 1 ~ "Both Treated",
+      treatment == 1 & partner_treatment == 0 ~ "Only You Treated",
+      treatment == 0 & partner_treatment == 1 ~ "Only Friend Treated",
+      treatment == 0 & partner_treatment == 0 ~ "Neither Treated"
+    )
+  )
+
+ggplot(network_viz, aes(x = treatment_combo, y = observed_outcome)) +
+  geom_boxplot() +
+  labs(
+    title = "Outcomes by Treatment Combination",
+    subtitle = "Evidence of spillover effects",
+    x = "Treatment Status",
+    y = "Observed Outcome (Pain Level)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+**Key Insights**:
+- Multiple treatment versions create ambiguity about what effect we're estimating
+- Interference between units biases standard estimates
+- Both violations make causal interpretation more complex
+:::
+:::
+
+### Lab Exercise 4: Creating and Analyzing DAGs
+
+::: {.callout-question}
+## Your Task
+Practice creating DAGs for different causal scenarios and identifying what variables need to be adjusted for causal identification.
+:::
+
+```{r}
+#| label: lab4-skeleton
+#| eval: false
+
+# Create DAGs for the following Scenarios:
+# 1. Simple Treatment-outcome
+# 2. Treatment-outcome with One Confounder
+# 3. Treatment-outcome with Mediator
+# 4. Complex Scenario with Multiple Confounders and Collider
+
+# Example Starter Code:
+dag_simple <- dagify(
+  Y ~ T,
+  labels = c(T = "Treatment", Y = "Outcome")
+)
+
+# Your DAG Code here for Scenarios 2-4
+```
+
+::: {.callout-tip collapse="true"}
+## Solution to Lab 4
+
+```{r}
+#| label: lab4-solution
+
+# Scenario 1: Simple Treatment-outcome
+dag_simple <- dagify(
+  Y ~ T,
+  labels = c(T = "Treatment", Y = "Outcome"),
+  exposure = "T",
+  outcome = "Y"
+)
+
+# Scenario 2: Treatment-outcome with Confounder
+dag_confounded <- dagify(
+  Y ~ T + X,
+  T ~ X,
+  labels = c(
+    T = "Treatment",
+    Y = "Outcome",
+    X = "Confounder"
+  )
+)
+
+# Scenario 3: Treatment-outcome with Mediator
+dag_mediated <- dagify(
+  Y ~ T + M,
+  M ~ T,
+  labels = c(
+    T = "Treatment",
+    Y = "Outcome",
+    M = "Mediator"
+  )
+)
+
+# Scenario 4: Complex Scenario
+dag_complex <- dagify(
+  Y ~ T + X1 + X2 + C,
+  T ~ X1 + X2,
+  C ~ T + Y, # Collider
+  X2 ~ X1, # Confounder correlation
+  labels = c(
+    T = "Treatment",
+    Y = "Outcome",
+    X1 = "Confounder 1",
+    X2 = "Confounder 2",
+    C = "Collider"
+  )
+)
+
+# Visualize All DAGs
+p1 <- ggdag(dag_simple) +
+  geom_dag_text() +
+  theme_dag_blank() +
+  ggtitle("Simple")
+p2 <- ggdag(dag_confounded) +
+  geom_dag_text() +
+  theme_dag_blank() +
+  ggtitle("Confounded")
+p3 <- ggdag(dag_mediated) +
+  geom_dag_text() +
+  theme_dag_blank() +
+  ggtitle("Mediated")
+p4 <- ggdag(dag_complex) +
+  geom_dag_text() +
+  theme_dag_blank() +
+  ggtitle("Complex")
+
+(p1 + p2) / (p3 + p4)
+
+# Find Adjustment Sets for Each Scenario
+cat("Adjustment sets for each scenario:\n\n")
+
+cat("Simple DAG:\n")
+print(adjustmentSets(dag_simple))
+
+cat("\nConfounded DAG:\n")
+print(adjustmentSets(dag_confounded))
+
+cat("\nMediated DAG:\n")
+print(adjustmentSets(dag_mediated))
+
+cat("\nComplex DAG:\n")
+print(adjustmentSets(dag_complex))
+
+# Check for Collider Bias
+cat("\nCollider paths in complex DAG:\n")
+ggdag_paths(dag_complex, from = "T", to = "Y") +
+  theme_dag_blank() +
+  ggtitle("All paths from Treatment to Outcome")
+```
+
+**Educational Points**:
+
+- Simple DAG: No adjustment needed (no confounders)
+- Confounded DAG: Must adjust for X to block backdoor path T ← X → Y
+- Mediated DAG: No adjustment needed for total effect; adjust for M for direct effect
+- Complex DAG: Must adjust for {X1, X2} but NOT C (collider)
+:::
+
+### Retrieval Practice Quiz
+
+::: {.callout-question}
+## Quiz Questions
+Answer these questions without looking back at the material:
+
+1. **Definition**: What is the Fundamental Problem of Causal Inference?
+
+2. **Calculation**: If Y₁(1) = 10, Y₁(0) = 25, Y₂(1) = 15, Y₂(0) = 20, what is the Average Treatment Effect?
+
+3. **Conceptual**: Why does SUTVA matter for causal inference?
+
+4. **Application**: In a randomized experiment with perfect compliance, what is the relationship between the ATE and the difference in sample means?
+
+5. **Critical Thinking**: Describe a realistic scenario where SUTVA would be violated and explain the implications.
+:::
+
+::: {.callout-tip collapse="true"}
+## Quiz Answers
+
+1. **Fundamental Problem**: For any individual unit, we can observe at most one potential outcome (either Y(1) or Y(0)), but causal effects require comparing both potential outcomes for the same unit.
+
+2. **ATE Calculation**: 
+   - Unit 1 effect: 10 - 25 = -15
+   - Unit 2 effect: 15 - 20 = -5  
+   - ATE = (-15 + -5)/2 = -10
+
+3. **SUTVA Importance**: SUTVA ensures potential outcomes are well-defined by requiring: (a) no multiple treatment versions, and (b) no interference between units. Without SUTVA, we cannot clearly define what causal effect we're trying to estimate.
+
+4. **Randomization**: Under randomization with perfect compliance, the difference in sample means equals the ATE in expectation: E[Ȳ₁ - Ȳ₀] = E[Y(1)] - E[Y(0)] = ATE.
+
+5. **SUTVA Violation Example**: Social media advertising study where friends share ads with each other (interference), or educational intervention where "small class size" varies from 12-18 students (multiple versions).
+:::
+
+### Reflection Prompts
+
+1. **Connection**: How does the potential outcomes framework connect to your intuitive understanding of causation?
+
+2. **Challenges**: What aspects of SUTVA do you find most difficult to ensure in practice?
+
+3. **Applications**: Think of a research question in your field. How would you define the units, treatments, and potential outcomes?
+
+4. **Limitations**: What are the main limitations of the potential outcomes framework? When might alternative approaches be preferable?
+
+## 6 Common Pitfalls & Checks
+
+### 6.1 Misunderstanding the Temporal Nature of Units
+
+::: {.callout-warning}
+## Common Pitfall: Time-Invariant Units
+Students often forget that units are defined at specific points in time. "John Smith" on different days may respond differently to treatment due to changing circumstances.
+:::
+
+**Check**: Always specify the exact timing when defining units. Ask: "Could the same physical entity respond differently to treatment at different times?"
+
+### 6.2 Conflating Population and Individual Effects
+
+::: {.callout-warning}
+## Common Pitfall: ATE ≠ Individual Effect
+The Average Treatment Effect describes the population average but may not apply to any specific individual. Treatment effects are often heterogeneous.
+:::
+
+**Check**: Examine the distribution of individual effects, not just the average. Consider whether the ATE is representative of typical individuals.
+
+### 6.3 Ignoring SUTVA Violations
+
+::: {.callout-warning}
+## Common Pitfall: Assuming SUTVA
+Researchers often assume SUTVA holds without careful consideration of potential violations, particularly interference between units.
+:::
+
+**Self-Check Questions**:
+- Are there multiple versions of the treatment?
+- Could one unit's treatment affect another unit's outcome?
+- Do units interact with each other?
+- Is the treatment clearly defined and consistently implemented?
+
+### 6.4 Misinterpreting Assignment Mechanisms
+
+::: {.callout-warning}
+## Common Pitfall: Assignment ≠ Treatment Effect
+The way units are assigned to treatment affects what we can learn about causal effects, but doesn't change the true causal effects themselves.
+:::
+
+**Check**: Distinguish between:
+- The science (potential outcomes)
+- What we observe (assignment mechanism + observed outcomes)  
+- What we can learn (identification strategy)
+
+### 6.5 Confusing Causation with Association
+
+::: {.callout-important}
+## Key Distinction
+Causal effects compare potential outcomes under different treatments for the same units. Associations compare observed outcomes across different groups of units.
+:::
+
+**Diagnostic Questions**:
+- Am I comparing the same units under different conditions?
+- Or am I comparing different units that happen to have different treatments?
+
+## 7 Advanced Teaching Activities & Interactivity
+
+### 7.1 Think-Pair-Share: Defining Causal Effects
+
+::: {.callout-note}
+## Activity Instructions
+**Individual (5 minutes)**: Write down a causal question from your field and define the units, treatments, and potential outcomes.
+
+**Pair (10 minutes)**: Share with a partner and help each other refine the definitions. Pay special attention to SUTVA.
+
+**Share (10 minutes)**: Selected pairs present to class. Class discusses potential SUTVA violations and alternative outcome measures.
+:::
+
+### 7.2 Problem-Based Learning: The Headache Study
+
+::: {.callout-note}
+## Scenario
+You're designing a study of aspirin effectiveness. You have 100 volunteers with headaches of varying severity. Design three different studies:
+
+1. **Perfect Experiment**: Assume you can do anything (including impossible things)
+2. **Realistic RCT**: What would you actually do in practice?
+3. **Observational Study**: People choose their own treatment
+
+For each design, identify:
+- What causal effects you can estimate
+- What assumptions are required
+- What biases might occur
+:::
+
+### 7.3 Interactive Simulation Exercise
+
+Create a live coding session where students manipulate parameters:
+
+```{r}
+#| label: interactive-demo
+#| eval: false
+
+# Live Coding Template for Class
+simulate_causal_study <- function(n = 100, 
+                                 baseline_mean = 70,
+                                 treatment_effect = -20,
+                                 assignment_prob = 0.5) {
+# Student Fill in the Simulation
+# Instructor Guides through Each step
+}
+
+# Class Manipulates Parameters to See Effects On:
+# - Precision (larger n)
+# - Effect Size (treatment_effect)
+# - Balance (assignment_prob)
+```
+
+### 7.4 Spaced Retrieval Practice
+
+Throughout the semester, include these warm-up questions:
+
+**Week 3**: "Without looking at notes, draw the relationship between Y(1), Y(0), and individual causal effects"
+
+**Week 6**: "Give an example of a SUTVA violation from current news"
+
+**Week 10**: "How would you modify the potential outcomes framework for time-varying treatments?"
+
+### 7.5 Peer Instruction: Conceptual Questions
+
+Use clicker questions or show-of-hands voting:
+
+1. **True/False**: The Average Treatment Effect equals the effect of treatment for the average person.
+
+2. **Which violates SUTVA?**
+   - A) Different doctors administer "the same" treatment
+   - B) Students study together for an exam
+   - C) Both A and B
+   - D) Neither A nor B
+
+3. **In randomized experiments, what does the difference in means estimate?**
+   - A) Individual causal effects
+   - B) Average Treatment Effect
+   - C) Treatment effect for the treated
+   - D) Cannot be determined
+
+### 7.6 Metacognitive Reflection
+
+**Self-Explanation Tasks**:
+- "Explain why we need the potential outcomes framework rather than just comparing treated and control groups"
+- "Describe a situation where you would worry about SUTVA violations"
+- "How would you explain the fundamental problem to someone without statistical training?"
+
+### 7.7 Real-World Case Analysis
+
+Present famous studies and have students identify:
+
+**Case 1: COVID-19 Vaccine Trials**
+- Units: Participants at enrollment
+- Treatment: Vaccine vs. placebo
+- Outcome: Infection within 6 months
+- SUTVA concerns: Herd immunity effects?
+
+**Case 2: Class Size Reduction (Tennessee STAR)**
+- Units: Students in kindergarten
+- Treatment: Small vs. regular class
+- Outcome: Test scores
+- SUTVA concerns: Multiple versions of "small"?
+
+## 8 Appendix: Advanced Theory & Derivations
+
+### 8.1 Formal Framework and Notation
+
+Let $\mathcal{U} = \{1, 2, ..., N\}$ denote a finite population of $N$ units. For each unit $i \in \mathcal{U}$ and treatment value $t \in \mathcal{T}$, let $Y_i(t)$ denote the potential outcome for unit $i$ under treatment $t$.
+
+**Definition A.1** (Causal Effect): For treatments $t, t' \in \mathcal{T}$, the individual causal effect for unit $i$ is:
+$\tau_i(t, t') = Y_i(t) - Y_i(t')$
+
+**Definition A.2** (Average Causal Effect): The average causal effect is:
+$\tau(t, t') = \frac{1}{N} \sum_{i=1}^N [Y_i(t) - Y_i(t')] = \bar{Y}(t) - \bar{Y}(t')$
+
+where $\bar{Y}(t) = \frac{1}{N} \sum_{i=1}^N Y_i(t)$.
+
+### 8.2 SUTVA: Mathematical Formalization
+
+**Definition A.3** (SUTVA): The Stable Unit Treatment Value Assumption states:
+
+1. **No multiple versions**: For each $t \in \mathcal{T}$, there is only one version of treatment level $t$
+2. **No interference**: $Y_i(t_1, ..., t_N) = Y_i(t_i)$ for all $i$ and all treatment vectors $(t_1, ..., t_N)$
+
+Under SUTVA, the observed outcome for unit $i$ is:
+$Y_i^{obs} = \sum_{t \in \mathcal{T}} Y_i(t) \cdot \mathbb{1}[T_i = t]$
+
+where $T_i$ is the treatment assignment for unit $i$.
+
+### 8.3 Assignment Mechanisms: Formal Treatment
+
+**Definition A.4** (Assignment Mechanism): An assignment mechanism is a function $\pi: \mathcal{X}^N \times \mathcal{Y}^N(\mathcal{T}) \rightarrow [0,1]^{N \times |\mathcal{T}|}$ that gives the probability of each treatment assignment given covariates and potential outcomes.
+
+**Classification of Assignment Mechanisms**:
+
+1. **Individualistic**: $\Pr[T_i = t | X, Y(\mathcal{T})] = \pi_i(X_i, Y_i(\mathcal{T}))$
+2. **Unconfounded**: $\Pr[T_i = t | X, Y(\mathcal{T})] = \Pr[T_i = t | X]$  
+3. **Probabilistic**: $0 < \Pr[T_i = t | X, Y(\mathcal{T})] < 1$ for all $i, t$
+
+### 8.4 Identification Under Different Assignment Mechanisms
+
+**Theorem A.1** (Identification Under Randomization): Under complete randomization with $\Pr[T_i = 1] = p$ for all $i$:
+$E[\bar{Y}_1 - \bar{Y}_0] = E[Y(1)] - E[Y(0)] = \text{ATE}$
+
+**Proof**: Under randomization, $E[Y_i | T_i = 1] = E[Y_i(1)]$ and $E[Y_i | T_i = 0] = E[Y_i(0)]$. Therefore:
+$E[\bar{Y}_1 - \bar{Y}_0] = E[Y_i(1) | T_i = 1] - E[Y_i(0) | T_i = 0] = E[Y_i(1)] - E[Y_i(0)]$
+
+**Numerical Illustration**: Consider a population with $Y_i(1) \sim N(10, 4)$ and $Y_i(0) \sim N(15, 4)$, so ATE = -5.
+
+```{r}
+#| label: identification-illustration
+
+set.seed(12345)
+n <- 1000
+
+# Generate Potential Outcomes
+y1 <- rnorm(n, 10, 2)
+y0 <- rnorm(n, 15, 2)
+true_ate <- mean(y1 - y0)
+
+# Randomized Assignment
+treatment <- rbinom(n, 1, 0.5)
+observed_y <- ifelse(treatment == 1, y1, y0)
+
+# Estimate ATE
+ate_estimate <- mean(observed_y[treatment == 1]) - mean(observed_y[treatment == 0])
+
+cat("True ATE:", round(true_ate, 3), "\n")
+cat("Estimated ATE:", round(ate_estimate, 3), "\n")
+cat("Bias:", round(ate_estimate - true_ate, 3), "\n")
+```
+
+### 8.5 Violations of SUTVA: Mathematical Treatment
+
+**Multiple Versions Problem**: Suppose treatment $t$ has versions $t^{(v)}$ for $v \in \mathcal{V}$. Then:
+$Y_i(t) = \sum_{v \in \mathcal{V}} Y_i(t^{(v)}) \cdot \mathbb{1}[V_i = v]$
+
+where $V_i$ indicates the version received by unit $i$.
+
+**Interference Problem**: With interference, potential outcomes depend on the full treatment vector:
+$Y_i = Y_i(T_1, T_2, ..., T_N)$
+
+**Numerical Example of Interference**:
+
+```{r}
+#| label: interference-theory
+
+# Two-unit Example with Interference
+# Y_i(t_i, t_j) Where J is the other Unit
+
+# Unit 1's Potential Outcomes
+Y1_00 <- 20  # Both get control
+Y1_01 <- 18  # Unit 1 control, Unit 2 treatment  
+Y1_10 <- 10  # Unit 1 treatment, Unit 2 control
+Y1_11 <- 8   # Both get treatment
+
+# Unit 2's Potential Outcomes
+Y2_00 <- 25
+Y2_01 <- 15  
+Y2_10 <- 23
+Y2_11 <- 13
+
+# Individual Causal Effects Depend on Other's Treatment
+cat("Unit 1 effects:\n")
+cat("When Unit 2 gets control:", Y1_10 - Y1_00, "\n")
+cat("When Unit 2 gets treatment:", Y1_11 - Y1_01, "\n")
+
+cat("\nUnit 2 effects:\n") 
+cat("When Unit 1 gets control:", Y2_01 - Y2_00, "\n")
+cat("When Unit 1 gets treatment:", Y2_11 - Y2_10, "\n")
+```
+
+### 8.6 Variance of Treatment Effect Estimators
+
+**Theorem A.2** (Variance Under Complete Randomization): For the difference-in-means estimator under complete randomization:
+$\text{Var}(\hat{\tau}) = \frac{\sigma_1^2}{n_1} + \frac{\sigma_0^2}{n_0} + \frac{n_1 + n_0}{n_1 n_0} S^2_{\tau}$
+
+where $S^2_{\tau} = \frac{1}{N-1} \sum_{i=1}^N (\tau_i - \bar{\tau})^2$ is the finite-population variance of individual treatment effects.
+
+**Numerical Illustration**:
+
+```{r}
+#| label: variance-illustration
+
+# Simulate Heterogeneous Treatment Effects
+set.seed(99999)
+n <- 200
+n1 <- n0 <- n/2
+
+# Individual Treatment Effects Vary
+tau_i <- rnorm(n, -5, 3)
+y0_i <- rnorm(n, 20, 4)
+y1_i <- y0_i + tau_i
+
+# Population Parameters
+sigma0_sq <- var(y0_i)
+sigma1_sq <- var(y1_i) 
+S_tau_sq <- var(tau_i)
+
+# Theoretical variance
+var_theory <- sigma1_sq/n1 + sigma0_sq/n0 + (n1 + n0)/(n1*n0) * S_tau_sq
+
+# Simulation-based variance
+B <- 1000
+estimates <- replicate(B, {
+  treatment <- sample(rep(c(0,1), each = n/2))
+  observed_y <- ifelse(treatment == 1, y1_i, y0_i)
+  mean(observed_y[treatment == 1]) - mean(observed_y[treatment == 0])
+})
+
+var_empirical <- var(estimates)
+
+cat("Theoretical variance:", round(var_theory, 4), "\n")
+cat("Empirical variance:", round(var_empirical, 4), "\n")
+cat("Difference:", round(abs(var_theory - var_empirical), 4), "\n")
+```
+
+## References
+

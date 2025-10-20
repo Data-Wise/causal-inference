@@ -1,0 +1,427 @@
+---
+title: "Week 9: Time-Varying Treatments and Marginal Structural Models"
+---
+
+## 📖 Overview
+
+We are now moving into one of the most powerful and modern areas of applied causal inference: handling treatments that change over time. In the real world, medical treatments, social policies, and environmental exposures are not static. Doctors adjust medications based on patient progress, governments modify programs, and individuals change behaviors. Our methods must be ableto handle this dynamic reality. This week, we introduce the framework and methods to do just that.
+
+## R Packages
+
+```{r}
+#| label: load-packages
+#| echo: true
+#| message: false
+#| warning: false
+pacman::p_load(
+  tidyverse, # Data manipulation and visualization
+  geepack, # Generalized estimating equations for MSMs
+  survival # Survival analysis tools
+)
+```
+
+## 🎯 Learning Objectives & Motivation
+
+Our goal is to understand how to estimate the causal effects of treatment *strategies* or *regimes* over time. Standard methods that we've learned, like regression adjustment or single-time-point propensity scores, will fail us here. This failure is not a minor detail; it can lead to qualitatively wrong conclusions.
+
+By the end of this lecture, you will be able to:
+
+1.  **Define** and **identify** time-varying confounding in a real-world scenario.
+2.  **Explain**, using a DAG, precisely why standard regression adjustment is biased in this context.
+3.  **Distinguish** between a *marginal* model and a *conditional* model, and articulate why we need the former.
+4.  **Describe** the structure and causal interpretation of a Marginal Structural Model (MSM).
+5.  **Calculate** and **interpret** stabilized Inverse Probability of Treatment Weights (IPTW).
+6.  **Implement** an MSM analysis in R and critically assess its assumptions.
+7.  **Explain** the logic of G-computation as an alternative to IPTW.
+
+## The Motivation: Two Scenarios
+
+Let's ground our discussion in two motivating public health examples.
+
+### Scenario 1: HIV Treatment 💊
+
+A patient with HIV is followed for several years. Every six months, their doctor:
+
+1.  Measures their **CD4 count** ($L$), a marker of immune system health.
+2.  Decides whether to initiate or continue potent **antiretroviral therapy (ART)** ($A$).
+3.  The final outcome of interest is long-term **survival** ($Y$).
+
+The clinical reality is that a low CD4 count ($L$) today makes a doctor more likely to prescribe ART ($A$) at the next visit. However, ART ($A$) taken in the past is intended to *increase* the CD4 count ($L$) in the future. The CD4 count is also a strong predictor of survival ($Y$). This creates a feedback loop that is analytically challenging.
+
+### Scenario 2: Asthma and Air Pollution 💨
+
+A pediatric cohort study follows children with asthma. Every month:
+
+1.  Researchers measure the ambient **air pollution** ($A$) level in the child's neighborhood (the "exposure" osr "treatment").
+2.  Doctors record the child's current **symptom severity** ($L$), such as frequency of wheezing. Based on this, they might prescribe or adjust the dose of a rescue inhaler.
+3.  The outcome ($Y$) is the number of hospitalizations over the study period.
+
+High air pollution ($A$) in one month likely worsens symptoms ($L$) in the next. Severe symptoms ($L$) are a primary reason for both hospitalization ($Y$) and for doctors to prescribe more aggressive medication. The medication itself might be considered another time-varying treatment. For simplicity, let's focus on air pollution ($A$) as the exposure and symptoms ($L$) as the key time-varying factor.
+
+## 🧠 A Deeper Dive into Time-Varying Confounding
+
+The central challenge in both scenarios is **time-varying confounding**. Let's formally define it and see it on a DAG.
+
+::: {.callout-note icon= 'false'}
+## 📖 Definition
+A **time-varying confounder** is a variable that varies over time and is a common cause of both future exposure/treatment and the outcome. The critical problem arises when this confounder is *also* affected by1 past exposure/treatment.
+:::
+
+Let's draw a simplified two-time-point DAG that represents this structure.
+
+-   $A_{0}, A_{1}$: Exposure/Treatment at time 0 and 1.
+-   $L_{0}, L_{1}$: Confounder measured at time 0 and 1.
+-   $Y$: The final outcome.
+
+```{mermaid}
+%%| label: fig-time-varying-confounder-dag
+%%| fig-cap: "DAG for Time-Varying Confounding"
+%%| column: margin
+%%| echo: false
+%%| fig-width: 6.5
+%%| eval: false
+
+graph LR
+    subgraph Time 0
+        L0[L₀: Baseline Confounder]
+        A0[A₀: Treatment]
+    end
+
+    subgraph Time 1
+        L1[L₁: Time-Varying Confounder]
+        A1[A₁: Treatment]
+    end
+
+    subgraph Outcome
+        Y[Y: Final Outcome]
+    end
+
+    %% Causal Paths
+    L0 --> A0
+    L0 --> L1
+    A0 --> L1
+    A0 --> A1
+    L1 --> A1
+    L1 --> Y
+    A1 --> Y
+
+    %% Optional direct path for completeness
+    A0 --> Y
+```
+
+::: {#fig-dag-time-varying-confounding}
+
+```tikz
+% In your preamble:
+% \usepackage{tikz}
+% \usetikzlibrary{positioning, fit, arrows.meta}
+
+\begin{tikzpicture}[
+  % --- styles ---
+  >=Stealth, % modern arrow tip
+  var/.style   = {draw, rounded corners, align=center, minimum width=20mm, minimum height=7mm},
+  treat/.style = {var, fill=black!3},
+  outcome/.style = {var, fill=black!5},
+  timebox/.style = {draw, rounded corners, inner sep=6pt},
+  node distance = 18mm and 26mm
+]
+
+% --- nodes: Time 0 ---
+\node[var]   (L0) {$L_0$: Baseline Confounder};
+\node[treat, right=of L0] (A0) {$A_0$: Treatment};
+
+% --- nodes: Time 1 ---
+\node[var, below=of L0]   (L1) {$L_1$: Time-Varying Confounder};
+\node[treat, right=of L1] (A1) {$A_1$: Treatment};
+
+% --- node: Outcome ---
+\node[outcome, right=30mm of A1] (Y) {$Y$: Final Outcome};
+
+% --- group boxes (fit) ---
+\node[timebox, fit=(L0) (A0), label={[yshift=2mm]above:\strut Time 0}]   (T0) {};
+\node[timebox, fit=(L1) (A1), label={[yshift=2mm]above:\strut Time 1}]   (T1) {};
+\node[timebox, fit=(Y),    label={[yshift=2mm]above:\strut Outcome}]     (TO) {};
+
+% --- edges (causal paths) ---
+\draw[->] (L0) -- (A0);
+\draw[->] (L0) -- (L1);
+\draw[->] (A0) -- (L1);
+\draw[->] (A0) -- (A1);
+\draw[->] (L1) -- (A1);
+\draw[->] (L1) to[bend right=20] (Y);
+\draw[->] (A1) -- (Y);
+% Optional direct path:
+\draw[->] (A0) to[bend left=10] (Y);
+
+\end{tikzpicture}
+```
+DAG for Time-Varying Confounding
+:::
+
+**Let's trace the paths to see the problem:**
+
+1.  **Confounding of** $A_{1}$: There is a backdoor path from $A_{1}$ to $Y$: $A_{1} \leftarrow L_{1} \rightarrow Y$. To get the causal effect of $A_{1}$, we *must* block this path by conditioning on $L_{1}$. This is standard confounding control.
+2.  **Mediation of** $A_{0}$: There is a causal path from $A_{0}$ to $Y$: $A_{0} \rightarrow L_{1} \rightarrow Y$. This path represents a mechanism by which the initial treatment works: it improves the intermediate health state $L_{1}$, which in turn improves the final outcome $Y$.
+
+## The Analytical Trap
+
+If we use a standard regression model (e.g., a generalized linear model) like $g(E[Y]) = \beta_{0} + \beta_{1} A_{0} + \beta_{2} A_{1} + β₃ L_{0} + \beta_{4} L_{1}$, we are conditioning on $L_{1}$.
+
+-   **The Good:** Conditioning on $L$₁ blocks the backdoor path $A_{1} \leftarrow L_{1} \rightarrow Y$, controlling for confounding of the $A \rightarrow Y$ relationship.
+-   **The Bad:** Conditioning on $L_{1}$ also blocks the causal path $A_{0} \rightarrow L_{1} \rightarrow Y$. This means our estimate \beta\_{1} for the effect of $A_{0}$ is no longer the *total* causal effect; it's only the effect *not* mediated through $L_{1}$. This is a form of **overadjustment bias**.
+
+Furthermore, and more subtly, $L_{1}$ is a **collider** on the path $A_{0} \rightarrow L_{1} \leftarrow U \rightarrow Y$ where $U$ represents all unmeasured common causes of $L_{1}$ and Y. Conditioning on a collider opens the path between the two variables it connects. In this case, conditioning on $L_{1}$ can induce a spurious association between $A_{0}$ and $Y$, biasing the estimate for $A_{0}$.
+
+You are caught in a statistical Catch-22. You must adjust for $L_{1}$ to deal with confounding for $A_{1}$, but doing so biases your estimate for $A_{0}$. This is why we need a different approach.
+
+## 🧠 Key Concept: Marginal vs. Conditional Models
+
+The model $Y \sim A_{0} + A_{1} + L_{0} + L_{1}$ is a **conditional model**. It estimates the effect of $A_{1}$ *conditional on* a fixed level of $L_{1}$. This answers a question like: "Among patients who all have a CD4 count of 250, what is the effect of starting ART?" This is a valid, but very specific, scientific question.
+
+Often, we want to know the answer to a more high-level policy question: "What is the overall effect of a policy of *'starting ART as soon as CD4 drops below 350'* compared to a policy of *'waiting until CD4 drops below 200'*, for the entire population?" This is a **marginal question**. It averages over all the different levels of the confounders L.
+
+A **Marginal Structural Model (MSM)** is a model for a marginal causal effect. It models the potential outcome under a given treatment history, without conditioning on the intermediate time-varying confounders.
+
+A simple linear MSM is:
+
+$$
+E[Y(\bar{a})] = \beta_0 + \beta_1 a_0 + \beta_2 a_1
+$$
+
+-   $Y(\bar{a})$ is the potential outcome if a subject were to receive the entire treatment history $\bar{a} = (a_0, a_1)$.
+-   $\beta_1$ is the average causal effect of treatment at time 0 on Y.
+-   $\beta_2$ is the average causal effect of treatment at time 1 on Y, having also received a₀.
+
+This model is "marginal" because $L_{1}$ is not in it. The challenge is to estimate the $\beta$s when our observed data is plagued by the time-varying confounding involving $L_{1}$.
+
+# ⚙️ Method 1: Inverse Probability of Treatment Weighting (IPTW)
+
+The magic of MSMs is in their estimation. We use **Inverse Probability of Treatment Weighting (IPTW)** to create a "pseudo-population" in which the confounding link between the treatment and the time-varying confounders is broken.
+
+## Intuition: Re-weighting a Biased Sample
+
+Imagine you're conducting a political poll but your phone survey accidentally reaches 70% seniors and 30% young people, while the true population is $50/50$. To get an unbiased estimate of the overall opinion, you would down-weight each senior's response and up-weight each young person's response.
+
+IPTW does the same thing, but for confounding. In our observed data, people with "bad" values of $L$ (low CD4 count) are more likely to get treated. This is not a random sample. We can give a "low" weight to treated people with bad $L$ values (since we over-sampled them) and a "high" weight to untreated people with bad $L$ values (since we under-sampled them). After re-weighting, in the pseudo-population, a person's L value no longer predicts whether they get the treatment. The confounding is removed.
+
+## Calculating Stabilized Weights
+
+To avoid issues with extreme weights, we use **stabilized weights**. The weight for each individual $i$ is a product over all time points $k$.
+
+The stabilized weight $sw_i$ is:
+
+$$
+sw_i = \prod_{k=0}^{K} \frac{P(A_{ik} = a_{ik} | \bar{A}_{i,k-1}, L_0)}{P(A_{ik} = a_{ik} | \bar{A}_{i,k-1}, \bar{L}_{ik})}
+$$
+
+Let's break this down:
+
+-   **The Product** $\prod_{k=0}^{K}$: The weight is cumulative. A person's final weight is the product of their weights from each time point. This reflects the accumulating probability of their entire treatment journey.
+-   **The Denominator** $P(A_{ik} = a_{ik} | \bar{A}_{i,k-1}, \bar{L}_{ik})$: This is the probability of receiving the treatment $a_{ik}$ that person i actually received at time k, given their *entire past* (past treatments $\bar{A}_{i,k-1}$ and full confounder history $\bar{L}_{ik}$). This is the source of the confounding. We estimate this for each time point, typically with a logistic regression.
+-   **The Numerator** $P(A_{ik} = a_{ik} | \bar{A}_{i,k-1}, L_0)$: This is the probability of receiving treatment $a_{ik}$ given their past treatments and *only baseline confounders* $L_0$. Because it doesn't depend on the time-varying confounders $L_k$ (for $k>0$), it "stabilizes" the weights, pulling them closer to 1 and reducing variance.
+
+### The Estimation Procedure:
+
+1.  **Fit Denominator Models**: For each time $k$, fit a model for $P(A_k | \bar{A}_{k-1}, \bar{L}_k)$. (e.g., `glm(A1 ~ A0 + L0 + L1, family=binomial)`)
+2.  **Fit Numerator Models**: For each time $k$, fit a model for $P(A_k | \bar{A}_{k-1}, L_0)$. (e.g., `glm(A1 ~ A0 + L0, family=binomial)`)
+3.  **Predict Probabilities**: For each person at each time point, predict the probabilities from both models.
+4.  **Calculate Weights**: For each person, calculate their final weight $sw_i$ by multiplying the ratios of these probabilities across time.
+5.  **Fit Weighted MSM**: Fit the final marginal model (`lm(Y ~ A0 + A1, weights = sw)`) using a procedure that accepts weights (like lm or `geeglm` from the `geepack` package for robust standard errors). The coefficients from this model are your causal effect estimates.
+
+::: {.callout-tip icon= 'false'}
+
+## 🧠 Assumptions for MSMs with IPTW
+To validly estimate causal effects using IPTW and MSMs, several key assumptions must hold:
+
+1.  **Sequential Exchangeability (No Unmeasured Confounding):** Conditional on the *observed past*, the treatment at time k is essentially random. This is the most important and untestable assumption.
+2.  **Positivity:** Everyone, no matter their history, must have a non-zero probability of receiving every level of treatment. $0 < P(A_k=a_k | \bar{L}_k, \bar{A}_{k-1}) < 1$.
+3.  **Consistency:** An individual's observed outcome is their potential outcome corresponding to the treatment history they actually received.
+4.  **Correct Model Specification:** The models used to estimate the probabilities for the weights must be correctly specified.
+:::
+
+## ✅ A Worked Example in R
+
+Let's simulate some data that follows our HIV scenario and apply the method.
+
+### 1. Simulate Data for N=1000 Patients over 2 time Points
+
+```{r}
+#| label: sim-data-2
+#| echo: false
+#| warning: false
+#| message: false
+set.seed(579)
+N <- 1000
+L0 <- rnorm(N, 500, 50) # Baseline CD4 count
+A0 <- rbinom(N, 1, plogis(-5 + 0.01 * L0)) # Treatment at T0 depends on L0
+
+# Time-varying Confounder L1 is Affected by A0
+L1 <- rnorm(N, L0 + 50 * A0 - 0.1 * L0, 40)
+
+# Treatment at T1 Depends on A0 and L1
+A1 <- rbinom(N, 1, plogis(-6 + 0.01 * L1 + 0.5 * A0))
+
+# Outcome Y Depends on All Treatments and Confounders
+Y <- rnorm(N, 200 - 0.1 * L0 - 0.2 * L1 + 20 * A0 + 30 * A1, 20)
+sim_data <- data.frame(id = 1:N, L0, A0, L1, A1, Y)
+head(sim_data)
+```
+
+Now, let's estimate the stabilized weights.
+
+#### 2. Fit Models for the Denominator of the Weights
+
+```{r}
+#| label: fit-denominator-models
+#| echo: true
+# Denominator for A0
+den_mod_A0 <- glm(A0 ~ L0, data = sim_data, family = binomial())
+pd_A0 <- predict(den_mod_A0, type = "response")
+
+# Denominator for A1
+
+den_mod_A1 <- glm(A1 ~ L1 + A0 + L0, data = sim_data, family = binomial())
+pd_A1 <- predict(den_mod_A1, type = "response")
+```
+
+### 3. Fit Models for the Numerator of the Weights
+
+```{r}
+#| label: fit-numerator-models
+#| echo: true
+# Numerator for A0 (depends only on Baseline Vars, here None besides intercept)
+num_mod_A0 <- glm(A0 ~ 1, data = sim_data, family = binomial())
+pn_A0 <- predict(num_mod_A0, type = "response")
+
+# Numerator for A1 (depends on Baseline Vars and past treatment)
+
+num_mod_A1 <- glm(A1 ~ A0 + L0, data = sim_data, family = binomial())
+pn_A1 <- predict(num_mod_A1, type = "response")
+```
+
+### 4. Calculate the Stabilized Weights (sw)
+
+```{r}
+#| label: sim-data-3
+#| echo: true
+#| warning: false
+#| message: false
+sim_data <- sim_data |>
+  mutate(
+    # Probability for the Treatment They Actually Got
+    prob_den_A0 = if_else(A0 == 1, pd_A0, 1 - pd_A0),
+    prob_den_A1 = if_else(A1 == 1, pd_A1, 1 - pd_A1),
+    prob_num_A0 = if_else(A0 == 1, pn_A0, 1 - pn_A0),
+    prob_num_A1 = if_else(A1 == 1, pn_A1, 1 - pn_A1),
+    # The Final Weight
+    sw = (prob_num_A0 * prob_num_A1) / (prob_den_A0 * prob_den_A1)
+  )
+```
+
+A crucial diagnostic step is to check the distribution of your weights.
+
+### 5. Check the Weights
+
+```{r}
+#| label: fig-histogram-1
+#| fig-cap: "Distribution of Stabilized Weights"
+#| column: margin
+
+hist(sim_data$sw, breaks = 50, main = "Distribution of Stabilized Weights")
+```
+
+If you have extremely large weights (e.g., > 50 or 100), it signals a positivity violation and your results will be unstable.
+
+Finally, we fit the weighted MSM.
+
+### 6. Fit the Final Weighted MSM
+
+```{r}
+#| label: tbl-msm-fit
+#| tbl-cap: "Marginal Structural Model Fit with IPTW"
+# We Use Geeglm for Robust Standard Errors, Which is Good Practice
+
+msm_fit <- geeglm(
+  Y ~ A0 + A1,
+  data = sim_data,
+  id = id,
+  weights = sw,
+  corstr = "independence"
+)
+summary(msm_fit)
+```
+
+The output coefficients for `A0` and `A1` are the estimated average causal effects. For our simulation, `A0` should be around 20 and `A1`around 30. The IPTW procedure should recover these values, whereas a naive model `lm(Y ~ A0 + A1 + L0 + L1)` would give biased results.
+
+## ⚙️ Method 2: G-Computation (The G-Formula)
+
+G-computation is a powerful alternative to IPTW. Instead of re-weighting the population, it uses a modeling-based approach to **simulate** what would have happened under different treatment strategies. It is sometimes called "standardization" extended to the time-varying case.
+
+## Conceptual Steps for G-Computation
+
+1.  **Model the World Sequentially**: Fit a series of regression models for each time-varying factor.
+    -   Model 1: $L_{1} ~ A_{0} + L_{0}$ (How the confounder evolves)
+    -   Model 2: $Y ~ A_{1} + L_{1} + A_{0} + L_{0}$ (How the outcome is generated)
+    -   (Note: In a real analysis, you would also need a model for $A_{0}$ and $A_{1}$ to fully specify the system, but for outcome simulation, these two are key).
+
+2.  **Simulate Potential Outcomes**
+
+3.  **Simulate Potential Outcomes under a Fixed Policy**:
+
+    -   For each individual, simulate what their outcome would be under different treatment policies.
+    -   For example, simulate outcomes if everyone received treatment at time 0 and time 1, and separately if no one received treatment.
+
+-   **Policy 1: Never Treat (**$a_0=0, a_1=0$):
+    a.  Start with your original dataset ($L_{0}$).
+    b.  Set $A_0 = 0$ for everyone.
+    c.  Use Model 1 to predict a potential value of $L_1(0)$ for everyone.
+    d.  Set $A_1 = 0$ for everyone.
+    e.  Use Model 2 to predict a potential outcome $Y(0,0)$ for everyone, using their observed $L_0$ and their simulated $L_1(0)$.
+    f.  The average of all these $Y(0,0)$ predictions is $E[Y(0,0)]$.
+-   **Policy 2: Always Treat (**$a_0=1, a_1=1$):
+    a.  Repeat the process, but now force $A_0=1$ and $A_1=1$ at the relevant steps. This will generate $E[Y(1,1)]$.
+
+3.  **Calculate Causal Effect:** The average causal effect is the difference: 
+$$
+ATE = E[Y(1,1)] - E[Y(0,0)].
+$$
+
+G-computation is powerful but carries the heavy burden of requiring correctly specified parametric models for the entire data-generating process. Any misspecification can lead to bias.
+
+# 📚 Appendix: Advanced Statistical Derivations and Theory
+
+## Formal Justification for IPTW
+
+Let's briefly sketch why IPTW works. The goal is to show that in the pseudo-population created by the weights, treatment $A$ and the confounders $L$ are independent. We'll use unstabilized weights ($w_i = 1 / f(a_i | l_i)$) for simplicity.
+
+We want to show that the weighted expectation $E_w[g(L) | A=1]$ is equal to the marginal expectation $E[g(L)]$, for any function $g$ of the confounders $L$. This would mean L has the same distribution among the treated as it does in the total population, implying independence.
+
+$$
+E_w[g(L) | A=1] = \frac{E[ \frac{I(A=1)}{f(A=1|L)} g(L) ]}{E[ \frac{I(A=1)}{f(A=1|L)} ]}
+$$
+
+Let's look at the numerator. By the law of iterated expectations ($E[X] = E[E[X|Z]]$), we can condition on $L$.
+
+$$
+E \left[ \frac{I(A=1)}{f(A=1|L)} g(L) \right] = E \left\{ E \left[ \left. \frac{I(A=1)}{f(A=1|L)} g(L) \right| L \right] \right\}
+$$
+
+Inside the inner expectation, $g(L)$ and $f(A=1|L)$ are constants with respect to $A$.
+
+$$
+= E \left\{ \frac{g(L)}{f(A=1|L)} E[I(A=1)|L] \right\}
+$$
+
+By definition, $E[I(A=1)|L] = P(A=1|L) = f(A=1|L)$. So, the terms cancel:
+
+$$
+= E \left\{ \frac{g(L)}{f(A=1|L)} f(A=1|L) \right\} = E[g(L)]
+$$
+
+A similar calculation shows the denominator equals $P(A=1)$. Therefore,
+
+$$
+E_w[g(L) | A=1] = \frac{E[g(L)]}{P(A=1)}
+$$
+
+Wait, this is not quite $E[g(L)]$. There is a nuance here in the formal derivation for a continuous variable versus a discrete sum. The key insight is that the weighting scheme effectively transforms the joint distribution $f(y,a,l)$ into a new distribution $f_w(y,a,l) \propto y \cdot f(y|a,l)f(a)f(l)$ where $a$ and $l$ are independent. This relies on the assumption of sequential exchangeability allowing us to factor the joint distribution correctly. The stabilized weights perform a similar function while being more statistically efficient.

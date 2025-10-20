@@ -1,0 +1,145 @@
+---
+title: "Marginal and Conditional Effects in GLM and GLMM"
+---
+
+Below is an integrated overview of **marginal** versus **conditional** effects, highlighting how each concept is defined and interpreted in **statistics**, **biostatistics**, and **social science** contexts. We then consider how the notion of "effect" changes when moving from linear to non-linear models.
+
+## 1. Marginal vs. Conditional Effects
+
+### 1.1 In General (Statistics)
+
+- **Marginal Effect**
+  1. **Definition**: A marginal effect is usually understood as an *overall* or *population-averaged* effect of a predictor on an outcome, either by:
+     - Ignoring other variables entirely, or
+     - Averaging (integrating) over the distribution of other variables or random effects.
+  2. **Usage**:
+     - In a simple regression setting (e.g., ordinary least squares with one predictor $x$), the marginal effect is often the slope from regressing $y$ on $x$ alone (i.e., not conditioning on other covariates).
+     - In more complex settings (especially with mixed models or multi-level models), marginal effects often refer to *population-averaged* effects when random effects or other covariates have been integrated out.
+- **Conditional Effect**
+  1. **Definition**: A conditional effect is the *partial* or *subject-specific* effect of a predictor on the outcome *given* specific values (or levels) of the other covariates (and possibly given a specific value of any random effect).
+  2. **Usage**:
+     - In a multiple regression with predictors $\{x_1, x_2, \ldots\}$, the coefficient $\beta_1$ is typically referred to as the conditional effect of $x_1$ on $y$, holding all other covariates fixed.
+     - In multi-level or longitudinal models, "conditional" often means "subject-specific," as in a random-intercept or random-slope model.
+
+#### Why the Terminology Matters
+
+- **Marginal** = *Averaged over* or *ignoring* other variables (or random effects).
+- **Conditional** = *Given* or *holding constant* other variables (or random effects).
+
+### 1.2 Biostatistics
+
+In **biostatistics**, the terms *marginal* and *conditional* often surface in the context of **Generalized Estimating Equations (GEE)** and **mixed-effects GLMs** for correlated data:
+
+1. **Marginal (Population-Averaged) Models**
+   - Fit via GEE (Generalized Estimating Equations).
+   - The coefficients represent *population-averaged (or population-level) effects*.
+   - Example: A logistic GEE for binary outcomes yields *marginal odds ratios*, which interpret changes in odds at the *population* level.
+
+2. **Conditional (Subject-Specific) Models**
+   - Typically fit via mixed-effects (random effects) models (e.g., generalized linear mixed models, GLMMs).
+   - Coefficients represent *subject-specific (conditional) effects*, i.e., the effect of a predictor on the outcome *within* a particular subject, conditioning on that subject's random intercept (and/or slope).
+   - Example: A logistic mixed model yields *subject-specific odds ratios*, meaning how the odds change *within* an individual, controlling for that individual's random effect.
+
+**Interpretation Differences**
+- A *marginal odds ratio* (or risk ratio, or difference) for a binary outcome can differ significantly from a *subject-specific* odds ratio in non-linear models because averaging on the link scale does not equal averaging on the response scale. This is sometimes referred to as the "ecological" or "Simpson's paradox"-type phenomena when aggregated or marginal relationships differ from within-subject or conditional relationships.
+
+### 1.3 Social Science
+
+In **social science** research (e.g., econometrics, sociology, political science):
+
+- **Marginal Effects**
+  - Often refers to a *partial derivative* (or discrete difference) of the outcome with respect to a predictor, *averaged* across the observed data or at specific "typical" values of other covariates.
+  - In nonlinear models (e.g., logistic or probit models), researchers frequently calculate "average marginal effects" (AMEs) or "marginal effects at the mean" (MEMs) to communicate how a 1-unit change in $x$ affects the probability of an outcome *on average in the population*.
+- **Conditional Effects**
+  - Typically refers to the *partial effect* of a predictor on the outcome *given* certain levels of other predictors—commonly expressed as "holding other things constant."
+  - For interaction terms, "conditional effect" highlights how the effect of one variable depends on a particular level of another variable.
+
+Moreover, in social science, "effect" often implies a **causal** interpretation if certain identification assumptions are met (e.g., from a randomized experiment or strong quasi-experimental design). However, without these assumptions, "effect" may be used loosely to mean an *association* controlling for other covariates.
+
+## 2. What Does "Effect" Mean in Each Field?
+
+1. **Statistics**
+   - "Effect" can be purely descriptive: the change in the expected value (or another parameter, like odds or rate) of the response given a change in the predictor. Causality is not necessarily implied unless explicitly stated (e.g., in a causal inference framework).
+
+2. **Biostatistics**
+   - Often concerned with *treatment effects* (drug vs. placebo) or *exposure effects* (risk factor vs. no risk factor). The term "effect" can be used in a causal sense, especially in clinical trial contexts where randomization helps identify a cause–effect relationship.
+   - Still, "marginal" vs. "subject-specific" effect might differ: the "marginal (population-averaged) effect" is the difference (or ratio) in the population outcome if the entire population were exposed vs. unexposed; the "conditional (subject-specific) effect" is the difference for a given individual, possibly with random intercepts accounted for.
+
+3. **Social Science**
+   - The language of "effect" is often connected to causal interpretations, but many observational studies are correlational.
+   - Researchers often talk about "marginal effects" (especially in logistic or probit regression) as the difference in predicted probability of an event for a 1-unit change in a predictor, either at average values of other variables or averaged across the sample distribution.
+
+## 3. How the Definition Changes for Non-Linear Models
+
+### 3.1 Linear vs. Non-Linear
+
+- In a **linear model** $y = X\beta + \varepsilon$:
+  - The effect of $\beta_j$ is literally the amount $y$ changes *on average* per 1-unit change in $x_j$, holding other $x$'s constant.
+  - Marginal vs. conditional effects in a simple linear model can sometimes coincide if the model is fully specified (no omitted confounders, etc.). However, once you bring random effects or partialing out other covariates, the distinction can still appear (subject-specific vs. population-level interpretation).
+- In a **non-linear model** (e.g., logistic, Poisson, probit):
+  1. **Link Function**: The coefficient $\beta_j$ is the change in the *log-odds* (logit), *log of rate* (Poisson), or another link-scale quantity, not necessarily the change in the raw outcome scale.
+  2. **Marginal vs. Conditional**:
+     - *Marginal (Population-Averaged) Effect*: Often found by integrating out random effects or averaging across the distribution of covariates. In logistic regression, this might be the average change in predicted probability for a 1-unit change in $x_j$ across the population.
+     - *Conditional (Subject-Specific) Effect*: The change in the linear predictor (e.g., log-odds) for a 1-unit change in $x_j$ within an individual or holding all covariates (and random effects) fixed at certain values.
+
+**Key Point**: For **non-linear** models, the difference between marginal and conditional can be *much larger* than in linear models, because
+
+$$
+\mathbb{E}[g^{-1}(\eta)] \;\neq\; g^{-1}(\mathbb{E}[\eta]),
+$$
+
+and thus integrating the nonlinear link function can yield fundamentally different "average" effects compared to those conditional on specific levels.
+
+### 3.2 Example: Logistic Regression
+
+1. **Subject-Specific (Conditional) Model**
+   - A random-intercept logistic model:
+
+$$
+\text{logit}(P(Y_{i}=1 \mid X_{i}, b_i)) = \beta_0 + \beta_1 X_{i} + b_i.
+$$
+
+   - $\beta_1$ is the log-odds change for a 1-unit change in $X_i$ *within an individual*, conditioning on that individual's random effect $b_i$.
+
+2. **Marginal (Population-Averaged) Model**
+   - A GEE approach or a marginal logistic regression:
+
+$$
+\text{logit}(P(Y_{i}=1 \mid X_{i})) = \alpha_0 + \alpha_1 X_{i},
+$$
+
+   - $\alpha_1$ is the log-odds change *averaged over* the distribution of random intercepts.
+
+Because of the non-linearity of the logit function, $\alpha_1$ and $\beta_1$ typically differ: the population-averaged effect on the odds of $Y=1$ is not the same as the subject-specific effect *within* an individual.
+
+## 4. Summary Highlights
+
+1. **Marginal Effects**
+   - *Population-level* interpretation.
+   - "Average" effect when other factors are not held fixed or are integrated out (in random-effects settings).
+
+2. **Conditional Effects**
+   - *Subject-specific* or *partial* interpretation.
+   - Effect given specific values of other covariates (and random effects, if any).
+
+3. **Different Disciplines, Different Emphases**
+   - **Statistics**: Tends to emphasize whether you are conditioning on or marginalizing over random effects or covariates.
+   - **Biostatistics**: Clear distinction between *population-averaged* (GEE) vs. *subject-specific* (mixed-effects) interpretations, especially for repeated-measures or clustered data.
+   - **Social Science**: Focus on *marginal effects* in logistic or probit models (at means or averaged over the sample) versus *conditional* effects with other variables "held constant." Also, "effect" language often implies causal interpretation if the design justifies it.
+
+4. **Non-Linear Models**
+   - The difference between marginal and conditional effects can be large because of the link function.
+   - One cannot simply interpret a coefficient on the link scale (e.g., log-odds) as the change in probability; instead, the effect on the probability scale usually requires partial derivatives or predicted probability calculations—either holding variables at certain values (conditional) or averaging across their distribution (marginal).
+
+### Final Takeaway
+
+- **Marginal Effect** = Effect of a predictor without conditioning on other variables, or after averaging over them (population-level).
+- **Conditional Effect** = Effect of a predictor at specific values of other variables (subject-specific or partial effect).
+- **"Effect"** in each field may be purely *associational* or may imply *causation* if the study design (e.g., randomized trial) and assumptions permit.
+- In **non-linear** models (logistic, Poisson, etc.), marginal vs. conditional effects differ more dramatically because averaging or integrating out variables/parameters on the link scale does not equate to averaging on the outcome scale.
+
+## References / Further Reading
+- Skrondal, A., & Rabe-Hesketh, S. (2004). *Generalized Latent Variable Modeling: Multilevel, Longitudinal, and Structural Equation Models*.
+- Long, J. S., & Freese, J. (2014). *Regression Models for Categorical Dependent Variables Using Stata*.
+- Hardin, J. W., & Hilbe, J. M. (2003). *Generalized Estimating Equations*.
+- McCullagh, P., & Nelder, J. A. (1989). *Generalized Linear Models*.

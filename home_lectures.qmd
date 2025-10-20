@@ -1,0 +1,53 @@
+---
+title: "Lecture Notes" 
+date: "7/12/2025"
+date-modified: last-modified
+date-format: long
+---
+
+This page provides a detailed week-by-week schedule for STAT 579. Readings should be completed *before* the first class of the week.
+
+- **HR:** Hernán, M. A., & Robins, J. M. (2024). *Causal Inference: What If*.
+- **Neal:** Neal, B. (2020). *Introduction to Causal Inference*.
+- **Cunningham:** Cunningham, S. (2021). *Causal Inference: The Mixtape*.
+- **VanderWeele:** VanderWeele, T. J. (2015). *Explanation in Causal Inference*.
+
+### Part I: Foundations of Causal Inference
+
+| Week  | Dates      | Core Topic                                                                          | Primary Readings                   | Optional Reading (Cunningham)  | Project Connection                          |
+| :---- | :--------- | :---------------------------------------------------------------------------------- | :--------------------------------- | :----------------------------- | :------------------------------------------ |
+| **1** | Aug 19, 21 | [What is a Causal Effect?](lectures/week-01_what_is_causal_effect.qmd)               | **HR:** Ch. 1–2; **Neal:** Ch. 1–2 | Ch. 2: Potential Outcomes      | Define your causal question.                |
+| **2** | Aug 26, 28 | [DAGs & Assumption Transparency](lectures/week-02_DAG.qmd)                           | **Neal:** Ch. 3; **HR:** Ch. 6     | Ch. 3: Directed Acyclic Graphs | Draw a preliminary DAG.                     |
+| **3** | Sep 2, 4   | [Exchangeability, Positivity](lectures/week-03_exchangeability_positivity.qmd)      | **HR:** Ch. 7; **Neal:** Ch. 4     | Ch. 4: Regression              | Identify assumptions for your causal model. |
+| **4** | Sep 9, 11  | [Bias (Confounding, Selection)](lectures/week-04_bias_seleclection_measurement.qmd) | **HR:** Ch. 8–9                    | \-                             | Consider biases in your dataset.            |
+
+### Part II: Estimation Methods
+
+| Week  | Dates         | Core Topic                                                                | Primary Readings                      | Optional Reading (Cunningham)       | Project Connection          |
+| :---- | :------------ | :------------------------------------------------------------------------ | :------------------------------------ | :---------------------------------- | :-------------------------- |
+| **5** | Sep 16, 18    | [Propensity Scores-I](lectures/week-05_propensity_score.qmd)              | **HR:** Ch. 12–13; **Neal:** Ch. 7    | Ch. 5: Matching & Subclassification | Select adjustment strategy. |
+| **5** | Sep 16, 18    | [Propensity Scores-II](lectures/week-05_propensity_score-rev-1.qmd)       | **HR:** Ch. 12–13; **Neal:** Ch. 7    | Ch. 5: Matching & Subclassification | Select adjustment strategy. |
+| **6** | Sep 23, 25    | [IPTW & MSMs](lectures/week-06_IP_weighting_MSM-rev2.qmd)                      | **HR:** Ch. 15; **Neal:** Ch. 7.5–7.6 | \-                                  | Evaluate MSM relevance.     |
+| **6** | Sep 23, 25    | [IPTW & MSMs](lectures/week-06_IP_weighting_MSM-rev1.qmd)                 | **HR:** Ch. 15; **Neal:** Ch. 7.5–7.6 | \-                                  | Evaluate MSM relevance.     |
+| **7** | Sep 30, Oct 2 | [G-computation](lectures/week-07_g_computation-rev1.qmd)                  | **HR:** Ch. 20–21                     | \-                                  | Explore g-methods.          |
+| **8** | Oct 7         | [Instrumental Variables](lectures/week-08_instrumental_variable.qmd) | **HR:** Ch. 16; **Neal:** Ch. 9       | Ch. 8: Instrumental Variables       | Assess natural experiments. |
+
+***Note:** UNM Fall Break is Oct 9–10. Thursday's class is cancelled.*
+
+### Part III: Advanced Topics & Applications
+
+| Week   | Dates      | Core Topic                                                                   | Primary Readings                           | Project Connection                   |
+| :----- | :--------- | :--------------------------------------------------------------------------- | :----------------------------------------- | :----------------------------------- |
+| **9**  | Oct 14, 16 | [Effect Modification](lectures/week-09_effect_modification.qmd)              | **HR:** Ch. 4–5; **Neal:** Ch. 10          | **Milestone: Project Proposal Due.** |
+| **9**  | Oct 14, 16 | [Effect Modification](lectures/week-09_effect_modification-rev1.qmd)        | **HR:** Ch. 4–5; **Neal:** Ch. 10          | |
+| **10** | Oct 21, 23 | [Mediation I (Foundations)](lectures/week-10_mediation_analysis_example.qmd) | **VanderWeele:** Ch. 1–2; **Neal:** Ch. 14 | Refine DAG with mediators.           |
+| **11** | Oct 28, 30 | [Mediation II (Application)](lectures/week-11_mediation_analysis.qmd)        | **VanderWeele:** Ch. 3; **HR:** Ch. 23     | \-                                   |
+| **12** | Nov 4, 6   | [Sensitivity Analysis](lectures/week-12_sensitivity_analysis-rev3.qmd)       | **Neal:** Ch. 8; **HR:** Ch. 14            | Plan robustness checks.              |
+| **13** | Nov 11, 13 | [Target Trial Emulation](lectures/week-13_target_trial.qmd)                  | **HR:** Ch. 22                             | Reframe project as a trial.          |
+| **14** | Nov 18, 20 | **Final Presentations**                                                      | \-                                         | Present your findings.               |
+
+***Note:** Thanksgiving Break is Nov 27-28.*
+
+------------------------------------------------------------------------
+
+**Finals Week (Dec 8–13):** Final Project Paper Due.

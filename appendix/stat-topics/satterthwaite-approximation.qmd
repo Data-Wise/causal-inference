@@ -1,0 +1,262 @@
+---
+title: "Satterthwaite Approximation in Random Effects ANOVA"
+subtitle: "Generalized F Method for Variance Components"
+---
+
+The Satterthwaite approximation, often referred to as the Generalized $F$ method, is a statistical technique used in Analysis of Variance (ANOVA), particularly in random effects models, to approximate the distribution of linear combinations of mean squares. This method is invaluable when dealing with unbalanced designs or complex models where exact distributions are not easily obtainable. It facilitates hypothesis testing and the construction of confidence intervals for variance components by approximating these distributions with chi-square or F-distributions, adjusted with effective degrees of freedom. Below, I'll explain the method in detail, including its context, application, and derivations, tailored to the random effects ANOVA framework.
+
+# Context: Random Effects ANOVA
+
+In a random effects ANOVA, the goal is to analyze variance components rather than fixed group means. Consider a one-way random effects model:
+
+$$
+Y_{ij} = \mu + \tau_{i} + \epsilon_{ij},
+$$
+
+where:
+
+- $i = 1, \dots, a$ indexes the groups,
+- $j = 1, \dots, n_i$ indexes observations within group $i$ (possibly unbalanced, so $n_i$ may differ),
+- $\mu$ is the overall mean,
+- $\tau_{i} \sim N(0, \sigma^2_{\tau})$ is the random effect for group $i$,
+- $\epsilon_{ij} \sim N(0, \sigma^2)$ is the random error,
+- $\tau_{i}$ and $\epsilon_{ij}$ are independent.
+
+The parameters of interest are the variance components:
+
+- $\sigma^2_{\tau}$: Between-group variance,
+- $\sigma^2$: Within-group (error) variance.
+
+The total number of observations is $N = \sum_{i=1}^a n_i$. In this model, we decompose the total variability into sums of squares (SS) and compute mean squares (MS) to estimate these variances.
+
+## Sums of Squares and Mean Squares
+
+- **Between-group sum of squares ($SS_{Trt}$)**: Captures variability between group means.
+- **Within-group sum of squares ($SS_{Error}$)**: Captures variability within groups.
+
+These are divided by their degrees of freedom to obtain mean squares:
+
+- $MS_{Trt} = \frac{SS_{Trt}}{\nu-1}$,
+- $MS_{Error} = \frac{SS_{Error}}{N-\nu}$.
+
+Under the random effects model:
+
+- $MS_{Error}$ is an unbiased estimator of $\sigma^2$, because $E(MS_{Error}) = \sigma^2$,
+- $MS_{Trt}$ estimates a combination of variances: $E(MS_{Trt}) = \sigma^2 + c \sigma^2_{\tau}$, where $k$ is a design-dependent constant.
+
+For a **balanced design** ($n_i = n$ for all $i$):
+
+$$
+c = n,
+$$
+
+so $E(MS_{Trt}) = \sigma^2 + n \sigma^2_{\tau}$.
+
+For an **unbalanced design**:
+
+$$
+c = \frac{N - \sum_{i=1}^a n_i^2 / N}{\nu-1},
+$$
+
+reflecting the weighted contribution of group sizes to the between-group variance.
+
+## **Statistical Properties**
+
+Assuming normality:
+
+- $\frac{(N-\nu) MS_{Error}}{\sigma^2} \sim \chi^2_{N-\nu}$,
+- $\frac{(\nu-1) MS_{Trt}}{\sigma^2 + c \sigma^2_{\tau}} \sim \chi^2_{\nu-1}$,
+and $MS_{Trt}$ and $MS_{Error}$ are independent.
+
+In balanced designs, exact tests exist. For example, to test:
+
+$$
+H_0: \sigma^2_{\tau} = 0 \quad \text{vs.} \quad H_{Trt}: \sigma^2_{\tau} > 0,
+$$
+
+the statistic $F = \frac{MS_{Trt}}{MS_{Error}}$ follows an $F_{\nu-1, N-\nu}$ distribution under $H_0$. However, in unbalanced designs, the distribution of $F$ or estimators like $\hat{\sigma}_{Trt}^2 = \frac{MS_{Trt} - MS_{Error}}{c}$ is not exact, necessitating approximations like the Satterthwaite method.
+
+# Satterthwaite Approximation: Concept
+
+The Satterthwaite Approximation approximates the distribution of a linear combination of independent mean squares (which are scaled chi-square variables) by a single scaled chi-square distribution. This is achieved by matching the first two moments (mean and variance) of the linear combination to those of a scaled chi-square random variable, $c \chi^2_f$, where $f$ is the effective degrees of freedom.
+
+## General Form
+
+Suppose we have a linear combination:
+
+$$
+Q = \sum_{i=1}^m c_i Q_i,
+$$
+
+where:
+
+- $Q_i \sim \chi^2_{d_i}$ are independent chi-square variables with degrees of freedom $d_i$,
+- $c_i$ are constants (positive or negative, though typically positive in ANOVA contexts).
+
+We approximate:
+
+$$
+Q \approx c \chi^2_f,
+$$
+
+and determine $c$ and $f$ by equating moments.
+
+For a chi-square variable:
+
+- $E(\chi^2_f) = f$,
+- $\text{Var}(\chi^2_f) = 2f$.
+
+For $c \chi^2_f$:
+
+- $E(c \chi^2_f) = c f$,
+- $\text{Var}(c \chi^2_f) = c^2 \cdot 2f$.
+
+For $Q$:
+
+- $E(Q) = \sum_{i=1}^m c_i E(Q_i) = \sum_{i=1}^m c_i d_i$,
+- $\text{Var}(Q) = \sum_{i=1}^m c_i^2 \text{Var}(Q_i) = \sum_{i=1}^m c_i^2 \cdot 2 d_i$.
+
+Equate moments:
+
+1. $c f = \sum_{i=1}^m c_i d_i$,
+2. $2 c^2 f = \sum_{i=1}^m 2 c_i^2 d_i$.
+
+Solve for $f$:
+
+$$
+2 c^2 f = 2 \sum_{i=1}^m c_i^2 d_i,
+$$
+
+$$
+c f = \sum_{i=1}^m c_i d_i.
+$$
+
+Substitute $c = \frac{\sum_{i=1}^m c_i d_i}{f}$ into the variance equation:
+
+$$
+2 \left( \frac{\sum_{i=1}^m c_i d_i}{f} \right)^2 f = 2 \sum_{i=1}^m c_i^2 d_i,
+$$
+
+$$
+\frac{2 \left( \sum_{i=1}^m c_i d_i \right)^2}{f} = 2 \sum_{i=1}^m c_i^2 d_i,
+$$
+
+$$
+f = \frac{ \left( \sum_{i=1}^m c_i d_i \right)^2 }{ \sum_{i=1}^m c_i^2 d_i }.
+$$
+
+Then:
+
+$$
+c = \frac{\sum_{i=1}^m c_i d_i}{f}.
+$$
+
+This $f$ is the effective degrees of freedom, often non-integer, reflecting the complexity of the combination.
+
+# Application to Random Effects ANOVA
+
+In random effects ANOVA, mean squares are not pure chi-square variables but are scaled versions:
+
+- $MS_{Error}$: $\frac{(N-\nu) MS_{Error}}{\sigma^2} \sim \chi^2_{N-\nu}$,
+- $MS_{Trt}$: $\frac{(\nu-1) MS_{Trt}}{\sigma^2 + c \sigma^2_{\tau}} \sim \chi^2_{\nu-1}$.
+
+The Satterthwaite Approximation is typically applied to:
+
+1. **Linear combinations** (e.g., $MS_{Trt} - MS_{Error}$) for variance component estimation,
+2. **Ratios** (e.g., $\frac{MS_{Trt}}{MS_{Error}}$) for hypothesis testing, approximating them with an F-distribution (Generalized F).
+
+## Estimating $\sigma^2_{\tau}$
+
+Consider the estimator:
+
+$$
+\hat{\sigma}_{Trt}^2 = \frac{MS_{Trt} - MS_{Error}}{c}.
+$$
+
+We need the distribution of $MS_{Trt} - MS_{Error}$:
+
+- $E(MS_{Trt} - MS_{Error}) = (\sigma^2 + c \sigma^2_{\tau}) - \sigma^2 = c \sigma^2_{\tau}$,
+- $\text{Var}(MS_{Trt} - MS_{Error}) = \text{Var}(MS_{Trt}) + \text{Var}(MS_{Error})$, since $MS_{Trt}$ and $MS_{Error}$ are independent.
+
+Compute variances:
+
+- $MS_{Trt} = \frac{\sigma^2 + c \sigma^2_{\tau}}{\nu-1} \cdot \chi^2_{\nu-1}$,
+- $\text{Var}(MS_{Trt}) = \frac{(\sigma^2 + c \sigma^2_{\tau})^2}{\nu-1} \cdot 2(\nu-1) = \frac{2 (\sigma^2 + c \sigma^2_{\tau})^2}{\nu-1}$,
+- $MS_{Error} = \frac{\sigma^2}{N-\nu} \cdot \chi^2_{N-\nu}$,
+- $\text{Var}(MS_{Error}) = \frac{2 \sigma^4}{N-\nu}$.
+
+So:
+
+$$
+\text{Var}(MS_{Trt} - MS_{Error}) = \frac{2 (\sigma^2 + c \sigma^2_{\tau})^2}{\nu-1} + \frac{2 \sigma^4}{N-\nu}.
+$$
+
+Approximating $Q = MS_{Trt} - MS_{Error} \approx c \chi^2_f$:
+
+$$
+E(Q) = c \sigma^2_{\tau},
+$$
+
+$$
+\text{Var}(Q) = \frac{2 (\sigma^2 + c \sigma^2_{\tau})^2}{\nu-1} + \frac{2 \sigma^4}{N-\nu},
+$$
+
+$$
+f = \frac{2 [E(Q)]^2}{\text{Var}(Q)} = \frac{2 (c \sigma^2_{\tau})^2}{\frac{2 (\sigma^2 + c \sigma^2_{\tau})^2}{\nu-1} + \frac{2 \sigma^4}{N-\nu}}.
+$$
+
+Since $\sigma^2$ and $\sigma^2_{\tau}$ are unknown, we estimate them using $MS_{Error}$ and $\hat{\sigma}_{Trt}^2$, but this approximation is complex due to the subtraction. In practice, the Satterthwaite method is more commonly applied to ratios for testing.
+
+## Hypothesis Testing: Generalized F
+
+For $H_0: \sigma^2_{\tau} = 0$, use:
+
+$$
+F = \frac{MS_{Trt}}{MS_{Error}}.
+$$
+
+Under $H_0$, $E(MS_{Trt}) = \sigma^2$, but in unbalanced designs, the exact F-distribution doesn't hold. The Satterthwaite Approximation adjusts the degrees of freedom:
+
+- Numerator: $MS_{Trt}$, degrees of freedom $\nu-1$,
+- Denominator: $MS_{Error}$, degrees of freedom $N-\nu$.
+
+For simple cases, these are used directly, but in complex models (e.g., multi-way ANOVA), the test statistic might be:
+
+$$
+F = \frac{\sum_{i=1}^p c_i MS_i}{\sum_{j=1}^q d_j MS_j}.
+$$
+
+Approximate:
+
+$$
+F \approx F_{f_1, f_2},
+$$
+
+where:
+
+- $f_1$ is the effective degrees of freedom for the numerator,
+- $f_2$ is for the denominator.
+
+For $Q_1 = \sum_{i=1}^p c_i MS_i$:
+
+- $E(Q_1) = \sum_{i=1}^p c_i E(MS_i)$,
+- $\text{Var}(Q_1) = \sum_{i=1}^p c_i^2 \cdot \frac{2 [E(MS_i)]^2}{df_i}$,
+- $f_1 = \frac{ [E(Q_1)]^2 }{ \sum_{i=1}^p c_i^2 \frac{ [E(MS_i)]^2 }{df_i} }$.
+
+Similarly for the denominator. In practice, $E(MS_i)$ is estimated by $MS_i$.
+
+# Detailed Derivation Example
+
+For $Q = c_1 MS_1 + c_2 MS_2$:
+
+- $\frac{df_1 MS_1}{\theta_1} \sim \chi^2_{df_1}$, $\theta_1 = E(MS_1)$,
+- $\frac{df_2 MS_2}{\theta_2} \sim \chi^2_{df_2}$, $\theta_2 = E(MS_2)$.
+- $E(Q) = c_1 \theta_1 + c_2 \theta_2$,
+- $\text{Var}(Q) = c_1^2 \cdot \frac{2 \theta_1^2}{df_1} + c_2^2 \cdot \frac{2 \theta_2^2}{df_2}$,
+- $f = \frac{ (c_1 \theta_1 + c_2 \theta_2)^2 }{ \frac{c_1^2 \theta_1^2}{df_1} + \frac{c_2^2 \theta_2^2}{df_2} }$.
+
+Substitute $\theta_1 \approx MS_1$, $\theta_2 \approx MS_2$ for estimation.
+
+# Conclusion
+
+The Satterthwaite approximation is a versatile method in random effects ANOVA, enabling approximate inference for variance components in unbalanced or complex designs. By matching moments, it provides effective degrees of freedom, making it possible to use chi-square or F-distributions for testing and interval estimation, despite its reliance on normality and independence assumptions.

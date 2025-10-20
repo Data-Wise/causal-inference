@@ -1,0 +1,71 @@
+---
+title: "Instructions for Weekly Critiques"
+---
+
+## ✍️ Instructions for Weekly Critiques
+
+Your primary task each week is to provide thoughtful, well-reasoned answers to the three **guiding questions** for your chosen paper. This assignment is not about finding flaws; it's about engaging deeply with the core concepts and demonstrating your understanding.
+
+Your critique should be structured using the provided template. The goal is clarity, critical thinking, and conciseness.
+
+## 📝 Critique Templates
+
+Use the appropriate Quarto/Markdown template below for your weekly posts on Canvas. This structure ensures you address all required components clearly.
+
+### A) Template for the Discussion Leader
+
+**Subject:** Week [##] Discussion Starter: [Paper Author(s) & Year]
+
+**Summary (~300 words):**
+Provide a concise summary of the paper's core argument. 
+
+- What was the central problem the authors were trying to solve? 
+- What was their key insight or proposed solution? 
+- How does this paper fit into our course's narrative?
+
+**Answers to Guiding Questions:**
+
+1. Your thoughtful and comprehensive answer to the first guiding question for the paper. Aim for depth and clarity.
+2. Your thoughtful and comprehensive answer to the second guiding question.
+3. Your thoughtful and comprehensive answer to the third guiding question.
+
+**Takeaway & Discussion Prompt:**
+Conclude with the single most important takeaway from this paper. Then, pose one open-ended question to your classmates to stimulate discussion.
+
+### B) Template for All Other Students
+
+**Subject:** Critique: [Paper Author(s) & Year]
+
+**Brief Takeaway (1-2 sentences):**
+Start with your single most important takeaway from the paper. What did you find most surprising, useful, or problematic?
+
+**Answers to Guiding Questions:**
+
+1. Your thoughtful and direct answer to the first guiding question for the paper.
+2. Your thoughtful and direct answer to the second guiding question.
+3. Your thoughtful and direct answer to the third guiding question.
+
+
+## STAT 579: Rubric for Weekly Paper Critiques
+
+This rubric outlines the criteria for evaluating your weekly paper critiques posted on the Canvas Discussion forum. The goal is to reward thoughtful engagement with the material, clear reasoning, and a critical, assumption-focused perspective.
+
+### 1. Rubric for Student Critiques (Participants)
+
+This rubric is for all students who are not the designated Discussion Leader for the week. Each critique is worth a total of **20 points**.
+
+|Dimension|**Excellent (A-Level Work)**|**Good (B-Level Work)**|**Needs Improvement (C-Level or Below)**|Points|
+|---|---|---|---|---|
+|**Answers to Guiding Questions**|Answers are not just correct but demonstrate deep, critical engagement with the paper. The student uses examples, connects concepts to the broader course, and writes with analytical depth.|Answers are generally correct and address all parts of the prompt. The analysis is sound but may be more descriptive than critical.|Answers are incomplete, factually incorrect, or demonstrate a superficial understanding of the core concepts.|**/ 12**|
+|**Clarity & Reasoning**|The writing is clear, logical, and easy to follow. The student effectively communicates complex statistical ideas in their own words.|The writing is mostly clear, but may contain some jargon or slightly convoluted phrasing. The core logic is sound.|The writing is unclear, making the argument difficult to follow. Key terms may be used incorrectly.|**/ 4**|
+|**Takeaway & Critical Perspective**|The takeaway is insightful, goes beyond a simple summary, and shows critical reflection on the paper's assumptions, limitations, or broader implications.|The takeaway is reasonable and relevant to the paper, but may not offer a deep or novel insight.|The takeaway is a simple restatement of a fact from the paper, is unrelated to the core argument, or is missing.|**/ 4**|
+
+### 2. Rubric for the Weekly Discussion Leader
+
+The weekly **Discussion Leader** is evaluated on the same 20-point scale but with criteria re-weighted to reflect their role in framing the conversation for the class.
+
+|Dimension|**Excellent (A-Level Work)**|**Good (B-Level Work)**|**Needs Improvement (C-Level or Below)**|Points|
+|---|---|---|---|---|
+|**Summary & Synthesis**|The summary is comprehensive, accurate, and skillfully frames the paper's context, core argument, and importance. It provides a strong foundation for the class discussion.|The summary is accurate and covers the main points but may lack depth in explaining the paper's broader significance or context.|The summary contains significant inaccuracies, is incomplete, or fails to identify the paper's central contribution.|**/ 8**|
+|**Answers to Guiding Questions**|Answers are exemplary, serving as a model of deep analysis for the class. They are well-reasoned and demonstrate a superior grasp of the material.|Answers are correct and thoughtful, addressing all parts of the prompt.|Answers are superficial, incorrect, or suggest a misunderstanding of the guiding questions.|**/ 6**|
+|**Posing New Questions**|The two self-generated questions are insightful, open-ended, and designed to stimulate high-level discussion and critical thinking beyond the provided questions.|The questions are relevant but may be more straightforward or less provocative (e.g., closer to comprehension checks).|The questions are simple comprehension checks, are unclear, unrelated to the core themes, or are missing.|**/ 6**|

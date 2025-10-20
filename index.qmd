@@ -1,0 +1,94 @@
+---
+title: "STAT 579: Applied Causal Inference"
+---
+
+[Access UNM Canvas](https://canvas.unm.edu){.btn .btn-primary}
+
+
+| **Instructor**   | Davood Tofighi, PhD                      |
+| ---------------- | ---------------------------------------- |
+| **Affiliation**  | Department of Mathematics and Statistics |
+| **Office**       | Science Math Learning Center (SMLC) 228  |
+| **Office Hours** | TBD – Office/Zoom                        |
+| **Email**        | Through Canvas                           |
+| **Class Time**   | Tuesdays & Thursdays, 9:30 AM – 10:45 AM |
+
+## Course Overview
+
+This graduate-level seminar introduces the **theory and application of causal inference**, with a strong emphasis on **biostatistical and epidemiological contexts**. The course builds from **conceptual foundations and core assumptions** to **modern estimation methods** for causal effects, emphasizing **target trial emulation** as a unifying framework.
+
+Key frameworks and tools include:
+
+- Potential Outcomes Framework & SUTVA
+- Directed Acyclic Graphs (DAGs)
+- Propensity Scores, IPW, and Doubly Robust Methods
+- Instrumental Variables
+- Mediation Analysis (NDE/NIE)
+- Marginal Structural Models (MSMs)
+- Sensitivity Analysis
+
+### Instructor’s Approach
+
+Causal inference is not just a toolbox—it's a **rigorous way of thinking** about cause and effect. We will prioritize:
+
+- **Precise causal questions** (not just statistical associations).
+- **Transparency of assumptions** (via DAGs and formal notation).
+- **Identification before estimation** (thinking carefully about what is learnable from data).
+- **Critical robustness assessment** (sensitivity, replication, target trial framing).
+
+## Learning Objectives
+
+By the end of the course, students will be able to:
+
+1.  Formulate and distinguish causal from associational questions.
+2.  Represent assumptions using DAGs and counterfactual notation.
+3.  Evaluate and apply key assumptions (SUTVA, exchangeability, positivity).
+4.  Implement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).
+5.  Decompose effects via mediation analysis.
+6.  Conduct sensitivity analyses for unmeasured confounding.
+7.  Frame observational studies as target trial emulations.
+8.  Critically evaluate causal claims in the literature.
+
+## Assessment and Grading
+
+::: {.cell}
+| Component                            | Weight | Description                                                                                                                                                                                                                      |
+| :----------------------------------- | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Weekly Concept Checks** | 10%    | Short, low-stakes exercises on assumptions, DAGs, and interpretation.                                                                                                                                              |
+| **Problem Sets (3–4 sets)** | 25%    | Analytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).                                                                                                                               |
+| **Paper Critique & Discussion Lead** | 20%    | Each student will lead one class discussion of an assigned paper. This involves reconstructing the authors' DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings. |
+| **Final Project** | 35%    | Independent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.                                                                                                                    |
+| **Final Presentation** | 10%    | 15-minute conference-style presentation defending your project's causal assumptions and interpreting the results.                                                                                                                 |
+:::
+
+## Course Materials
+
+### Required (Freely Available Online)
+- Hernán, M. A., & Robins, J. M. (2024). *Causal Inference: What If*.
+- Neal, B. (2020). *Introduction to Causal Inference*.
+
+### Recommended
+- Cunningham, S. (2021). *Causal Inference: The Mixtape*.
+- VanderWeele, T. J. (2015). *Explanation in Causal Inference*.
+- Pearl, J., Glymour, M., & Jewell, N. (2016). *Causal Inference in Statistics: A Primer*.
+- Imbens, G. W., & Rubin, D. B. (2015). *Causal Inference for Statistics, Social, and Biomedical Sciences*.
+- Morgan, S. L., & Winship, C. (2015). *Counterfactuals and Causal Inference*.
+
+### Software
+- **Required:** R and RStudio (or VS Code). Students should have intermediate R proficiency.
+- **Core Packages:** `tidyverse`, `dagitty`, `ggdag`, `MatchIt`, `WeightIt`, `cobalt`, `ivreg`, `mediation`, `EValue`, `tmle3`, `grf`, `DoubleML`.
+
+### Key Notes for Students
+- **Paper Critique & Discussion Lead (20%)**: Each student is responsible for one session. Deliverables include:
+  1. **DAG reconstruction** of the paper’s causal assumptions.
+  2. **Assumptions table** (exchangeability, positivity, SUTVA, consistency).
+  3. **Replication/robustness plan** — how would you replicate or stress-test the findings?
+  4. **Discussion facilitation** with prepared questions for peers.
+
+## Course Policies
+- **Late Work:** Deadlines are firm; 10% penalty/day unless prior arrangement for documented emergencies.
+- **Academic Integrity:** Collaboration on ideas is encouraged, but submitted work must be your own.
+- **Participation & Respect:** Active, inclusive, evidence-based dialogue is expected.
+- **Accessibility:** Contact Accessibility Resource Center for accommodations.
+
+

@@ -1,0 +1,89 @@
+# Common Errors in Mixed Models: Random Interaction Terms
+
+This document explains a common error that occurs when trying to use random interaction terms in mixed models.
+
+## The Error
+
+When fitting a mixed model with random interaction terms using `lmer()`, you might encounter this error:
+
+```r
+Error: number of levels of each grouping factor must be < number of observations
+(problems: FactorA:FactorB)
+```
+
+## What Causes This Error?
+
+This error occurs in crossed random effects models when:
+
+1. You have exactly one observation per cell (e.g., one observation per A:B combination)
+2. The interaction term (A:B) has as many levels as there are observations
+3. This creates a saturated model where the interaction perfectly predicts each observation
+
+## Example That Produces the Error
+
+```{r}
+# Create a crossed design with 1 obs per cell
+nA <- 5
+nB <- 6
+problem_data <- expand.grid(
+    FactorA = factor(1:nA),
+    FactorB = factor(1:nB)
+)
+problem_data$y <- rnorm(nrow(problem_data))
+
+# This will fail with the error:
+lmer(y ~ (1 | FactorA) + (1 | FactorB) + (1 | FactorA:FactorB), data = problem_data)
+```
+
+## Why This Is a Problem
+
+When you have exactly one observation per cell:
+- The A:B interaction term can perfectly predict every observation
+- There's no residual variance left to estimate
+- The model is overparameterized and cannot be estimated
+
+## Solutions
+
+1. **Multiple observations per cell**: Ensure you have at least 2 observations for each Factor A × Factor B combination.
+
+```{r}
+# Repeat each A:B combination at least twice
+good_data <- problem_data[rep(1:nrow(problem_data), each = 2), ]
+good_data$y <- rnorm(nrow(good_data))
+
+# This will work:
+lmer(y ~ (1|FactorA) + (1|FactorB) + (1|FactorA:FactorB), data = good_data)
+```
+
+2. **Incomplete design**: Use a design where not every A:B combination exists, so the number of cells is less than the number of observations.
+
+3. **Omit the interaction**: If you truly have only one observation per cell, you cannot include the interaction term as random. Use only the main random effects:
+
+```{r}
+# This will work (but doesn't model cell-specific variation):
+lmer(y ~ (1|FactorA) + (1|FactorB), data = problem_data)
+```
+
+4. **Use a different correlation structure**: Consider other ways to model the relationship, such as random slopes instead of interaction terms.
+
+## Understanding Random Interaction Terms
+
+- A random interaction term (1|A:B) models excess variation specific to combinations of factors
+- It captures non-additive effects where some combinations deviate from what would be predicted by adding the main effects
+- In experimental design, this is sometimes called the "cell-specific" component of variance
+
+## Technical Requirements
+
+For a model with p random effects terms, the data must satisfy:
+1. For each random effects term, the number of levels must be less than n (total observations)
+2. The total number of observations must exceed the sum of ranks of the random effects design matrices
+
+## Application in Research
+
+Random interaction terms are important in many research contexts:
+- Rater × item designs in psychometrics
+- Stimulus × subject designs in psychology
+- Genotype × environment studies in agriculture
+- Many other crossed experimental designs
+
+By properly designing studies with sufficient replication within cells, you can properly estimate these important variance components.

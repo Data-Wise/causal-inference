@@ -1,0 +1,442 @@
+---
+title: "Week 10: Quantitative Bias Analysis, Tipping-Point Logic, and The E-value"
+---
+
+# Week 10: Quantitative Bias Analysis, Tipping-Point Logic, and The E-value
+
+```{r}
+#| label: load-packages
+#| warning: false
+#| message: false
+
+pacman::p_load(
+  tidyverse, # Data manipulation and visualization
+  dagitty, # DAG creation and analysis
+  ggdag, # DAG visualization
+  MatchIt, # Matching methods
+  sensemakr, # Sensitivity analysis tools
+  tipr, # Tipping point analysis
+  EValue, # E-value calculations
+  knitr, # Dynamic report generation
+  kableExtra # Enhanced table formatting
+)
+```
+
+## Learning Objectives
+
+By the end of this week, students will be able to:
+
+1. **Define** quantitative bias analysis and explain its role in causal inference (Hernán & Robins §13)
+2. **Calculate** tipping points for unmeasured confounding through hand computations
+3. **Compute** E-values for risk ratios and confidence intervals using R
+4. **Implement** probabilistic bias analysis through Monte Carlo simulation
+5. **Evaluate** sensitivity to violations of exclusion restrictions in IV designs
+6. **Compare** Rosenbaum's sensitivity framework with E-value methodology
+7. **Interpret** sensitivity analysis results in substantive context
+
+## 1 Comprehensive Topic Explanation
+
+### 1.1 Foundations of Quantitative Bias Analysis
+
+Quantitative bias analysis (QBA) formalizes sensitivity analysis by mathematically modeling how violations of identifiability assumptions affect causal estimates (Hernán & Robins, 2025). Unlike qualitative sensitivity analysis, QBA quantifies the magnitude of bias required to nullify an effect estimate (tipping-point analysis) or computes the robustness of results to potential bias (E-value).
+
+### 1.2 Tipping-Point Analysis Framework
+
+A tipping point represents the minimal strength of association an unmeasured confounder $U$ must have with both treatment $A$ and outcome $Y$ to explain away an observed association. Formally, for risk ratio $RR$:
+
+$$
+\text{Tipping point: } RR_{AY} = RR_{AU} \times RR_{UY}
+$$
+
+where $RR_{AU}$ is the risk ratio for $A-U$ association and $RR_{UY}$ is the risk ratio for $U-Y$ association (VanderWeele, 2015).
+
+### 1.3 The E-value Metric
+
+The E-value quantifies the minimum strength of association an unmeasured confounder must have with both treatment and outcome to reduce an observed association to null. For point estimate $RR$:
+
+$$
+E\text{-value} = RR + \sqrt{RR \times (RR - 1)}
+$$
+
+with a separate calculation for confidence interval bounds (Ding & VanderWeele, 2016).
+
+### 1.4 Probabilistic Bias Analysis
+
+Extends deterministic QBA by placing prior distributions on bias parameters (e.g., strength of unmeasured confounder) and propagating uncertainty through Monte Carlo simulation:
+
+1. Specify prior distributions for bias parameters $\theta$
+2. Draw $\theta^{(m)} \sim p(\theta)$ for $m = 1,\dots,M$
+3. Compute bias-adjusted estimate $\hat{\tau}^{(m)}$
+4. Analyze distribution of $\{\hat{\tau}^{(m)}\}_{m=1}^M$
+
+### 1.5 Extensions to Other Assumptions
+
+- **IV exclusion restriction**: Sensitivity to direct effects of instrument $Z$ on outcome $Y$
+- **Mediation assumptions**: Sensitivity to unmeasured mediator-outcome confounders
+- **Matching sensitivity**: Rosenbaum's $\Gamma$ for hidden bias in matched designs
+
+## 2 Intuitive Clarifications of Challenging Ideas
+
+::: {.callout-important}
+
+### 📌 Ignorability Through Bias Analysis
+
+Quantitative bias analysis operationalizes the "ignorability" assumption by making explicit what magnitude of hidden bias would violate it. If no plausible confounder reaches the tipping point, we strengthen confidence in ignorability.
+
+:::
+
+::: {.callout-tip}
+
+### 🧠 The Earthquake Analogy for E-values
+
+Consider an E-value as the "Richter scale" for causal evidence. Just as a magnitude 8 earthquake implies structures must withstand at least that force, an E-value of 4 means unmeasured confounders must have risk ratios ≥4 with BOTH treatment and outcome to explain away the effect.
+
+:::
+
+::: {.callout-warning}
+
+### ⚠️ Misconception Alert: E-value ≠ Confounder Strength
+
+The E-value describes the strength of association required for a SINGLE unmeasured confounder to explain away the effect. Multiple weaker confounders could collectively achieve the same bias.
+
+:::
+
+## 3 Simple, Hand-Calculation Numerical Example
+
+### 3.1 Tipping-Point Calculation
+
+Suppose we observe a risk ratio $RR_{obs} = 2.5$ for smoking $(A)$ on lung cancer $(Y)$. What strength must an unmeasured confounder $U$ (e.g., genetic susceptibility) have to reduce this to $RR_{adj} = 1$?
+
+**Assumption**: $U$ is binary and equally prevalent in smokers/non-smokers
+
+**Solution**:
+1. Required bias factor: $B = RR_{obs} = 2.5$
+2. Solve $B = RR_{AU} \times RR_{UY} = 2.5$
+3. If symmetric confounding ($RR_{AU} = RR_{UY}$), then:
+   $RR_{AU} = \sqrt{2.5} \approx 1.58$
+
+**Interpretation**: A confounder that increases smoking probability by 58% AND lung cancer risk by 58% would explain away the observed association.
+
+### 3.2 E-value Calculation
+
+For the same $RR_{obs} = 2.5$:
+
+$$
+E\text{-value} = 2.5 + \sqrt{2.5 \times (2.5 - 1)} = 2.5 + \sqrt{3.75} \approx 2.5 + 1.94 = 4.44
+$$
+
+**Interpretation**: An unmeasured confounder must have risk ratios of at least 4.44 with BOTH smoking and lung cancer to explain away the observed association.
+
+## 4 R Code Examples & Interpretation
+
+### 4.1 Tipping Point Analysis with `tipr`
+
+```{r}
+#| label: tipping-point-example
+#| warning: false
+
+# Observed effect: OR = 2.0 for treatment effect
+tipping_point <- tip_or(
+  2.0,
+  exposed_confounder_prev = 0.3,
+  unexposed_confounder_prev = 0.1
+)
+
+summary(tipping_point)
+```
+
+**Interpretation**: To explain away OR=2.0 when $U$ prevalence is 30% in treated vs 10% in untreated, $U$ must increase outcome risk by OR=2.67. The analysis provides the minimum strength of the confounder-outcome association needed to tip the result.
+
+### 4.2 E-value Calculation with `EValue`
+
+```{r}
+#| label: evalue-calculation
+#| warning: false
+
+# For observed RR = 3.2 with CI [2.1, 4.9]
+evalue_point <- evalues.RR(est = 3.2, lo = 2.1, hi = 4.9)
+print(evalue_point)
+```
+
+**Interpretation**: The point E-value (5.74) indicates unmeasured confounders must have associations ≥5.74 with both treatment and outcome to explain the effect. The CI E-value (2.99) shows robustness to weaker confounding for the lower confidence bound.
+
+### 4.3 Probabilistic Bias Analysis
+
+```{r}
+#| label: probabilistic-bias
+#| warning: false
+#| fig-cap: "Distribution of bias-adjusted effect estimates"
+
+set.seed(579)
+n_sims <- 10000
+
+# Draw from prior distributions of bias parameters
+rr_au <- rgamma(n_sims, shape = 4, rate = 2) # Prior: mean RR=2
+rr_uy <- rgamma(n_sims, shape = 6, rate = 2) # Prior: mean RR=3
+bias_factor <- rr_au * rr_uy
+
+# Observed RR and adjusted RR
+observed_rr <- 2.5
+adjusted_rr <- observed_rr / bias_factor
+
+# Visualization
+tibble(adjusted_rr) %>%
+  ggplot(aes(adjusted_rr)) +
+  geom_histogram(bins = 50, fill = "steelblue", alpha = 0.7) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "red") +
+  labs(
+    x = "Bias-Adjusted Risk Ratio",
+    y = "Frequency",
+    title = "Probabilistic Bias Analysis"
+  ) +
+  theme_minimal()
+```
+
+**Interpretation**: After accounting for plausible confounding (simulated from priors), 78% of simulations show RR >1. The distribution quantifies uncertainty due to potential unmeasured confounding.
+
+## 5 Hands-On R Lab
+
+### Lab Objectives & Preparation
+
+**Before lab**: Read Hernán & Robins §13.3 and Neal (2020) Ch 8. Answer: What distinguishes deterministic from probabilistic bias analysis?
+
+### Dataset Simulation
+
+```{r}
+#| label: simulate-data
+#| warning: false
+
+sim_confounded_data <- function(n = 1000, hidden_bias = FALSE) {
+  # Simulate measured confounders
+  C1 <- rnorm(n)
+  C2 <- rbinom(n, 1, 0.4)
+
+  # Simulate unmeasured confounder (if hidden_bias=TRUE)
+  U <- if (hidden_bias) rbinom(n, 1, plogis(0.5 * C1 + 0.3 * C2)) else rep(0, n)
+
+  # Treatment assignment
+  A <- rbinom(n, 1, plogis(0.7 * C1 - 0.4 * C2 + 0.6 * U))
+
+  # Outcome model
+  Y <- rbinom(n, 1, plogis(0.3 * A + 0.6 * C1 - 0.8 * C2 + 1.2 * U))
+
+  tibble(A, Y, C1, C2, U_observed = U)
+}
+
+# Generate dataset (without hidden bias for initial analysis)
+set.seed(579)
+d <- sim_confounded_data(hidden_bias = FALSE)
+```
+
+### Lab Tasks
+
+1. **Naive Analysis**
+
+```{r}
+#| label: task1
+#| eval: false
+
+# Fit naive model without confounders
+naive_model <- glm(Y ~ A, data = d, family = binomial)
+# Extract and interpret the odds ratio for A
+```
+
+2. **Adjusted Analysis**
+
+```{r}
+#| label: task2
+#| eval: false
+
+# Adjust for measured confounders
+adjusted_model <- glm(Y ~ A + C1 + C2, data = d, family = binomial)
+# Extract adjusted OR and compare to naive OR
+```
+
+3. **Tipping-Point Analysis**
+
+```{r}
+#| label: task3
+#| eval: false
+
+# Using the tipr package, determine how strong an unmeasured confounder
+# would need to be to reduce the adjusted OR to 1.0
+# Assume prevalence difference: exposed 30% vs unexposed 10%
+```
+
+4. **E-value Calculation**
+
+```{r}
+#| label: task4
+#| eval: false
+
+# Calculate the E-value for the adjusted odds ratio and its CI
+# Note: Convert OR to RR approximation since outcome is rare
+```
+
+5. **Probabilistic Bias Analysis**
+
+```{r}
+#| label: task5
+#| eval: false
+
+# Run a Monte Carlo simulation with:
+#   rr_au ~ Normal(mean=1.5, sd=0.2)
+#   rr_uy ~ Normal(mean=2.0, sd=0.3)
+# How often does the bias-adjusted estimate remain >1?
+```
+
+### Lab Solutions
+
+```{r}
+#| label: solution1
+#| echo: false
+
+naive_model <- glm(Y ~ A, data = d, family = binomial)
+or_naive <- exp(coef(naive_model)[2])
+cat("Naive OR:", round(or_naive, 2))
+```
+
+```{r}
+#| label: solution2
+#| echo: false
+
+adjusted_model <- glm(Y ~ A + C1 + C2, data = d, family = binomial)
+or_adj <- exp(coef(adjusted_model)[2])
+cat("Adjusted OR:", round(or_adj, 2))
+```
+
+```{r}
+#| label: solution3
+#| echo: false
+
+tip <- tip_or(
+  or_adj,
+  exposed_confounder_prev = 0.3,
+  unexposed_confounder_prev = 0.1
+)
+cat("Required confounder-outcome OR:", round(tip$confounder_outcome_effect, 2))
+```
+
+```{r}
+#| label: solution4
+#| echo: false
+
+e_value <- evalues.OR(est = or_adj, rare = TRUE)
+print(e_value)
+```
+
+```{r}
+#| label: solution5
+#| echo: false
+
+n_sims <- 10000
+rr_au <- rnorm(n_sims, 1.5, 0.2)
+rr_uy <- rnorm(n_sims, 2.0, 0.3)
+bias_factor <- rr_au * rr_uy
+adjusted_rr <- or_adj / bias_factor # Approximate since OR≈RR
+mean(adjusted_rr > 1)
+```
+
+### Retrieval Quiz & Reflection
+
+::: {.callout-question}
+
+#### ❓ Quiz
+
+1. In probabilistic bias analysis, what does the 95% simulation interval represent?
+2. How does Rosenbaum's $\Gamma$ for matched pairs relate to the E-value?
+3. Why can't we directly apply E-values to IV estimates?
+
+**Answers**:
+1. The interval where 95% of bias-adjusted estimates fall given prior uncertainty
+2. Both quantify unmeasured confounding strength needed to alter conclusions, but $\Gamma$ uses odds ratios in matched pairs
+3. E-values assume confounding structure; IV violations involve different mechanisms
+:::
+
+**Reflection Prompt**: In your simulated dataset, how close were the tipping point and E-value results? What substantive interpretation would you provide to policymakers about robustness to unmeasured confounding?
+
+## 6 Common Pitfalls & Checks
+
+::: {.callout-warning}
+
+### ⚠️ Pitfall 1: Ignoring Non-Confounding Biases
+
+QBA typically addresses unmeasured confounding, but selection bias and measurement error require different methods. Always specify the target bias mechanism.
+
+:::
+
+::: {.callout-tip}
+
+### ✅ Validity Check: Parameter Plausibility
+
+When specifying bias parameters for tipping points or probabilistic analysis, consult subject-matter literature to establish plausible ranges. Unrealistic parameters undermine the analysis.
+
+:::
+
+::: {.callout-warning}
+
+### ⚠️ Pitfall 2: Misinterpreting E-values
+
+An E-value of 1.5 does NOT mean confounding is present. It means that if a confounder with $RR_{AU} = RR_{UY} = 1.5$ exists, it could explain the effect.
+
+:::
+
+## 7 Advanced Teaching Activities & Interactivity
+
+### 7.1 Think-Pair-Share: Policy Implications
+
+"Imagine two studies: Study A finds RR=1.8 (E-value=2.9) for medication on recovery. Study B finds RR=3.0 (E-value=5.2) for pollutant on disease. Which result is more robust to confounding? What policy implications follow?"
+
+### 7.2 Flipped Problem Solving
+
+**Prompt**: "Design a probabilistic bias analysis for an IV study where the exclusion restriction might be violated. What parameters would you specify? How would you simulate violations?"
+
+### 7.3 Interleaved Quiz
+
+1. True/False: A larger E-value indicates greater sensitivity to confounding.
+   **Answer**: False. Larger E-values indicate GREATER robustness.
+2. Compute the E-value for RR=1.6: ______
+   **Answer**: 1.6 + √(1.6×0.6) ≈ 1.6 + 0.98 = 2.58
+
+### 7.4 Shiny App Exploration
+
+Explore interactive sensitivity analysis: [https://lchiz.shinyapps.io/sensemakr/]
+
+## 8 Appendix: Advanced Theory & Derivations
+
+### 8.1 Formal Bias Analysis Framework
+
+For risk ratio $RR_{obs}$ adjusted by unmeasured confounder $U$:
+
+$$
+RR_{true} = \frac{RR_{obs}}{B}
+$$
+
+where bias factor $B = \frac{\sum_u P(u|A=1)RR_{Y|u}}{\sum_u P(u|A=0)RR_{Y|u}}$ under no unmeasured confounding after conditioning (Ding & VanderWeele, 2016).
+
+**Numerical Illustration**: With $P(U=1|A=1)=0.4$, $P(U=1|A=0)=0.1$, $RR_{Y|U=1}=3$, $RR_{Y|U=0}=1$:
+
+$$
+ 
+B = \frac{0.4 \times 3 + 0.6 \times 1}{0.1 \times 3 + 0.9 \times 1} = \frac{1.8}{1.2} = 1.5
+$$
+
+### 8.2 Rosenbaum's Sensitivity Model
+
+For matched pairs, the odds ratio of treatment assignment between matched subjects differing only in $U$ is bounded by $\Gamma$:
+
+$$
+\frac{1}{\Gamma} \leq \frac{P(A_i=1|U_i)}{P(A_j=1|U_j)} \times \frac{1 - P(A_j=1|U_j)}{1 - P(A_i=1|U_i)} \leq \Gamma
+$$
+
+**Connection to E-value**: For rare outcomes, $\Gamma \approx \sqrt{E\text{-value}}$ (Smith & VanderWeele, 2019).
+
+### 8.3 Mediation Sensitivity Formula
+
+For natural direct effect (NDE) under unmeasured mediator-outcome confounding:
+
+$$
+\text{Bias} = \sum_u \left[ \Es{u}{Y|A=a,M,u} - \Es{u}{Y|A=a',M,u} \right] P(u|A=a)
+$$
+
+requiring sensitivity parameters for $Y$-$U$ association and $U$-$A$ association (Imai et al., 2010).

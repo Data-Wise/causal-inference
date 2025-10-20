@@ -1,0 +1,621 @@
+---
+title: "Causal Inference Course Syllabus"
+---
+
+## Course Assessment
+
+-   Weekly Concept Checks (10%): Brief conceptual quizzes or check-ins administered via UNM Learn.
+-   Biweekly Problem Sets (20%): Theoretical and graphical identification exercises, including DAGs and backdoor criterion applications.
+-   Applied R Labs (20%): Weekly lab demos (30 minutes) during class, followed by structured take-home assignments in R.
+-   Causal Article Critique (10%): A structured 2-page critique of a published observational study.
+-   Midterm Take-Home Exam (15%): Focuses on identifying estimands, drawing DAGs, and evaluating robustness of causal claims.
+-   Final Project (25%): A target trial emulation involving a written report and in-class presentation.
+
+## Part I: Foundations of Causal Inference
+
+### Week 1: What is a Causal Effect?
+
+-   Learning Objectives:
+    -   Define a causal effect using the Potential Outcomes framework.
+    -   Explain the "Fundamental Problem of Causal Inference."
+    -   Articulate the Stable Unit Treatment Value Assumption (SUTVA).
+    -   Explain why Randomized Controlled Trials (RCTs) are considered a gold standard for estimating average causal effects.
+-   Key Concepts: Potential Outcomes ($Y^1, Y^0$), Individual Causal Effect ($\tau_i$), Average Treatment Effect (ATE), SUTVA (No Interference, Consistency), Assignment Mechanism, Selection Bias.
+-   Readings:
+    -   Hernán & Robins (HR): Chapters 1 & 2
+    -   Neal: Chapters 1 & 2
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Aug 19, 9:30 AM - 10:45 AM): The Language of Causality
+    -   Agenda:
+        -   (15 min) Course introduction, syllabus review.
+        -   (60 min) Instructor-led discussion on the core theoretical concepts.
+    -   Topics Covered:
+        -   Motivation: Why "correlation is not causation" is an insufficient starting point.
+        -   The Fundamental Problem: Introduce the core challenge – we can only observe one state of the world for any individual at any given time.
+        -   Potential Outcomes: Formalize the problem with potential outcomes notation, $Y_i^1$ and $Y_i^0$.
+        -   Causal Contrasts: Distinguish between Average Treatment Effect (ATE), Average Treatment effect on the Treated (ATT), and other contrasts (HR Ch. 1–2; Neal Ch. 1).
+        -   Role of Counterfactuals: Discuss how counterfactuals underpin causal questions in policy and intervention research (Neal Ch. 1–2).
+        -   Prediction vs. Causation: Clarify the difference between predicting $Y$ and estimating a causal effect of $A$ on $Y$ (HR Ch. 2; Neal Ch. 2).
+        -   Consistency Assumptions: Discuss the consistency aspect of SUTVA and its implications for defining treatment versions (HR Ch. 2).
+        -   Experimental vs. Observational Data: Frame causal inference as comparing what we learn from randomized experiments vs. observational studies (HR Ch. 1–2).
+        -   Defining Effects: Define the Individual Causal Effect ($\tau_i = Y_i^1 - Y_i^0$) and the Average Treatment Effect (ATE) as $E[Y^1 - Y^0]$.
+        -   SUTVA: Break down the Stable Unit Treatment Value Assumption into its two parts: No Interference and Consistency (or "one version of treatment"), with public health examples for each.
+-   Thursday (Aug 21, 9:30 AM - 10:45 AM): The Power of Randomization
+    -   Agenda:
+        -   (35 min) Discussion on bias and the solution of randomization.
+        -   (15 min) Project workshop.
+    -   Topics Covered:
+        -   Selection Bias: Formally define selection bias as the systematic difference in baseline potential outcomes between groups, $E[Y^0 | A=1] - E[Y^0 | A=0]$.
+        -   Randomization as the Solution: Explain how random assignment, on average, forces the selection bias term to zero, making the treated and control groups comparable (exchangeable).
+        -   Unbiased Estimation: Show that because of randomization, the simple difference-in-means is an unbiased estimator of the ATE.
+        -   Types of Causal Effects: Compare ATE, ATT, ATC, and their interpretation in randomized vs. observational settings (HR Ch. 2).
+        -   Policy Framing: Discuss how counterfactuals are used to frame and interpret policy-relevant causal questions (Neal Ch. 2).
+
+#### Detailed Project Instructions for Week 1
+
+-   This Week's Goal: Begin the process of identifying a research area of interest and framing a question in causal terms.
+-   Tasks:
+    1.  Brainstorm Topics: Think about your field of study or areas of interest in public health or biostatistics. What relationships are you curious about? (e.g., the effect of a new policy, a clinical intervention, an environmental exposure).
+    2.  Formulate an Initial Causal Question: Try to phrase your interest as a clear causal question. For example, instead of "I'm interested in smoking and cancer," frame it as "What is the causal effect of initiating smoking (A) by age 18 on the 20-year risk of lung cancer (Y)?"
+    3.  Define the "Target Trial": Based on this week's discussion of RCTs as the gold standard, imagine the ideal (even if impossible) randomized experiment you would conduct to answer your question. Who would the participants be? What exactly is the "treatment" and "control"? What is the outcome? Thinking about this ideal trial will be a valuable reference point all semester.
+    4.  Begin Searching for Data: Start looking for publicly available datasets that might contain the variables you need to answer your question (e.g., NHANES, census data, data repositories from your field).
+
+### Week 2: Causal Diagrams (DAGs)
+
+-   Learning Objectives:
+    -   Translate a set of causal assumptions into a Directed Acyclic Graph (DAG).
+    -   Define and identify nodes, edges, paths, confounders, colliders, and mediators on a DAG.
+    -   Explain how DAGs represent the flow of association.
+-   Key Concepts: Directed Acyclic Graph (DAG), Node, Edge, Path, Chain, Fork, Collider, d-separation.
+-   Readings:
+    -   Neal: Chapter 3
+    -   HR: Chapter 6
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Aug 26, 9:30 AM - 10:45 AM): Drawing Our Assumptions
+    -   Agenda:
+        -   (75 min) Instructor-led discussion and interactive examples focused on DAG theory.
+    -   Topics Covered:
+        -   DAGs as a Language: Introduce DAGs as a formal, non-parametric way to encode our assumptions about the data-generating process (HR Ch. 6; Neal Ch. 3).
+        -   The Building Blocks: Define the three fundamental structures that make up any DAG:
+            -   Chains: $A \rightarrow M \rightarrow Y$ (causal mediation).
+            -   Forks: $A \leftarrow C \rightarrow Y$ (confounding).
+            -   Colliders: $A \rightarrow O \leftarrow Y$ (collider-stratification bias).
+        -   Graphical Model Formalism: Introduce formal language for nodes, edges, directed paths, and acyclicity (HR Ch. 6).
+        -   Encoding Assumptions: Show how DAGs make explicit the causal assumptions and allow for transparency and critique (Neal Ch. 3).
+        -   Markov Properties: Discuss the global and local Markov properties and how they relate to conditional independence (HR Ch. 6).
+        -   Graphical Definitions of Independence: Use DAGs to define and visualize conditional independence.
+        -   Flow of Association: Explain how association flows along open paths and is blocked by closed paths. Crucially, demonstrate that conditioning on a variable in a chain or fork *blocks* the path, while conditioning on a collider *opens* the path.
+-   Thursday (Aug 28, 9:30 AM - 10:45 AM): DAGs in Practice
+    -   Agenda:
+        -   (45 min) Deeper dive into d-separation and interactive DAG exercises.
+        -   (30 min) Applied R Lab Demo: Instructor-led demonstration with students coding along. Take-home assignment due before the next class. Project workshop.
+    -   Topics Covered:
+        -   d-separation: Formalize the rules for determining if two variables are conditionally independent given a third set of variables (HR Ch. 6).
+        -   Interactive Examples: Work through several examples as a class, drawing DAGs for real-world scenarios and identifying the different types of paths.
+        -   DAGs for Transparency: Use DAGs to make transparent causal assumptions, facilitate critique, and communicate with collaborators (Neal Ch. 3).
+        -   Code Demonstration: Introduce the `dagitty` R package and its online counterpart. Show how to specify a DAG in code and use the software to check for d-separation and identify paths.
+
+#### Detailed Project Instructions for Week 2
+
+-   This Week's Goal: Formalize your causal question with an initial DAG and select a dataset for your project.
+-   Tasks:
+    1.  Finalize Your Causal Question: Refine your question from Week 1 to be as specific as possible. Define your treatment (A), outcome (Y), and target population.
+    2.  Select a Dataset: Identify a specific, accessible dataset that contains your key variables. You must confirm that you can access and load this data.
+    3.  Draw Your Initial DAG: Based on your domain knowledge and a review of relevant literature, draw a DAG that represents your beliefs about the causal relationships between your A, your Y, and the most important other variables (Z).
+        -   This is your "assumed true" model of the world. It should not be based on what variables are available in your dataset, but on what you believe the real relationships are.
+        -   Clearly label the nodes for A, Y, and at least 3-4 other key variables (potential confounders, mediators, etc.).
+    4.  Submit Milestone 1: Formally submit your causal question and chosen dataset for instructor approval.
+
+
+
+### Week 3: Confounding & Identification
+
+-   Learning Objectives:
+    -   Define confounding using both the potential outcomes and graphical frameworks.
+    -   Use the backdoor criterion to find a sufficient adjustment set.
+    -   Distinguish between a confounder and other covariates.
+-   Key Concepts: Confounding, Backdoor Path, Backdoor Criterion, Sufficient Adjustment Set, Identifiability.
+-   Readings:
+    -   HR: Chapter 7
+    -   Neal: Chapter 4
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Sep 2, 9:30 AM - 10:45 AM): Identifying the Backdoor Threat
+    -   Agenda:
+        -   (75 min) Instructor-led discussion focused on the theory of confounding and the backdoor criterion.
+    -   Topics Covered:
+        -   What is Confounding?: Define a confounder as a common cause of the treatment and the outcome. Show how this creates a non-causal "backdoor" path that generates spurious association (HR Ch. 7).
+        -   Exchangeability: Introduce the concept of exchangeability and conditional exchangeability as the basis for identification (HR Ch. 7; Neal Ch. 4).
+        -   The Backdoor Criterion: Introduce the formal definition. A set of variables Z satisfies the backdoor criterion if it blocks all non-causal paths between treatment A and outcome Y, and contains no descendants of A (HR Ch. 7).
+        -   Sufficient Adjustment Sets: Explain that any set of variables that satisfies the backdoor criterion is a "sufficient adjustment set." There can be multiple such sets.
+        -   Minimal vs. Sufficient Adjustment: Distinguish between minimal adjustment sets and sufficient (possibly redundant) sets (Neal Ch. 4).
+        -   DAG-based Confounding: Use DAGs to define confounding and illustrate the difference between confounders, colliders, and mediators.
+        -   Residual Confounding: Discuss the problem of unmeasured or residual confounding and limitations of adjustment.
+-   Thursday (Sep 4, 9:30 AM - 10:45 AM): Finding the Right Path to Adjust
+    -   Agenda:
+        -   (45 min) Interactive session applying the backdoor criterion to complex DAGs.
+        -   (30 min) Applied R Lab Demo: Instructor-led demonstration with students coding along. Take-home assignment due before the next class. Project workshop.
+    -   Topics Covered:
+        -   "Bad Controls": Reinforce why you must not control for colliders or mediators of the effect you wish to estimate.
+        -   DAG Applications: Work through several complex DAGs as a class. For each, identify all backdoor paths and determine one or more valid adjustment sets.
+        -   Conditional Exchangeability: Emphasize the graphical and potential outcomes definitions of conditional exchangeability (HR Ch. 7).
+        -   Code Demonstration: Use `dagitty` to programmatically test the backdoor criterion and identify valid adjustment sets. Demonstrate the `paths()` and `adjustmentSets()` functions.
+
+#### Detailed Project Instructions for Week 3
+
+-   This Week's Goal: Refine your project DAG and formally identify the set of confounders you will need to adjust for in your analysis.
+-   Tasks:
+    1.  Refine Your Project DAG: Based on this week's material, critically review the DAG you drew last week. Have you included all plausible common causes? Are there any variables you previously included that might be colliders or mediators? Update your DAG to be as robust as possible.
+    2.  Apply the Backdoor Criterion: Using your refined DAG, manually trace all paths between your treatment (A) and outcome (Y).
+        -   List all the open "backdoor" paths. These are your sources of confounding.
+        -   Determine a set of covariates that, if adjusted for, would block all of these backdoor paths without opening any new ones (by conditioning on a collider) or blocking a causal path. This is your proposed adjustment set.
+    3.  Justify Your Set: Write a short paragraph explaining *why* your chosen set of variables is sufficient for confounding adjustment according to the backdoor criterion. This justification will be a core part of your project proposal.
+
+### Week 4: Selection & Measurement Bias
+
+-   Learning Objectives:
+    -   Explain how conditioning on a collider induces bias.
+    -   Identify potential sources of selection bias in different study designs.
+    -   Recognize how measurement error can impact causal estimates.
+-   Key Concepts: Collider-Stratification Bias, Selection Bias, Measurement Error (non-differential, differential).
+-   Readings:
+    -   HR: Chapters 8 & 9
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Sep 9, 9:30 AM - 10:45 AM): Bias from Selection
+    -   Agenda:
+        -   (75 min) Instructor-led discussion focused on collider-stratification and selection bias.
+    -   Topics Covered:
+        -   Collider Bias Revisited: Provide several strong, intuitive examples of how conditioning on a common effect creates a spurious association between its causes (e.g., the "talent and beauty" example for movie stars).
+        -   Selection as Conditioning on a Collider: Frame various forms of selection bias as implicitly conditioning on a collider.
+            -   Case-Control Studies: Selecting on the outcome.
+            -   Loss to Follow-up: Selecting on continued participation in the study, which is often affected by both treatment and other factors related to the outcome.
+        -   Selection Diagrams: Introduce selection diagrams as a way to represent selection mechanisms graphically (HR Ch. 8).
+        -   Generalizability vs. Bias: Discuss when selection limits the generalizability of your findings versus when it introduces a bias in the estimate for your selected sample.
+-   Thursday (Sep 11, 9:30 AM - 10:45 AM): Bias from Measurement
+    -   Agenda:
+        -   (45 min) Discussion on measurement error and final review of all biases.
+        -   (30 min) Project workshop and final proposal Q&A.
+    -   Topics Covered:
+        -   Measurement Error: Discuss the difference between non-differential measurement error (which typically biases estimates toward the null) and differential measurement error (which can bias in any direction).
+        -   Measurement Models: Introduce measurement error DAGs and the impact of misclassification (HR Ch. 9).
+        -   Berkson’s Bias and Bias Amplification: Illustrate Berkson’s bias and how certain types of selection or measurement error can amplify bias (HR Ch. 8–9).
+        -   Representing Bias on DAGs: Show how to add nodes for selection ("S") or unmeasured true values ("A\*") to a DAG to make these biases explicit.
+        -   The Hierarchy of Tasks: Review the core workflow for a causal analysis: 1) Define the question, 2) Draw the DAG (your assumptions), 3) Use the DAG to devise an identification strategy, 4) Estimate.
+
+#### Detailed Project Instructions for Week 4
+
+-   This Week's Goal: Finalize and submit your project proposal by critically assessing your design for all types of bias discussed so far.
+-   Tasks:
+    1.  Assess for Selection Bias: Look at your dataset and research question.
+        -   Are you studying a specific subgroup? If so, is that subgroup defined by a variable that could be a collider?
+        -   Is there significant missing data or loss to follow-up? Could participation in the study be related to both the treatment and the outcome? If so, selection bias is a major concern.
+    2.  Assess for Measurement Error: Consider how your key variables (treatment, outcome, and main confounders) were collected. Is there potential for misclassification or error? Briefly describe this potential limitation.
+    3.  Write the Project Proposal: Assemble your work from the last four weeks into a formal proposal (\~2-3 pages). It must include:
+        -   Your specific causal question and target estimand (e.g., ATE).
+        -   A description of your chosen dataset.
+        -   Your final, well-annotated DAG representing your causal assumptions.
+        -   Your identification strategy, explicitly stating your chosen adjustment set and justifying it using the backdoor criterion.
+        -   A brief discussion of the main threats to validity for your study (e.g., unmeasured confounding, potential selection bias, measurement error).
+    4.  Submit Milestone 2: Formally submit your Project Proposal & Causal DAG.
+
+
+## Part II: Methods for Estimating Causal Effects
+
+### Week 5: Modeling for Confounding Adjustment
+
+-   Learning Objectives:
+    -   Explain the two primary strategies for confounding adjustment using models: outcome modeling (g-formula) and treatment modeling (propensity scores).
+    -   Implement standardization (the parametric g-formula) to estimate an ATE.
+    -   Implement Inverse Probability Weighting (IPW) using propensity scores to estimate an ATE.
+    -   Assess covariate balance after matching or weighting.
+-   Key Concepts: Standardization, Parametric g-formula, Propensity Score, Balancing Score, Inverse Probability Weighting (IPW), Covariate Balance, Positivity (Overlap).
+-   Readings:
+    -   Hernán & Robins (HR): Chapters 12, 13, 15
+    -   Neal: Chapters 7.2, 7.5-7.6
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Sep 16, 9:30 AM - 10:45 AM): Two Strategies for Adjustment
+    -   Agenda:
+        -   (75 min) Instructor-led discussion comparing and contrasting the two major approaches to model-based adjustment.
+    -   Topics Covered:
+        -   Motivation: Why simple regression adjustment can be problematic (model misspecification, extrapolation).
+        -   Parametric vs. Nonparametric g-formula: Discuss the difference between parametric (model-based) and nonparametric (data-driven) g-formula for estimating counterfactual outcomes (HR Ch. 12, 13; Neal Ch. 7.2).
+        -   Strategy 1: Outcome Modeling (G-Formula): Introduce standardization as a method. The process: 1) Fit a model for the outcome $Y$ conditional on treatment $A$ and confounders $Z$. 2) Use this model to predict the potential outcomes for every individual under treatment ($Y^1$) and control ($Y^0$). 3) Average these predictions to get $E[Y^1]$ and $E[Y^0]$ and take the difference.
+        -   Estimation of Counterfactual Outcomes: Explain how both g-formula and IPW estimate marginal counterfactual means (HR Ch. 12, 13).
+        -   Strategy 2: Treatment Modeling (Propensity Scores): Introduce the propensity score, $e(Z) = P(A=1|Z)$, as a balancing score. Explain that conditioning on the propensity score is sufficient to control for confounding by $Z$. Introduce Inverse Probability Weighting (IPW) as a method to create a "pseudo-population" where the confounders are no longer associated with the treatment.
+        -   IPW Assumptions: Discuss the assumptions required for IPW (correct model, positivity, no unmeasured confounding) (HR Ch. 15).
+-   Thursday (Sep 18, 9:30 AM - 10:45 AM): Implementation and Diagnostics
+    -   Agenda:
+        -   (45 min) Deeper dive into practical issues like assessing balance and overlap.
+        -   (30 min) Applied R Lab Demo: Instructor-led demonstration with students coding along. Take-home assignment due before the next class.
+    -   Topics Covered:
+        -   Positivity/Overlap: Emphasize the critical importance of checking that for all levels of the confounders $Z$, there are both treated and untreated individuals (HR Ch. 15).
+        -   Positivity Diagnostics: Demonstrate use of overlap plots and summary statistics to diagnose positivity violations (Neal Ch. 7.5–7.6).
+        -   Covariate Balance: After matching or weighting, we must check if the confounders have become balanced across the treatment groups. This is our primary diagnostic.
+        -   Code Demonstration: Use R to: 1) Fit a propensity score model using `glm()`. 2) Use the `WeightIt` package to calculate IPW weights. 3) Use the `cobalt` package to assess covariate balance before and after weighting via a Love plot.
+
+#### Detailed Project Instructions for Week 5
+
+-   This Week's Goal: Choose and justify a primary modeling strategy (g-formula or IPW) for your project's confounding adjustment.
+-   Tasks:
+    1.  Evaluate Your Confounders: Look at the adjustment set you identified in Week 3. Are the variables continuous or categorical? How many are there?
+    2.  Compare Strategies for Your Project: Consider the trade-offs. Is it easier to correctly model the outcome (a potentially complex relationship) or the treatment assignment (which might be simpler, e.g., a doctor's prescribing behavior)?
+    3.  Outline Your Plan: Write a paragraph for your project plan that states your chosen primary strategy. For example: "My primary strategy will be Inverse Probability Weighting. I will model the propensity to receive Treatment A conditional on the confounders {Z1, Z2, Z3}. I will assess positivity by examining the distribution of propensity scores and check covariate balance using standardized mean differences after weighting."
+
+
+### Week 6: Instrumental Variables (IV)
+
+-   Learning Objectives:
+    -   Identify situations where IV methods are necessary due to unmeasured confounding.
+    -   State and critically evaluate the three core IV assumptions.
+    -   Define the Local Average Treatment Effect (LATE) and the "complier" population.
+    -   Implement a two-stage least squares (2SLS) regression.
+-   Key Concepts: Unmeasured Confounding, Instrument, Relevance, Exclusion Restriction, Exogeneity, Local Average Treatment Effect (LATE), Compliers, Two-Stage Least Squares (2SLS).
+-   Readings:
+    -   Hernán & Robins (HR): Chapter 16
+    -   Neal: Chapter 9
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Sep 23, 9:30 AM - 10:45 AM): The Logic of Instruments
+    -   Agenda:
+        -   (75 min) Instructor-led discussion on the theory of instrumental variables.
+    -   Topics Covered:
+        -   The Problem: Why methods like IPW and g-formula fail when there is a strong, unmeasured confounder $U$.
+        -   The Solution: Introduce the concept of an instrument ($Z$)—a variable that is correlated with the treatment $A$ but is not associated with the outcome $Y$ through any other path.
+        -   The Three Core Assumptions:
+            1.  Relevance: The instrument must have a causal effect on the treatment.
+            2.  Exclusion Restriction: The instrument affects the outcome *only through* the treatment. (This is untestable).
+            3.  Exogeneity: The instrument does not share any common causes with the outcome.
+        -   Monotonicity Assumption: Introduce and discuss the monotonicity assumption for IV analysis (HR Ch. 16; Neal Ch. 9).
+        -   Complier Average Causal Effect (CACE): Define the CACE and its relation to LATE (HR Ch. 16).
+        -   IV Structural Equations: Write and interpret the structural equations for IV models.
+        -   The LATE: Explain that IV does not estimate the ATE. It estimates the Local Average Treatment Effect, which is the ATE among the "compliers"—the subpopulation of individuals who are induced to take the treatment by the instrument.
+-   Thursday (Sep 25, 9:30 AM - 10:45 AM): IV in Practice
+    -   Agenda:
+        -   (45 min) Discussion on finding plausible instruments and the 2SLS estimation procedure.
+        -   (30 min) Applied R Lab Demo: Instructor-led demonstration with students coding along. Take-home assignment due before the next class.
+    -   Topics Covered:
+        -   Plausible Instruments: Discuss classic IV examples (e.g., draft lottery for military service, distance to hospital for surgery type) and the arguments for their validity.
+        -   Two-Stage Least Squares (2SLS): Intuitively explain the two stages: 1) Isolate the "as-if random" variation in the treatment by regressing $A$ on $Z$. 2) Use the *predicted values* from this first stage to estimate the effect on $Y$.
+        -   Weak Instrument Bias: Discuss the problem of weak instruments and F-statistic thresholds for instrument strength (HR Ch. 16).
+        -   Code Demonstration: Use the `ivreg` package in R. Show how to specify the two stages in the formula, how to interpret the output, and how to check the first-stage F-statistic for instrument relevance (weak instruments).
+
+#### Detailed Project Instructions for Week 6
+
+-   This Week's Goal: Critically assess whether an IV analysis is plausible or feasible for your project.
+-   Tasks:
+    1.  Brainstorm Potential Instruments: Think about your research question and the system that generates your data. Is there any source of "quasi-random" variation that encourages some units to receive the treatment but not others? Examples include policy changes, geographic variation, or genetic factors.
+    2.  Draw the IV DAG: If you identify a potential instrument, add it to your project DAG.
+    3.  Justify the Assumptions: For your potential instrument, write a short paragraph for each of the three core IV assumptions, arguing for or against its plausibility. The exclusion restriction is the hardest to justify and requires the most careful thought. Even if you conclude an IV analysis is not possible, this exercise is invaluable for understanding the threat of unmeasured confounding in your project.
+
+### Week 7: Effect Modification
+
+-   Learning Objectives:
+    -   Distinguish between effect modification and confounding.
+    -   Define effect modification on both additive and multiplicative scales.
+    -   Use stratification and interaction terms to assess for heterogeneity of treatment effects.
+-   Key Concepts: Effect Modification, Heterogeneity, Subgroup Analysis, Stratification, Interaction Terms, Additive vs. Multiplicative Scales.
+-   Readings:
+    -   Hernán & Robins (HR): Chapters 4 & 5
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Sep 30, 9:30 AM - 10:45 AM): Does the Effect Differ?
+    -   Agenda:
+        -   (75 min) Instructor-led discussion on the concept of effect modification.
+    -   Topics Covered:
+        -   Defining Effect Modification: A treatment's effect is modified by a third variable $V$ if the size or direction of the effect differs for different levels of $V$. Unlike a confounder, an effect modifier does not have to be a cause of the treatment.
+        -   Why it Matters: We often care not just about the ATE, but about for whom the treatment is most beneficial or harmful.
+        -   Interaction Contrast: Define the interaction contrast and its interpretation (HR Ch. 4–5).
+        -   Additive vs. Multiplicative Interactions: Show how an effect can be modified on the risk difference (additive) scale but not on the risk ratio (multiplicative) scale, or vice-versa. The presence of interaction depends on the scale of measurement (HR Ch. 5).
+        -   Marginal vs. Conditional Effects: Discuss the difference between marginal and conditional effect modification (HR Ch. 5).
+        -   Statistical vs. Biological Interaction: Distinguish between statistical interaction (model-based) and biological interaction (mechanistic).
+        -   Stratification: The simplest way to assess effect modification is to stratify by the potential modifier and estimate the ATE within each stratum.
+-   Thursday (Oct 2, 9:30 AM - 10:45 AM): Modeling Interaction
+    -   Agenda:
+        -   (45 min) Discussion on using interaction terms in models to assess effect modification.
+        -   (30 min) Applied R Lab Demo: Instructor-led demonstration with students coding along. Take-home assignment due before the next class.
+    -   Topics Covered:
+        -   Interaction Terms: Introduce interaction terms (e.g., `treatment * age`) in regression models as a way to parametrically estimate stratum-specific effects.
+        -   Interpretation: Carefully walk through the interpretation of coefficients in a model with an interaction term. The main effect of treatment becomes the effect when the modifier is zero.
+        -   Visualizing Effect Modification: Use plots to visualize heterogeneity of effects across subgroups (HR Ch. 5).
+        -   Code Demonstration: Fit a model `lm(Y ~ A * V + Z)` where A is treatment, V is a modifier, and Z are confounders. Use the `marginaleffects` package to easily calculate and plot the estimated ATE at different levels of the modifier V.
+
+#### Detailed Project Instructions for Week 7
+
+-   This Week's Goal: Identify key potential effect modifiers for your research question and plan how to investigate them.
+-   Tasks:
+    1.  Identify Potential Modifiers: Based on your DAG and domain knowledge, list 1-2 baseline covariates that are most likely to modify the effect of your treatment on the outcome. For example, does the effect of a drug differ by sex or by baseline disease severity?
+    2.  Plan Your Analysis: For each potential modifier, describe how you would assess effect modification. Would you stratify your entire analysis? Or would you fit a single model with an interaction term after adjusting for confounding?
+    3.  Update Your Analysis Plan: Add a section to your project plan titled "Investigation of Effect Heterogeneity" and outline the subgroup analyses or interaction models you intend to run. This demonstrates a more nuanced approach to your causal question. Milestone: Interim Report Due Next Week.
+
+
+
+### Week 8: Mediation I: Foundations & Counterfactuals
+
+-   Learning Objectives:
+    -   Explain the purpose of mediation analysis.
+    -   Describe the limitations of the traditional Baron-Kenny approach for *causal* mediation.
+    -   Define Natural Direct Effects (NDE) and Natural Indirect Effects (NIE) using counterfactuals.
+-   Key Concepts: Mediation, Total Effect, Direct Effect, Indirect Effect, Baron-Kenny Method, Natural Direct Effect (NDE), Natural Indirect Effect (NIE).
+-   Readings:
+    -   VanderWeele: Chapters 1-2
+    -   Neal: Chapter 14
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Oct 7, 9:30 AM - 10:45 AM): Decomposing Effects
+    -   Agenda:
+        -   (75 min) Instructor-led discussion introducing the modern, counterfactual-based approach to mediation.
+    -   Topics Covered:
+        -   The "How" Question: Mediation analysis aims to understand the mechanisms or pathways through which a treatment causes an outcome.
+        -   Traditional Methods & Their Flaws: Briefly cover the Baron-Kenny steps and explain why they are about associations between regression coefficients, not necessarily causal pathways (they are susceptible to confounding).
+        -   Controlled Direct Effects: Define controlled direct effects and their estimation (VW Ch. 1–2).
+        -   Total Effect Decomposition: Show how the total effect can be decomposed into direct and indirect effects (VW Ch. 1–2).
+        -   Counterfactual Definitions:
+            -   Controlled Direct Effect (CDE): The effect of A on Y when we force the mediator M to be a specific value for everyone.
+            -   Natural Direct Effect (NDE): $E[Y^{a=1, M^{a=0}} - Y^{a=0, M^{a=0}}]$. The effect of A on Y if we could block the pathway through M.
+            -   Natural Indirect Effect (NIE): $E[Y^{a=1, M^{a=1}} - Y^{a=1, M^{a=0}}]$. The effect of A on Y that runs *only* through the mediator M. 
+        -   Assumptions for Mediation: Introduce the key assumptions required for identifying mediation effects (VW Ch. 2).
+        -   Three-variable DAG with Mediator: Illustrate mediation using a simple three-variable DAG (A → M → Y).
+        -   Mediated Moderation: Discuss scenarios where the mediation effect itself may be modified by another variable (Neal Ch. 14).
+-   Thursday (Oct 9, 9:30 AM - 10:45 AM): The Logic of Natural Effects
+    -   (No class - Fall Break)
+    -   Agenda:
+        -   (75 min) A conceptual session focused on the logic of NDE/NIE and the strong assumptions required.
+    -   Topics Covered:
+        -   "Cross-World" Counterfactuals: Explain the conceptual difficulty of the NDE and NIE—they involve counterfactuals from different "worlds" (e.g., the outcome under treatment if the mediator had been at its control level).
+        -   Path-Tracing on DAGs: Use DAGs to visualize the total effect, NDE (the direct arrow $A \rightarrow Y$), and NIE (the path $A \rightarrow M \rightarrow Y$).
+        -   Decomposition: Show that under certain assumptions, Total Effect = NDE + NIE.
+        -   Policy Relevance: Discuss when the NDE vs. the NIE is the more policy-relevant quantity.
+        -   Applied Example: Step through a simple applied mediation scenario using counterfactual notation (VW Ch. 2).
+
+#### Detailed Project Instructions for Week 8
+
+-   This Week's Goal: If applicable to your project, refine your DAG to include a key mediator and formulate a specific mediation hypothesis. Submit your Project Proposal.
+-   Tasks:
+    1.  Identify Potential Mediators: Look at the causal pathway between your treatment A and outcome Y. Are there plausible intermediate variables (M) through which the effect might operate? Add the most important one to your DAG.
+    2.  Formulate a Mediation Hypothesis: State a clear question about the mechanism. For example: "I hypothesize that the effect of the educational program (A) on test scores (Y) is primarily mediated by increased homework time (M)."
+    3.  Finalize and Submit Project Proposal: Assemble your work from the preceding weeks into a formal proposal document. Ensure your DAG, identification strategy, and research question are clear and well-justified.
+    4.  Submit Milestone 2: Formally submit your Project Proposal & Causal DAG.
+
+
+
+### Week 9: Mediation II: Application & Assumptions
+
+-   Learning Objectives:
+    -   State the four key assumptions for identifying NDE and NIE.
+    -   Implement a causal mediation analysis in R.
+    -   Interpret the output of a mediation analysis.
+-   Key Concepts: Sequential Ignorability, Confounding of the M-Y relationship, `mediation` package.
+-   Readings:
+    -   VanderWeele: Chapter 3
+    -   HR: Chapter 23
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Oct 14, 9:30 AM - 10:45 AM): The Strong Assumptions of Causal Mediation
+    -   Agenda:
+        -   (75 min) A deep dive into the four assumptions required to identify NDE and NIE from data.
+    -   Topics Covered:
+        -   The Four Assumptions:
+            1.  No unmeasured A-Y confounding.
+            2.  No unmeasured A-M confounding.
+            3.  No unmeasured M-Y confounding. (This is the strongest and most likely to be violated).
+            4.  No M-Y confounder is caused by the treatment A.
+        -   Parametric and Nonparametric Mediation Models: Distinguish between parametric (regression-based) and nonparametric identification (VW Ch. 3; HR Ch. 23).
+        -   DAG Visualization: Use DAGs to show how a variable that is a common cause of M and Y (and is not controlled for) violates Assumption 3 and biases the NDE and NIE estimates.
+        -   Bootstrap for Inference: Introduce the use of bootstrapping for confidence intervals in mediation analysis (VW Ch. 3).
+        -   Sequential Ignorability: Discuss the practical challenges and potential violations of the sequential ignorability assumption (VW Ch. 3).
+        -   Sensitivity Analysis for Mediator-Outcome Confounding: Introduce methods for sensitivity analysis in mediation (VW Ch. 3).
+        -   Plausibility Discussion: Discuss in which real-world scenarios these assumptions might be plausible or implausible.
+-   Thursday (Oct 16, 9:30 AM - 10:45 AM): Mediation in R
+    -   Agenda:
+        -   (45 min) Applied R Lab Demo: Instructor-led demonstration with students coding along. Take-home assignment due before the next class.
+        -   (30 min) Discussion on interpretation and project planning.
+    -   Topics Covered:
+        -   The Two-Model Approach: Explain that the `mediation` package requires you to fit two models: 1) A model for the mediator conditional on the treatment and confounders (`M ~ A + Z`). 2) A model for the outcome conditional on the treatment, mediator, and confounders (`Y ~ A + M + Z`).
+        -   Code Demonstration: Walk through the full process: fit `model.m`, fit `model.y`, pass both to the `mediate()` function, and print the `summary()`.
+        -   Interpreting Output: Carefully explain how to find the CDE, ADE (which is the NDE), ACME (which is the NIE), and the proportion mediated in the summary output.
+
+#### Detailed Project Instructions for Week 9
+
+-   This Week's Goal: Outline the specific analysis plan for your mediation hypothesis, paying close attention to the assumptions.
+-   Tasks:
+    1.  State the Mediation Assumptions for Your Project: For your chosen mediator (M), explicitly list the four key assumptions in the context of your research question.
+    2.  Critically Assess Plausibility: Write a paragraph discussing whether these assumptions, especially "no unmeasured M-Y confounding," are likely to hold in your study. What is the most likely unmeasured confounder of your M-Y relationship?
+    3.  Outline Your Code: Write down the two regression formulas you would need to fit to conduct your mediation analysis. This will prepare you to implement the analysis later in the semester. Even if mediation is not the primary focus of your project, this exercise demonstrates a deeper understanding of the causal pathways.
+
+
+
+## Part III: Advanced Topics & Synthesis
+
+### Week 10: Time-Varying Treatments & MSMs
+
+-   Learning Objectives:
+    -   Explain why standard adjustment methods fail in the presence of time-varying confounding.
+    -   Define a treatment strategy and the causal effect of that strategy.
+    -   Describe how Marginal Structural Models (MSMs) with Inverse Probability of Treatment Weighting (IPW) can address time-varying confounding.
+    -   State the key assumption of sequential exchangeability.
+-   Key Concepts: Time-Varying Confounding, Treatment-Confounder Feedback, Treatment Strategy, Marginal Structural Model (MSM), Sequential Exchangeability, Inverse Probability of Treatment Weights (IPW), Stabilized Weights.
+-   Readings:
+    -   Hernán & Robins (HR): Chapters 19, 20, & 21
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Oct 21, 9:30 AM - 10:45 AM): The Challenge of Time
+    -   Agenda:
+        -   (75 min) Instructor-led discussion on the unique problems that arise with longitudinal data.
+    -   Topics Covered:
+        -   Motivation: Why is time special? Introduce scenarios where a variable (e.g., a biomarker) is both a confounder for a future treatment decision and a mediator of a past treatment's effect.
+        -   Treatment-Confounder Feedback: Use a DAG with time-stamped nodes to illustrate this feedback loop. Show why conditioning on the time-varying confounder in a standard regression model will block a causal pathway and induce bias.
+        -   Treatment Strategies: Shift the focus from the effect of a single treatment to the effect of a sustained strategy or policy (e.g., "take the drug if and only if your biomarker is high").
+        -   Sequential Exchangeability: Introduce the core assumption needed for time-varying treatments: at every time point, the treatment assignment is independent of the potential outcomes, given the past treatment and covariate history.
+-   Thursday (Oct 23, 9:30 AM - 10:45 AM): Marginal Structural Models
+    -   Agenda:
+        -   (45 min) Discussion on the logic of MSMs and IPW.
+        -   (30 min) Applied R Lab Demo: Instructor-led demonstration with students coding along. Take-home assignment due before the next class.
+    -   Topics Covered:
+        -   Longitudinal Data Structure: Describe the structure and unique challenges of longitudinal data with repeated measurements (HR Ch. 19).
+        -   Time-Updated Covariates: Discuss the importance and handling of time-updated covariates (HR Ch. 19–21).
+        -   The MSM Solution: Explain that MSMs work by creating a "pseudo-population" using IPW, where the treatment history is no longer confounded by the time-varying covariates. We can then fit a simple model on this weighted population (HR Ch. 20–21).
+        -   G-methods: Briefly introduce g-computation, g-estimation, and MSMs as a family of g-methods (HR Ch. 21).
+        -   IPW for MSMs: Show how weights are calculated based on the probability of a patient's *entire observed treatment history*, conditional on their past covariate history. Introduce stabilized weights to improve statistical efficiency.
+        -   Cumulative Incidence under Treatment Regimes: Demonstrate how to estimate cumulative incidence curves under different treatment strategies using MSMs (HR Ch. 21).
+        -   Code Demonstration: 1) Show how to structure longitudinal data. 2) Use `glm()` to model the probability of treatment at each time point. 3) Calculate the stabilized IPW. 4) Fit a weighted outcome model using `geepack::geeglm()` to get the final MSM estimate.
+
+#### Detailed Project Instructions for Week 10
+
+-   This Week's Goal: Determine if your project involves time-varying confounding and if MSMs are an appropriate (even if aspirational) method.
+-   Tasks:
+    1.  Review Your Project's Time Component: Does your exposure/treatment occur at multiple time points? Do you have longitudinal data on confounders?
+    2.  Draw a Time-Varying DAG: Sketch a simplified DAG for two time points (t=0 and t=1). Is there a variable Z₁ that is caused by the initial treatment A₀ and is a cause of the next treatment A₁ and the outcome Y? If so, you have treatment-confounder feedback.
+    3.  Assess Feasibility: A full MSM is complex and may be beyond the scope of your final project. However, it's critical to acknowledge this structure if it exists. In your final paper's "Limitations" section, you should state that if treatment-confounder feedback is present, your simpler point-treatment analysis could be biased, and an MSM would be a more appropriate future analysis.
+
+
+
+### Week 11: Sensitivity Analysis
+
+-   Learning Objectives:
+    -   Explain the purpose of sensitivity analysis for unmeasured confounding.
+    -   Define the E-value and interpret it in the context of a study's findings.
+    -   Quantify the robustness of a causal estimate to potential unmeasured confounding.
+-   Key Concepts: Unmeasured Confounding, Robustness, Tipping-Point Analysis, E-value.
+-   Readings:
+    -   Neal: Chapter 8
+    -   Discussions in HR Chapter 14
+    -   Key paper: VanderWeele, T. J., & Ding, P. (2017). Sensitivity Analysis in Observational Research.
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Oct 28, 9:30 AM - 10:45 AM): How Wrong Do We Have to Be?
+    -   Agenda:
+        -   (75 min) Instructor-led discussion on the concepts behind sensitivity analysis.
+    -   Topics Covered:
+        -   Quantitative Bias Analysis: Introduce quantitative bias analysis and the use of bias parameters to assess robustness (Neal Ch. 8; HR Ch. 14).
+        -   The Core Problem: Our primary causal assumption—"no unmeasured confounding" (or conditional exchangeability)—is untestable. We must therefore assess how our conclusions would change if that assumption were violated.
+        -   The Logic of Tipping-Point Analysis: Instead of asking "Is there unmeasured confounding?" (which we can't answer), we ask "How strong would an unmeasured confounder have to be to change my conclusion?"
+        -   E-value Formula Derivation: Walk through the derivation of the E-value formula (VW & Ding 2017).
+        -   Comparison with Rosenbaum Bounds: Briefly compare the E-value approach to Rosenbaum sensitivity analysis.
+        -   Introducing the E-value: Define the E-value as the minimum strength of association (on the risk ratio scale) that an unmeasured confounder would need to have with both the treatment and the outcome, above and beyond the measured covariates, to explain away the observed effect.
+-   Thursday (Oct 30, 9:30 AM - 10:45 AM): Calculating and Interpreting E-values
+    -   Agenda:
+        -   (45 min) Discussion on interpreting E-values and integrating them into research.
+        -   (30 min) Applied R Lab Demo: Instructor-led demonstration with students coding along. Take-home assignment due before the next class.
+    -   Topics Covered:
+        -   Interpreting the E-value: A high E-value (e.g., 5) suggests that a very strong unmeasured confounder would be needed to negate the study's finding, increasing our confidence. A low E-value (e.g., 1.5) suggests the finding is sensitive to even weak unmeasured confounding.
+        -   Tipping-Point Logic: Apply tipping-point logic to interpret E-values and bias parameters.
+        -   Context is Key: The plausibility of such a confounder must be debated based on domain expertise.
+        -   Code Demonstration: Use the `EValue` package in R. Show how to calculate an E-value for an estimated risk ratio, odds ratio, or hazard ratio, and its confidence interval.
+
+#### Detailed Project Instructions for Week 11
+
+-   This Week's Goal: Plan and conduct a sensitivity analysis to assess the robustness of your project's main finding.
+
+-   Tasks:
+
+    1.  Identify Your Key Estimate: Take the main causal effect estimate from your primary analysis (e.g., the risk ratio, odds ratio, or a converted coefficient).
+    2.  Calculate the E-value: Use the `EValue` package or an online calculator to compute the E-value for your point estimate and the limit of your confidence interval closest to the null.
+    3.  Write the Interpretation: Draft the "Sensitivity Analysis" section for your final paper. State the calculated E-value clearly. Interpret it in the context of your research question. For example: "The observed risk ratio was 2.0 (95% CI: 1.5, 2.7). The E-value is 3.41 for the point estimate and 2.37 for the confidence interval. This indicates that an unmeasured confounder associated with both the treatment and the outcome by a risk ratio of 3.41-fold each, above and beyond the measured covariates, could explain away the estimate. A confounder of this magnitude is \[plausible/implausible\] because…"
+
+    -   Complete Causal Article Critique: Submit a structured 2-page written critique of a published observational study. A rubric and example will be provided.
+
+
+
+### Week 12: Target Trial Emulation & Synthesis
+
+-   Learning Objectives:
+    -   Describe the seven key components of a randomized trial protocol.
+    -   Explain how the "target trial" framework can be used to design and critique an observational study.
+    -   Synthesize concepts from the entire course into a single, cohesive framework.
+-   Key Concepts: Target Trial, Protocol Components (Eligibility, Treatment Strategies, Assignment, Follow-up, Outcome, Causal Contrast, Analysis Plan), Intention-to-Treat, Per-Protocol.
+-   Readings:
+    -   Hernán & Robins (HR): Chapter 22
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Nov 4, 9:30 AM - 10:45 AM): Thinking Like a Trialist
+    -   Agenda:
+        -   (75 min) A capstone lecture introducing the Target Trial framework as a way to structure causal inference problems.
+    -   Topics Covered:
+        -   The Unifying Idea: Propose that every causal question from observational data can be framed as an attempt to emulate a hypothetical, pragmatic randomized trial—the "target trial."
+        -   The 7 Protocol Components: Go through each component of a trial protocol and discuss its analog in an observational study.
+            1.  Eligibility Criteria: Who is in the study population? (HR Ch. 22)
+            2.  Treatment Strategies: What are the specific interventions being compared?
+            3.  Assignment Procedure: How are people assigned to a strategy? (This is where the observational study differs from the ideal trial).
+            4.  Follow-up Period: When do we start and stop following people?
+            5.  Outcome: What is being measured?
+            6.  Causal Contrast: What is the estimand (e.g., ITT or Per-Protocol)?
+            7.  Analysis Plan: What methods will be used?
+        -   Eligibility Criteria Formalization: Discuss how to formalize eligibility criteria and its implications for generalizability (HR Ch. 22).
+        -   Treatment Assignment Emulation: Explain the importance of emulating random assignment and the limitations of observational assignment (HR Ch. 22).
+        -   ITT vs. Per-Protocol Estimands: Define and contrast intention-to-treat and per-protocol analyses (HR Ch. 22).
+        -   Common Errors in Emulation: Identify frequent pitfalls in emulating target trials (HR Ch. 22).
+        -   From Question to Protocol: This session is a hands-on workshop. Students will take their own final project and explicitly write out each of the seven components of the target trial they are trying to emulate.
+-   Thursday (Nov 6, 9:30 AM - 10:45 AM): Protocol Design Workshop
+    -   Agenda:
+        -   (60 min) Structured workshop where students apply the framework to their own projects.
+        -   (15 min) Peer feedback and final project discussion.
+    -   Topics Covered:
+        -   From Question to Protocol: This session is a hands-on workshop. Students will take their own final project and explicitly write out each of the seven components of the target trial they are trying to emulate.
+        -   Identifying Mismatches: The key learning objective is to identify where the observational data and analysis plan *deviate* from the ideal trial protocol. This clearly highlights the study's limitations and key assumptions.
+        -   Synthesis of Course Concepts: Integrate identification, estimation, sensitivity, and mediation strategies into the target trial framework.
+
+#### Detailed Project Instructions for Week 12
+
+-   This Week's Goal: Synthesize your entire project by framing it as an emulation of a hypothetical "target trial." This is a critical step for structuring your final paper.
+-   Tasks:
+    1.  Write Your Target Trial Protocol: Create a new section in your final paper titled "Target Trial Emulation." In this section, write out the protocol for the ideal randomized trial you wish you could have conducted. Use the seven components listed above as subheadings.
+    2.  Describe Your Emulation: After specifying the ideal protocol, describe how your observational analysis attempts to emulate it. For example, under "Assignment Procedure," you would state: "The ideal trial would randomly assign treatment A. In our emulation, we use propensity score weighting on the measured confounders Z to adjust for the non-random assignment in our data."
+    3.  Identify Deviations: Explicitly state the key areas where your observational study may fail to perfectly emulate the target trial (e.g., immortal time bias, inability to measure certain eligibility criteria, etc.). This demonstrates a deep and critical understanding of your project's limitations.
+    4.  Submit Milestone 4: Submit your draft final presentation slides for feedback.
+
+
+
+### Week 13: Final Project Presentations
+
+-   Learning Objectives:
+    -   Clearly and concisely present a causal research question, identification strategy, results, and limitations.
+    -   Provide and receive constructive feedback from peers.
+    -   Synthesize and communicate a semester's worth of research.
+-   Key Concepts: Research Communication, Distilling Complexity, Defending Assumptions.
+
+#### Detailed Lesson Plan
+
+-   Tuesday (Nov 11, 9:30 AM - 10:45 AM): Presentations - Part 1
+    -   Agenda:
+        -   (75 min) The first half of the students will give their final project presentations. Each presentation will be strictly timed (e.g., 12 minutes) followed by a 3-minute Q&A session.
+        -   (60 min) The second half of the students will present.
+        -   (15 min) Course wrap-up. Review the major themes of the course and discuss where to go from here. Final Q&A.
+-   Thursday (Nov 13, 9:30 AM - 10:45 AM): Presentations - Part 2 & Wrap-up
+    -   Agenda:
+        -   (60 min) The second half of the students will present.
+        -   (15 min) Course wrap-up. Review the major themes of the course and discuss where to go from here. Final Q&A.
+
+#### Detailed Project Instructions for Week 13
+
+-   This Week's Goal: Successfully present your semester's work to your peers and submit your final written report.
+-   Tasks:
+    1.  Prepare and Rehearse: Finalize your presentation slides based on the feedback from Week 12. Your talk should be structured around your causal question, your DAG and assumptions, your methods (framed as a target trial emulation), your main results, your sensitivity analysis, and a thoughtful discussion of limitations.
+    2.  Presentation Criteria: Ensure your presentation meets criteria for clarity, causal logic, visual aids (e.g., DAGs, plots), and scientific communication (evaluation rubric will be provided).
+    3.  Peer Critique: Practice constructive peer critique techniques—focus on clarity, logic, and communication, not just results.
+    4.  Scientific Communication: Highlight strategies for effective scientific communication (conciseness, logical structure, visual storytelling).
+    5.  Present Your Work: Deliver your presentation clearly and professionally. Be prepared to answer questions about your identification strategy and assumptions.
+    6.  Engage with Peers: Be an active and supportive audience member for your classmates. Ask thoughtful questions.
+    7.  Submit Final Paper: Submit your final, polished project paper, incorporating all the components you have developed and refined throughout the semester.
+    8.  Submit Milestone 5 & 6: Present your project and submit your final paper. Congratulations!
+
+
+### Week 14: Final Wrap-up & Office Hours
+
+-   Tuesday (Nov 18, 9:30 AM - 10:45 AM): Final Project Consultations, Office Hours, Q&A
+-   Thursday (Nov 20, 9:30 AM - 10:45 AM): Final Project Consultations, Office Hours, Q&A

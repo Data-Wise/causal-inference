@@ -1,0 +1,293 @@
+---
+title: "Week 4: The Potential Outcomes Framework"
+---
+
+## Motivation and Learning Objectives
+
+So far, we have used Directed Acyclic Graphs (DAGs) to visualize our causal assumptions. DAGs provide a "blueprint" for cause and effect. Now, we turn to the mathematical foundation that allows us to define and quantify what a "causal effect" actually is: the **Potential Outcomes Framework**, also known as the **Rubin Causal Model**.
+
+At its core, every causal question is a "what if" question. What would have happened to a patient if they had received the new drug instead of the old one? What would the mortality rate be in a city if a clean-air policy had not been implemented? These questions require us to think about **counterfactuals**—outcomes that could have happened but didn't. The Potential Outcomes framework provides the formal language to talk about these counterfactuals rigorously. It is the bedrock upon which most modern methods of causal inference are built.
+
+By the end of this module, you will be able to:
+
+1. **Define** causal effects using the language of potential outcomes.
+2. **Explain** the "Fundamental Problem of Causal Inference" and why we must shift our focus from individual to average effects.
+3. **Distinguish** between different causal estimands: the ATE, ATT, and ATC.
+4. **Articulate** and **interpret** the three key assumptions for identifying causal effects from data: Consistency, Positivity, and Exchangeability.
+5. **Decompose** the simple difference in means into the causal effect and bias terms.
+
+## Key Concepts: A Language for Counterfactuals
+
+### 1. Potential Outcomes and the Individual Causal Effect
+
+The Potential Outcomes framework starts with a simple but powerful idea. For any individual `i` and any given exposure or treatment `D`, there exists a set of *potential outcomes*, one for each possible treatment level.
+
+For a binary treatment (`D=1` for treated, `D=0` for control):
+
+  - $Y_i(1)$: The potential outcome for individual `i` *if they were to receive the treatment*.
+  - $Y_i(0)$: The potential outcome for individual `i` *if they were to receive the control*.
+
+**Intuition**: Imagine two parallel universes for a single patient with a headache. In Universe 1, they take an aspirin ($D=1$), and their headache level an hour later is $Y_i(1)$. In Universe 2, they do not take an aspirin ($D=0$), and their headache level is $Y_i(0)$.
+
+Using this notation, we can define the **individual causal effect (ICE)** for person `i` as:
+
+$$
+\text{ICE}_i = Y_i(1) - Y_i(0)
+$$
+
+This is the true, individual-level effect of the treatment.
+
+### 2. The Fundamental Problem of Causal Inference
+
+The definition of the individual causal effect immediately reveals a profound challenge.
+
+::: {.callout-warning icon="⚠️"}
+
+#### The Fundamental Problem of Causal Inference
+
+For any given individual `i`, it is impossible to observe both $Y_i(1)$ and $Y_i(0)$ at the same time. We can only observe the outcome that corresponds to the treatment they actually received. The other potential outcome is a counterfactual and is forever missing.
+
+:::
+
+We can represent this with a table. The question marks denote the unobserved, counterfactual outcomes.
+
+| Patient ID | Treatment Received (D) | Outcome if Treated, Y(1) | Outcome if Control, Y(0) | Observed Outcome (Y) |
+| :--------: | :--------------------: | :----------------------: | :----------------------: | :------------------: |
+|     1      |      1 (Treated)       |            10            |            ?             |          10          |
+|     2      |      0 (Control)       |            ?             |            12            |          12          |
+|     3      |      0 (Control)       |            ?             |            15            |          15          |
+|     4      |      1 (Treated)       |            8             |            ?             |          8           |
+
+Because we can never calculate $Y_i(1) - Y_i(0)$ for any single person, **individual causal effects are fundamentally unobservable.**
+
+### 3. Shifting Focus: Average Causal Effects
+
+Since we cannot identify individual effects, causal inference shifts its goal to a more modest but achievable target: estimating the **average causal effect** for a population.
+
+There are three primary average causal effects, or "estimands," we often care about:
+
+1. **Average Treatment Effect (ATE):**
+
+$$
+\text{ATE} = E[Y_i(1) - Y_i(0)]
+$$
+
+This is the average effect if *everyone* in the population were to be treated versus if *everyone* were to be in the control. It answers the question: "What is the effect of the treatment on a person chosen at random from the population?"
+
+2.  **Average Treatment Effect on the Treated (ATT):**
+    
+$$
+\text{ATT} = E[Y_i(1) - Y_i(0) | D_i=1]
+$$
+
+This is the average effect specifically for the group of people who *actually received* the treatment. It answers the policy-relevant question: "How did the treatment affect the people who chose to receive it?"
+
+2. **Average Treatment Effect on the Controls (ATC or ATU):**
+
+    
+$$
+\text{ATC} = E[Y_i(1) - Y_i(0) | D_i=0]
+$$
+
+This is the average effect specifically for the group of people who *did not* receive the treatment. It answers the question: "How *would* the treatment have affected the people who did not receive it?"
+
+In a randomized controlled trial (RCT), the ATE, ATT, and ATC will all be the same. In observational studies, however, where individuals self-select into treatment, these estimands can be very different.
+
+### 4. The Three Key Assumptions for Identification
+
+So, how do we use the data we actually observe to estimate these unobservable average causal effects? We need to make three critical assumptions that connect the potential outcomes to the observed data.
+
+::: {.callout-tip}
+
+#### The Three Pillars of Causal Identification
+
+1. **Consistency**: This assumption links the potential outcomes to the observed outcomes. It states that an individual's observed outcome is their potential outcome under the treatment they actually received.
+$$
+\text{If } D_i = 1, \text{ then } Y_i = Y_i(1). \quad \text{If } D_i = 0, \text{ then } Y_i = Y_i(0).
+$$
+
+*Intuition*: This seems obvious, but it's a crucial assumption. It means there is only *one version* of the treatment and that an individual's outcome doesn't depend on how they got assigned to the treatment, only on the treatment itself.
+
+3. **Positivity (or Overlap)**: For any set of characteristics, there is a non-zero probability of being in both the treatment and control groups.
+
+$$
+P(D=1 | Z=z) > 0 \text{ and } P(D=0 | Z=z) > 0 \text{ for all } z
+$$
+
+*Intuition*: You can't learn about the effect of a drug on 80-year-olds if your study contains no 80-year-olds who took the drug. There must be overlap in the characteristics of the treated and control groups.
+
+3. **Exchangeability (or Ignorability / Unconfoundedness)**: This is the "no confounding" assumption. It states that the mechanism that assigns the treatment is independent of the potential outcomes.
+
+   - **Unconditional Exchangeability**: $(Y(1), Y(0)) \perp D$
+   - **Conditional Exchangeability**: $(Y(1), Y(0)) \perp D | Z$
+     *Intuition*: **Unconditional exchangeability** means the treated and control groups are, on average, identical with respect to all factors that could influence the outcome. This is what an RCT achieves through randomization. **Conditional exchangeability** is the assumption for observational studies: after adjusting for a set of measured covariates `Z`, the treated and control groups are "as-if" randomly assigned. This is the mathematical equivalent of satisfying the backdoor criterion in a DAG.
+:::
+
+## The Link Between Association and Causation
+
+Now we can use the potential outcomes framework to understand *why* "correlation is not causation." The quantity we can always calculate from data is the **association**, or the simple difference in mean outcomes:
+$$
+\text{Association} = E[Y | D=1] - E[Y | D=0]
+$$
+
+Is this equal to our causal estimand of interest, say, the ATE? Let's see.
+
+### ✅ Theorem: Decomposing the Naive Difference
+
+We can decompose the associational difference into two parts: the true causal effect and bias.
+
+**Derivation:**
+$$
+E[Y | D=1] - E[Y | D=0]
+$$
+$$
+= E[Y(1) | D=1] - E[Y(0) | D=0] \quad \text{(by Consistency)}
+$$
+
+Now, let's add and subtract a clever term, $E[Y(0) | D=1]$:
+$$
+= E[Y(1) | D=1] - E[Y(0) | D=1] + E[Y(0) | D=1] - E[Y(0) | D=0]
+$$
+
+Grouping the terms:
+$$
+= \underbrace{E[Y(1) - Y(0) | D=1]}_{\text{ATT}} + \underbrace{\{E[Y(0) | D=1] - E[Y(0) | D=0]\}}_{\text{Selection Bias}}
+$$
+
+**Conclusion**: The observed association is the sum of the **Average Treatment Effect on the Treated (ATT)** and **Selection Bias**.
+
+  - **Selection Bias**: This term represents the difference in the *no-treatment potential outcome* between the group that chose treatment and the group that chose control. If sicker people are more likely to take a drug, this term will be non-zero because the treated group would have had worse outcomes even without the drug.
+  - **Identification**: The association equals the causal effect (ATT) **if and only if the selection bias term is zero**. This happens when $E[Y(0)|D=1] = E[Y(0)|D=0]$, which is a direct implication of the **exchangeability** assumption.
+
+### ✅ Numerical Example: Seeing the Bias
+
+Let's use a "God's-eye view" of a population of 10 patients to see this decomposition in action. We want to know the effect of a new heart medication.
+
+|   Patient   | $Y(1)$ (Days healthy if Treated) | $Y(0)$ (Days healthy if Control) | True ICE |
+| :---------: | :------------------------------: | :------------------------------: | :------: |
+|      1      |               350                |               330                |   +20    |
+|      2      |               340                |               320                |   +20    |
+|      3      |               330                |               310                |   +20    |
+|      4      |               320                |               300                |   +20    |
+|      5      |               310                |               290                |   +20    |
+| 6 (Sicker)  |               220                |               200                |   +20    |
+| 7 (Sicker)  |               210                |               190                |   +20    |
+| 8 (Sicker)  |               200                |               180                |   +20    |
+| 9 (Sicker)  |               190                |               170                |   +20    |
+| 10 (Sicker) |               180                |               160                |   +20    |
+
+**Step 1: Calculate the True Causal Effects**
+
+  - The **True ATE** = $E[Y(1) - Y(0)] = (200) / 10 = \mathbf{20}$ healthy days. Since the effect is the same for everyone, ATE = ATT = ATC.
+
+**Step 2: Simulate Confounded Treatment Assignment**
+Now, let's assume doctors are more likely to give the new drug to the sicker patients.
+
+  - Patients 1-5 (healthier) are assigned to Control ($D=0$).
+  - Patients 6-10 (sicker) are assigned to Treatment ($D=1$).
+
+**Step 3: Look at the Observed Data**
+
+| Patient |  D  | Y(1) | Y(0) | Observed Y |
+| :-----: | :-: | :--: | :--: | :--------: |
+|    1    |  0  | 350  | 330  |    330     |
+|    2    |  0  | 340  | 320  |    320     |
+|    3    |  0  | 330  | 310  |    310     |
+|    4    |  0  | 320  | 300  |    300     |
+|    5    |  0  | 310  | 290  |    290     |
+|    6    |  1  | 220  | 200  |    220     |
+|    7    |  1  | 210  | 190  |    210     |
+|    8    |  1  | 200  | 180  |    200     |
+|    9    |  1  | 190  | 170  |    190     |
+|   10    |  1  | 180  | 160  |    180     |
+
+**Step 4: Calculate the Naive Association**
+
+  - Average outcome for Treated: $E[Y | D=1] = (220+210+200+190+180)/5 = 200$
+  - Average outcome for Control: $E[Y | D=0] = (330+320+310+300+290)/5 = 310$
+  - **Naive Association**: $200 - 310 = \mathbf{-110}$ days.
+
+The analysis wrongly suggests the drug *harms* patients, reducing healthy days by 110\!
+
+**Step 5: Decompose the Bias**
+
+  - **ATT**: We already know this is **+20**.
+  - **Selection Bias**: $E[Y(0)|D=1] - E[Y(0)|D=0]$
+      - $E[Y(0)|D=1]$: Average *no-treatment* outcome for those who *got* treatment (sicker group) = $(200+190+180+170+160)/5 = 180$.
+      - $E[Y(0)|D=0]$: Average *no-treatment* outcome for those who *did not* get treatment (healthier group) = $(330+320+310+300+290)/5 = 310$.
+      - Selection Bias = $180 - 310 = \mathbf{-130}$ days.
+  - **Check the Decomposition**:
+      - Association = ATT + Selection Bias
+      - $-110 = 20 + (-130)$
+      - The math works perfectly. The naive association is severely biased downward because we are comparing sick people on the new drug to healthy people on the old drug.
+
+
+
+### ❓ Quiz: Check Your Understanding
+
+You are evaluating a voluntary tutoring program (`D=1`) on students' final exam scores (`Y`). You find that students in the program have lower average scores than those not in the program. An advisor argues this proves the program is ineffective.
+
+1. What is the most likely form of bias at play here?
+2. Using the potential outcomes framework, what key assumption is likely violated?
+3. What is the ATT in this context, and what is the Selection Bias?
+
+<details>
+
+<summary><b>Answer</b></summary>
+
+1. **Selection Bias**. Students who are struggling in the class are more likely to voluntarily sign up for tutoring.
+2. **Exchangeability** is violated. The potential outcomes (exam scores with or without tutoring) are not independent of the decision to get tutoring. The treated group (tutored students) would have had lower scores than the control group even if no one had received tutoring.
+3. The **ATT** is the true causal effect of the tutoring program *for the struggling students who enrolled*. It might be positive (e.g., +5 points). The **Selection Bias** is the difference in potential exam scores (without tutoring) between the struggling students who signed up and the proficient students who did not. This bias is likely large and negative (e.g., -15 points), overwhelming the positive ATT and making the observed association negative.
+</details>
+
+
+
+## Appendix: Advanced Statistical Derivations and Theory
+
+#### 📕 Motivation: How Randomization Guarantees an Unbiased Estimate
+
+We've stated that in a randomized controlled trial (RCT), the simple difference in means is an unbiased estimator of the ATE. The potential outcomes framework allows us to prove this formally. This proof is the mathematical justification for the "gold standard" status of RCTs.
+
+#### 📕 Derivation: Proof that the Naive Difference Identifies the ATE under Randomization
+
+**Goal**: Show that under the assumptions of an ideal RCT, $E[Y | D=1] - E[Y | D=0] = E[Y(1) - Y(0)] = \text{ATE}$.
+
+**Assumptions of an Ideal RCT**:
+
+1. **Consistency**: Holds by ensuring a well-defined treatment protocol.
+2. **Positivity**: Holds by design, as some units are assigned to treatment and some to control.
+3. **Unconditional Exchangeability**: This is the key. Random assignment ensures that the treatment `D` is statistically independent of the pair of potential outcomes $(Y(1), Y(0))$.
+$$
+(Y(1), Y(0)) \perp D
+$$
+
+**Step-by-step Derivation**:
+
+1. **Start with the associational difference:**
+$$
+E[Y | D=1] - E[Y | D=0]
+$$
+2. **Apply the Consistency assumption:**
+$$
+= E[Y(1) | D=1] - E[Y(0) | D=0]
+$$
+3. **Apply the Unconditional Exchangeability assumption:**
+
+   - Because treatment assignment `D` is independent of the potential outcomes, conditioning on `D` provides no new information about the expected value of the potential outcomes.
+   - Therefore, $E[Y(1) | D=1] = E[Y(1)]$.
+   - And, $E[Y(0) | D=0] = E[Y(0)]$.
+   - *Annotation*: This is the critical step. In an RCT, the group that got the treatment is, on average, a perfect mirror of the group that didn't. Their average potential outcome under treatment would be the same as the population's average.
+
+4. **Substitute back into the equation:**
+
+
+$$
+= E[Y(1)] - E[Y(0)]
+$$
+
+5. **Apply the definition of the ATE:**
+$$
+= E[Y(1) - Y(0)] = \text{ATE}
+$$
+
+**Conclusion**: This completes the proof. In a perfect RCT, the simple, observable difference in mean outcomes is a mathematically unbiased estimator of the unobservable Average Treatment Effect. This is why randomization is such a powerful tool for causal inference.

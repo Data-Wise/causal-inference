@@ -1,0 +1,129 @@
+---
+title: "STAT 579: Applied Causal Inference"
+author: ""
+---
+
+::: cell
+| Instructor   | Dr. Davood Tofighi                       |
+|--------------|------------------------------------------|
+| Affiliation  | Department of Mathematics and Statistics |
+| Email        | Through Canvas                           |
+| Office Hours | TBD – Office/Zoom                        |
+| Class Time   | Tue/Thu 9:30–10:45 AM                    |
+| Location     | Science Math Learning Center (SMLC) 120  |
+:::
+
+## Course Overview
+
+This graduate-level course introduces the theory and application of causal inference with an emphasis on biostatistical and social sciences contexts. We will move beyond association to learn formal frameworks for defining and estimating causal effects from observational data. The course builds from core conceptual foundations to modern methods for estimating causal effects from observational data.
+
+Key tools and frameworks include:
+
+-   Potential Outcomes
+-   Directed Acyclic Graphs (DAGs)
+-   Propensity Scores and IPW
+-   Instrumental Variables
+-   Mediation Analysis
+-   Marginal Structural Models
+-   Sensitivity Analysis
+
+## Instructor’s Approach
+
+Causal inference is not just a toolbox—it's a **way of thinking rigorously** about cause and effect. We’ll prioritize:
+
+-   **Precise causal questions**
+-   **Assumptions made transparent** (with DAGs)
+-   **Justification of identification strategies**
+-   **Critical assessment of robustness**
+
+## Learning Objectives
+
+By the end of the course, you will be able to:
+
+1.  Formulate and distinguish between causal and associational questions.
+2.  Use DAGs to detect confounding and bias.
+3.  Evaluate assumptions for identification (e.g., SUTVA, ignorability).
+4.  Apply propensity score methods and marginal structural models.
+5.  Conduct causal mediation analysis (NDE/NIE).
+6.  Use sensitivity analysis tools to assess robustness.
+7.  Reframe observational questions as target trial emulations.
+
+## Grading Breakdown
+
+-   **Weekly Problem Sets**: 20%
+-   **Applied R Assignments**: 25%
+-   **Midterm Exam**: 20%
+-   **Final Project**: 35%
+    -   Proposal: 5%
+    -   Final Report & Presentation: 30%
+
+## Primary Course Materials
+
+### Required:
+
+-   Hernán, M. A., & Robins, J. M. (May 2025). *Causal Inference: What If*.\
+    <https://miguelhernan.org/whatifbook>
+
+-   Neal, B. (2020). *Introduction to Causal Inference*.\
+    <https://www.bradyneal.com/causal-inference-course>
+
+### Recommended:
+
+-   Cunningham, S. (2020). *Causal Inference: The Mixtape*. <https://mixtape.scunning.com>
+-   Pearl, J., Glymour, M., & Jewell, N. P. *Causal Inference in Statistics: A Primer*.
+-   VanderWeele, T. (2015). *Explanation in Causal Inference*.
+-   Imbens & Rubin. *Causal Inference for Statistics, Social, and Biomedical Sciences*.
+-   Brumback, B. A. *Fundamentals of Causal Inference with R*
+
+### Software:
+
+R, VS Code, Positron, RStudio
+
+### Key Packages:
+
+`dagitty`, `MatchIt`, `WeightIt`, `cobalt`, `ivreg`, `mediation`
+
+# Course Schedule
+
+## Part I: Foundations of Causal Inference
+
+| Week | Dates | Core Topic | Primary Readings | Optional Reading (Cunningham) | Project Connection |
+|:----------|:----------|:----------|:----------|:----------|:-----------------|
+| **1** | Aug 19, 21 | What is a Causal Effect? | **HR:** Ch. 1-2 ; **Neal:** Ch. 1-2 | Ch. 2: Potential Outcomes | Framing your research interest as a precise causal question. |
+| **2** | Aug 26, 28 | Causal Diagrams (DAGs) | **Neal:** Ch. 3 ; **HR:** Ch. 6 | Ch. 3: Directed Acyclic Graphs | **Action:** Draw a preliminary DAG for your project idea. |
+| **3** | Sep 2, 4 | Confounding & Identification | **HR:** Ch. 7 ; **Neal:** Ch. 4 | Ch. 4: Regression | Refining your project's DAG and identifying key confounders. |
+| **4** | Sep 9, 11 | Selection & Measurement Bias | **HR:** Ch. 8-9 | \- | Considering potential sources of bias in your chosen dataset. |
+
+## Part II: Methods for Estimating Causal Effects
+
+| Week | Dates | Core Topic | Primary Readings | Optional Reading (Cunningham) | Project Connection |
+|:----------|:----------|:----------|:-----------|:----------|:----------------|
+| **5** | Sep 16, 18 | Modeling for Adjustment | **HR:** Ch. 12, 13, 15 ; **Neal:** Ch. 7.2, 7.5-7.6 | Ch. 5: Matching & Subclassification | Deciding on a primary adjustment strategy for your project. |
+| **6** | Sep 23, 25 | Instrumental Variables (IV) | **HR:** Ch. 16 ; **Neal:** Ch. 9 | Ch. 8: Instrumental Variables | Does your research area have any plausible "natural experiments"? |
+| **7** | Sep 30, Oct 2 | Effect Modification | **HR:** Ch. 4-5 | \- | Thinking about important subgroups for your project analysis. |
+| **8** | Oct 7 | Mediation I: Foundations | **VanderWeele:** Ch. 1-2 ; **Neal:** Ch. 14 | \- | Refining your DAG to include potential mediators. |
+
+*Note:* UNM Fall Break is Oct 9-10. The Thursday class is cancelled this week.
+
+## Part III: Advanced Topics & Synthesis
+
+| Week | Dates | Core Topic | Primary Readings | Optional Reading (Cunningham) | Project Connection |
+|:----------|:----------|:----------|:----------|:------------|:---------------|
+| **9** | Oct 14, 16 | Mediation II: Application | **VanderWeele:** Ch. 3 ; **HR:** Ch. 23 | \- | **Milestone:** Project Proposal Due. |
+| **10** | Oct 21, 23 | Time-Varying Treatments | **HR:** Ch. 19-21 | Ch. 7: Difference-in-Differences, Ch. 9: Synthetic Control | Does your project involve longitudinal data? |
+| **11** | Oct 28, 30 | Sensitivity Analysis | **Neal:** Ch. 8 ; **HR:** Ch. 14 | \- | Planning how to assess the robustness of your project's findings. |
+| **12** | Nov 4, 6 | Target Trial Emulation | **HR:** Ch. 22 | \- | **Action:** Re-frame your analysis plan as a target trial emulation. |
+| **13** | Nov 11, 13 | Project Work & Review | \- | \- | In-class workshop and final project Q&A. |
+| **14** | Nov 18, 20 | Final Presentations | \- | \- | **Milestone:** Present your project to the class. |
+
+*Note:* Thanksgiving Break is Nov 27-28. The final instructional week ends before the break.
+
+## Course Policies
+
+**Late Work**: 10% deduction per day late unless documented emergency.\
+**Integrity**: Collaboration on ideas is encouraged; all code and write-ups must be your own.\
+**Communication**: Course announcements via UNM Learn. Response time: 24–48 hours for email.\
+**Accessibility**: Contact ARC early for accommodations.\
+**Class Culture**: Respect, inclusion, and evidence-based dialogue are expected.
+
+*This course is designed to not only equip you with tools, but also with the mindset of a critical, careful, and creative causal thinker.*

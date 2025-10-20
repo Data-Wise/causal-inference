@@ -1,0 +1,294 @@
+---
+title: "Week 2: Directed Acyclic Graphs (DAGs)"
+---
+
+## 🚀 Setup: Required R Packages
+Before we begin, please run the following code chunk in your R console to install and load the packages we'll use in today's lecture. This code will only install packages you don't already have.
+
+```{r}
+#| label: load-packages
+#| warning: false
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman", quiet = TRUE)
+}
+
+pacman::p_load("dagitty", "ggplot2")
+```
+
+# Motivation and Learning Objectives
+
+In our last session, we discussed the potential outcomes framework, which defines causality through the lens of counterfactuals. This framework is powerful but abstract. A common challenge in applied research is clearly articulating *why* we believe a certain statistical analysis can yield a causal estimate. We often say we need to "control for confounders," but which ones? And why? Are there variables we should *not* control for?
+
+This week, we introduce **Directed Acyclic Graphs (DAGs)**, a visual language for making our causal assumptions explicit and transparent. Think of a DAG as a **blueprint of your scientific beliefs** about how the world works. It provides a formal, graphical grammar to represent complex causal relationships, allowing us to rigorously determine which variables must be measured and controlled to isolate a causal effect.
+
+By the end of this module, you will be able to:
+
+1. **Construct** a DAG to represent a set of causal assumptions.
+2. **Identify** the three core causal structures: chains, forks, and colliders.
+3. **Define** and distinguish between causal paths and non-causal "backdoor" paths.
+4. **Apply** the rules of **d-separation** to determine if a path is blocked.
+5. Use the **backdoor criterion** to identify a valid set of covariates for statistical adjustment to estimate a causal effect.
+6. Recognize and avoid common analytical pitfalls like collider bias.
+
+# Key Concepts: The Grammar of Causal Graphs
+
+A **Directed Acyclic Graph (DAG)** is a graphical model that consists of three main components:
+
+  - **Nodes (or Vertices):** These represent the variables in our system (e.g., treatment, outcome, covariates).
+  - **Directed Edges (Arrows):** An arrow from node $A$ to node $B$ (`A → B`) represents a direct causal effect of $A$ on $B$. The assumption is that $A$ is a cause of $B$. The *absence* of an arrow is also a strong assumption: it claims the absence of a direct causal effect.
+  - **Acyclicity:** A path of arrows cannot form a closed loop. You cannot start at a node, follow the arrows, and return to that same node. This reflects the natural flow of time—an event cannot be its own cause.
+
+# The Three Foundational Structures
+
+Every complex DAG is built from just three elementary structures. Understanding them is the key to identifying causal effects.
+
+## 1. Chains (Mediation): $A \rightarrow M \leftarrow Y$
+
+This structure represents a causal pathway where the effect of an exposure ($A$) on an outcome ($Y$) is transmitted *through* a mediating variable ($M$).
+
+  - **Example 1**: A smoking cessation program ($A$) causes an individual to reduce their cigarette consumption ($M$), which in turn reduces their risk of lung cancer ($Y$).
+  - **Example 2**: A new drug ($A$) improves a patient's cholesterol levels ($M$), which in turn lowers their risk of a heart attack ($Y$).
+  - **Statistical Property**: $A$ and $Y$ are associated. If we condition on the mediator $M$, we block this causal path, and the statistical association between $A$ and $Y$ will weaken or disappear.
+
+## 2. Forks (Confounding): $A \leftarrow C \rightarrow Y$
+
+This is the classic structure of **confounding**. A variable $C$ is a common cause of both the exposure ($A$) and the outcome ($Y$).
+
+  - **Example 1**: An individual's socioeconomic status ($C$) may affect their choice of neighborhood (and thus exposure to air pollution, $A$) as well as their underlying health (and thus risk of asthma, $Y$).
+  - **Example 2**: A patient's baseline disease severity ($C$) might influence a doctor's decision to prescribe an aggressive new treatment ($A$) and also directly affect the patient's survival ($Y$).
+  - **Statistical Property**: $A$ and $Y$ are associated due to the common cause $C$. To estimate the true causal effect of $A$ on $Y$, we **must condition on the confounder $C$**.
+
+## 3. Colliders: `A → C ← Y`
+
+This structure occurs when an exposure ($A$) and an outcome ($Y$) are independent causes of a third variable, $C$. Because the arrows "collide" at $C$, it is called a **collider**.
+
+  - **Example 1**: Admission to a specialized hospital unit ($C$) is caused by having a rare disease ($A$) or having severe symptoms from an unrelated condition ($Y$).
+  - **Example 2**: A patient's self-reported "wellness score" ($C$) is high if they have either good physical health ($A$) or good mental health ($Y$).
+  - **Statistical Property**: $A$ and $Y$ are marginally independent. **Conditioning on a collider $C$ *opens* a non-causal path** and induces a spurious association between $A$ and $Y$.
+
+::: {.callout-warning icon="⚠️"}
+
+## Pitfall: Conditioning on a Collider
+
+Controlling for a collider is a common and serious mistake in applied research. It often occurs through sample selection. For instance, studying the effect of a risk factor ($A$) on a disease ($Y$) using only hospitalized patients ($C$) can induce collider bias if both $A$ and $Y$ lead to hospitalization.
+
+**The rule is simple: Do not condition on colliders.**
+:::
+
+::: {.callout-question icon="❓"}
+
+## Check Your Understanding
+
+For each scenario, identify the structure (Chain, Fork, or Collider) and state whether you should condition on the middle variable ($Z$).
+
+1. **Scenario A**: $A$ (Diet Soda Intake) → $Z$ (Desire for Sweets) → $Y$ (Weight Gain). Should you condition on $Z$ to find the total effect of diet soda on weight gain?
+2. **Scenario B**: $A$ (Genetics for high cholesterol) ← $Z$ (Shared Family Environment) → $Y$ (Dietary Habits). Should you condition on $Z$ to find the effect of genetics on diet?
+3. **Scenario C**: $A$ (Patient has Condition X) → $Z$ (Is selected for a clinical trial) ← $Y$ (Patient lives near the research hospital). Should you condition on $Z$ to find the effect of Condition X on where a patient lives?
+
+<details>
+
+<summary><b>Answer</b></summary>
+
+1. **Chain (Mediation)**. No, you should not condition on $Z$ if you want the *total* causal effect of $A$ on $Y$. Conditioning on a mediator blocks the causal pathway.
+2. **Fork (Confounding)**. Yes, you must condition on $Z$. $Z$ is a common cause of $A$ and $Y$ and creates a spurious association.
+3. **Collider**. No, absolutely not. $Z$ is a collider. Conditioning on it would create a spurious association between the patient's condition and their location.
+</details>
+
+:::
+
+# Paths, d-Separation, and the Backdoor Criterion
+
+To estimate the causal effect of $A$ on $Y$, we must isolate the direct causal path (`A → Y`) by blocking all non-causal paths.
+
+- **Backdoor Path:** A non-causal path between $A$ and $Y$ that starts with an arrow pointing into $A$. The path $A \leftarrow C \rightarrow Y$ is a backdoor path. These paths are the source of confounding.
+
+**d-Separation** ("directional separation") is the set of graphical rules for blocking these non-causal paths. A path is blocked if:
+
+1. We condition on a variable in a **chain** or a **fork** on that path.
+2. The path contains a **collider** that we have *not* conditioned on (nor on any of its descendants).
+
+This leads to the formal rule for identifying a valid set of control variables:
+
+::: {.callout-tip icon="📌"}
+
+## Key Assumption: The Backdoor Criterion
+
+A set of variables $Z$ satisfies the backdoor criterion for estimating the effect of $A$ on $Y$ if:
+
+1. No variable in $Z$ is a descendant of $A$ (i.e., we don't control for variables on the causal pathway, like mediators).
+2. $Z$ blocks every backdoor path between $A$ and $Y$.
+
+If a set $Z$ meets this criterion, then conditioning on $Z$ is sufficient to yield an unbiased estimate of the causal effect of $A$ on $Y$. The variables in $Z$ are often called the "adjustment set."
+
+:::
+
+# Scaffolding Example: Building a DAG from a Research Question
+
+Let's build a DAG step-by-step to illustrate the thought process.
+
+**Research Question:** What is the causal effect of prescribing a new, aggressive statin drug (`Drug`) on the 5-year risk of a major cardiac event (`MCE`) for high-risk patients?
+
+1. **Identify Key Variables:**
+
+   - `Drug`: The exposure (Prescribed the new statin = 1, standard care = 0).
+   - `MCE`: The outcome (Major Cardiac Event = 1, No = 0).
+   - `Severity`: Patient's underlying disease severity (e.g., prior cholesterol levels, previous MCEs).
+   - `Lifestyle`: Patient's health-related lifestyle (e.g., diet, exercise).
+   - `Adherence`: Whether the patient adheres to their prescribed medication.
+
+2. **Draw the Arrows (Articulate Assumptions):**
+
+   - `Drug → MCE`: This is the primary causal effect we want to estimate. The drug is intended to reduce MCE risk.
+   - `Severity → Drug`: A doctor is more likely to prescribe an aggressive new drug to a sicker patient.
+   - `Severity → MCE`: Sicker patients are inherently more likely to have a future MCE, regardless of treatment. **This makes `Severity` a classic confounder.**
+   - `Lifestyle → MCE`: A healthier lifestyle directly reduces MCE risk.
+   - `Lifestyle → Severity`: Over time, lifestyle can affect disease severity. Let's assume for this model that baseline `Lifestyle` is a determinant of baseline `Severity`.
+   - `Drug → Adherence`: The new drug might have more side effects, affecting adherence.
+   - `Adherence → MCE`: Adhering to any effective medication should reduce MCE risk. **This makes `Adherence` a mediator.**
+
+3. **Analyze the DAG:**
+
+```{r}
+statin_dag <- dagitty(
+  'dag{
+    Drug [exposure]
+    MCE [outcome]
+    Severity
+    Lifestyle
+    Adherence
+
+    Severity -> Drug -> Adherence -> MCE
+    Severity -> MCE
+    Lifestyle -> Severity
+}'
+)
+plot(statin_dag)
+```
+
+**Analysis of Paths from `Drug` to `MCE`:**
+
+- **Causal Paths:** `Drug → Adherence → MCE` (mediated) and a presumed (but un-drawn) direct `Drug → MCE` arrow.
+- **Backdoor Paths:** The only backdoor path is `Drug ← Severity → MCE`. `Lifestyle` is a cause of `Severity`, but it's not on a backdoor path itself because the path `Drug ← Severity ← Lifestyle → MCE` is blocked by the collider `Severity`. Wait, no, `Severity` is a fork, not a collider in that path. Let's re-examine.
+    - Path 1: `Drug ← Severity → MCE`. This is a backdoor path.
+    - Is there another one? Let's check `dagitty`.
+
+
+```{r}
+# Let's add the direct arrow for the total effect
+statin_dag <- dagitty(
+  'dag{
+    Drug [exposure]
+    MCE [outcome]
+    Severity
+    Lifestyle
+    Adherence
+
+    Drug -> MCE
+    Severity -> Drug -> Adherence -> MCE
+    Severity -> MCE
+    Lifestyle -> Severity
+}'
+)
+
+paths(statin_dag, from = "Drug", to = "MCE")
+#> $paths
+#> [1] "Drug -> MCE"
+#> [2] "Drug -> Adherence -> MCE"
+#> [3] "Drug <- Severity -> MCE"
+#>
+#> $open
+#> [1] TRUE TRUE TRUE
+
+adjustmentSets(statin_dag)
+#> { Severity }
+```
+
+`dagitty` confirms there is one open backdoor path: `Drug ← Severity → MCE`. To close it, we must condition on `Severity`.
+
+4. **Conclusion:** To estimate the causal effect of the new drug, we must control for baseline disease severity. We should *not* control for adherence, as it is a mediator on the causal pathway.
+
+# Numerical Example: Creating Collider Bias with Continuous Data
+
+Let's illustrate the danger of conditioning on a collider with a linear model.
+
+**Scenario**: We want to know if a patient's baseline lung function ($A$) is related to their baseline kidney function ($Y$). In the general population, these are likely independent. However, let's say we conduct our study only on patients currently in the Intensive Care Unit ($C$). Admission to the ICU ($C$) is more likely if a patient has poor lung function OR poor kidney function.
+
+**The DAG:** $A$ (Lung Function) `→ C ←` ($Y$) Kidney Function.
+
+```{r}
+set.seed(456)
+n <- 2000
+# A and Y are independent in the general population.
+# Let's model them as continuous scores from 0-100.
+lung_function <- rnorm(n, 75, 15)
+kidney_function <- rnorm(n, 75, 15)
+
+# C is the collider. Probability of ICU admission increases if lung or kidney function is low.
+# Let's model ICU status as a continuous "severity score" for clarity
+icu_severity_score <- 100 -
+  0.5 * lung_function -
+  0.5 * kidney_function +
+  rnorm(n, 0, 5)
+
+df_collider <- data.frame(lung_function, kidney_function, icu_severity_score)
+
+# Check the relationship in the full population (should be ~0)
+summary(lm(kidney_function ~ lung_function, data = df_collider))
+#>                Estimate Std. Error t value Pr(>|t|)
+#> (Intercept)   75.394183   1.517032  49.70
+#> lung_function -0.005435   0.020120  -0.27   0.787
+
+# Now, let's condition on the collider by only looking at the sickest patients
+# (e.g., those with an ICU severity score > 50)
+sick_patients <- subset(df_collider, icu_severity_score > 50)
+summary(lm(kidney_function ~ lung_function, data = sick_patients))
+#>                Estimate Std. Error t value Pr(>|t|)
+#> (Intercept)   118.84758    3.58784   33.12   <2e-16 ***
+#> lung_function  -0.65586    0.05436  -12.07   <2e-16 ***
+```
+
+::: {.callout-note}
+
+## Interpretation of Results
+
+  - In the full population, the regression coefficient for `lung_function` is nearly zero and statistically insignificant (`p = 0.787`), correctly showing that the two variables are independent.
+  - However, when we restrict our analysis to the sickest patients (conditioning on the collider), a strong **negative** and statistically significant relationship appears (`β = -0.66`, `p < 0.001`). Among very sick patients, if their lungs are surprisingly healthy, their kidneys must be in terrible shape to explain their overall severity, and vice versa.
+  - This demonstrates how sample selection (a form of conditioning) can create entirely spurious results.
+:::
+
+# Appendix: Advanced Statistical Derivations and Theory
+
+## 📕 Motivation: The Theory Connecting DAGs to Data
+
+Why can we trust the graphical rules of d-separation? The connection between a DAG's structure and the statistical properties of the data it represents is formalized by two key assumptions: the **Causal Markov Assumption** and the **Faithfulness Assumption**. Together, they allow us to read conditional independencies directly from the graph.
+
+- **Causal Markov Assumption**: This assumption states that, conditional on its direct causes (its "parents" in the DAG), a variable is independent of all its non-descendants. This is the formal basis for why controlling for confounders works.
+- **Faithfulness Assumption**: This assumption states that all conditional independencies present in the data are represented in the DAG. In other words, there are no "accidental" cancellations of effects that would create an independence where the graph suggests a dependence. For example, if a drug has a positive direct effect on health but also a negative indirect effect (via a side effect) that perfectly cancels out the positive effect, the data would show no association. This would be a violation of faithfulness.
+
+## 📕 Derivation: How d-Separation Implies Conditional Independence
+
+Let's use our confounding example (`A ← Z → Y`) to provide a conceptual derivation of why conditioning on $Z$ makes $A$ and $Y$ independent (if there is no direct arrow between them).
+
+1. **Start with the Joint Probability Distribution**: According to the rules of probability and the Causal Markov assumption, we can factorize the joint distribution `P(A, Z, Y)` based on the DAG's structure. Each variable's probability is conditioned only on its parents:
+$$
+P(A, Z, Y) = P(Z) \times P(A|Z) \times P(Y|Z)
+$$
+
+   - *Annotation*: $Z$ has no parents, so its probability is marginal. $A$'s only parent is $Z$, so we have `P(A|Z)`. $Y$'s only parent is $Z$, so we have `P(Y|Z)`.
+
+2. **Derive the Conditional Distribution of A and Y given Z**: We want to know `P(A, Y | Z)`. Using the definition of conditional probability:
+    $$P(A, Y | Z) = \frac{P(A, Y, Z)}{P(Z)}$$
+
+3. **Substitute the Factorized Form**: Now, substitute our factorization from Step 1 into the numerator:
+$$
+P(A, Y | Z) = \frac{P(Z) \times P(A|Z) \times P(Y|Z)}{P(Z)}
+$$
+
+4. **Simplify**: The `P(Z)` terms cancel out, leaving:
+$$
+P(A, Y | Z) = P(A|Z) \times P(Y|Z)
+$$
+
+5. **Conclusion**: This final expression is the definition of **conditional independence**. It shows that, given $Z$, the joint probability of $A$ and $Y$ is just the product of their individual conditional probabilities. Therefore, $A$ is independent of $Y$ conditional on $Z$, written as `(A ⊥ Y | Z)`.
+
+This derivation demonstrates that the graphical rule of "blocking" a backdoor path by conditioning on the common cause $Z$ is mathematically equivalent to achieving conditional independence in the data. This is the theoretical foundation that allows us to use DAGs to design valid statistical analyses for causal inference.

@@ -1,0 +1,9 @@
+---
+title: "Projects"
+listing:
+  contents: .
+  sort: "title"
+  type: table   # or 'grid', 'table'
+  fields: [title, categories]
+page-navigation: true
+---

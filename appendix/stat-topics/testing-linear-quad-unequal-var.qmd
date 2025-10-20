@@ -1,0 +1,155 @@
+---
+title: "Testing Linear and Quadratic Trends with Unequal Variance in ANOVA"
+---
+
+## Intuitive Understanding
+
+**Concept**:
+In ANOVA, when groups have a natural order (e.g., drug doses: low, medium, high), we often test if the outcome follows a **linear** or **quadratic** trend. A linear trend implies a steady increase/decrease across groups, while a quadratic trend suggests a U-shaped or inverted U-shaped pattern.
+
+**Problem with Unequal Variance**:
+Standard ANOVA assumes equal variance across groups. When variances differ (heteroscedasticity), the usual F-test becomes unreliable. For example, groups with larger variances may dominate the analysis, leading to incorrect conclusions.
+
+**Solution (Satterthwaite's Approximation)**:
+Satterthwaite's method adjusts the degrees of freedom (DF) for the t-test used to evaluate contrasts (e.g., linear/quadratic trends). This adjustment accounts for unequal variances, producing a more accurate p-value. Think of it as "balancing" the influence of each group based on its variability.
+
+---
+
+## Mathematical Foundations
+
+### Linear And Quadratic Contrasts
+
+For $k$ groups with means $\bar{y}_1, \dots, \bar{y}_k$, define contrasts using coefficients $c_i$:
+
+- **Linear**: $c_i = \text{linear scaling (e.g., -1, 0, 1)}$
+- **Quadratic**: $c_i = \text{quadratic scaling (e.g., 1, -2, 1)}$
+
+**Contrast Estimate**:
+
+$$
+\psi = \sum_{i=1}^k c_i \bar{y}_i
+$$
+
+**Standard Error (Unequal Variances)**:
+
+$$
+SE(\psi) = \sqrt{\sum_{i=1}^k \frac{c_i^2 s_i^2}{n_i}}
+$$
+
+where $s_i^2$ is the variance of group $i$, and $n_i$ is its sample size.
+
+**Satterthwaite's Degrees of Freedom**:
+
+$$
+\nu = \frac{\left( \sum_{i=1}^k \frac{c_i^2 s_i^2}{n_i} \right)^2}{\sum_{i=1}^k \frac{c_i^4 s_i^4}{n_i^2 (n_i - 1)}}
+$$
+
+This formula approximates the effective DF by combining group-specific variances, derived from Welch's t-test extension.
+
+**Test Statistic**:
+
+$$
+t = \frac{\psi}{SE(\psi)} \sim t_{\nu}
+$$
+
+**Key Theorems**:
+
+- **Welch-Satterthwaite Equation**: Approximates the distribution of a weighted sum of variances as a scaled chi-square distribution.
+- **Central Limit Theorem**: Justifies using the t-distribution for large samples.
+
+---
+
+## Numerical Example in R
+
+**Data Generation**:
+Simulate three groups with unequal variances:
+
+```{r}
+set.seed(123)
+group <- factor(rep(1:3, each = 5))
+y <- c(
+    rnorm(5, 10, 1), # Group 1: μ=10, σ=1
+    rnorm(5, 12, 2), # Group 2: μ=12, σ=2
+    rnorm(5, 15, 3)
+) # Group 3: μ=15, σ=3
+```
+
+**Manual Calculation**:
+
+```{r}
+# Group statistics
+means <- tapply(y, group, mean) # 10.19357 11.91136 15.92371
+vars <- tapply(y, group, var) # 0.6577564 5.4148322 3.6802184
+ns <- tapply(y, group, length) # 5 5 5
+
+# Linear contrast coefficients (from contr.poly)
+c_linear <- contr.poly(3)[, 1] # [-0.707, 0, 0.707]
+
+# Contrast estimate
+contrast_est <- sum(c_linear * means) # ≈ 4.051817
+
+# Standard error
+se <- sqrt(sum((c_linear^2 * vars) / ns)) # 0.658633
+
+# Satterthwaite DF
+df_num <- (sum((c_linear^2 * vars) / ns))^2
+df_den <- sum((c_linear^4 * vars^2) / (ns^2 * (ns - 1)))
+df_satt <- df_num / df_den # ≈ 5.6
+
+# t-test
+t_ratio <- contrast_est / se # ≈ 6.15
+p_value <- 2 * pt(abs(t_ratio), df_satt, lower.tail = FALSE)
+
+# output create a table
+data.frame(contrast_est, se, df_satt, t_ratio, p_value)
+```
+
+<!-- **Using R Packages**: -->
+
+```{r}
+#| label: tbl-conduct-trend-test-unequal-var
+#| tbl-cap: "Conducting a trend test with unequal variance"
+pacman::p_load(emmeans)
+library(nlme)
+
+# Fit a model allowing unequal variances
+model_gls <- gls(y ~ group, weights = varIdent(form = ~ 1 | group))
+emm <- emmeans(model_gls, ~group)
+
+# Test linear trend
+contrast(emm, method = "poly", adjust = "none")
+```
+
+---
+
+## Comprehension Questions (Appendix)
+
+**Conceptual**:
+
+1. Why does unequal variance violate ANOVA assumptions?
+2. How does Satterthwaite's approximation improve trend testing?
+
+**Computational**:
+3. Calculate the standard error for a quadratic contrast with coefficients $(1, -2, 1)$, variances $(4, 1, 9)$, and $n_i = 5$.
+
+**Application**:
+4. Interpret the R output: $t = 2.5, df = 8.3, p = 0.03$.
+
+---
+
+## Detailed Solutions
+
+**1. Answer**:
+Unequal variances distort the pooled variance estimate, inflating Type I/II errors. Groups with larger variances dominate the error term, reducing test reliability.
+
+**2. Answer**:
+Satterthwaite's method adjusts the DF to account for heterogeneous variances, ensuring the t-test better approximates the true sampling distribution.
+
+**3. Solution**:
+
+$$
+SE = \sqrt{\frac{1^2 \cdot 4}{5} + \frac{(-2)^2 \cdot 1}{5} + \frac{1^2 \cdot 9}{5}} = \sqrt{\frac{4 + 4 + 9}{5}} = \sqrt{3.4} \approx 1.84
+$$
+
+**4. Answer**:
+The linear trend is significant ($t(8.3) = 2.5, p = 0.03$), suggesting a steady increase/decrease across groups despite unequal variances.

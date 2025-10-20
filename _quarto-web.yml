@@ -1,0 +1,37 @@
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-expand: false
+    toc-float:
+      collapsed: true
+    theme:
+      - cosmo
+      - "assets/styles/css/styles.scss"
+    smooth-scroll: true
+    toc-location: right
+    number-sections: false
+    number-depth: 3
+    code-fold: false
+    code-overflow: wrap
+    standalone: false
+    fig-align: left
+    callout-icon: true
+    date: last-modified
+    date-format: "DD-MMM-YYYY"
+    lightbox: auto
+    css: "assets/styles/css/home.css"
+    page-layout: article
+    title-block-banner: true
+    highlight-style: pygments
+    tbl-cap-location: margin
+    fig-cap-location: margin
+    reference-location: margin
+    footnotes-hover: true
+    mermaid:
+      theme: neutral
+    header-includes:
+      # - '<img src="/assets/images/banner-logo1.png" alt="Course Banner" style="width: 100%; height: auto;">'
+      - '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">'
+    include-after-body:
+      - "assets/includes/footer.html"

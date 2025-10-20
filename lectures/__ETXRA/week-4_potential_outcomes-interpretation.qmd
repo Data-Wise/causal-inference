@@ -1,0 +1,337 @@
+---
+title: "Interpreting Potential Outcomes Across Causal Inference Methods"
+---
+
+## Introduction: The Contextual Nature of Causal Notation
+
+The potential outcomes framework provides a unified mathematical language for causal inference, but the same notation can carry dramatically different interpretations depending on the identification strategy employed. Understanding these contextual differences is crucial for proper application and interpretation of causal methods. This chapter explores how potential outcome notation adapts across mediation analysis, instrumental variables, difference-in-differences, and time-varying interventions, revealing both the flexibility and precision required in modern causal reasoning.
+
+
+## 1. Mediation Analysis: Cross-World Counterfactuals
+
+### The Challenge of Nested Potential Outcomes
+
+In mediation analysis, we encounter the most complex form of potential outcome notation: **nested counterfactuals** of the form $Y^{a, M^{a'}}$. This notation describes outcomes in hypothetical worlds that combine elements from multiple parallel universes.
+
+#### Deconstructing the Superscript: $Y^{a, M^{a'}}$
+
+The superscript contains two conceptually distinct components:
+
+**Component 1: Direct Intervention ($a$)**
+
+- Represents an active manipulation of treatment $A$ to value $a$
+- This is a standard intervention, similar to what we see in randomized experiments
+
+**Component 2: Counterfactual Mediator Value ($M^{a'}$)**
+
+- This is **not** an intervention on $M$
+- Instead, $M^{a'}$ represents the natural value that mediator $M$ would have taken if treatment had been set to $a'$
+- Crucially, $M^{a'}$ is a random variable capturing natural variation in mediator response
+
+#### The Cross-World Interpretation
+
+$Y^{a, M^{a'}}$ means: *"The potential outcome that would be realized if we intervened to set treatment $A$ to $a$, while the mediator $M$ simultaneously took on the value it would have naturally attained if treatment had been set to $a'$."*
+
+This creates a "cross-world" counterfactual requiring information from multiple parallel universes:
+
+- World 1: Where $A = a'$ (to determine $M^{a'}$)
+- World 2: Where $A = a$ and $M = M^{a'}$ (to determine $Y$)
+
+#### Natural Direct and Indirect Effects
+
+**Natural Direct Effect (NDE)**
+
+$$
+\text{NDE} = \E{Y^{a=1, M^{a=0}} - Y^{a=0, M^{a=0}}}
+$$
+
+*Interpretation*: Compare two worlds where the mediator is frozen at its natural control value ($M^{a=0}$). Only the treatment varies. Any difference isolates the pathway that bypasses the mediator.
+
+**Natural Indirect Effect (NIE)**
+
+$$
+\text{NIE} = \E{Y^{a=1, M^{a=1}} - Y^{a=1, M^{a=0}}}
+$$
+
+*Interpretation*: Treatment is fixed at the treated level. Only the mediator's natural value changes (from control to treatment level). Any difference isolates the pathway flowing through the mediator.
+
+#### Alternative Mediation Frameworks
+
+**Controlled Direct Effects**
+
+$$
+\text{CDE}(m) = \E{Y^{a=1, m} - Y^{a=0, m}}
+$$
+
+Here, the mediator is set to a fixed value $m$ (not a counterfactual value). This represents a different causal question: the effect of treatment when we directly control the mediator.
+
+**Interventional Effects (Vanderweele & Tchetgen Tchetgen)**
+These effects consider interventions that shift the distribution of the mediator rather than fixing it to specific values, providing yet another interpretation of "mediated" effects.
+
+## 2. Instrumental Variables: Compliance-Defined Counterfactuals
+
+### The Instrumental Variable Setup
+
+In IV analysis, potential outcomes take on a different meaning, intimately connected to the concept of **compliance types**. The notation $Y^z$ represents the outcome that would be observed if the instrument $Z$ were set to $z$, but this masks considerable heterogeneity.
+
+#### Compliance Types and Potential Outcomes
+
+Consider instrument $Z \in \{0,1\}$ and treatment $A \in \{0,1\}$. Each unit has potential treatment values $(A^0, A^1)$, defining four compliance types:
+
+1. **Always-takers**: $A^0 = 1, A^1 = 1$
+2. **Never-takers**: $A^0 = 0, A^1 = 0$
+3. **Compliers**: $A^0 = 0, A^1 = 1$
+4. **Defiers**: $A^0 = 1, A^1 = 0$
+
+#### The Local Average Treatment Effect (LATE)
+
+The IV estimand identifies the **Local Average Treatment Effect**:
+
+$$
+\text{LATE} = \E{Y^1 - Y^0 | \text{Complier}}
+$$
+
+**Critical Interpretation**: $Y^1$ and $Y^0$ here do **not** represent potential outcomes under direct intervention on $Y$. Instead:
+
+- $Y^1$ = outcome when instrument encourages treatment (and compliers take treatment)
+- $Y^0$ = outcome when instrument discourages treatment (and compliers avoid treatment)
+
+#### The Indirect Nature of IV Counterfactuals
+
+Unlike in experimental settings, IV counterfactuals are **mediated through compliance behavior**:
+
+$$
+Y^z = \sum_{\text{types}} Y^{A^z} \cdot \ind{\text{type}} \cdot \Prob{\text{type}}
+$$
+
+This shows that $Y^z$ is actually a mixture of different potential outcomes, weighted by compliance type probabilities.
+
+#### Principal Stratification Framework
+
+In IV analysis, we're essentially doing **principal stratification** on compliance types:
+
+- **Principal strata**: Defined by $(A^0, A^1)$
+- **Causal effect of interest**: $\E{Y^{A=1} - Y^{A=0} | A^0 = 0, A^1 = 1}$
+- **Identification**: Uses the instrument to reveal this stratum-specific effect
+
+#### Exclusion Restriction Interpretation
+
+The exclusion restriction ($Y^{z,d} = Y^d$ for all $z,d$) means:
+
+*"The instrument only affects outcomes through its effect on treatment receipt."*
+
+This creates a specific type of mediation structure where the instrument → treatment → outcome, but unlike general mediation, we can point-identify the effect for compliers under additional assumptions.
+
+## 3. Difference-in-Differences: Temporal Counterfactuals
+
+### The DiD Framework
+
+In difference-in-differences, potential outcomes acquire a **temporal dimension**. The notation $Y_{it}^g$ represents the outcome for unit $i$ at time $t$ if first treated in period $g$.
+
+#### Treatment Timing and Potential Outcomes
+
+**Never-treated units**: $Y_{it}^{\infty}$ (outcome if never treated)
+**Treated units**: $Y_{it}^g$ where $g$ is the first treatment period
+
+#### Parallel Trends as a Counterfactual Assumption
+
+The parallel trends assumption states:
+
+$$
+\E{Y_{it}^{\infty} - Y_{i,t-1}^{\infty} | G_i = g} = \E{Y_{it}^{\infty} - Y_{i,t-1}^{\infty} | G_i = \infty}
+$$
+
+*Interpretation*: The **counterfactual trend** for treated units (had they not been treated) equals the observed trend for control units.
+
+#### The ATT in DiD
+
+The Average Treatment Effect on the Treated becomes:
+
+$$
+\text{ATT}_{g,t} = \E{Y_{it}^g - Y_{it}^{\infty} | G_i = g, t \geq g}
+$$
+
+**Key insight**: We observe $Y_{it}^g$ but must construct $Y_{it}^{\infty}$ using the parallel trends assumption and control group observations.
+
+#### Staggered Adoption and Dynamic Effects
+
+**Modern DiD with staggered treatment timing**:
+
+$$
+Y_{it}^g = Y_{it}^{\infty} + \sum_{s=0}^{\infty} \tau_{g,s} \cdot \mathbf{1}{t = g + s}
+$$
+
+where $\tau_{g,s}$ is the treatment effect $s$ periods after initial treatment for cohort $g$.
+
+**Interpretation complexity**: Each potential outcome $Y_{it}^g$ now represents a **dynamic treatment trajectory** starting at time $g$, not just a static treatment state.
+
+## 4. Time-Varying Interventions: Sequential Counterfactuals
+
+### The g-Formula Framework
+
+For time-varying treatments $\bar{A}_t = (A_0, A_1, \ldots, A_t)$, potential outcomes become **path-dependent**: $Y^{\bar{a}_t}$.
+
+#### Sequential Randomization
+
+The key assumption becomes **sequential exchangeability**:
+
+$$
+Y^{\bar{a}_t} \indep A_t | \bar{A}_{t-1} = \bar{a}_{t-1}, \bar{L}_t
+$$
+
+*Interpretation*: At each time point, treatment assignment is as-good-as-random given observed history.
+
+#### The g-Formula
+
+$$
+\E{Y^{\bar{a}_t}} = \sum_{\bar{l}_t} \E{Y | \bar{A}_t = \bar{a}_t, \bar{L}_t = \bar{l}_t} \prod_{k=0}^t \Prob{L_k = l_k | \bar{A}_{k-1} = \bar{a}_{k-1}, \bar{L}_{k-1} = \bar{l}_{k-1}}
+$$
+
+**Interpretation**: The counterfactual mean under treatment regime $\bar{a}_t$ equals a weighted average over all possible covariate histories, where weights represent the probability of each history under the treatment regime.
+
+#### Sustained vs. Point Interventions
+
+**Sustained intervention**: $\bar{a}_t = (1,1,\ldots,1)$ - "always treat"
+**Point intervention**: $\bar{a}_t = (0,\ldots,0,1,0,\ldots,0)$ - "treat only at time $s$"
+
+Each creates different counterfactual worlds with distinct causal interpretations.
+
+#### Natural vs. Modified Treatment Policies
+
+**Static regimes**: $\bar{a}_t$ fixed regardless of evolving covariates
+**Dynamic regimes**: $a_t = d_t(\bar{l}_t)$ where treatment depends on covariate history
+**Modified treatment policies**: Shift observed treatment probabilities rather than imposing fixed regimes
+
+## 5. Comparative Analysis: How Context Shapes Interpretation
+
+### Common Mathematical Forms, Different Meanings
+
+| Method | Notation | Core Interpretation | Key Challenge |
+|--------|----------|-------------------|---------------|
+| **RCT** | $Y^a$ | Outcome under direct intervention | Simple, unconfounded |
+| **Mediation** | $Y^{a, M^{a'}}$ | Cross-world counterfactual | Requires multiple universes |
+| **IV** | $Y^z$ | Outcome under instrument-induced treatment | Compliance heterogeneity |
+| **DiD** | $Y_{it}^g$ | Outcome under treatment starting at time $g$ | Parallel trends assumption |
+| **Time-varying** | $Y^{\bar{a}_t}$ | Outcome under treatment sequence | Sequential confounding |
+
+### Identification Strategies and Assumptions
+
+**Mediation Analysis**
+
+- *Sequential ignorability*: $(Y^{a,m}, M^{a'}) \indep A | X$ and $Y^{a,m} \indep M | A, X$
+- *Cross-world independence*: Cannot be tested empirically
+
+**Instrumental Variables**
+
+- *Instrument relevance*: $\cov{Z, A} \neq 0$
+- *Exclusion restriction*: $Y^{z,d} = Y^d$
+- *Monotonicity*: No defiers
+
+**Difference-in-Differences**
+
+- *Parallel trends*: $\E{Y_{it}^{\infty} - Y_{i,t-1}^{\infty} | G_i = g} = \E{Y_{it}^{\infty} - Y_{i,t-1}^{\infty} | G_i = \infty}$
+- *No anticipation*: Treatment doesn't affect outcomes before implementation
+
+**Time-Varying Interventions**
+
+- *Sequential exchangeability*: $Y^{\bar{a}_t} \indep A_t | \bar{A}_{t-1} = \bar{a}_{t-1}, \bar{L}_t$
+- *Positivity*: $P(A_t = a_t | \bar{A}_{t-1} = \bar{a}_{t-1}, \bar{L}_t = \bar{l}_t) > 0$
+
+### The Role of Time in Counterfactual Reasoning
+
+**Static potential outcomes** (RCT, basic mediation): Time-invariant treatment effects
+**Dynamic potential outcomes** (DiD): Treatment effects can vary with exposure duration
+**Sequential potential outcomes** (Time-varying): Treatment history determines outcomes
+
+## 6. Advanced Topics and Extensions
+
+### Interference and Spillover Effects
+
+When units interfere with each other, potential outcomes become:
+
+$$
+Y_i^{\bar{a}_N} = Y_i(a_i, a_{-i})
+$$
+
+where $a_{-i}$ represents treatment assignments for all other units. This creates **network-dependent counterfactuals**.
+
+### Mediation with Time-Varying Treatments
+
+Combining mediation and time-varying interventions:
+
+$$
+Y^{\bar{a}_t, \bar{M}^{\bar{a}'_t}}
+$$
+
+*Interpretation*: Outcome under treatment sequence $\bar{a}_t$ with mediator trajectory that would have emerged under alternative sequence $\bar{a}'_t$.
+
+### Survival Analysis and Truncation by Death
+
+In survival settings:
+
+$$
+Y^a = Y(a) \text{ if } T(a) > t, \text{ undefined otherwise}
+$$
+
+*Interpretation*: Potential outcomes may not be well-defined if treatment affects survival. This leads to **principal stratification** on survival status.
+
+### Machine Learning and Potential Outcomes
+
+Modern methods (double/debiased ML) estimate:
+
+$$
+\E{Y^1 - Y^0} = \E{\E{Y|A=1,X} - \E{Y|A=0,X}}
+$$
+
+*Interpretation*: The same potential outcome difference, but estimated via outcome regression functions rather than direct randomization.
+
+## 7. Practical Guidelines for Interpretation
+
+### Checklist for Interpreting Potential Outcomes
+
+1. **Identify the intervention type**
+   - Direct manipulation vs. instrument-induced vs. natural variation
+2. **Understand the reference population**
+   - Entire population vs. compliers vs. treated units vs. survivors
+3. **Consider temporal aspects**
+   - Static vs. dynamic vs. sequential treatments
+4. **Examine cross-world dependencies**
+   - Single universe vs. multiple counterfactual worlds
+5. **Assess identification assumptions**
+   - What makes the counterfactual identifiable from observed data?
+
+### Common Misinterpretations
+
+**Mediation Analysis**
+
+- *Error*: Treating $M^{a'}$ as an intervention rather than counterfactual value
+- *Correction*: Recognize that mediation effects require cross-world reasoning
+
+**Instrumental Variables**
+
+- *Error*: Interpreting LATE as population average treatment effect
+- *Correction*: Remember LATE applies only to compliers
+
+**Difference-in-Differences**
+
+- *Error*: Assuming treatment effects are constant over time
+- *Correction*: Allow for dynamic treatment effects and test parallel trends
+
+**Time-Varying Interventions**
+
+- *Error*: Ignoring time-varying confounding
+- *Correction*: Use g-formula or marginal structural models
+
+## Conclusion: The Art of Causal Interpretation
+
+The potential outcomes framework provides remarkable flexibility for expressing diverse causal questions, but this flexibility comes with the responsibility of careful interpretation. The same mathematical notation can represent fundamentally different causal concepts depending on the identification strategy employed.
+
+Understanding these distinctions is not merely academic—it directly impacts:
+
+- **Study design decisions**: What assumptions are reasonable for your setting?
+- **Estimation strategies**: Which methods are appropriate for your causal question?
+- **Policy interpretation**: What populations and scenarios do your results apply to?
+
+The evolution of causal inference continues to expand our ability to answer complex causal questions, but the fundamental requirement remains unchanged: precise thinking about counterfactual scenarios and the assumptions that make them identifiable from observed data.
+
+As the field advances toward more complex settings—network interference, continuous treatments, high-dimensional mediators, machine learning integration—the principles outlined in this chapter provide the foundation for rigorous causal reasoning. The mathematics may grow more sophisticated, but the core interpretive challenges remain: What counterfactual world are we imagining, and what assumptions allow us to learn about it from the world we observe?

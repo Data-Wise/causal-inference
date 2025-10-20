@@ -1,0 +1,94 @@
+---
+title: "R Tutorial"
+---
+
+# R Help and Tutorial
+
+Welcome to the R Help and Tutorial Section. This resource organizes R help files into structured categories based on **Subjects**, **Topics**, and implementation through **R Base** and **Packages**.
+
+---
+
+## 1. Subjects and Topics {#r-subjects-topics}
+
+Below are the available subjects and their corresponding topics. Select a topic to view detailed help pages.
+
+### **Subjects**
+- **Data Manipulation**
+  - [Creating Data Frames](appendix/r-topics/r-data-frames-basics.qmd)
+  - [Working with Factors](appendix/r-topics/r-factors-basics.qmd)
+  - [Subsetting Data](appendix/r-topics/r-subsetting-basics.qmd)
+  - [Data Transformation and Wrangling](appendix/r-topics/r-data-transformation.qmd)
+- **Data Visualization**
+  - Base R Graphics
+  - [ggplot2 Basics](appendix/r-packages/ggplot2.qmd)
+- **Statistical Analysis**
+  - Hypothesis Testing
+  - Regression
+  - ANOVA
+- **Programming with R**
+  - Control Structures
+  - Writing Functions
+  - Debugging
+
+---
+
+## 2. Help by R Base Functions {#r-base-functions}
+
+
+### **Data Visualization**
+- [Base R Plotting](appendix/r-base/r-base-plot-basics.qmd)
+- [Customizing Plots](appendix/r-base/r-plot-customization-basics.qmd)
+
+### **Statistical Analysis**
+- [t-Test](appendix/r-base/r-ttest-basics.qmd)
+- [Linear Regression](appendix/r-base/r-lm-basics.qmd)
+- [ANOVA](appendix/r-base/r-anova-basics.qmd)
+
+### **Programming with R**
+- [Control Structures](appendix/r-base/r-control-structures-basics.qmd)
+- [Writing Functions](appendix/r-base/r-functions-basics.qmd)
+- [Debugging](appendix/r-base/r-debugging-basics.qmd)
+
+---
+
+## 3. Help by R Packages {#r-packages}
+
+### **Data Manipulation**
+- [dplyr](appendix/r-packages/dplyr.qmd)
+- [tidyr](appendix/r-packages/tidyr.qmd)
+
+### **Data Visualization**
+- [ggplot2](appendix/r-packages/ggplot2.qmd)
+<!-- - [plotly](appendix/r-packages/plotly.qmd) -->
+
+### **Statistical Analysis**
+- [emmeans](appendix/r-packages/emmeans.qmd)
+- [multcomp](appendix/r-packages/multcomp.qmd)
+- [pwr](appendix/r-packages/pwr.qmd)
+
+<!-- ### **Programming with R**
+- [purrr](appendix/r-packages/purrr.qmd)
+- [stringr](appendix/r-packages/stringr.qmd)
+
+---
+
+## **4. How to Use This Help**
+
+1. **Explore Subjects and Topics:** Use the Subjects and Topics section to browse R concepts by category.
+2. **R Base Help:** Click on the R Base links to learn about core R functions.
+3. **Packages Help:** Dive into R packages to explore advanced features and functionalities.
+4. **Appendix Folder Structure:**
+   - **R Base Functions:** `appendix/r-base/`
+   - **R Packages:** `appendix/r-packages/`
+
+---
+
+<!-- ## **Feedback**
+
+Have suggestions or found an issue? Reach out to us via [GitHub Discussions](https://github.com/your-repo-url/discussions). -->
+
+---
+
+## **Navigation**
+- [Home](index.qmd)
+- [Appendix](home_appendix.qmd)

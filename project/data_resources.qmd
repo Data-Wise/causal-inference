@@ -1,0 +1,97 @@
+---
+title: "How To Find a Dataset for Target Trial Emulation"
+subtitle: "Finding a Dataset for Target Trial Emulation"
+---
+
+Welcome to the data exploration hub for your final project. Finding the right dataset is arguably the most important
+step in a successful causal inference study. A good dataset doesn't just have interesting variables; it must have the
+right **structure** to allow for the emulation of a target trial.
+
+This page provides you with two things: a powerful tool for searching broadly and a curated list of datasets that are
+known to be well-suited for this kind of work.
+
+## The Go-To Tool: Google Dataset Search
+
+Think of this as Google Scholar, but for data. The **Google Dataset Search** engine indexes thousands of data
+repositories from around the world. It is the best place to start when you have a specific topic in mind.
+
+<a href="https://datasetsearch.research.google.com/" target="_blank"
+    style="font-size: 1.2em; font-weight: bold; text-decoration: none; background-color: #007bff; color: white; padding: 10px 15px; border-radius: 5px;">Launch
+    Google Dataset Search
+</a>
+
+### Tips for Effective Searching
+
+When searching, use keywords that describe the **structure** of the data you need, not just the topic. Good causal
+inference requires data where time is well-defined.
+
+- Combine your topic (e.g., "cancer", "education", "air pollution") with structural keywords like:
+- "**longitudinal study**"
+- "**cohort study**"
+- "**prospective data**"
+- "**panel data**"
+- "**linked mortality data**"
+
+## Curated Datasets for Target Trial Emulation
+
+Not all datasets are created equal. The best datasets for TTE are **longitudinal cohort studies**, where a group of
+people is enrolled at a baseline point in time and followed forward. This structure allows us to properly define
+eligibility, measure confounders before treatment, and follow individuals for the outcome.
+
+Here are a few high-quality, publicly-available datasets that are exceptionally well-suited for your project.
+
+### Framingham Heart Study
+
+- **Why it's great for TTE:** This is the archetypal prospective cohort study. A cohort of residents from Framingham,
+MA, was enrolled in 1948 and has been followed ever since. It contains detailed baseline measurements of potential
+confounders (e.g., smoking, cholesterol, blood pressure) and tracks cardiovascular outcomes over many decades. It's a
+perfect dataset for emulating a trial of an intervention (e.g., lifestyle change, medication) on heart disease.
+- **Access:** Data is available to researchers through a proposal process. [Visit the Framingham Heart Study
+Website](https://www.framinghamheartstudy.org/).
+
+### MIMIC-IV (Medical Information Mart for Intensive Care)
+
+- **Why it's great for TTE:** This database of ICU admissions contains high-resolution, time-stamped data. This is
+critical because you can precisely define **time zero** (e.g., time of admission, time of a specific diagnosis).
+Treatments (medications, ventilators) and outcomes are all logged with precise timing, allowing you to emulate a trial
+of a clinical intervention in a critical care setting and avoid biases like immortal time bias.
+- **Access:** Requires completion of a human subjects research training course. [Visit the MIMIC-IV
+Website](https://mimic.mit.edu/).
+
+### Add Health (The National Longitudinal Study of Adolescent to Adult Health)
+
+- **Why it's great for TTE:** This is a classic longitudinal cohort. A representative sample of U.S. adolescents was
+enrolled in 1994-95 and has been followed into adulthood. This is ideal for questions where the "treatment" occurs in
+adolescence (e.g., participation in sports, a specific educational program) and the outcome occurs in adulthood (e.g.,
+income, health status). The baseline wave contains rich data on potential confounders (family background, school
+environment, etc.).
+- **Access:** Public-use data is readily available. [Visit the Add Health Website](https://addhealth.cpc.unc.edu/).
+
+### NHANES (National Health and Nutrition Examination Survey) with Linked Mortality Data
+
+- **Why it's great for TTE:** By itself, NHANES is a series of cross-sectional surveys. However, participants can be
+linked to the National Death Index. This transforms the dataset into a prospective cohort study. You can use the rich
+survey data at baseline (diet, lab values, lifestyle) to define eligibility and measure confounders. You can then
+emulate a trial where the outcome is long-term mortality.
+- **Access:** Data is publicly available from the CDC. [Visit the NHANES
+Website](https://www.cdc.gov/nchs/nhanes/index.htm).
+
+---
+
+## ✅ Checklist for Evaluating a Dataset
+
+When you find a dataset that looks promising, use this checklist to assess its suitability for a Target Trial Emulation
+project.
+
+- [ ] **Can you define a clear `time zero`?** Is there a variable that marks the start of follow-up for all individuals
+(e.g., date of enrollment, date of diagnosis, start of the school year)?
+- [ ] **Are confounders measured at or before `time zero`?** The fundamental requirement for confounding control is that
+your covariates are measured *before* the treatment is assigned.
+- [ ] **Is the exposure/treatment variable well-defined?** Can you clearly determine who is "treated" and "untreated"
+based on the data?
+- [ ] **Is the outcome measured after `time zero`?** The dataset must have follow-up data to ascertain the outcome after
+the intervention.
+- [ ] **Is the follow-up period long enough?** Is there sufficient time between treatment and outcome for a causal
+effect to plausibly occur?
+
+If you can answer "yes" to these questions, you likely have a strong candidate dataset for your project.

@@ -1,0 +1,345 @@
+---
+title: "R Package Tutorial: tipr"
+---
+
+# Introduction
+
+- **tipr** performs *tipping-point sensitivity analyses* for unmeasured confounding: it solves for the strength of a hypothetical confounder that would move an observed estimate to the null (or any chosen reference value). [R Causal](https://r-causal.github.io/tipr/?utm_source=chatgpt.com)
+- **Key functions covered here**
+  - `tip()`, `tip_with_binary()` – generic continuous / binary confounder engines.
+  - Scale-specific wrappers: `tip_or()`, `tip_rr()`, `tip_hr()`, `tip_coef()` and their `_with_binary`, `_with_r2` variants.
+- **Typical use-cases**
+  - Post-hoc robustness checks for observational studies.
+  - Sensitivity reporting in clinical-trial subgroup or per-protocol analyses.
+  - Pre-analysis planning (how strong must lurking confounding be to matter?).
+- **Benefits vs. alternatives**
+  - Can target *any* effect scale (OR, RR, HR, β).
+  - Integrates cleanly with `broom` output pipes and plotting tools (unlike **EValue**, which returns scalars, or **sensemakr**, which focuses on partial $R^2$).
+  - Offers quick grid evaluations useful for interactive dashboards. [Journal of Open Source Software](https://joss.theoj.org/papers/10.21105/joss.04495?utm_source=chatgpt.com)
+
+## Getting Started
+
+```{r}
+#| label: setup
+#| message: false
+pacman::p_load(tipr, tidyverse, ggplot2, dagitty, ggdag)
+```
+
+## A First “Hello tipr”
+```{r}
+#| label: hello-tipr
+#| message: false
+# Suppose we observed a hazard ratio (HR) of 1.50 from a Cox model.
+tipr::tip_hr(
+  effect_observed = 1.50,
+  exposure_confounder_effect = 0.40 # HR linking exposure and confounder
+)
+```
+
+Interpretation: **If** an unmeasured *continuous* confounder raised the outcome hazard by the returned HR (≈ 2.8), *and* was associated with exposure via HR = 0.40, the observed HR would shrink to 1 (no effect).
+
+### Scaffold-Yourself Exercise
+
+1. Change the `exposure_confounder_effect` to 0.10, 0.20, … 1.00.
+2. Record the required confounder–outcome HR each time.
+3. Plot and describe the trend.
+
+# Conceptual Foundations
+
+### What Is a “Tipping Point”?
+
+A tipping point is the set of confounder parameters $(\gamma_{UX},\ \gamma_{UY})$ that exactly *cancels* the bias in an observed effect $\hat\theta$. Algebraically we solve
+
+$$
+\theta_\text{obs} = \theta_\text{true}\times\operatorname{Bias}(\gamma_{UX},\gamma_{UY}),
+$$
+
+then set $\theta_\text{true}=1$ (null) and invert. For linear models the bias is additive; for ratio scales it is multiplicative.
+
+### DAG Perspective (drawn with `dagitty` + `ggdag`)
+
+
+```{r}
+#| label: dag-basic
+#| fig-cap: "Minimal DAG for tipping-point logic: U confounds the X→Y relation."
+dag <- dagitty(
+  "dag{
+  U -> X
+  U -> Y
+  X -> Y
+}"
+)
+ggdag(dag) +
+  theme_dag_blank()
+```
+
+**Nuance:** *tipr* assumes *single* unmeasured confounder $U$. Multiple moderate confounders are equivalent to one composite confounder with aggregated effects—a useful but sometimes overlooked approximation.
+
+# Key Functions and Features
+
+Below each function appears twice: a **basic** and an **advanced** example, followed by tips and contrasts.
+
+## 1. `tip()` – Continuous $U$ on Any Linear-Coefficient Scale
+
+### Detailed Explanation
+
+`tip()` targets estimates on *additive* scales (e.g., linear-regression coefficients). It requires the observed coefficient and *either* the exposure–confounder effect or the confounder–outcome effect; it returns the unknown partner.
+
+**Syntax**
+
+```r
+tip(effect_observed, exposure_confounder_effect = NULL,
+    confounder_outcome_effect = NULL)
+```
+
+### Basic Example – Body-Mass vs. Blood Pressure
+
+
+```{r}
+#| label: tip-basic
+#| message: false
+coef_observed <- 2.0 # systolic mmHg per kg
+tip(effect_observed = coef_observed, exposure_confounder_effect = 0.3)
+```
+
+### Advanced Example – High-Dimensional Simulation
+
+
+```{r}
+#| label: tip-adv
+#| message: false
+set.seed(579)
+n <- 2e4
+U <- rnorm(n)
+X <- 0.5 * U + rnorm(n)
+Y <- 1.2 * X + 0.8 * U + rnorm(n)
+lm_raw <- lm(Y ~ X)
+beta <- coef(lm_raw)[2]
+
+tip(effect_observed = beta, confounder_outcome_effect = 0.8) # solve for γ_UX
+```
+
+### Tips, Nuances, Misconceptions
+
+- **Linearity**: bias formula derives from linear expectation; use with log-transformed outcomes for skewed data.
+- **Common misconception**: A large required γ_UY means “safe.” Not necessarily—plausibility depends on domain knowledge.
+- **Contrast:** **sensemakr** computes *partial $R^2$* needed; *tipr* computes effect size directly, often easier to interpret in applied biomedical terms.
+
+## 2. `tip_with_binary()` – Binary $U$
+
+### Detailed Explanation
+
+Adapts Cornfield conditions: specify two of
+
+`exposed_confounder_prev`, `unexposed_confounder_prev`, `confounder_outcome_effect`.
+
+### Basic Example – Smoking (U) in Diet-Heart Study
+
+
+```{r}
+#| label: tip-bin-basic
+#| message: false
+tip_with_binary(
+  effect_observed = 1.4, # observed RR
+  exposed_confounder_prev = 0.25,
+  unexposed_confounder_prev = 0.05
+)
+```
+
+### Advanced Example – Sensitivity Grid
+
+```{r}
+#| label: tbl-tip-bin-adv
+#| tbl-cap: "Grid of required confounder–outcome effects over varying prevalences."
+prev_grid <- expand.grid(
+  exp_prev = seq(0.1, 0.5, 0.1),
+  unexp_prev = seq(0.01, 0.2, 0.03)
+)
+
+# Create a "safe" version of tip_with_binary() that returns NA on error
+safe_tip <- possibly(
+  .f = function(exp_p, unexp_p) {
+    tip_with_binary(
+      effect_observed = 1.4,
+      exposed_confounder_prev = exp_p,
+      unexposed_confounder_prev = unexp_p
+    )$confounder_outcome_effect
+  },
+  otherwise = NA_real_
+)
+
+prev_grid <- prev_grid |>
+  mutate(
+    gamma_UY = map2_dbl(
+      exp_prev,
+      unexp_prev,
+      safe_tip
+    )
+  )
+
+prev_grid
+```
+
+### What happens here
+
+1. **`possibly()`**  
+   ```r
+   safe_tip <- possibly(.f, otherwise = NA_real_)
+   ```  
+   Wraps your original anonymous function so that if it ever errors (i.e. the prevalence difference is too small), you quietly get `NA_real_` instead of stopping.
+
+2. **`map2_dbl()`**  
+   Applies `safe_tip(exp_prev[i], unexp_prev[i])` for each row and always returns a **numeric** vector (with `NA`s where the underlying call failed).
+
+3. **Result**  
+   Your `prev_grid$gamma_UY` will now be a length-15 numeric vector. Whenever `tip_gamma()` can’t find a valid confounder (as in your index 16 error), you’ll see an `NA` there rather than a hard stop.
+
+
+Visualize:
+
+```{r}
+#| label: tip-bin-heat
+ggplot(prev_grid, aes(exp_prev, unexp_prev, fill = gamma_UY)) +
+  geom_tile() +
+  labs(fill = "Required U→Y RR")
+```
+
+### Nuances & Compare
+
+- **Rare U assumption**: When `unexposed_confounder_prev≃0`, results mimic classical Cornfield inequality.
+- **Contrast**: **EValue** provides a single minimal RR needed under *equal* prevalence—*tipr* lets prevalences differ, giving richer scenarios.
+
+
+## 3. Scale-Specific Wrappers (`tip_or()`, `tip_rr()`, `tip_hr()`)
+
+### Detailed Explanation
+
+These thin wrappers set default link transformers and interpretation messages. `tip_hr()` offers an **`hr_correction`** argument for common outcomes (>15 %) to adjust the risk-ratio approximation [RDocumentation](https://www.rdocumentation.org/packages/tipr/versions/1.0.2/topics/tip_hr?utm_source=chatgpt.com).
+
+### Basic Example – Odds Ratio
+
+
+```{r}
+#| label: tip-or-basic
+or_obs <- 2.1
+tip_or(effect_observed = or_obs, exposure_confounder_effect = 0.3)
+```
+
+### Advanced Example – Hazard Ratio with Correction
+
+
+```{r}
+#| label: tip-hr-adv
+tip_hr(
+  effect_observed = 1.6,
+  exposure_confounder_effect = 0.4,
+  hr_correction = TRUE
+)
+```
+
+### Nuances
+
+- **HR Correction**: For cumulative incidences >15 %, hazard ratios diverge from risk ratios—enable `hr_correction`.
+- **Misconception**: Setting *both* `exposure_confounder_effect` *and* `confounder_outcome_effect` will *always* error; but if both are supplied, the function reports how many such confounders would be needed to tip (nice diagnostic!).
+
+## 4. Partial $R^2$ Variants (`*_with_r2`)
+
+### Detailed Explanation
+
+Instead of effect sizes, specify the *partial $R^2$* that $U$ explains in *X* and *Y*. Helpful when domain experts think in %-variance terms.
+
+### Example – Robustness Value
+
+```{r}
+#| label: tip-r2
+tip_coef_with_r2(
+  effect_observed = 0.25,
+  se = 0.05,
+  df = 100,
+  # Assume U explains 4% of the variance in the exposure (X).
+  # The function then solves for the required variance U must explain in the outcome (Y).
+  exposure_r2 = 0.04,
+  confounder_outcome_r2 = .1, # optional: if known, plug it in to see how many such confounders would be needed to tip
+)
+```
+
+### Compare vs. **sensemakr**
+
+`sensemakr` computes “robustness value” via $R^2$; *tipr* adds direct solver so you can toggle between effect-size and variance descriptions seamlessly.
+
+# Common Workflows & In-Depth Examples
+
+## Basic Workflow (Logistic Regression)
+
+
+```{r}
+#| label: wf-logistic
+model <- glm(am ~ hp + wt, data = mtcars, family = binomial)
+or_hp <- broom::tidy(model, exponentiate = TRUE) |>
+  filter(term == "hp") |>
+  pull(estimate)
+
+tip_or(effect_observed = or_hp, exposure_confounder_effect = 0.2)
+```
+
+## Intermediate Workflow – Continuous vs. Binary $U$ Side-by-Side
+
+1. Run `tip()` with realistic continuous $γ_{UX} = 0.3$.
+2. Run `tip_with_binary()` under plausible prevalences.
+3. Plot both required $γ_{UY}$ values to compare robustness.
+
+## Advanced Workflow – Interactive Grid + DAG Overlay
+
+```{r}
+#| label: wf-adv
+# Build grid of γ_UX and plot required γ_UY
+ux <- seq(0.05, 1, 0.05)
+# tip_or is vectorized, so we can pass the entire `ux` vector directly.
+# This is more efficient and readable than using map_dbl.
+grid <- tibble(
+  ux = ux,
+  # We need to extract the numeric vector from the tip_or() output
+  uy = tip_or(
+    effect_observed = 1.8,
+    exposure_confounder_effect = ux
+  )$confounder_outcome_effect
+)
+
+ggplot(grid, aes(ux, uy)) +
+  geom_line() +
+  labs(x = "γ_UX (Exposure–Confounder OR)", y = "γ_UY needed") +
+  geom_vline(xintercept = 0.2, linetype = 2) # domain-expert plausible
+```
+
+Interpret the intersection where plausible $γ_{UX}$ meets required γ_UY. If intersection lies above typical U effects, the estimate is robust.
+
+## Advanced Features & Customization
+
+- **Vectorized calls**: pass vectors to `effect_observed` for batch analyses.
+- **Integration**: because outputs are numeric, you can feed them into **shiny** dashboards for real-time robustness sliders.
+- **Large datasets**: no raw data are needed—only summary estimates—making *tipr* trivially memory-safe.
+
+## Troubleshooting and FAQs
+
+| Symptom | Diagnosis | Fix |
+|---------|-----------|-----|
+| “unused argument” | Called `tip_with_binary` without parentheses | Add `()` or ensure all required args |
+| Infinite output | Requested impossible combination (e.g., $γ_{UX} = 0$) | Use realistic non-zero $γ_{UX}$ or check input order |
+| Negative required effect | Swapped sign on `exposure_confounder_effect` | Remember: log-ratio <0 means protective confounder |
+
+## Best Practices
+
+- **Triangulate**: report *tipr* alongside **EValue** and **sensemakr** for convergent credibility.
+- **Visualize**: always pair numerical tipping points with ggplot curves for interpretability.
+- **Document assumptions**: specify whether $γ_{UX}$ refers to log-OR, log-HR, etc.
+
+## Conclusion
+
+*tipr* translates the abstract worry of “unmeasured confounding” into tangible numbers researchers can debate. Use the scaffolded examples above to build from single-scenario checks to fully automated robustness dashboards.
+
+## References and Resources
+
+- tipr website and docs [R Causal](https://r-causal.github.io/tipr/?utm_source=chatgpt.com)
+- McGowan LD (2022). *tipr: An R package for sensitivity analyses for unmeasured confounders*. *JOSS*, 7 (77), 4495. DOI 10.21105/joss.04495 [Journal of Open Source Software](https://joss.theoj.org/papers/10.21105/joss.04495?utm_source=chatgpt.com)
+- CRAN manual (v1.0.2) [CRAN](https://cran.r-project.org/web/packages/tipr/tipr.pdf?utm_source=chatgpt.com)
+- `tip_hr` documentation for HR correction details [RDocumentation](https://www.rdocumentation.org/packages/tipr/versions/1.0.2/topics/tip_hr?utm_source=chatgpt.com)

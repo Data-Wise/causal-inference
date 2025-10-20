@@ -1,0 +1,9 @@
+---
+title: "Readings"
+listing:
+  contents: ~
+  sort: "title"
+  type: table
+  fields: [title, categories]
+page-navigation: true
+---

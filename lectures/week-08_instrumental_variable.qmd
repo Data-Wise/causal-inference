@@ -1,0 +1,1484 @@
+---
+title: "Instrumental Variables (IV)"
+execute: 
+  echo: false
+---
+
+## Setup and R Packages
+
+```{r}
+#| label: load-packages
+pacman::p_load(
+    "dagitty",
+    "ggplot2",
+    "ggdag",
+    "tidyverse",
+    "ggpubr",
+    "ivreg",
+    "stargazer",
+    "gridExtra"
+)
+
+ggplot2::theme_set(ggpubr::theme_pubr())
+```
+
+## 📘 What is an Instrument?
+
+Instrumental Variables (IV) represents one of the most powerful yet challenging methods in causal inference. When we cannot conduct a randomized experiment and face the dreaded problem of **unobserved confounding**, IV offers a potential path forward by exploiting "natural experiments" in observational data.
+
+### The Core Problem: Unobserved Confounding
+
+In many real-world scenarios, we cannot assume that all confounders have been measured and controlled for. Consider these examples:
+
+- **Education and earnings**: Unmeasured ability affects both schooling decisions and future income
+- **Hospital quality and patient outcomes**: Sicker patients may systematically choose certain hospitals
+- **Treatment adherence and health**: Patient motivation influences both medication compliance and health behaviors
+
+Traditional methods like regression adjustment or matching fail when important confounders remain unobserved. This is where instrumental variables shine.
+
+### Formal Definition of an Instrumental Variable
+
+An **instrumental variable** $Z$ is a variable that enables causal identification of the effect of treatment $A$ on outcome $Y$ by satisfying three fundamental assumptions:
+
+::: {.callout-key}
+
+### The Three IV Assumptions
+
+1. **Relevance (Non-zero association)**: $Z$ is statistically associated with treatment $A$
+
+$$
+\text{Cov}(Z, A) \neq 0
+$$
+
+2. **Exclusion Restriction (No direct effect)**: $Z$ affects outcome $Y$ only through its effect on treatment $A$
+   
+$$
+Z \perp Y | A, U
+$$
+
+where $U$ represents unmeasured confounders
+
+3. **Exchangeability (No confounding of instrument)**: $Z$ is independent of all unmeasured confounders $U$
+   
+$$
+Z \perp U
+$$
+:::
+
+### Intuitive Understanding: The "Nudge" Metaphor
+
+::: {.callout-tip}
+### Think of an Instrument as a "Nudge"
+An ideal instrument is like a gentle nudge that pushes some people toward treatment and others away from treatment, but has no other effects on their lives. It's as if nature randomly assigned some people to receive encouragement for treatment, creating a partial experiment within observational data.
+:::
+
+The instrument creates **exogenous variation** in treatment - variation that comes from outside the system of confounding relationships. This exogenous push allows us to isolate the causal effect of treatment from the web of confounding factors.
+
+### Classic Examples of Instrumental Variables
+
+1. Quarter of Birth and Education (Angrist & Krueger, 1991)
+- **Instrument**: Quarter of birth (Q1, Q2, Q3, Q4)
+- **Treatment**: Years of education
+- **Outcome**: Earnings
+- **Logic**: Compulsory schooling laws mean children born in certain quarters must start school earlier/later, affecting total education, but birth quarter is otherwise random
+
+2. Distance to Hospital and Treatment Choice
+- **Instrument**: Distance to nearest specialized hospital
+- **Treatment**: Receiving specialized care
+- **Outcome**: Health outcomes
+- **Logic**: Distance affects where you seek care but shouldn't directly affect your health (conditional on treatment received)
+
+3. Mendelian Randomization in Genetics
+- **Instrument**: Genetic variants
+- **Treatment**: Biomarker levels (e.g., cholesterol)
+- **Outcome**: Disease risk
+- **Logic**: Genes are randomly assigned at conception and affect disease only through their effect on biomarkers
+
+### Connections to Other Causal Methods
+
+IV differs fundamentally from other causal inference methods:
+
+- **Unlike randomization**: We don't control the instrument assignment, we observe it
+- **Unlike backdoor adjustment**: We don't need to measure all confounders
+- **Unlike front-door criterion**: We don't need to identify mediating pathways
+- **Like natural experiments**: We exploit quasi-random variation in nature
+
+::: {.callout-warning}
+### Critical Limitation Preview
+Unlike methods that can identify the Average Treatment Effect (ATE) for the entire population, IV typically identifies effects only for a specific subgroup - those whose treatment decisions are influenced by the instrument. We'll explore this limitation in detail later.
+:::
+
+## 🧠 No Nonparametric Identification of the ATE
+
+This section addresses one of the most important and often misunderstood limitations of instrumental variables: **IV cannot nonparametrically identify the population Average Treatment Effect (ATE)** in general settings.
+
+### What Do We Mean by "Nonparametric Identification"?
+
+**Nonparametric identification** means we can recover a causal parameter without making strong functional form assumptions (like linearity). Methods like randomization or backdoor adjustment can nonparametrically identify the ATE - the average effect of treatment for the entire population.
+
+### The Fundamental IV Limitation
+
+Instrumental variables face an inherent limitation: they only provide information about individuals whose treatment decisions are affected by the instrument. We learn nothing about treatment effects for people who would make the same treatment choice regardless of the instrument value.
+
+::: {.callout-key}
+### The Information Gap
+- **What IV tells us**: Treatment effects for people influenced by the instrument
+- **What IV doesn't tell us**: Treatment effects for people unaffected by the instrument
+- **What we want**: Treatment effects for the entire population (ATE)
+:::
+
+### Intuitive Explanation: The "Influence" Problem
+
+Imagine studying the effect of college education on earnings using distance to college as an instrument:
+
+- **Group A**: People who attend college regardless of distance (always-takers)
+- **Group B**: People who never attend college regardless of distance (never-takers)
+- **Group C**: People whose college decision depends on distance (compliers)
+
+The instrument only creates variation for Group C. We observe what happens when Group C members are nudged toward vs. away from college, but we learn nothing about what would happen if Group A or B members changed their education status.
+
+### Why This Matters in Practice
+
+This limitation has profound implications:
+
+1. **Generalizability**: IV estimates may not apply to policy interventions that affect different populations
+2. **External validity**: Effects may not generalize across contexts with different complier populations
+3. **Policy relevance**: The ATE might be more relevant for policy than the effect for compliers
+
+### Mathematical Insight: The Identification Problem
+
+Consider the general nonparametric case. The ATE is:
+$$
+\text{ATE} = E[Y^1-Y^0]
+$$
+
+But IV can only identify:
+$$
+\text{IV Estimand} = \frac{E[Y|Z=1]-E[Y|Z=0]}{E[A|Z=1]-E[A|Z=0]}
+$$
+
+Without additional assumptions, this IV estimand equals a **weighted average** of treatment effects for different subgroups, where the weights depend on how responsive each subgroup is to the instrument. This generally differs from the population ATE.
+
+## Interpretation
+
+The IV estimand: 
+$$
+\text{IV Estimand} = \frac{E[Y|Z=1] - E[Y|Z=0]}{E[A|Z=1] - E[A|Z=0]}
+$$
+
+is the Wald estimator for the causal effect of a treatment (A) on an outcome (Y) using an instrumental variable (Z).
+
+### Interpretation:
+
+- The numerator, ($E[Y|Z=1] - E[Y|Z=0]$), is the difference in average outcomes between groups defined by the instrument.
+- The denominator, ($E[A|Z=1] - E[A|Z=0]$), is the difference in average treatment rates between those same groups.
+
+### Causal Meaning:
+
+This ratio estimates the Local Average Treatment Effect (LATE): the average causal effect of (A) on (Y) for individuals whose treatment status is changed by the instrument (Z) (the "compliers").
+It is valid under the standard IV assumptions: relevance, exclusion restriction, and exchangeability (plus monotonicity for LATE).
+
+### In summary:
+
+The IV estimand isolates the causal effect of the treatment by leveraging exogenous variation in treatment induced by the instrument, thus overcoming unmeasured confounding. It tells us the effect of treatment for those whose treatment status is actually influenced by the instrument.
+
+::: {.callout-tip}
+## When IV Can Identify ATE
+IV can identify the population ATE under special circumstances:
+
+1. **Homogeneous effects**: Everyone has the same treatment effect
+2. **Complete compliance**: Everyone's treatment is affected by the instrument
+3. **Representative compliers**: Those affected by the instrument are representative of the population
+:::
+
+### The Trade-off: Bias vs. Assumptions
+
+This limitation reflects a fundamental trade-off in causal inference:
+
+- **Backdoor methods**: Can identify ATE but require "no unobserved confounders"
+- **IV methods**: Can handle unobserved confounders but typically identify Local ATE
+
+Neither assumption is necessarily better - the choice depends on which is more plausible in your specific application.
+
+## ✅ Warm-Up: Binary Linear Setting
+
+Let's start our technical journey with the simplest possible IV setting: binary instrument, binary treatment, and linear relationships. This serves as our foundation before tackling more complex scenarios.
+
+### The Setup
+
+Consider the following simple system:
+
+- $Z \in \{0,1\}$: Binary instrumental variable
+- $A \in \{0,1\}$: Binary treatment variable
+- $Y$: Continuous outcome
+- $U$: Unobserved confounder affecting both $A$ and $Y$
+
+### The Structural Model
+
+We can represent this system with two equations:
+
+**Treatment equation (First stage):**
+$$
+A = \alpha_0 + \alpha_1 Z + \gamma_1 U + \epsilon_A
+$$
+
+**Outcome equation (Second stage):**
+$$
+Y = \beta_0 + \beta_1 A + \gamma_2 U + \epsilon_Y
+$$
+
+The parameter of interest is $\beta_1$ - the causal effect of treatment on outcome.
+
+### The Problem with OLS
+
+If we simply regress $Y$ on $A$, we get:
+$$
+\hat{\beta}_1^{OLS} = \beta_1 + \gamma_2 \frac{\text{Cov}(A,U)}{\text{Var}(A)}
+$$
+
+This is biased whenever treatment and the unobserved confounder are correlated ($\text{Cov}(A,U) \neq 0$).
+
+### The IV Solution: Two-Stage Least Squares (2SLS)
+
+IV solves this by using the instrument to create "clean" variation in treatment:
+
+**Stage 1**: Predict treatment using only the instrument
+$$
+\hat{A} = \hat{\alpha}_0 + \hat{\alpha}_1 Z
+$$
+
+**Stage 2**: Regress outcome on predicted treatment  
+$$
+Y = \beta_0 + \beta_1 \hat{A} + \epsilon
+$$
+
+### The IV Formula in Binary Case
+
+In the binary setting, the IV estimator has a particularly clean form:
+$$
+\hat{\beta}_1^{IV} = \frac{E[Y|Z=1]-E[Y|Z=0]}{E[A|Z=1]-E[A|Z=0]} = \frac{\text{Reduced Form}}{\text{First Stage}}
+$$
+
+This is the **Wald estimator** - the ratio of the instrument's effect on the outcome to the instrument's effect on treatment.
+
+### Step-by-Step Numerical Example
+
+::: {.callout-example}
+### College Education and Earnings
+
+Let's study the effect of college completion on annual earnings using quarter of birth as an instrument.
+
+**Setting**:
+
+- $Z$: Born in Q4 (1) vs. other quarters (0)
+- $A$: College degree (1) vs. no degree (0)
+- $Y$: Annual earnings (in thousands of dollars)
+
+**Observed Data Summary** (n = 1,000):
+
+| Birth Quarter | College Rate | Avg Earnings | Sample Size |
+| ------------- | ------------ | ------------ | ----------- |
+| Q1-Q3 (Z=0)   | 40%          | $45k         | 750         |
+| Q4 (Z=1)      | 50%          | $48k         | 250         |
+:::
+
+**Step 1: Calculate the First Stage**
+The first stage measures how much the instrument affects treatment probability:
+$$
+\text{First Stage} = P(A=1|Z=1) - P(A=1|Z=0) = 0.50 - 0.40 = 0.10
+$$
+
+**Step 2: Calculate the Reduced Form**
+The reduced form measures the instrument's total effect on the outcome:
+$$
+\text{Reduced Form} = E[Y|Z=1] - E[Y|Z=0] = 48 - 45 = 3
+$$
+**Step 3: Calculate the IV Estimate**
+The IV estimate is the ratio of reduced form to first stage:
+$$
+\hat{\beta}_1^{IV} = \frac{\text{Reduced Form}}{\text{First Stage}} = \frac{3}{0.10} = 30
+$$
+
+
+**Interpretation**: Among individuals whose college attendance was influenced by their birth quarter, completing college increases annual earnings by $30,000 on average.
+
+### R Code Implementation
+
+```{r}
+#| label: tbl-summary
+# Set Random Seed for Reproducibility
+set.seed(123)
+n <- 1000
+
+# Generate Binary Instrument (quarter of birth)
+# Z=1 For Q4 Births, Z=0 for Q1-Q3 Births
+Z <- rbinom(n, 1, 0.25) # 25% born in Q4
+
+# Generate Unobserved Confounder (ability/motivation)
+U <- rnorm(n, mean = 0, sd = 1)
+
+# Generate Treatment (college completion)
+# Affected by Instrument, Confounder, and Random Variation
+linear_index <- -0.5 + 0.4 * Z + 0.6 * U
+A <- rbinom(n, 1, plogis(linear_index))
+
+# Generate Outcome (earnings in thousands)
+# Affected by Treatment, Confounder, and Random Variation
+Y <- 35 + 25 * A + 10 * U + rnorm(n, mean = 0, sd = 8)
+
+# Create Data Frame
+data <- data.frame(Y = Y, A = A, Z = Z, U = U)
+
+# Display Summary Statistics by Instrument
+summary_stats <- data |>
+    group_by(Z) |>
+    summarise(
+        n = n(),
+        college_rate = mean(A),
+        avg_earnings = mean(Y),
+        .groups = "drop"
+    )
+print(summary_stats)
+```
+
+::: {.callout-code}
+## Code Explanation
+- `plogis()`: Converts linear index to probability using logistic function
+- We simulate the unobserved confounder `U` but wouldn't observe it in real data
+- The true causal effect is 25 (coefficient on `A` in outcome equation)
+- Notice how birth quarter affects both college attendance and earnings
+:::
+
+### Manual IV Calculation
+
+```{r}
+#| label: manual
+# Manual Calculation of IV Estimate
+# Step 1: First Stage (instrument Effect on treatment)
+first_stage <- mean(data$A[data$Z == 1]) - mean(data$A[data$Z == 0])
+cat("First Stage:", round(first_stage, 3), "\n")
+
+# Step 2: Reduced Form (instrument Effect on outcome)
+reduced_form <- mean(data$Y[data$Z == 1]) - mean(data$Y[data$Z == 0])
+cat("Reduced Form:", round(reduced_form, 3), "\n")
+
+# Step 3: IV Estimate (Wald estimator)
+iv_estimate <- reduced_form / first_stage
+cat("Manual IV Estimate:", round(iv_estimate, 3), "\n")
+
+# Compare with True Effect and Biased OLS
+true_effect <- 25
+ols_estimate <- coef(lm(Y ~ A, data = data))["A"]
+
+cat("True Causal Effect:", true_effect, "\n")
+cat("OLS Estimate (biased):", round(ols_estimate, 3), "\n")
+cat("IV Estimate:", round(iv_estimate, 3), "\n")
+```
+
+### Using Built-in 2SLS
+
+```{r}
+#| label: tbl-ivreg
+#| tbl-cap: "IV Regression"
+# Using the Ivreg Package for Automatic 2SLS
+# Fit IV Regression: Y ~ A | Z means
+# Regress Y on A, Using Z as Instrument for A
+iv_model <- ivreg(Y ~ A | Z, data = data)
+summary(iv_model)
+```
+
+```{r}
+#| label: tbl-comparion
+#| tbl-cap: "Comparison of OLS and IV"
+# Compare IV with OLS
+ols_model <- lm(Y ~ A, data = data)
+
+# Create Comparison Table
+stargazer(
+    ols_model,
+    iv_model,
+    type = "text",
+    column.labels = c("OLS (Biased)", "IV (Causal)"),
+    omit.stat = c("adj.rsq", "f")
+)
+```
+
+::: {.callout-warning}
+## Common Pitfalls in Binary IV
+1. **Weak instrument**: If the first stage is small, IV estimates become unreliable
+2. **Exclusion violation**: If birth quarter directly affects earnings (e.g., through seasonal hiring), IV fails
+3. **Defiers**: If some people do the opposite of what the instrument suggests, interpretation becomes complex
+:::
+
+### Checking Instrument Strength
+
+```{r}
+#| label: tbl-first-stage-reg
+#| tbl-cap: "First Stage Regression"
+# Check First Stage Strength
+first_stage_reg <- lm(A ~ Z, data = data)
+summary(first_stage_reg)
+
+# Rule of Thumb: F-statistic Should Be > 10
+first_stage_f <- summary(first_stage_reg)$fstatistic[1]
+cat("First Stage F-statistic:", round(first_stage_f, 2), "\n")
+cat("Strong instrument?", first_stage_f > 10, "\n")
+```
+
+## 💻 Continuous Linear Setting
+
+Moving beyond binary variables, we now consider the case where instruments and treatments can take continuous values. This setting is common in economics and health research and introduces additional nuances in estimation and interpretation.
+
+### The Continuous Linear Model
+
+Consider the following system of equations:
+
+**First Stage (Treatment equation):**
+$$
+A = \alpha_0 + \alpha_1 Z + \gamma_1 U + \epsilon_A
+$$
+**Second Stage (Outcome equation):**
+$$
+Y = \beta_0 + \beta_1 A + \gamma_2 U + \epsilon_Y
+$$
+
+Where:
+
+- $Z$: Continuous instrumental variable
+- $A$: Continuous treatment variable
+- $Y$: Continuous outcome
+- $U$: Unobserved confounder
+
+### IV Identification in Continuous Setting
+
+The IV estimator in the continuous case is:
+$$
+\hat{\beta}_1^{IV} = \frac{\text{Cov}(Y,Z)}{\text{Cov}(A,Z)}
+$$
+
+This formula generalizes our binary Wald estimator. Under the three IV assumptions, this consistently estimates the causal effect $\beta_1$.
+
+### Extended Numerical Example
+
+::: {.callout-example}
+## Distance to College and Years of Education
+
+We'll study how years of education affect log earnings, using distance to the nearest college as an instrument.
+
+**Setting**:
+
+- $Z$: Distance to nearest college (0-100 miles)
+- $A$: Years of education (8-20 years)
+- $Y$: Log of annual earnings
+
+**Reasoning**:
+
+- **Relevance**: Distance affects education costs and accessibility
+- **Exclusion**: Distance shouldn't directly affect your earnings ability
+- **Exchangeability**: Residential location (conditional on observables) is plausibly exogenous to ability
+:::
+
+### Simulation and Analysis
+
+```{r}
+#| label: tbl-continuous
+#| tbl-cap: "Simulation and Analysis for Continuous IV"
+# Set up Simulation Parameters
+set.seed(456)
+n <- 1500
+
+# Generate Continuous Instrument (distance to College in miles)
+Z <- runif(n, min = 0, max = 100)
+
+# Generate Unobserved ability/motivation
+U <- rnorm(n, mean = 0, sd = 2)
+
+# Generate Years of Education
+# Decreases with Distance, Increases with Ability
+A <- 12 + (-0.03) * Z + 0.8 * U + rnorm(n, mean = 0, sd = 1.5)
+A <- pmax(A, 8) # Minimum 8 years education
+A <- pmin(A, 20) # Maximum 20 years education
+
+# Generate Log Earnings
+# Increases with Education and Ability
+Y <- 2.4 + 0.06 * A + 0.1 * U + rnorm(n, mean = 0, sd = 0.4)
+
+# Store True Parameters for Comparison
+true_effect <- 0.06 # True return to education
+
+# Create Dataset
+df_continuous <- data.frame(
+    log_earnings = Y,
+    education = A,
+    distance = Z,
+    ability = U # We observe this in simulation but not in real data
+)
+
+# Display Summary Statistics
+summary(df_continuous[, c("log_earnings", "education", "distance")])
+```
+
+::: {.callout-code}
+### Simulation Details
+- Distance reduces education by 0.03 years per mile (first stage effect)
+- Each year of education increases log earnings by 0.06 (6% return)
+- Ability affects both education and earnings, creating confounding
+- We add realistic random variation to make the example more realistic
+:::
+
+### First Stage Analysis
+
+```{r}
+#| label: tbl-first-stage-continuous
+#| tbl-cap: "First Stage Analysis for Continuous IV"
+# Estimate First Stage Regression
+first_stage <- lm(education ~ distance, data = df_continuous)
+summary(first_stage)
+
+# Extract Key Statistics
+first_stage_coef <- coef(first_stage)["distance"]
+first_stage_se <- summary(first_stage)$coefficients["distance", "Std. Error"]
+first_stage_f <- summary(first_stage)$fstatistic[1]
+
+cat("First Stage Results:\n")
+cat("Coefficient:", round(first_stage_coef, 4), "\n")
+cat("Standard Error:", round(first_stage_se, 4), "\n")
+cat("F-statistic:", round(first_stage_f, 2), "\n")
+cat("Strong instrument?", first_stage_f > 10, "\n")
+```
+
+### Reduced Form Analysis
+
+```{r}
+#| label: tbl-reduced-form-continuous
+#| tbl-cap: "Reduced Form Analysis for Continuous IV"
+# Estimate Reduced Form (instrument Effect on outcome)
+reduced_form <- lm(log_earnings ~ distance, data = df_continuous)
+summary(reduced_form)
+
+reduced_form_coef <- coef(reduced_form)["distance"]
+cat("Reduced Form Coefficient:", round(reduced_form_coef, 6), "\n")
+```
+
+### IV Estimation and Comparison
+
+```{r}
+#| label: tbl-iv-continuous
+#| tbl-cap: "IV Estimation and Comparison for Continuous IV"
+# Method 1: Manual IV Calculation
+manual_iv <- reduced_form_coef / first_stage_coef
+cat("Manual IV Estimate:", round(manual_iv, 4), "\n")
+
+# Method 2: Two-Stage Least Squares Using Ivreg
+iv_model <- ivreg(log_earnings ~ education | distance, data = df_continuous)
+summary(iv_model)
+```
+
+```{r}
+#| label: tbl-2sls-continuous
+#| tbl-cap: "2SLS Estimation and Comparison for Continuous IV"
+# Method 3: Manual 2SLS for Educational Purposes
+# Stage 1: Predict Education Using Distance
+education_predicted <- predict(first_stage)
+
+# Stage 2: Regress Outcome on Predicted Education
+stage2_manual <- lm(log_earnings ~ education_predicted, data = df_continuous)
+
+# Compare All Approaches
+ols_biased <- lm(log_earnings ~ education, data = df_continuous)
+
+# Create Comparison Table
+estimates <- data.frame(
+    Method = c(
+        "True Effect",
+        "OLS (Biased)",
+        "IV (Manual)",
+        "IV (ivreg)",
+        "2SLS (Manual)"
+    ),
+    Estimate = c(
+        true_effect,
+        coef(ols_biased)["education"],
+        manual_iv,
+        coef(iv_model)["education"],
+        coef(stage2_manual)["education_predicted"]
+    )
+)
+estimates$Estimate <- round(estimates$Estimate, 4)
+print(estimates)
+```
+
+::: {.callout-warning}
+### Standard Error Warning
+When doing manual 2SLS (Method 3 above), the standard errors from the second stage are incorrect because they don't account for the uncertainty from the first stage. Always use `ivreg()` or equivalent for proper inference.
+:::
+
+### Visualizing the IV Approach
+
+```{r}
+#| label: fig-iv-visualization
+#| fig-cap: "Visualizing the IV Approach for Continuous IV"
+# Create Visualization of IV Identification Strategy
+# Plot 1: First Stage Relationship
+p1 <- ggplot(df_continuous, aes(x = distance, y = education)) +
+    geom_point(alpha = 0.5, color = "steelblue") +
+    geom_smooth(method = "lm", color = "red", se = TRUE) +
+    labs(
+        title = "First Stage: Distance → Education",
+        x = "Distance to College (miles)",
+        y = "Years of Education"
+    )
+
+# Plot 2: Reduced Form Relationship
+p2 <- ggplot(df_continuous, aes(x = distance, y = log_earnings)) +
+    geom_point(alpha = 0.5, color = "darkgreen") +
+    geom_smooth(method = "lm", color = "red", se = TRUE) +
+    labs(
+        title = "Reduced Form: Distance → Log Earnings",
+        x = "Distance to College (miles)",
+        y = "Log Annual Earnings"
+    )
+
+# Plot 3: Treatment-outcome Relationship (confounded)
+p3 <- ggplot(df_continuous, aes(x = education, y = log_earnings)) +
+    geom_point(alpha = 0.5, color = "purple") +
+    geom_smooth(method = "lm", color = "red", se = TRUE) +
+    labs(
+        title = "Confounded: Education → Log Earnings",
+        x = "Years of Education",
+        y = "Log Annual Earnings"
+    )
+
+# Combine Plots
+grid.arrange(p1, p2, p3, ncol = 1)
+```
+
+### Diagnostic Tests
+
+```{r}
+#| label: tbl-diagnostics-continuous
+#| tbl-cap: "Diagnostic Tests for Continuous IV"
+# Test Instrument Strength (first Stage F-test)
+cat("=== INSTRUMENT STRENGTH TEST ===\n")
+cat(
+    "First Stage F-statistic:",
+    round(summary(first_stage_reg)$fstatistic[1], 2),
+    "\n"
+)
+cat("Critical value (rule of thumb): 10\n")
+cat("Strong instrument?", first_stage_f > 10, "\n\n")
+
+# Test for Instrument Exogeneity (reduced Form Should Be through treatment)
+cat("=== INSTRUMENT EXOGENEITY CHECK ===\n")
+cat("Reduced form coefficient:", round(reduced_form_coef, 6), "\n")
+cat("Implied effect (RF/FS):", round(manual_iv, 4), "\n")
+cat("This should match our economic expectation of education returns\n\n")
+
+# Compare with Truth (only Possible in simulation)
+cat("=== COMPARISON WITH TRUTH ===\n")
+cat("True causal effect:", true_effect, "\n")
+cat("OLS estimate:", round(coef(ols_biased)["education"], 4), "\n")
+cat("IV estimate:", round(coef(iv_model)["education"], 4), "\n")
+cat("IV bias:", round(coef(iv_model)["education"] - true_effect, 4), "\n")
+```
+
+::: {.callout-tip}
+### Interpreting Continuous IV Results
+In our example, the IV estimate suggests that each additional year of education increases earnings by approximately 6%. This is the causal effect for individuals whose education decisions are influenced by distance to college - typically those on the margin of attending college who face cost/access constraints.
+:::
+
+### When Continuous IV Goes Wrong
+
+```{r}
+#| label: tbl-wrong-continuous
+#| tbl-cap: "When Continuous IV Goes Wrong"
+# Simulate Weak Instrument Scenario
+set.seed(789)
+Z_weak <- runif(n, 0, 100)
+A_weak <- 12 + (-0.005) * Z_weak + 0.8 * U + rnorm(n, 0, 1.5) # Very small first stage
+A_weak <- pmax(A_weak, 8)
+Y_weak <- 2.4 + 0.06 * A_weak + 0.12 * U + rnorm(n, 0, 0.4)
+
+df_weak <- data.frame(Y = Y_weak, A = A_weak, Z = Z_weak)
+
+# Estimate with Weak Instrument
+iv_weak <- ivreg(Y ~ A | Z, data = df_weak)
+first_stage_weak <- lm(A ~ Z, data = df_weak)
+
+cat("=== WEAK INSTRUMENT EXAMPLE ===\n")
+cat(
+    "First stage F-statistic:",
+    round(summary(first_stage_weak)$fstatistic[1], 2),
+    "\n"
+)
+cat("IV estimate:", round(coef(iv_weak)["A"], 4), "\n")
+cat(
+    "IV standard error:",
+    round(summary(iv_weak)$coefficients["A", "Std. Error"], 4),
+    "\n"
+)
+cat("Notice the large standard error and unreliable estimate!\n")
+```
+
+## 🧭 Nonparametric Identification of Local ATE
+
+This section introduces the most sophisticated conceptual framework for understanding what instrumental variables actually identify. We'll develop new notation, explore principal stratification, and formally define the Local Average Treatment Effect (LATE).
+
+### New Potential Notation with Instruments
+
+To understand IV identification rigorously, we need to expand our potential outcomes framework to include potential treatments under different instrument values.
+
+**Standard Potential Outcomes**: $Y^a$ represents the potential outcome under treatment level $a$.
+
+**IV Potential Outcomes**: We also need $A^z$ to represent the potential treatment under instrument value $z$.
+
+::: {.callout-key}
+### Expanded Notation System
+For each individual $i$, we have:
+
+- $Y_i^{A_i^0}$: Outcome they would have under their natural treatment when $Z=0$
+- $Y_i^{A_i^1}$: Outcome they would have under their natural treatment when $Z=1$  
+- $Y_i^0$: Outcome under no treatment (traditional notation)
+- $Y_i^1$: Outcome under treatment (traditional notation)
+- $A_i^0$: Treatment they would choose when $Z=0$
+- $A_i^1$: Treatment they would choose when $Z=1$
+:::
+
+This notation recognizes that the instrument affects treatment choice, and treatment choice affects outcomes. We observe:
+
+- $A_i = A_i^{Z_i}$ (observed treatment under observed instrument)
+- $Y_i = Y_i^{A_i^{Z_i}}$ (observed outcome under observed treatment under observed instrument)
+
+### Principal Stratification
+
+Based on their potential treatments $(A_i^0, A_i^1)$, individuals can be classified into four **principal strata**:
+
+::: {.callout-example}
+## The Four Principal Strata
+
+1. **Compliers**: $A_i^1 = 1, A_i^0 = 0$
+   - Take treatment when instrument is "on", don't take it when instrument is "off"
+   - These are the people influenced by the instrument
+
+2. **Always-takers**: $A_i^1 = 1, A_i^0 = 1$  
+   - Take treatment regardless of instrument value
+   - The instrument doesn't affect their behavior
+
+3. **Never-takers**: $A_i^1 = 0, A_i^0 = 0$
+   - Never take treatment regardless of instrument value
+   - The instrument doesn't affect their behavior
+
+4. **Defiers**: $A_i^1 = 0, A_i^0 = 1$
+   - Do the opposite of what the instrument suggests
+   - Usually assumed not to exist (monotonicity assumption)
+:::
+
+### The Monotonicity Assumption
+
+::: {.callout-key}
+### Monotonicity (No Defiers)
+We assume $A_i^1 \geq A_i^0$ for all individuals $i$. 
+
+This means the instrument weakly increases treatment probability for everyone. No one does the opposite of what the instrument suggests.
+:::
+
+Monotonicity is often plausible. For example, if distance to college is our instrument, it's reasonable that distance never increases someone's probability of attending college.
+
+### Local Average Treatment Effect (LATE)
+
+The **Local Average Treatment Effect** is the average treatment effect for the complier population:
+$$
+\text{LATE} = E[Y_i^1-Y_i^0|\text{Complier}]
+$$
+
+This is what instrumental variables identify under the standard IV assumptions plus monotonicity.
+
+### LATE Vs ATE: A Detailed Comparison
+
+The **Average Treatment Effect** for the population is:
+$$
+\text{ATE} = E[Y_i^1-Y_i^0]
+$$
+
+The **Local Average Treatment Effect** is:
+$$
+\text{LATE} = E[Y_i^1-Y_i^0|\text{Complier}]
+$$
+
+::: {.callout-warning}
+### When LATE ≠ ATE
+
+LATE differs from ATE when:
+1. **Treatment effect heterogeneity**: Different people have different treatment effects
+2. **Non-representative compliers**: Compliers have different treatment effects than the population average
+
+LATE equals ATE only when treatment effects are homogeneous OR when compliers are representative of the population.
+:::
+
+### Comprehensive Numerical Example
+
+::: {.callout-example}
+### LATE Calculation: College and Earnings Revisited
+
+Let's work through a detailed example where we can observe the principal strata.
+
+**Population Composition**:
+- 50% Compliers: College attendance depends on distance
+- 30% Always-takers: Attend college regardless of distance  
+- 20% Never-takers: Never attend college regardless of distance
+
+**Treatment Effects by Strata**:
+- Compliers: $+\$35,000$ from college
+- Always-takers: $+\$25,000$ from college
+- Never-takers: $+\$45,000$ from college (hypothetical - we don't observe this)
+
+**Population ATE**: $0.5 \times 35 + 0.3 \times 25 + 0.2 \times 45 = \$34,500$
+
+**LATE**: $\$35,000$ (effect for compliers only)
+:::
+
+### Simulation of LATE Framework
+
+```{r}
+#| label: sim-late
+# Detailed Simulation with Observable Principal Strata
+set.seed(2024)
+n <- 2000
+
+# Step 1: Assign Principal Strata
+strata_probs <- c(0.5, 0.3, 0.2) # complier, always-taker, never-taker
+strata <- sample(
+    c("complier", "always_taker", "never_taker"),
+    n,
+    replace = TRUE,
+    prob = strata_probs
+)
+
+# Step 2: Generate Instrument (distance to college)
+Z <- rbinom(n, 1, 0.5) # 50% live far from college
+
+# Step 3: Generate Treatment Based on Strata and Instrument
+A <- case_when(
+    strata == "complier" ~ Z, # Attend college only if close (Z=1 means close)
+    strata == "always_taker" ~ 1, # Always attend college
+    strata == "never_taker" ~ 0 # Never attend college
+)
+
+# Step 4: Generate Potential Outcomes with Heterogeneous Effects
+Y0_base <- 40 + rnorm(n, 0, 8) # Baseline earnings without college
+
+# Treatment Effects Vary by Strata (in thousands)
+treatment_effect <- case_when(
+    strata == "complier" ~ 35,
+    strata == "always_taker" ~ 25,
+    strata == "never_taker" ~ 45
+)
+
+Y1 <- Y0_base + treatment_effect # Earnings with college
+Y <- A * Y1 + (1 - A) * Y0_base # Observed earnings
+
+# Create Comprehensive Dataset
+df_late <- data.frame(
+    Y = Y,
+    A = A,
+    Z = Z,
+    strata = strata,
+    Y0 = Y0_base,
+    Y1 = Y1,
+    treatment_effect = treatment_effect
+)
+
+# Calculate True Parameters
+true_ate <- mean(df_late$treatment_effect)
+true_late <- mean(df_late$treatment_effect[df_late$strata == "complier"])
+
+cat("=== TRUE PARAMETERS ===\n")
+cat("Population ATE:", round(true_ate, 2), "\n")
+cat("LATE (Compliers only):", round(true_late, 2), "\n")
+```
+
+::: {.callout-code}
+
+### Simulation Logic
+
+- We create the principal strata first, then generate treatment based on strata and instrument
+- Compliers attend college when close (Z=1), not when far (Z=0)
+- Always-takers attend regardless of distance
+- Never-takers never attend regardless of distance
+- Treatment effects differ across strata to show heterogeneity
+:::
+
+### Analyzing the LATE Framework
+
+```{r}
+#| label: tbl-late-analysis
+#| tbl-cap: "Analyzing the LATE Framework"
+# Examine the Data by Strata and Instrument
+
+strata_summary <- df_late |>
+    group_by(strata, Z) |>
+    summarise(
+        n = n(),
+        treatment_rate = mean(A),
+        avg_outcome = mean(Y),
+        avg_effect = mean(treatment_effect),
+        .groups = "drop"
+    )
+
+print("=== DATA BY STRATA AND INSTRUMENT ===")
+print(strata_summary)
+
+# Calculate First Stage and Reduced Form
+first_stage_effect <- mean(df_late$A[df_late$Z == 1]) -
+    mean(df_late$A[df_late$Z == 0])
+reduced_form_effect <- mean(df_late$Y[df_late$Z == 1]) -
+    mean(df_late$Y[df_late$Z == 0])
+
+cat("\n=== IV COMPONENTS ===\n")
+cat("First Stage (instrument → treatment):", round(first_stage_effect, 3), "\n")
+cat("Reduced Form (instrument → outcome):", round(reduced_form_effect, 3), "\n")
+
+# Calculate IV Estimate
+iv_estimate <- reduced_form_effect / first_stage_effect
+cat("IV Estimate (LATE):", round(iv_estimate, 2), "\n")
+
+# Verify This Equals the Complier Treatment Effect
+cat("True LATE:", round(true_late, 2), "\n")
+cat("IV correctly identifies LATE:", abs(iv_estimate - true_late) < 1, "\n")
+```
+
+### Formal IV Estimation
+
+```{r}
+#| label: tbl-iv-late
+#| tbl-cap: "Formal IV Estimation"
+# Estimate Using Standard IV Methods
+# IV Regression
+iv_model_late <- ivreg(Y ~ A | Z, data = df_late)
+summary(iv_model_late)
+
+# Compare with Biased OLS
+ols_model_late <- lm(Y ~ A, data = df_late)
+
+# Create Comparison
+results_comparison <- data.frame(
+    Parameter = c("True ATE", "True LATE", "OLS Estimate", "IV Estimate"),
+    Value = c(
+        true_ate,
+        true_late,
+        coef(ols_model_late)["A"],
+        coef(iv_model_late)["A"]
+    ),
+    Interpretation = c(
+        "Population average effect",
+        "Effect for compliers only",
+        "Biased by selection",
+        "Causal effect for compliers"
+    )
+)
+
+results_comparison$Value <- round(results_comparison$Value, 2)
+print(results_comparison)
+
+print("=== RESULTS COMPARISON ===")
+print(results_comparison)
+```
+
+### Understanding Complier Characteristics
+
+```{r}
+#| label: tbl-complier-characteristics
+#| tbl-cap: "Understanding Complier Characteristics"
+
+# Who Are the Compliers in Our Example?
+complier_analysis <- df_late |>
+    group_by(strata) |>
+    summarise(
+        proportion = n() / nrow(df_late),
+        avg_baseline_earnings = mean(Y0),
+        treatment_effect = mean(treatment_effect),
+        .groups = "drop"
+    )
+
+print("=== COMPLIER CHARACTERISTICS ===")
+print(complier_analysis)
+
+# Visualize Treatment Effect Heterogeneity
+
+p_effects <- ggplot(
+    df_late,
+    aes(x = strata, y = treatment_effect, fill = strata)
+) +
+    geom_boxplot(alpha = 0.7) +
+    geom_hline(
+        yintercept = true_ate,
+        color = "red",
+        linetype = "dashed",
+        linewidth = 1
+    ) +
+    geom_hline(
+        yintercept = true_late,
+        color = "blue",
+        linetype = "solid",
+        linewidth = 1
+    ) +
+    labs(
+        title = "Treatment Effect Heterogeneity Across Principal Strata",
+        x = "Principal Strata",
+        y = "Treatment Effect (thousands $)",
+        caption = "Red dashed line = ATE, Blue solid line = LATE"
+    ) +
+    theme_minimal() +
+    theme(legend.position = "none")
+
+print(p_effects)
+```
+
+### Interpretation and External Validity
+
+::: {.callout-tip}
+### LATE Interpretation Guidelines
+
+1. **Be specific about the population**: "For individuals whose college attendance is affected by distance..."
+2. **Consider generalizability**: Would policy interventions affect the same complier population?
+3. **Acknowledge limitations**: "This may not represent the effect for all individuals"
+4. **Context matters**: Different instruments identify different complier populations
+:::
+
+### Testing the Monotonicity Assumption
+
+```{r}
+#| label: tbl-monotonicity-check
+#| tbl-cap: "Testing the Monotonicity Assumption"
+
+# In Our Simulation, We Can Check if Monotonicity Holds
+# (In Real Data, This is untestable)
+
+monotonicity_check <- df_late |>
+    group_by(strata) |>
+    summarise(
+        A_when_Z0 = mean(A[Z == 0]),
+        A_when_Z1 = mean(A[Z == 1]),
+        monotonic = A_when_Z1 >= A_when_Z0,
+        .groups = "drop"
+    )
+
+print("=== MONOTONICITY CHECK ===")
+print(monotonicity_check)
+
+cat("All strata satisfy monotonicity:", all(monotonicity_check$monotonic), "\n")
+```
+
+
+### Alternative Instruments and Different LATEs
+
+```{r}
+#| label: tbl-alternative-instruments
+#| tbl-cap: "Alternative Instruments and Different LATEs"
+# Simulate what Happens with a Different Instrument
+# That Affects a Different Complier Population
+
+# Create Second Instrument: Financial Aid Eligibility
+Z2 <- rbinom(n, 1, 0.4) # 40% eligible for aid
+
+# This Instrument Affects Different People
+# Let's Say it Mainly Affects a Subset of Compliers and Some Never-takers
+A2 <- case_when(
+    strata == "complier" & runif(n) < 0.7 ~ Z2, # 70% of compliers affected
+    strata == "never_taker" & runif(n) < 0.3 ~ Z2, # 30% never-takers now affected
+    strata == "always_taker" ~ 1,
+    TRUE ~ 0
+)
+
+# Different LATE with Second Instrument
+iv_model2 <- ivreg(Y ~ A2 | Z2, data = df_late)
+
+cat("=== COMPARISON OF INSTRUMENTS ===\n")
+cat("LATE with Distance Instrument:", coef(iv_model_late)["A"], "\n")
+cat("LATE with Aid Instrument:", round(coef(iv_model2)["A2"], 2), "\n")
+cat("Same parameter?", abs(coef(iv_model_late)["A"] - coef(iv_model2)["A2"]) < 2, "\n")
+```
+
+::: {.callout-warning}
+### Different Instruments, Different LATEs
+
+Different instruments typically identify different Local Average Treatment Effects because they affect different complier populations. This is a fundamental feature of IV, not a bug - it reflects real heterogeneity in treatment effects.
+:::
+
+## 📌 9.6 More General Settings for ATE Identification
+
+Having established the LATE framework, we now explore when and how IV methods can identify the population Average Treatment Effect (ATE) under stronger assumptions, and examine extensions to more complex settings.
+
+### Conditions for ATE Identification
+
+While IV generally identifies LATE, the population ATE can be recovered under special circumstances:
+
+::: {.callout-key}
+### When IV Identifies ATE
+
+1. **Homogeneous Treatment Effects**: $Y_i^1 - Y_i^0 = \tau$ for all $i$
+   - Everyone has the same treatment effect
+   - LATE = ATE = $\tau$
+
+2. **Perfect Compliance**: Everyone is a complier
+   - $A_i^1 = 1$ and $A_i^0 = 0$ for all $i$
+   - No always-takers or never-takers
+
+3. **Representative Compliers**:
+   - $E[Y_i^1 - Y_i^0 | \text{Complier}] = E[Y_i^1 - Y_i^0]$
+   - Compliers have the same average treatment effect as the population
+:::
+
+### Parametric Approaches to ATE Recovery
+
+When we're willing to make parametric assumptions, we can sometimes recover the ATE from LATE estimates.
+
+#### Linear Response Model
+
+Assume a linear relationship:
+
+$$
+Y_i = \alpha + \beta A_i + \gamma X_i + \epsilon_i
+$$
+
+Under linearity and homogeneous effects, the IV estimator directly identifies $\beta$, which equals the ATE.
+
+#### Marginal Treatment Effect (MTE) Framework
+
+The **Marginal Treatment Effect** framework allows for heterogeneous treatment effects that vary with unobserved characteristics. Under this approach:
+
+$$
+\text{MTE}(u) = E[Y_i^1-Y_i^0|U_i=u]
+$$
+
+where $U_i$ represents unobserved heterogeneity. Different policy parameters (ATE, LATE, etc.) are weighted averages of MTE over different ranges of $u$.
+
+### Extensions to Nonlinear Settings
+
+#### Binary Outcomes with Probit/Logit
+
+When outcomes are binary, we might model:
+
+**First Stage**: $P(A_i = 1 | Z_i) = \Phi(\alpha_0 + \alpha_1 Z_i)$
+
+**Second Stage**: $P(Y_i = 1 | A_i) = \Phi(\beta_0 + \beta_1 A_i)$
+
+The interpretation becomes more complex, and we typically identify local effects rather than population parameters.
+
+#### Nonparametric Bounds
+
+When parametric assumptions are questionable, we can sometimes derive **bounds** on the ATE using IV assumptions plus mild additional restrictions.
+
+### Multiple Instruments
+
+Having multiple instruments provides opportunities for:
+
+1. **Overidentification tests**: Testing whether all instruments identify the same parameter
+2. **Efficiency gains**: Combining information from multiple instruments
+3. **Robustness checks**: Seeing if results are consistent across instruments
+
+::: {.callout-example}
+### Multiple Instruments Example: Returns to Education
+
+Consider using both distance to college and tuition costs as instruments for education:
+
+- Both should satisfy exclusion restriction
+- Both should be correlated with education (relevance)
+- They may affect different complier populations
+:::
+
+### Numerical Example: Multiple Instruments
+
+```{r}
+#| label: tbl-sim-multi-instruments
+#| tbl-cap: "Multiple Instruments Example: Returns to Education"
+# Simulate Data with Multiple Instruments
+set.seed(2025)
+n <- 1200
+
+# Two Instruments
+Z1 <- runif(n, 0, 50)     # Distance to college (miles)
+Z2 <- runif(n, 8000, 20000)  # Tuition costs (dollars)
+
+# Unobserved Ability
+U <- rnorm(n, 0, 2)
+
+# Education Responds to both Instruments and Ability
+education <- 12 + (-0.04)*Z1 + (-0.0003)*Z2 + 0.7*U + rnorm(n, 0, 1.5)
+education <- pmax(education, 8)
+education <- pmin(education, 18)
+
+# Log Earnings
+log_earnings <- 2.3 + 0.065*education + 0.1*U + rnorm(n, 0, 0.35)
+
+df_multi <- data.frame(
+  log_earnings = log_earnings,
+  education = education,
+  distance = Z1,
+  tuition = Z2
+)
+
+# Estimate with Each Instrument Separately
+iv_distance <- ivreg(log_earnings ~ education | distance, data = df_multi)
+iv_tuition <- ivreg(log_earnings ~ education | tuition, data = df_multi)
+
+# Estimate with both Instruments together
+iv_both <- ivreg(log_earnings ~ education | distance + tuition, data = df_multi)
+
+# Compare Results
+multi_results <- data.frame(
+  Instrument = c("Distance Only", "Tuition Only", "Both Instruments"),
+  Estimate = c(
+    coef(iv_distance)["education"],
+    coef(iv_tuition)["education"], 
+    coef(iv_both)["education"]
+  ),
+  SE = c(
+    summary(iv_distance)$coefficients["education", "Std. Error"],
+    summary(iv_tuition)$coefficients["education", "Std. Error"],
+    summary(iv_both)$coefficients["education", "Std. Error"]
+  )
+)
+
+print("=== MULTIPLE INSTRUMENTS COMPARISON ===")
+print(multi_results)
+```
+
+::: {.callout-code}
+### Multiple Instruments Benefits
+
+- Using both instruments typically reduces standard errors
+- Provides a robustness check - estimates should be similar if assumptions hold
+- Allows for overidentification testing
+:::
+
+### Overidentification Testing
+
+```{r}
+#| label: tbl-overid-test
+#| tbl-cap: "Overidentification Testing"
+# Test whether both Instruments Identify the Same Parameter
+# H0: Both Instruments Are Valid and Identify the Same Parameter
+
+# Manual Overidentification Test
+# Step 1: Get Residuals from IV Regression with both Instruments
+iv_residuals <- residuals(iv_both)
+
+# Step 2: Regress Residuals on both Instruments
+overid_test <- lm(iv_residuals ~ distance + tuition, data = df_multi)
+
+# Step 3: Calculate Test Statistic
+n_obs <- nrow(df_multi)
+r_squared <- summary(overid_test)$r.squared
+test_stat <- n_obs * r_squared
+
+# Degrees of Freedom = Number of Instruments - Number of Endogenous Variables
+df_overid <- 2 - 1  # 2 instruments, 1 endogenous variable
+
+p_value <- 1 - pchisq(test_stat, df_overid)
+
+cat("=== OVERIDENTIFICATION TEST ===\n")
+cat("Test Statistic:", round(test_stat, 3), "\n")
+cat("Degrees of Freedom:", df_overid, "\n")
+cat("P-value:", round(p_value, 4), "\n")
+cat("Reject H0 (instruments invalid)?", p_value < 0.05, "\n")
+```
+
+### Testing for Homogeneous Vs Heterogeneous Effects
+
+```{r}
+#| label: tbl-heterogeneity-test
+#| tbl-cap: "Testing for Homogeneous Vs Heterogeneous Effects"
+# Test whether Treatment Effects Are Homogeneous
+# If Effects Are Heterogeneous, Different Instruments May Give Different LATEs
+
+# Compare point Estimates
+distance_est <- coef(iv_distance)["education"]
+tuition_est <- coef(iv_tuition)["education"]
+
+difference <- abs(distance_est - tuition_est)
+pooled_se <- sqrt(summary(iv_distance)$coefficients["education", "Std. Error"]^2 + 
+                  summary(iv_tuition)$coefficients["education", "Std. Error"]^2)
+
+# Informal Test of Equality
+z_stat <- difference / pooled_se
+p_value_het <- 2 * (1 - pnorm(abs(z_stat)))
+
+cat("=== HETEROGENEITY TEST ===\n")
+cat("Distance Estimate:", round(distance_est, 4), "\n")
+cat("Tuition Estimate:", round(tuition_est, 4), "\n")
+cat("Difference:", round(difference, 4), "\n")
+cat("Z-statistic:", round(z_stat, 3), "\n")
+cat("P-value:", round(p_value_het, 4), "\n")
+cat("Evidence of heterogeneity?", p_value_het < 0.05, "\n")
+```
+
+### Advanced Applications
+
+#### Time-Varying Instruments
+
+In panel data settings, instruments can vary over time:
+$$
+Y_{it} = \beta A_{it} + \alpha_i + \lambda_t + \epsilon_{it}
+$$
+
+$$
+A_{it} = \gamma Z_{it} + \alpha_i + \lambda_t + u_{it}
+$$
+
+#### Multiple Treatments
+
+With multiple treatments, IV can identify effects of each treatment:
+
+$$
+Y_i = \beta_1 A_{1i} + \beta_2 A_{2i} + \epsilon_i
+$$
+
+This requires at least as many instruments as endogenous treatments.
+
+#### Nonlinear IV with Machine Learning
+
+Recent advances combine IV with machine learning for flexible functional forms while maintaining causal identification.
+
+### Practical Guidelines for Applied Work
+
+::: {.callout-tip}
+### Best Practices for IV Applications
+
+1. **Justify each assumption explicitly**:
+   - Provide institutional details for relevance
+   - Argue for exclusion restriction with domain knowledge
+   - Discuss potential confounders of the instrument
+
+2. **Test what you can**:
+   - Check first stage strength (F > 10)
+   - Perform overidentification tests with multiple instruments
+   - Examine sensitivity to functional form
+
+3. **Interpret carefully**:
+   - Acknowledge LATE vs ATE distinction
+   - Describe the complier population
+   - Discuss external validity limitations
+
+4. **Report comprehensively**:
+   - Show first stage results
+   - Report reduced form estimates
+   - Include diagnostic statistics
+:::
+
+### Common Pitfalls and How to Avoid Them
+
+::: {.callout-warning}
+### Major IV Pitfalls
+
+1. **Weak instruments**: Use first-stage F-tests and consider weak-IV robust methods
+2. **Exclusion violations**: Think carefully about all pathways from instrument to outcome
+3. **Overstating generalizability**: Remember that IV identifies LATE, not necessarily ATE
+4. **Ignoring heterogeneity**: Consider whether treatment effects might vary across populations
+5. **Multiple testing**: With many instruments, correct for multiple comparisons
+:::
+
+## ❓ Check Your Understanding
+
+### Question 1
+
+Explain why having multiple instruments allows for overidentification testing. What does it mean if this test rejects?
+
+::: {.callout-answer collapse="true"}
+### Answer
+
+With multiple instruments, we have more moment conditions than parameters to estimate - this creates "overidentification." If all instruments are valid, they should identify the same causal parameter. The overidentification test checks whether different instruments give statistically similar estimates.
+
+If the test rejects, it suggests that:
+
+- At least one instrument violates the exclusion restriction
+- The instruments identify different Local Average Treatment Effects (heterogeneous effects)
+- There are other specification problems
+
+Rejection doesn't tell us which instrument is problematic, but indicates the IV assumptions may be violated.
+:::
+
+### Question 2
+
+In what sense is the LATE "local," and why does this matter for policy evaluation?
+
+::: {.callout-answer collapse="true"}
+### Answer
+
+LATE is "local" in three ways:
+
+1. **Population**: Only applies to compliers (those affected by the instrument)
+2. **Instrument-specific**: Different instruments identify different complier populations
+3. **Context-dependent**: The complier population may not be representative of policy targets
+
+This matters for policy because:
+
+- A policy intervention might affect a different population than the instrument's compliers
+- The treatment effect for policy-relevant populations might differ from LATE
+- External validity requires careful consideration of who the compliers are and whether they're representative of the target population
+
+For example, using distance to college as an instrument identifies effects for people on the margin due to access costs, but a tuition subsidy policy might affect a broader population.
+:::
+
+### Question 3
+
+Under what conditions can instrumental variables identify the population ATE rather than just LATE?
+
+::: {.callout-answer collapse="true"}
+### Answer
+
+IV can identify the population ATE under these conditions:
+
+1. **Homogeneous treatment effects**: $Y_i^1 - Y_i^0 = \tau$ for all $i$
+   - Everyone has the same treatment effect
+   - LATE = ATE = $\tau$
+
+2. **Perfect compliance**: Everyone is a complier
+   - $A_i^1 = 1$ and $A_i^0 = 0$ for all $i$
+   - No always-takers or never-takers
+
+3. **Representative compliers**:
+   - $E[Y_i^1 - Y_i^0 | \text{Complier}] = E[Y_i^1 - Y_i^0]$
+   - Compliers have the same average treatment effect as the population
+
+In practice, these conditions are often strong assumptions. Condition 1 rules out interesting heterogeneity, condition 2 is rare (most instruments only affect some people), and condition 3 is hard to verify. This is why most IV applications should interpret results as LATE rather than ATE unless there's strong justification for one of these assumptions.
+
+:::
+
+### Question 4
+
+How would you explain to a policy maker the difference between what OLS and IV identify in the presence of unobserved confounding?
+
+::: {.callout-answer collapse="true"}
+### Answer
+
+**OLS with unobserved confounding**:
+
+- Compares people who chose different treatments
+- Confounded by unmeasured factors that affect both treatment choice and outcomes
+- Answers: "What's the difference in outcomes between those who chose treatment vs. those who didn't?"
+- **Problem**: This includes selection bias, not just the causal effect
+
+**IV with valid instrument**:
+
+- Compares people who were encouraged vs. discouraged from treatment by a quasi-random factor
+- Isolates the causal effect by using exogenous variation
+- Answers: "What's the effect of treatment for people whose treatment decision was influenced by this quasi-random encouragement?"
+- **Advantage**: Provides causal identification
+- **Limitation**: Only applies to the "complier" population affected by the instrument
+
+For policy: IV gives you the causal effect, but for a specific subgroup. You need to consider whether this subgroup is relevant for your policy intervention.
+:::
+
+::: {.callout-tip}
+### Module Summary: Key Takeaways
+
+1. **Instrumental variables** provide causal identification when unobserved confounding is present, using three key assumptions: relevance, exclusion restriction, and exchangeability
+2. **IV typically identifies LATE, not ATE**: The Local Average Treatment Effect applies only to compliers - those whose treatment is affected by the instrument
+3. **Principal stratification** divides the population into compliers, always-takers, never-takers, and (assumed away) defiers based on treatment response to the instrument
+4. **Different instruments identify different LATEs** because they affect different complier populations - this reflects real treatment effect heterogeneity
+5. **Multiple instruments** enable overidentification testing and efficiency gains, but require all instruments to satisfy the exclusion restriction
+6. **Practical application** requires careful justification of assumptions, diagnostic testing, and appropriate interpretation acknowledging the LATE framework
+
+The power of IV lies in handling unobserved confounding, but this comes at the cost of identifying local rather than global treatment effects. Success requires strong institutional knowledge to justify the exclusion restriction and careful consideration of the policy relevance of the complier population.
+:::

@@ -1,0 +1,341 @@
+---
+title: "Anderson-Darling Test in R"
+---
+
+# Introduction
+
+## Overview
+
+The Anderson-Darling (A-D) test is a *goodness-of-fit test* that determines whether a sample of data is drawn from a specific probability distribution. It is a modification of the Kolmogorov-Smirnov (K-S) test and gives more weight to the tails of the distribution. This increased sensitivity at the tails makes it a powerful tool for testing normality, which is a common assumption in many statistical procedures.
+
+In R, the Anderson-Darling test is implemented in several packages. This tutorial will focus on the two most common ones:
+
+  - **`nortest`**: This package provides a collection of tests for normality, including the Anderson-Darling test.
+      - Function: `nortest::ad.test()`
+  - **`goftest`**: This package provides goodness-of-fit tests for any specified continuous distribution.
+      - Function: `goftest::ad.test()`
+
+## Use Cases
+
+Common scenarios for using the Anderson-Darling test include:
+
+  - **Checking Normality of Residuals:** In linear regression, a key assumption is that the model's residuals are normally distributed. The A-D test can be used to formally check this assumption.
+  - **Validating Distributional Assumptions:** Before applying parametric statistical methods that assume a certain data distribution (e.g., normal, exponential, or Weibull), the A-D test can validate whether the data conforms to that distribution.
+  - **Comparing Sample to a Theoretical Distribution:** Assessing whether an observed dataset follows a hypothesized theoretical distribution.
+
+## Benefits
+
+  - **High Power:** The Anderson-Darling test is often more powerful than other goodness-of-fit tests like the Kolmogorov-Smirnov or Chi-squared tests.
+  - **Tail Sensitivity:** It is particularly effective at detecting discrepancies in the tails of the distribution, which can be critical in many applications (e.g., risk assessment).
+  - **Versatility:** While the `nortest` implementation is specific to normality, the `goftest` version allows testing against a wide range of continuous distributions.
+
+# Getting Started
+
+## Loading the Packages
+
+We will use `pacman` to load the necessary packages for this tutorial. We'll need `nortest` and `goftest` for the tests, and `ggplot2` and `dplyr` for data manipulation and visualization.
+
+```{r}
+#| label: load-packages
+#| message: false
+#| warning: false
+
+pacman::p_load(nortest, goftest, ggplot2, dplyr)
+```
+
+## Basic Usage
+
+The simplest use case is testing if a vector of data follows a normal distribution. Let's generate some data from a normal distribution and test it using `nortest::ad.test()`.
+
+The null hypothesis ($H_0$) for the test is that the data follows the specified distribution (in this case, normal). The alternative hypothesis ($H_a$) is that the data does not follow the specified distribution.
+
+```{r}
+#| label: basic-usage
+
+# Set a seed for reproducibility
+set.seed(123)
+
+# Generate 100 data points from a standard normal distribution
+normal_data <- rnorm(100, mean = 0, sd = 1)
+
+# Perform the Anderson-Darling test for normality
+ad_test_result <- nortest::ad.test(normal_data)
+
+# Print the result
+print(ad_test_result)
+```
+
+The high p-value (0.6151) suggests that we do not have sufficient evidence to reject the null hypothesis. We can conclude that the data is consistent with a normal distribution.
+
+# Key Functions and Features
+
+## `nortest::ad.test()`
+
+### Description
+
+This function is specifically designed to test the null hypothesis that a sample `x` was drawn from a normal distribution.
+
+### Syntax
+
+```r
+nortest::ad.test(x)
+```
+
+  - `x`: A numeric vector of data.
+
+### Statistical Method
+
+The Anderson-Darling test statistic, $A^2$, is a measure of the squared difference between the empirical cumulative distribution function (ECDF) and the theoretical cumulative distribution function (CDF), weighted to emphasize the tails.
+
+The statistic is calculated as:
+
+$$
+A^2 = -n - \frac{1}{n} \sum_{i=1}^{n} (2i - 1) [\ln(\Phi(Z_i)) + \ln(1 - \Phi(Z_{n-i+1}))]
+$$ {#eq-ad-stat}
+
+Where:
+
+  - $n$ is the sample size.
+  - The data $x_i$ are first sorted: $x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}$.
+  - The data are standardized to $Z_i = (x_{(i)} - \bar{x}) / s$, where $\bar{x}$ is the sample mean and $s$ is the sample standard deviation.
+  - $\Phi$ is the CDF of the standard normal distribution.
+
+A small value of $A^2$ supports the null hypothesis. The test statistic is then compared to critical values from the Anderson-Darling distribution to calculate the p-value.
+
+### Example
+
+Let's test data from a skewed distribution (the Gamma distribution) to see an example of rejecting the null hypothesis.
+
+```{r}
+#| label: nortest-example
+
+# Set a Seed for Reproducibility
+set.seed(456)
+
+# Generate 100 Data Points from a Skewed Gamma Distribution
+gamma_data <- rgamma(100, shape = 2, rate = 0.5)
+
+# Perform the Anderson-Darling Test for Normality
+nortest::ad.test(gamma_data)
+```
+
+Here, the p-value is very small ($p < 0.001$), leading us to reject the null hypothesis and conclude that the `gamma_data` does not come from a normal distribution.
+
+## `goftest::ad.test()`
+
+### Description
+
+This function is a more general implementation of the Anderson-Darling test. It can test whether a sample `x` comes from *any* fully specified continuous distribution.
+
+### Syntax
+
+```r
+goftest::ad.test(x, null = "punif", ..., estimated = FALSE)
+```
+
+  - `x`: A numeric vector of data.
+  - `null`: A character string specifying the name of the null distribution's CDF (e.g., `"pnorm"`, `"pexp"`, `"punif"`), or the function object itself.
+  - `...`: Additional arguments passed to the null distribution function (e.g., `mean`, `sd` for `pnorm`).
+  - `estimated`: A logical value. If `TRUE`, it indicates that the parameters of the null distribution were estimated from the data. This adjusts the p-value calculation.
+
+### Example
+
+Let's test if a sample of data comes from an exponential distribution with a rate of 2.
+
+```{r}
+#| label: goftest-example
+
+# Set a Seed for Reproducibility
+set.seed(789)
+
+# Generate Data from an Exponential Distribution with Rate = 2
+exp_data <- rexp(100, rate = 2)
+
+# Test against the Correct Exponential Distribution
+goftest::ad.test(exp_data, null = "pexp", rate = 2)
+```
+
+The high p-value (0.6416) correctly suggests we cannot reject the null hypothesis that the data follows an exponential distribution with a rate of 2.
+
+Now, let's test the same data against a *wrong* distribution, a uniform distribution.
+
+```{r}
+#| label: goftest-wrong-dist
+
+# Test the Exponential Data against a Uniform Distribution
+goftest::ad.test(exp_data, null = "punif")
+```
+
+The very low p-value leads us to correctly reject the null hypothesis that the data is from a uniform distribution.
+
+# In-Depth Examples
+
+## Testing Normality of Regression Residuals
+
+### Objective
+
+A fundamental assumption of linear regression is that the errors (residuals) are normally distributed. We will build a linear model and use the Anderson-Darling test to check this assumption.
+
+### Steps
+
+1.  **Fit a linear model:** We use the built-in `cars` dataset to model stopping distance as a function of speed.
+2.  **Extract residuals:** Obtain the residuals from the model object.
+3.  **Test for normality:** Apply `nortest::ad.test()` to the residuals.
+4.  **Visualize:** Create a Q-Q plot to graphically assess normality.
+
+
+
+```{r}
+#| label: fig-qq-plot
+#| fig-cap: "Q-Q Plot of Residuals from the cars Model"
+
+# 1. Fit a Linear Model
+car_model <- lm(dist ~ speed, data = cars)
+
+# 2. Extract Residuals
+model_residuals <- residuals(car_model)
+
+# 3. Perform the Anderson-Darling Test
+ad_result_residuals <- nortest::ad.test(model_residuals)
+
+# 4. Create a Q-Q Plot
+ggplot(data.frame(res = model_residuals), aes(sample = res)) +
+    geom_qq() +
+    geom_qq_line(color = "red", linetype = "dashed") +
+    labs(
+        title = "Q-Q Plot of Model Residuals",
+        x = "Theoretical Quantiles",
+        y = "Sample Quantiles"
+    ) +
+    theme_minimal()
+```
+
+### Output and Interpretation
+
+Let's look at the test result:
+
+```{r}
+#| label: print-residual-test
+
+print(ad_result_residuals)
+```
+
+  - **Test Result:** The p-value is 0.04029. Using a conventional significance level of $\alpha = 0.05$, this p-value is less than $\alpha$. We would therefore reject the null hypothesis and conclude that the residuals are not normally distributed.
+  - **Q-Q Plot (@fig-qq-plot):** The Q-Q plot shows points deviating from the reference line, particularly at the tails (both upper and lower). This pattern, especially the "S" shape, suggests that the distribution has heavier tails than a normal distribution, which corroborates the result from the Anderson-Darling test.
+
+## Testing for a Gamma Distribution with Estimated Parameters
+
+### Objective
+
+Suppose we have data and we hypothesize it comes from a Gamma distribution, but we don't know the `shape` and `rate` parameters. We will estimate them from the data and then use `goftest::ad.test()` to check the fit.
+
+### Steps
+
+1.  **Generate data:** Create a sample from a known Gamma distribution.
+2.  **Estimate parameters:** Use the method of moments or maximum likelihood to estimate the `shape` and `rate`.
+3.  **Test for fit:** Apply `goftest::ad.test()` using the estimated parameters.
+
+
+
+```{r}
+#| label: gamma-test-estimated
+#| message: false
+
+# 1. Generate Data
+set.seed(101)
+gamma_data_2 <- rgamma(200, shape = 5, rate = 1.5)
+
+# 2. Estimate Parameters (Method of Moments)
+m <- mean(gamma_data_2)
+v <- var(gamma_data_2)
+estimated_shape <- m^2 / v
+estimated_rate <- m / v
+
+cat("Estimated Shape:", estimated_shape, "\n")
+cat("Estimated Rate:", estimated_rate, "\n")
+
+# 3. Perform the A-D Test with Estimated Parameters
+gamma_test_result <- goftest::ad.test(
+    gamma_data_2,
+    null = "pgamma",
+    shape = estimated_shape,
+    rate = estimated_rate,
+    estimated = TRUE # Crucial to set this to TRUE
+)
+```
+
+### Output and Interpretation
+
+```{r}
+#| label: print-gamma-test
+
+print(gamma_test_result)
+```
+
+  - **Parameter Estimation:** The estimated `shape` (4.95) and `rate` (1.49) are very close to the true values of 5 and 1.5.
+  - **Test Result:** The p-value is 0.4431. Since we set `estimated = TRUE`, the test correctly adjusts for the fact that we used the data to estimate the parameters. The high p-value indicates that we have no reason to reject the null hypothesis that the data follows a Gamma distribution with the estimated parameters.
+
+# Advanced Features
+
+## Integration with `dplyr`
+
+The Anderson-Darling test can be easily integrated into a `dplyr` pipeline to perform tests on subsets of data. For example, let's test whether `Sepal.Length` is normally distributed for each species in the `iris` dataset.
+
+```{r}
+#| label: dplyr-integration
+#| tbl-cap: "Normality Test of Sepal Length for each Iris Species"
+
+iris |>
+    group_by(Species) |>
+    summarise(
+        ad_statistic = nortest::ad.test(Sepal.Length)$statistic,
+        p_value = nortest::ad.test(Sepal.Length)$p.value
+    ) |>
+    knitr::kable(digits = 4)
+```
+
+As shown in `@tbl-dplyr-integration`, the p-value for each species is high, suggesting that `Sepal.Length` is consistent with a normal distribution within each species group.
+
+# Troubleshooting and FAQs
+
+  - **Issue:** `Error in ad.test(x) : NAs in x are not allowed`
+
+      - **Fix:** The Anderson-Darling test cannot handle missing values (`NA`). You must remove or impute them before running the test.
+      - **Example:** `nortest::ad.test(na.omit(my_data))`
+
+  - **FAQ 1: How is the A-D test different from the Shapiro-Wilk test for normality?**
+
+      - Both are powerful tests for normality. The Shapiro-Wilk test is generally considered slightly more powerful, especially for smaller sample sizes. However, the A-D test's strength lies in its sensitivity to the tails and its generalizability (via `goftest`) to other distributions.
+
+  - **FAQ 2: What p-value threshold should I use?**
+
+      - A conventional choice is $\alpha = 0.05$. However, for very large datasets, even trivial deviations from perfect normality can result in a very small p-value. In such cases, it is crucial to also inspect a Q-Q plot to assess if the deviation is practically significant. A formal test should not be the sole basis for the decision.
+
+# Best Practices
+
+  - **Always Visualize:** Do not rely solely on the p-value. Always accompany the Anderson-Darling test with a graphical method like a Q-Q plot or a histogram. A visual check provides context that a single number cannot.
+  - **Context is Key:** For large samples ($n > 1000$), the test is very likely to detect minor, non-meaningful deviations from normality. Consider the practical implications of the deviation.
+  - **State Your Hypotheses:** When reporting results, clearly state the null and alternative hypotheses, the test statistic, the p-value, and your conclusion in the context of the problem.
+  - **Reproducibility:** Always set a seed (`set.seed()`) when your analysis involves random number generation to ensure your results are reproducible.
+
+# Conclusion
+
+## Summary
+
+The Anderson-Darling test is a powerful and versatile statistical tool for assessing goodness-of-fit. Its high sensitivity, particularly in the tails of a distribution, makes it an excellent choice for checking assumptions like normality in regression. The `nortest` package offers a straightforward implementation for normality testing, while the `goftest` package provides the flexibility to test against any continuous distribution, including those with parameters estimated from the data.
+
+## Next Steps
+
+  - **Explore Other Tests:** Investigate other normality tests in the `nortest` package, such as `sf.test()` (Shapiro-Francia) or `lillie.test()` (Lilliefors).
+  - **Power Analysis:** Learn about the statistical power of different goodness-of-fit tests under various conditions.
+  - **EDF Statistics:** Read more about the theory of Empirical Distribution Function (EDF) statistics, which form the basis for the A-D and K-S tests.
+
+# References and Resources
+
+  - **Documentation:**
+      - `nortest` package manual: [https://cran.r-project.org/web/packages/nortest/nortest.pdf](https://cran.r-project.org/web/packages/nortest/nortest.pdf)
+      - `goftest` package manual: [https://cran.r-project.org/web/packages/goftest/goftest.pdf](https://cran.r-project.org/web/packages/goftest/goftest.pdf)
+  - **Learning Materials:**
+      - Stephens, M. A. (1974). EDF Statistics for Goodness of Fit and Some Comparisons. *Journal of the American Statistical Association*, 69(347), 730–737.
+  - **Support Channels:**
+      - R questions are often answered on [Stack Overflow](https://stackoverflow.com/questions/tagged/r). Use the `r` and `goodness-of-fit` tags.

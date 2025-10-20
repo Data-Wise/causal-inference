@@ -1,0 +1,26 @@
+format:
+  html: default
+  pdf:
+    documentclass: article
+    fontsize: 10.5pt
+    geometry: margin=1in
+    colorlinks: true
+    linkcolor: blue
+    urlcolor: blue
+    citecolor: black
+    fig-pos: 'H'
+    number-sections: false
+    papersize: letter
+    header-includes:
+    - \usepackage{fancyhdr}
+    - \pagestyle{fancy}
+    - \fancyhf{}
+    - \rhead{STAT 579 Applied Causal Inference}
+    - \lhead{Fall 2025 Syllabus}
+    - \cfoot{\thepage}
+mainfont: Times New Roman
+sansfont: Helvetica
+monofont: Courier New
+toc: false
+toc-depth: 2
+linestretch: 1.2

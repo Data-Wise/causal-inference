@@ -1,0 +1,405 @@
+---
+title: "The Causal Question"
+---
+
+## 🎯 Learning Objectives
+
+Welcome to STAT 579: Applied Causal Inference! By the end of our session today, you will be able to:
+
+1. **Define** a causal question and distinguish it from questions of association or prediction.
+2. **Explain** the "fundamental problem of causal inference" using the potential outcomes framework.
+3. **Frame** a simple causal question by defining the treatment, outcome, and target population.
+4. **Illustrate** the concept of confounding using a real-world example and a Directed Acyclic Graph (DAG).
+5. **Recognize** why specialized methods are necessary to move from observed data to causal conclusions.
+
+
+## 💡 Conceptual Overview: From "What Is?" to "What If?"
+
+In statistics, we are trained to find patterns and relationships in data. Causal inference, however, pushes us to ask a more profound type of question. To formalize this, we can think of questions as existing on a "Ladder of Causation," an idea popularized by Judea Pearl.
+
+### The Ladder of Causation 🪜
+
+1. **Level 1: Association (Seeing):** *What is?*
+
+   - This level deals with passive observation. We ask how variables are related in the data we see. It's about finding statistical patterns.
+   - **Example:** "Among patients in our hospital data, are those who take a daily multivitamin more or less likely to have a heart attack than those who don't?"
+   - This is the domain of classical statistics: correlation, regression, and prediction.
+
+2. **Level 2: Intervention (Doing):** *What if?*
+
+   - This is the heart of causal inference. We move from observing the world as it is to asking what would happen if we actively changed it. We want to know the consequences of an **action**.
+   - **Example:** "If we were to *assign* a daily multivitamin to a population, would their rate of heart attacks change?"
+   - Notice the shift from "do take" to "if we assign." This is the crucial distinction.
+
+3. **Level 3: Counterfactuals (Imagining):** *Why? Would?*
+
+   - This is the deepest level. It involves imagining a world that is contrary to fact.
+   - **Example:** "John took the multivitamin and had a heart attack. *Would he still have had a heart attack if he hadn't taken the vitamin?*"
+   - Answering such questions is the ultimate goal and helps us understand mechanisms and assign responsibility.
+
+### Comparison: Level 2 (Intervention) vs. Level 3 (Counterfactuals)
+
+While both levels move beyond simple association, they ask fundamentally different types of causal questions. The key difference lies in their **scope** and **target of inquiry**: interventions are about populations and forward-looking policies, while counterfactuals are about individuals and backward-looking explanations.
+
+### Core Distinctions
+
+Let's break down the contrast in a more structured way:
+
+| Feature              | **Level 2: Intervention (Doing)**                                                                                  | **Level 3: Counterfactuals (Imagining)**                                                                                     |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| **Target**           | **Population** or sub-population.                                                                                  | **Individual** unit or a specific past event.                                                                                |
+| **Question**         | What is the average effect of an action if we apply it to a group?                                                 | For a specific individual who had a known exposure and outcome, what would have happened to them under a different exposure? |
+| **Perspective**      | **Forward-looking**: "What will happen if we…?"                                                                    | **Backward-looking**: "What would have happened if…?"                                                                        |
+| **Goal**             | To predict the effects of policies, treatments, or actions. To inform decision-making for a group.                 | To explain why a specific event occurred. To determine attribution, liability, or individual regret.                         |
+| **Example**          | "If we **assign** all eligible patients to take a new drug, what will be the change in the average recovery rate?" | "This patient took the new drug and recovered. **Would they have recovered** anyway, even if they had taken the placebo?"    |
+| **Typical Estimand** | **Average Treatment Effect (ATE)**: $E[Y(1) - Y(0)]$. We average over all individuals.                             | **Individual Causal Effect (ICE)**: $\tau_i = Y_i(1) - Y_i(0)$. We are concerned with a specific `i`.                        |
+
+### 🧠 An Intuitive Analogy: Traffic Safety
+
+To make this distinction even clearer, consider a traffic safety scenario:
+
+- **Level 2 (Intervention):** A city planner asks, "If we **install a new traffic light** at this intersection, how will the average number of accidents per month change?"
+    - This is a question about a **policy decision** (installing the light).
+    - The target is the **population** of all cars and pedestrians that use the intersection.
+    - The goal is **forward-looking prediction** to guide city planning.
+- **Level 3 (Counterfactual):** An accident investigator arrives at the scene of a crash. The driver ran a red light. The investigator asks, "**Would this specific crash have been avoided if the driver had stopped** at the red light?"
+    - This is a question about a **specific past event** (the crash).
+    - The target is the **individual** driver and car.
+    - The goal is **backward-looking explanation** to determine the cause and assign responsibility.
+
+In summary, **interventions** are about the average effects of actions on a population to guide future policy, while **counterfactuals** are about understanding the alternate outcomes for specific individuals in past events to provide explanations. Answering a counterfactual question is generally harder and requires stronger assumptions or a more complete causal model than answering an intervention question.
+
+### Case Study 1: Ice Cream and Drownings 🍦🌊
+
+This classic example perfectly illustrates the gap between Level 1 and Level 2.
+
+  - **Observation (Level 1):** In data collected over a year, we find a strong positive correlation between monthly ice cream sales and the number of drownings.
+  - **Causal Question (Level 2):** If we banned ice cream sales, would we reduce the number of drownings?
+  - **The Flaw:** The answer is obviously no. The observed association is not causal. It's driven by a **confounder**: **Season** (or high temperatures). Hot weather is a common cause that makes people both buy more ice cream and go swimming more often.
+
+We can draw a simple **Directed Acyclic Graph (DAG)** to show our belief about this data-generating process:
+
+```{mermaid}
+graph TD
+    L(High Temperature) --> A(Ice Cream Sales);
+    L(High Temperature) --> Y(Drownings);
+    A -- Spurious Association --- Y;
+```
+
+The link between Ice Cream Sales and Drownings is explained away by their common cause, High Temperature. The goal of causal inference is to distinguish the true causal paths (solid arrows) from the spurious, non-causal paths (dashed line).
+
+## ⚙️ Methodological Core: Two Languages for Causality
+
+To ask and answer causal questions rigorously, we need a formal language. In this course, we'll focus on two complementary frameworks: the Potential Outcomes model and Directed Acyclic Graphs (DAGs).
+
+### The Potential Outcomes Framework
+
+This framework, also known as the Neyman-Rubin Causal Model, forces us to be incredibly precise about our "what if" question. Let's use the notation:
+
+  - $A$ is the treatment or exposure (e.g., $A=1$ for treated, $A=0$ for control).
+  - $Y$ is the outcome of interest (e.g., $Y=1$ for heart attack, $Y=0$ for no heart attack).
+
+For each individual `i`, we imagine two **potential outcomes**:
+
+  - $Y_i(1)$: The outcome that **would have been observed** for individual `i` if they had received the treatment ($A=1$).
+  - $Y_i(0)$: The outcome that **would have been observed** for the same individual `i` if they had received the control ($A=0$).
+
+The **Individual Causal Effect (ICE)** is the difference between these two potential states:
+
+$$
+\tau_i = Y_i(1) - Y_i(0)
+$$
+
+::: {.callout-important}
+
+## The Fundamental Problem of Causal Inference
+
+For any given individual, we can only ever observe **one** of their potential outcomes. If a person takes the drug, we see $Y_i(1)$. If they don't, we see $Y_i(0)$. We *never* get to see both. The unobserved potential outcome is called the **counterfactual**.
+
+:::
+
+Let's illustrate with a simple table. Imagine we have four patients, and God lets us see their potential outcomes for a new drug ($A=1$) vs. a placebo ($A=0$) on blood pressure ($Y$).
+
+| Patient | Potential Outcome if Treated, $Y_i(1)$ | Potential Outcome if Control, $Y_i(0)$ | True Causal Effect, $\tau_i = Y_i(1) - Y_i(0)$ |
+| :------ | :------------------------------------: | :------------------------------------: | :--------------------------------------------: |
+| 1       |                  130                   |                  140                   |                      -10                       |
+| 2       |                  125                   |                  125                   |                       0                        |
+| 3       |                  150                   |                  165                   |                      -15                       |
+| 4       |                  145                   |                  140                   |                       +5                       |
+
+Now, let's see what we might observe in reality. Suppose Patients 1 and 3 were treated and Patients 2 and 4 were controls.
+
+| Patient | Treatment $A_i$ | Observed Outcome $Y_i$ | What we don't see |
+| :------ | :-------------: | :--------------------: | :---------------- |
+| 1       |   1 (Treated)   |          130           | $Y_1(0) = 140$    |
+| 2       |   0 (Control)   |          125           | $Y_2(1) = 125$    |
+| 3       |   1 (Treated)   |          150           | $Y_3(0) = 165$    |
+| 4       |   0 (Control)   |          140           | $Y_4(1) = 145$    |
+
+Because we can never calculate the individual effect $\tau_i$, we shift our goal to estimating an **average causal effect** for a population, like the **Average Treatment Effect (ATE)**:
+
+$$
+\text{ATE} = E[Y(1) - Y(0)] = E[Y(1)] - E[Y(0)]
+$$
+
+This is the average difference we would see if we could treat the *entire population* and measure their outcomes, and then go back in time and give the *entire population* the control and measure their outcomes. Our challenge is to estimate this from the messy data we actually observe.
+
+### Directed Acyclic Graphs (DAGs)
+
+DAGs are our roadmap. They are visual representations of our assumptions about the causal structure of a problem.
+
+  - **Nodes:** Represent variables (e.g., Treatment $A$, Outcome $Y$, Confounders $L$).
+  - **Arrows (Edges):** Represent direct causal effects. An arrow from $L$ to $A$ means $L$ is a direct cause of $A$.
+  - **Acyclic:** No loops. A variable cannot cause itself, even indirectly.
+
+Let's look at two critical examples.
+
+**1. The "Gold Standard": A Randomized Controlled Trial (RCT)**
+In a perfect RCT, a coin flip (or a computer) decides who gets the treatment. This means *nothing* causes treatment assignment except the randomization itself.
+
+```{mermaid}
+graph TD
+    A(Treatment) --> Y(Outcome)
+```
+
+Here, any association we observe between $A$ and $Y$ must be due to the arrow connecting them. The causal path is the only path!
+
+**2. The Observational Reality: Confounding**
+Let's use the Right Heart Catheterization (RHC) example. Doctors use RHC on the sickest patients. Here, *Severity of Illness* is a confounder.
+
+```{mermaid}
+graph TD
+    L(Severity of Illness) --> A(RHC Assigned)
+    L(Severity of Illness) --> Y(Mortality)
+    A(RHC Assigned) --> Y(Mortality)
+```
+
+This DAG shows two paths from $A$ to $Y$:
+
+1. The direct causal path we care about: $A \rightarrow Y$.
+2. A non-causal "backdoor" path: $A \leftarrow L \rightarrow Y$.
+
+This backdoor path creates a spurious association. Patients who get RHC ($A=1$) are also sicker ($L$ is high), and sick patients have higher mortality ($Y=1$). This path makes RHC *look* harmful, even if it's truly beneficial or has no effect. The goal of our methods will be to find a way to "block" this backdoor path to isolate the true causal effect.
+
+## ✅ R Application: Simulating and Visualizing Confounding
+
+Let's make this concrete. We'll simulate **Simpson's Paradox**, a classic case of confounding where the association in the overall population is the reverse of the association within subgroups.
+
+**Scenario:** We are testing a new drug for kidney stones ($A=1$) against a standard treatment ($A=0$). The outcome is success ($Y=1$). Doctors tend to give the new, more aggressive drug to patients with **large kidney stones** ($L=1$), while patients with small stones ($L=0$) are more likely to get the standard treatment. Stone size is a major predictor of success.
+
+**Our Causal DAG:**
+
+```{mermaid}
+graph TD
+    L(Stone Size) --> A(Treatment)
+    L(Stone Size) --> Y(Success)
+    A(Treatment) --> Y(Success)
+```
+
+We believe that large stones make treatment success less likely, and also influence which treatment is given.
+
+### 1. Detailed Numerical Example
+
+Let's imagine a study with 700 patients.
+
+  - **Small Stones ($L=0$):** 350 patients.
+      - New Drug ($A=1$): 87 patients, 81 succeed. **Success Rate: 93%** (81/87)
+      - Old Drug ($A=0$): 263 patients, 234 succeed. **Success Rate: 89%** (234/263)
+  - **Large Stones ($L=1$):** 350 patients.
+      - New Drug ($A=1$): 270 patients, 192 succeed. **Success Rate: 71%** (192/270)
+      - Old Drug ($A=0$): 80 patients, 55 succeed. **Success Rate: 69%** (55/80)
+
+Within *both* strata (small and large stones), the new drug is superior.
+
+**Now, let's commit a fallacy and look at the crude, overall data:**
+
+  - **New Drug ($A=1$):** 87 + 270 = 357 patients. 81 + 192 = 273 succeed.
+      - **Overall Success Rate: 76.5%** (273/357)
+  - **Old Drug ($A=0$):** 263 + 80 = 343 patients. 234 + 55 = 289 succeed.
+      - **Overall Success Rate: 84.3%** (289/343)
+
+**The Paradox:** In the aggregate, the new drug looks worse! This is because it was disproportionately used on the hard-to-treat large stone cases. The confounder (stone size) has distorted the overall association.
+
+### 2. R Implementation
+
+Let's reproduce this in R. We'll use the `tidyverse` for data manipulation and plotting.
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(ggplot2)
+
+# Create the data based on our numerical example
+# L=0 for small stones, L=1 for large stones
+# A=0 for old drug, A=1 for new drug
+# Y=1 for success, Y=0 for failure
+data <- tibble(
+  stone_size = c(
+    rep("Small", 87),
+    rep("Small", 263),
+    rep("Large", 270),
+    rep("Large", 80)
+  ),
+  treatment = c(
+    rep("New", 87),
+    rep("Old", 263),
+    rep("New", 270),
+    rep("Old", 80)
+  ),
+  success = c(
+    rep(1, 81),
+    rep(0, 6),
+    rep(1, 234),
+    rep(0, 29),
+    rep(1, 192),
+    rep(0, 78),
+    rep(1, 55),
+    rep(0, 25)
+  )
+) %>%
+  # Shuffle the rows for realism
+  slice_sample(n = 700)
+
+# View the first few rows
+head(data)
+
+# --------------------------------------------------------------------
+# Incorrect (Naive) Analysis: Ignore the confounder 'stone_size'
+# --------------------------------------------------------------------
+naive_summary <- data %>%
+  group_by(treatment) %>%
+  summarise(
+    n = n(),
+    success_rate = mean(success),
+    .groups = 'drop'
+  )
+
+print("Naive (Crude) Analysis:")
+print(naive_summary)
+# Note: This will show the new drug (A=1) appears worse.
+
+# --------------------------------------------------------------------
+# Correct (Stratified) Analysis: Adjust for the confounder
+# --------------------------------------------------------------------
+stratified_summary <- data %>%
+  group_by(stone_size, treatment) %>%
+  summarise(
+    n = n(),
+    success_rate = mean(success),
+    .groups = 'drop'
+  )
+
+print("Correct (Stratified) Analysis:")
+print(stratified_summary)
+# Note: This reveals the new drug (A=1) is better in BOTH groups.
+
+# --------------------------------------------------------------------
+# Visualization: Show the paradox!
+# --------------------------------------------------------------------
+ggplot(
+  stratified_summary,
+  aes(x = treatment, y = success_rate, fill = treatment)
+) +
+  geom_col(position = "dodge") +
+  geom_text(
+    aes(label = scales::percent(success_rate, accuracy = 0.1)),
+    vjust = -0.5
+  ) +
+  # Add the incorrect, crude association as horizontal lines
+  geom_hline(
+    data = naive_summary,
+    aes(yintercept = success_rate, color = treatment),
+    linetype = "dashed",
+    size = 1
+  ) +
+  facet_wrap(~stone_size) +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  labs(
+    title = "Simpson's Paradox: The Kidney Stone Treatment",
+    subtitle = "New drug is better in both groups, but appears worse overall (dashed lines)",
+    x = "Treatment Type",
+    y = "Success Rate"
+  ) +
+  theme_minimal()
+```
+
+This R code doesn't just run an analysis; it tells the story of confounding. It shows how a naive comparison leads to the wrong conclusion, while a simple stratification reveals the underlying truth.
+
+## ⚠️ Common Pitfalls
+
+::: {.callout-warning}
+
+### "Controlling For Everything" is Dangerous\
+
+A common impulse is to throw every measured variable into a regression model to "control for" confounding. This can be a huge mistake. As we'll learn, adjusting for certain types of variables (like colliders or mediators) can actually *introduce* bias rather than remove it. DAGs will be our guide for deciding what to adjust for.
+
+### Association is Not Causation
+
+A significant p-value for a treatment coefficient in a regression model `lm(Y ~ A + L)` does **not** automatically mean you've found a causal effect. It means you've found a conditional association. The entire purpose of this course is to understand the specific, strong, and often untestable assumptions under which that association can be interpreted as a causal effect.
+:::
+
+## ❓ Check Your Understanding
+
+::: {.callout-question}
+
+### Question 1
+
+A study finds that cities with more hospitals per capita also have higher overall mortality rates. An analyst concludes that hospitals are causing deaths.
+
+**a)** Using the potential outcomes framework, what is the causal question? Define the treatment $A$, outcome $Y$, and the units of analysis.
+**b)** What is a likely confounder, $L$?
+**c)** Draw a DAG representing your causal beliefs about this scenario.
+
+<details>
+
+<summary>Click for Answer</summary>
+
+**a) Causal Question:** If we were to build more hospitals in a city, would it cause the mortality rate to increase?
+
+  - **Units:** Cities.
+  - **Treatment (A):** High number of hospitals per capita ($A=1$) vs. Low number ($A=0$).
+  - **Outcome (Y):** Mortality rate.
+  - **Potential Outcomes:** $Y_i(1)$ is the mortality rate city `i` would have if it had many hospitals; $Y_i(0)$ is the rate it would have if it had few.
+
+**b) Confounder (L):** Population health status or population density/size. Larger, denser cities have sicker, more vulnerable populations (requiring more hospitals) and will naturally have more deaths.
+
+**c) DAG:**
+
+```{mermaid}
+graph TD
+    L(Population Health Status) --> A(Hospitals per Capita)
+    L(Population Health Status) --> Y(Mortality Rate)
+    A(Hospitals per Capita) --> Y(Mortality Rate)
+```
+
+The confounder $L$ opens a backdoor path $A \leftarrow L \rightarrow Y$, explaining the spurious association.
+
+</details>
+
+:::
+
+## 📚 Appendix: The Foundational Assumptions
+
+To connect the world of potential outcomes (what we want to know) to the world of observed data (what we have), we need a bridge. That bridge is built on several key assumptions. We'll discuss these all semester, but here are the first two.
+
+### 📗 A1: Consistency
+
+The consistency assumption states that an individual's potential outcome under the treatment they actually received is the outcome we actually observe.
+
+Formally, for an individual `i` with observed treatment $A_i$ and observed outcome $Y_i$:
+
+  - If $A_i = 1$, then $Y_i = Y_i(1)$.
+  - If $A_i = 0$, then $Y_i = Y_i(0)$.
+
+This may seem obvious, but it's a powerful link. It assumes there are no hidden "versions" of the treatment. For example, if "getting the new drug" also involves more frequent doctor visits than the old drug, then our treatment isn't just the pill—it's the entire package. Consistency requires that our definition of the treatment $A$ is well-defined and captures the relevant causal agent.
+
+### 📙 A2: SUTVA (Stable Unit Treatment Value Assumption)
+
+SUTVA is actually two assumptions rolled into one:
+
+1. **No Interference:** The potential outcomes for one individual are not affected by the treatment assignment of any other individual.
+      - **Example:** In a vaccine trial, if my vaccination ($A_i=1$) makes it less likely that you, my neighbor, get sick (it changes your $Y_j(0)$), then interference is present. Herd immunity is a classic violation of this assumption.
+2. **No Hidden Variations of Treatment:** This is the same as the "well-defined" part of consistency. It means that for any individual, the potential outcome $Y(1)$ is a single, fixed value, regardless of *how* they received the treatment.
+      - **Example:** If some surgeons are highly skilled at implanting RHCs and others are not, then "getting an RHC" isn't one single treatment. The effect depends on who does the procedure. SUTVA assumes this isn't the case, or that we've defined our treatment to be, for example, "getting an RHC by a skilled surgeon."
+
+These assumptions are strong, and often questionable in practice! A huge part of being a good causal inference practitioner is thinking deeply about whether these assumptions hold in your specific problem.

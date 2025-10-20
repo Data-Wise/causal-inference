@@ -1,0 +1,559 @@
+---
+title: "ggdag: A Tutorial for Causal DAGs in R"
+execute: 
+  echo: true
+---
+
+# Ggdag Tutorial with Function and Argument Explanations
+
+This revision expands each function’s description with clear argument notes and runnable examples using base pipes (`|>`). Installation steps are omitted as requested.
+
+# 1. Introduction
+
+ggdag is a tidy, ggplot2-based interface to dagitty for drawing and diagnosing Directed Acyclic Graphs (DAGs). You define a DAG once, then reuse it to check identification (backdoor/frontdoor, adjustment sets, d-separation) and to produce consistent figures.
+
+Key functions covered
+
+- Create and prepare DAGs: `dagify()`, `dagitty()`, `ggdag::tidy_dagitty()`
+- Plot scaffolds and theming: `ggdag::ggdag()`, `ggdag::ggdag_classic()`, `ggdag::theme_dag()`
+- Roles and node status: `ggdag::node_status()`, `ggdag::ggdag_status()`
+- Paths and d-separation: `ggdag::ggdag_paths()`, `ggdag::ggdag_dseparated()`
+- Identification helpers: `ggdag::dag_adjustment_sets()`, `ggdag::ggdag_adjustment_set()`
+- Structure inspection: `ggdag::ggdag_adjustment_set()`, `ggdag::ggdag_collider()`, `ggdag::ggdag_equivalent_dags()`
+- Low-level geoms: `ggdag::geom_dag_point()`, `ggdag::geom_dag_edges()`, `ggdag::geom_dag_text()`
+
+Typical use cases
+
+- Teaching causal diagrams with publication-quality plots
+- Rapid checks of valid adjustment sets and d-separation
+- Documenting modeling assumptions alongside code
+
+# 2. Getting Started
+
+```{r}
+#| label: setup-packages
+pacman::p_load(ggdag, dagitty, dplyr, ggplot2)
+```
+
+```{r}
+#| label: basic-workflow
+# Define a simple confounding DAG: Z -> X -> Y and Z -> Y
+dag <- dagify(
+  Y ~ X + Z,
+  X ~ Z,
+  exposure = "X",
+  outcome = "Y"
+)
+
+td <- ggdag::tidy_dagitty(dag, layout = "nicely", seed = 123)
+
+td |>
+  ggdag::ggdag_classic(text = FALSE) +
+  ggdag::geom_dag_text() +
+  ggdag::theme_dag()
+```
+
+# 3. Key Functions and Features (with Arguments)
+
+## 3.1 dagify()
+
+Purpose
+
+Programmatically define a DAG with formulas and set exposure/outcome/latent nodes.
+
+Syntax (no data example)
+
+```r
+dagify(…, exposure = NULL, outcome = NULL, latent = NULL, coords = NULL)
+```
+
+Argument notes
+
+- `…`: One or more one-sided formulas `child ~ parents`. Example: `Y ~ X + Z` means `X → Y`, `Z → Y`.
+- `exposure`, `outcome`: Character scalars naming the exposure and outcome. Setting these enables identification helpers downstream.
+- `latent`: Character vector of unobserved nodes. These are retained in the graph but marked latent.
+- `coords`: Optional named list or data frame of node coordinates to fix positions; otherwise layouts are computed later.
+
+Runnable example
+
+```{r}
+#| label: dagify-example
+dag2 <- dagify(
+  Y ~ X + Z + U,
+  X ~ Z + U,
+  exposure = "X",
+  outcome = "Y",
+  latent = "U"
+)
+dag2
+```
+
+## 3.2 ggdag::tidy_dagitty()
+
+Purpose
+
+Convert a `dagitty` DAG into tidy node/edge data for plotting and analysis.
+
+Syntax
+
+```r
+ggdag::tidy_dagitty(x, layout = "nicely", seed = NULL, …)
+```
+
+Argument notes
+
+- `x`: A `dagitty` object.
+- `layout`: Layout algorithm name (forwarded to ggraph/igraph), e.g., `"nicely"`, `"circle"`, `"tree"`, `"kk"`, `"fr"`.
+- `seed`: Optional integer to make the layout reproducible.
+- `…`: Passed to the underlying layout creation; use sparingly unless you know ggraph’s layout args.
+
+Runnable example
+
+```{r}
+#| label: tidy-example
+td2 <- ggdag::tidy_dagitty(dag2, layout = "nicely", seed = 1)
+dplyr::glimpse(td2$data) # nodes
+dplyr::glimpse(td2$edges) # edges
+```
+
+Concept
+
+Returns a list-like tidy DAG object with `data` (nodes tibble) and `edges` (edges tibble), plus the original `dag`.
+
+## 3.3 ggdag::ggdag() And ggdag::ggdag_classic()
+
+Purpose
+
+Create a ggplot scaffold for DAGs with sensible defaults; `ggdag_classic()` uses a cleaner minimal theme.
+
+Syntax
+
+```r
+ggdag(.data, text = TRUE, use_labels = TRUE, label = "name", …)
+ggdag_classic(.data, text = TRUE, use_labels = TRUE, label = "name", …)
+```
+
+Argument notes
+
+- `.data`: Output of `tidy_dagitty()`.
+- `text`: Logical; if `TRUE`, labels are added automatically.
+- `use_labels`: If `TRUE`, prefer node labels (if present) over names.
+- `label`: Column used for labels; default `"name"`.
+- `…`: Additional aesthetics or parameters forwarded to internal geoms/theme.
+
+Runnable example
+
+```{r}
+#| label: ggdag-classic-example
+td2 |>
+  ggdag::ggdag_classic(text = FALSE) +
+  ggdag::geom_dag_point(size = 4) +
+  ggdag::geom_dag_text(aes(label = name)) +
+  ggdag::theme_dag()
+```
+
+## 3.4 ggdag::node_status() And ggdag::ggdag_status()
+
+Purpose
+
+Compute and visualize node roles: exposure, outcome, adjusted, latent, and other.
+
+Syntax
+
+```r
+node_status(.data, …)
+ggdag_status(.data, …)
+```
+
+Argument notes
+
+- `.data`: A `tidy_dagitty` or `dagitty` object.
+- `…`: Currently unused, reserved for future options.
+
+Runnable example
+
+```{r}
+#| label: node-status-example
+# node_status() must be called on the tidy_dagitty object, not inside mutate().
+# It returns a tidy_dagitty with a `status` column that ggdag_status() will plot.
+
+td2 |>
+  ggdag::node_status() |>
+  ggdag::ggdag_status()
+```
+
+## 3.5 ggdag::ggdag_paths()
+
+Purpose
+
+Highlight and inspect paths between two nodes.
+
+Syntax
+
+```r
+ggdag_paths(.data, from, to, directed = FALSE, …)
+```
+
+Argument notes
+
+- `.data`: Tidy DAG.
+- `from`, `to`: Character scalars naming the endpoints.
+- `directed`: If `TRUE`, limit to directed paths; if `FALSE`, show all paths (useful for backdoor inspection).
+- `…`: Plot customizations passed to geoms.
+
+Runnable example
+
+```{r}
+#| label: paths-example
+ggdag::ggdag_paths(td2, from = "X", to = "Y")
+```
+
+## 3.6 ggdag::ggdag_dseparated()
+
+Purpose
+
+Visualize whether two nodes are d-separated given a conditioning set.
+
+Syntax
+
+```
+ggdag_dseparated(.data, from, to, controlling_for = NULL, …)
+```
+
+Argument notes
+
+- `.data`: Tidy DAG.
+- `from`, `to`: Endpoints as character scalars.
+- `controlling_for`: Character vector of nodes to condition on.
+- `…`: Aesthetic overrides.
+
+Runnable example
+
+```{r}
+#| label: dsep-example
+ggdag::ggdag_dseparated(td2, from = "X", to = "Y")
+ggdag::ggdag_dseparated(td2, from = "X", to = "Y", controlling_for = "Z")
+```
+
+Interpretation
+
+Open paths appear highlighted; conditioning may open/close paths depending on colliders.
+
+## 3.7 ggdag::dag_adjustment_sets() and ggdag::ggdag_adjustment_set()
+
+Purpose
+
+Compute and plot valid covariate sets that identify the total causal effect via backdoor adjustment.
+
+Syntax
+
+```r
+dag_adjustment_sets(.tdy_dag, exposure = NULL, outcome = NULL, ...)
+ggdag_adjustment_set(
+  .tdy_dag,
+  exposure = NULL,
+  outcome = NULL,
+  ...,
+  shadow = TRUE
+)
+```
+
+Argument notes
+
+- `.data`: Tidy DAG with exposure/outcome known.
+- `exposure`, `outcome`: Optional overrides; if omitted, use the dag’s attributes.
+- `...`: Additional arguments passed to `dagitty::adjustmentSets()`.
+- `shadow`: If `TRUE`, de-emphasize non-selected nodes/edges.
+- `…`: Plot tweaks.
+
+Runnable example
+
+```{r}
+#| label: adjust-sets-example
+# Use the simple confounding DAG (no latent U) from the basic workflow
+# so that valid backdoor sets exist and no warnings are emitted.
+ggdag::dag_adjustment_sets(td)
+ggdag::ggdag_adjustment_set(td, shadow = TRUE)
+```
+
+```{r}
+#| label: adjust-sets-latent-example
+# If a latent confounder exists (e.g., td2 has latent U), there may be
+# NO valid backdoor adjustment set. This is expected; suppress warnings
+# in rendered docs and explain in text.
+suppressWarnings(ggdag::dag_adjustment_sets(td2))
+```
+
+Notes
+
+- Under the hood, uses dagitty’s `adjustmentSets()` to enumerate valid sets.
+- If the graph contains unblocked latent confounding between exposure and outcome (e.g., `X <- U -> Y` with `U` latent), no adjustment set exists. ggdag will warn that backdoor paths cannot be closed; this is by design.
+
+## 3.8 Frontdoor Visualization (manual)
+
+Purpose
+
+Illustrate frontdoor structure when your ggdag version does not provide a dedicated helper.
+
+Approach
+
+- Use `ggdag_paths()` to highlight the directed path `X → M → Y`.
+- Then plot the DAG to discuss the required assumptions (e.g., unblocked `X ← U → Y` but no unblocked backdoor from `X` to `M`, and backdoors from `M` to `Y` blocked by `X`).
+
+Runnable example
+
+```{r}
+#| label: backdoor-frontdoor-example
+# Visualize a valid backdoor adjustment set (if one exists)
+ggdag::ggdag_adjustment_set(td, shadow = TRUE)
+```
+
+Frontdoor illustration (with latent U):
+
+```{r}
+#| label: frontdoor-example
+dagC <- dagify(
+  Y ~ M + U,
+  M ~ X,
+  X ~ U,
+  exposure = "X",
+  outcome = "Y",
+  latent = "U"
+)
+tdC <- ggdag::tidy_dagitty(dagC, seed = 2025)
+
+# Highlight the mediator path X -> M -> Y
+ggdag::ggdag_paths(tdC, from = "X", to = "Y", directed = TRUE)
+```
+
+## 3.9 ggdag::ggdag_adjustment_set() And ggdag::ggdag_collider()
+
+Purpose
+
+Highlight valid adjustment sets for backdoor identification and visualize colliders.
+
+Syntax
+
+```r
+ggdag_adjustment_set(.data, exposure = NULL, outcome = NULL, …)
+ggdag_collider(.data, …)
+```
+
+Argument notes
+
+- `.data`: Tidy DAG.
+- `exposure`, `outcome`: Optional overrides; otherwise use dag attributes.
+- `…`: Plot tweaks.
+
+Runnable example
+
+```{r}
+#| label: confounder-collider-example
+ggdag::ggdag_adjustment_set(td, shadow = TRUE)
+ggdag::ggdag_collider(td2)
+```
+
+## 3.10 ggdag::ggdag_equivalent_dags()
+
+Purpose
+
+Enumerate and facet Markov equivalent DAGs (same conditional independences).
+
+Syntax
+
+```r
+ggdag_equivalent_dags(.data, …)
+```
+
+Argument notes
+
+- `.data`: Tidy DAG.
+- `…`: Facet/plot options.
+
+Runnable example
+
+```{r}
+#| label: equivalent-dags-example
+ggdag::ggdag_equivalent_dags(td2)
+```
+
+## 3.11 Low-level Geoms and Theme
+
+Purpose
+
+Compose custom DAG plots with fine control.
+
+Syntax
+
+```r
+geom_dag_point(…)
+geom_dag_edges(arrow_directed = FALSE, arrow_size = 0.25, edge_width = 0.5, …)
+geom_dag_text(mapping = aes(label = name), …)
+theme_dag()
+```
+
+Argument notes
+
+- `geom_dag_point(…)`: Accepts standard ggplot aesthetics (`size`, `alpha`, `shape`, etc.).
+- `geom_dag_edges(…)`: Commonly used parameters include
+  `arrow_directed` (logical to draw arrows),
+  `arrow_size` (numeric, arrow head size),
+  `edge_width` (numeric line width),
+  plus standard aesthetics.
+- `geom_dag_text(…)`: Default label is `name`; can map other columns to `label`. Accepts `size`, `hjust`, `vjust`, etc.
+- `theme_dag()`: A minimalist theme tailored for DAG readability.
+
+Runnable example
+
+```{r}
+#| label: geoms-theme-example
+td2 |>
+  ggdag::ggdag(text = FALSE) +
+  ggdag::geom_dag_point(size = 4) +
+  ggdag::geom_dag_text(aes(label = name)) +
+  ggdag::geom_dag_edges(edge_width = 0.9) +
+  ggdag::theme_dag()
+```
+
+# 4. Common Workflows with Interpretation
+
+## Basic: Validate Adjustment for a Confounder
+
+Objective
+
+Confirm that adjusting for Z blocks backdoor paths from X to Y.
+
+Steps
+
+Define confounding DAG, compute adjustment sets, compare d-separation with and without Z.
+
+```{r}
+#| label: workflow-basic-adjust
+dagA <- dagify(
+  Y ~ X + Z,
+  X ~ Z,
+  exposure = "X",
+  outcome = "Y"
+)
+tdA <- ggdag::tidy_dagitty(dagA, seed = 42)
+
+# List valid adjustment sets for X -> Y (tidy tibble)
+setsA <- ggdag::dag_adjustment_sets(tdA)
+setsA
+# Visualize a valid set
+ggdag::ggdag_adjustment_set(tdA, shadow = TRUE)
+ggdag::ggdag_dseparated(tdA, from = "X", to = "Y") # not separated
+ggdag::ggdag_dseparated(tdA, from = "X", to = "Y", controlling_for = "Z") # separated when conditioning on Z
+```
+
+Interpretation
+
+`ggdag_adjustment_sets()` highlights Z as a valid set; the d-separation plot flips once we condition on Z.
+
+## Intermediate: Avoid Collider Adjustment
+
+Objective
+
+Show that conditioning on M in `X → M ← Z` opens a path.
+
+```{r}
+#| label: workflow-collider
+dagB <- dagify(
+  Y ~ X + Z + M,
+  M ~ X + Z,
+  exposure = "X",
+  outcome = "Y"
+)
+tdB <- ggdag::tidy_dagitty(dagB, seed = 1)
+
+ggdag::ggdag_collider(tdB)
+ggdag::ggdag_dseparated(tdB, from = "X", to = "Z") # blocked by collider M
+ggdag::ggdag_dseparated(tdB, from = "X", to = "Z", controlling_for = "M") # opens when conditioning on M
+```
+
+Interpretation
+
+Conditioning on colliders induces association between otherwise independent parents.
+
+## Advanced: Front-door Visualization
+
+Objective
+
+Visualize front-door identification with observed mediator M and unobserved confounder U.
+
+```{r}
+#| label: workflow-frontdoor
+dagC <- dagify(
+  Y ~ M + U,
+  M ~ X,
+  X ~ U,
+  exposure = "X",
+  outcome = "Y",
+  latent = "U"
+)
+tdC <- ggdag::tidy_dagitty(dagC, seed = 2025)
+
+# Highlight mediator path and all paths for discussion
+ggdag::ggdag_paths(tdC, from = "X", to = "Y", directed = TRUE)
+ggdag::ggdag_paths(tdC, from = "X", to = "Y", directed = FALSE)
+```
+
+Interpretation
+
+Front-door plots emphasize M’s role in identifying the effect despite unblocked confounding between X and Y.
+
+# 5. Advanced Features and Customization
+
+- Stable layouts: set `seed` in `tidy_dagitty()` or pass `coords` to `dagify()`.
+- Aesthetics: customize via geoms (`size`, `alpha`, `edge_width`).
+  Note: Older ggdag versions may not support arrow parameters; if you
+  encounter an "invalid 'arrow' argument" error, omit arrow options or
+  pass a proper `grid::arrow()` object directly when supported.
+- Programmatic relabeling: join a node tibble on `name` and map `aes(color = group, shape = status)` after adding `ggdag::node_status()`.
+
+```{r}
+#| label: customization-example
+td2 |>
+  ggdag::node_status() |>
+  ggdag::ggdag(text = FALSE) +
+  ggdag::geom_dag_point(aes(shape = status), size = 4, na.rm = TRUE) +
+  ggdag::geom_dag_text(aes(label = name), na.rm = TRUE) +
+  ggdag::geom_dag_edges(edge_width = 0.8, na.rm = TRUE) +
+  ggplot2::labs(title = "Custom DAG with latent node shape") +
+  ggdag::theme_dag()
+```
+
+# 6. Troubleshooting and FAQs
+
+Common issues
+
+- Empty adjustment sets
+  Ensure `exposure` and `outcome` are set in the dagitty object, or pass them explicitly to the ggdag function.
+- Layout changes every run
+  Provide `seed` to `tidy_dagitty()` or supply fixed `coords` in `dagify()`.
+- Labels overlap
+  Turn off automatic `text` in the scaffold and add `geom_dag_text()` with adjusted `size`; consider jittering coordinates slightly.
+
+FAQs
+
+- How do I select a specific adjustment set?
+  Use `ggdag_adjustment_set(td, set_index = k)`.
+- Can I facet equivalent DAGs?
+  Yes, `ggdag_equivalent_dags()` returns a facetted plot of Markov equivalent structures.
+
+# 7. Best Practices
+
+- Always set exposure and outcome on DAG creation to activate identification helpers.
+- Use `ggdag_paths()` and `ggdag_dseparated()` to inspect why a set is valid or invalid.
+- Keep DAGs minimal and question-focused; extra nodes add visual noise and can obscure identification logic.
+- Make plots reproducible with a deterministic layout (`seed` or explicit coordinates).
+
+# 8. Conclusion
+
+With ggdag, you write your DAG once and reuse it to reason about identification and to create consistent, high-quality figures. Knowing each function’s arguments helps you control both the logic (d-separation, adjustment) and the presentation (geoms, themes, and layouts).
+
+# 9. References and Resources
+
+- ggdag package reference and vignettes
+- dagitty documentation and theory notes
+- ggplot2 reference for customization and export

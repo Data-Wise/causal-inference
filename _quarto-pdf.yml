@@ -1,0 +1,203 @@
+project:
+  type: website
+  render:
+  - "lectures/*.qmd"
+  - "!syllabus/"
+  - "!slides"
+  - "!index.qmd"
+  - "!contents.qmd"
+  - "!home*.qmd"
+  - "!r_help.qmd"
+  - "!appendix/"
+  - "!assignments/"
+  - "!resources/"
+  - "!blog/"
+  - "!exams/"
+  - "!macros/"
+  - "!code/"
+format:
+  html: default
+  pdf:
+    documentclass: scrartcl
+    toc: false
+    mainfont: "TeX Gyre Pagella"
+    monofont: "Fira Code"
+    mathfont: "TeX Gyre Pagella Math"
+    fontsize: 10pt
+    linestretch: 1.25
+    pagestyle: plain
+    keep-tex: false
+    geometry:
+    - left=1in
+    - marginparwidth=2.1in
+    - textwidth=4in
+    - marginparsep=0.3in
+    - margin=1in
+    colorlinks: true
+    linkcolor: blue
+    fig-width: 7
+    fig-height: 5
+    include-in-header:
+    - text: |
+        \usepackage{amsfonts} % 
+        \usepackage{amssymb}
+        \usepackage{mathtools} % For \DeclarePairedDelimiter
+        \usepackage{multicol} % For multiple columns
+        \usepackage{graphicx} % For images
+        \usepackage{float} % For figure placement
+        \usepackage{microtype}
+        \microtypecontext{spacing=nonfrench}
+        \usepackage[margin=1in]{geometry}
+        % ==========================
+        % Sets & Blackboard bold
+        % ==========================
+        \newcommand{\RR}{\mathbb{R}}
+        \newcommand{\NN}{\mathbb{N}}
+        %\newcommand{\PP}{\mathbb{P}}
+        \newcommand{\QQ}{\mathbb{Q}}
+        \newcommand{\ZZ}{\mathbb{Z}}
+        % ==========================
+        % Math macros
+        % ==========================
+        % Expectation & Probability
+        % ==========================
+        \DeclareMathOperator{\EE}{\mathbb{E}}  % expectation operator
+        \newcommand{\E}[1]{\EE\!\left[ #1 \right]}
+        \newcommand{\Es}[2]{\EE_{#1}\!\left[ #2 \right]}  % subscripted expectation
+        \newcommand{\ESub}[2]{\EE_{#1}\!\left[ #2 \right]}  % subscripted expectation
+        \newcommand{\ESup}[2]{\EE^{#1}\!\left[ #2 \right]}  % superscripted expectation
+        \newcommand{\ESubSup}[3]{\EE^{#1}_{#2}\!\left[ #3 \right]} % sub+sup expectation
+        \newcommand{\Ehat}[1]{\hat{\EE}\left[#1\right]} % estimated expectation
+        \newcommand{\EHat}[1]{\hat{\EE}\left[#1\right]} % alternative estimated expectation
+        \newcommand{\EHatSup}[2]{\hat{\EE}^{#1}\!\left[#2\right]} % \EHatSup{2}{X} = \hat{E}^2[X]
+        \newcommand{\EHatSub}[2]{\hat{\EE}_{#1}\!\left[#2\right]} % \EHatSub{n}{X} = \hat{E}_n[X]
+        \newcommand{\EHatSS}[3]{\hat{\EE}^{#1}_{#2}\!\left[#3\right]} % sub+sup estimated expectation
+        % ==========================
+        % Probability
+        % ==========================
+        \DeclareMathOperator{\PP}{\mathbb{P}}  % probability operator
+        \newcommand{\Prob}[1]{\PP\!\left( #1 \right)}     % probability with parentheses
+        \newcommand{\pr}[1]{\PP!\left( #1 \right)}
+        \newcommand{\prob}[1]{\PP!\left( #1 \right)}
+        \newcommand{\ProbSub}[2]{\PP_{#1}!\left( #2 \right)} % subscripted probability
+        \newcommand{\ProbSup}[2]{\PP^{#1}\!\left( #2 \right)} % superscripted probability
+        \newcommand{\ProbSS}[3]{\PP^{#1}_{#2}\!\left( #3 \right)} % sub+sup probability
+        \newcommand{\ProbHat}[1]{\hat{\PP}\!\left( #1 \right)} % estimated probability
+        \newcommand{\ProbHatSub}[2]{\hat{\PP}_{#1}\!\left( #2 \right)} % subscripted estimated probability
+        \newcommand{\ProbHatSup}[2]{\hat{\PP}^{#1}\!\left( #2 \right)} % superscripted estimated probability
+        \newcommand{\ProbHatSS}[3]{\hat{\PP}^{#1}_{#2}\!\left( #3 \right)} % sub+sup estimated probability
+        % ==========================
+        % Propensity symbols (optional)
+        % ==========================
+        \newcommand{\PPhi}{\mathcal{P}}       % propensity score symbol
+        \newcommand{\PPhiHat}{\hat{\mathcal{P}}} % estimated propensity
+
+        % ==========================
+        % Vectors
+        % ==========================
+        \newcommand{\vect}[1]{\mathbf{#1}}
+
+        % ==========================
+        % Operators (variance/covariance/correlation/logit/sgn)
+        % ==========================
+        % Canonical operator names (upright, proper spacing)
+        \DeclareMathOperator{\Var}{Var}
+        \DeclareMathOperator{\Cov}{Cov}
+        \DeclareMathOperator{\Cor}{Cor}
+        \DeclareMathOperator{\logit}{logit} 
+        \DeclareMathOperator{\expit}{expit} % inverse logit
+        \DeclareMathOperator{\sgn}{sgn}
+        % Convenience wrappers
+        \newcommand{\var}[1]{\Var\!\left( #1 \right)}
+        \newcommand{\cov}[2]{\Cov\!\left( #1,\, #2 \right)}
+        \newcommand{\cor}[2]{\Cor\!\left( #1,\, #2 \right)}
+
+        % ==========================
+        % Norms, absolute value, inner product (paired delimiters)
+        % ==========================
+        \DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+        \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+        \DeclarePairedDelimiter{\ip}{\langle}{\rangle} % inner product
+        % Usage: \abs{x}, \norm{x}. For auto-sized delimiters: \abs*{x}, \norm*{x}.
+
+        % ==========================
+        % Indicator (two variants)
+        % ==========================
+        \newcommand{\indf}[1]{\mathbf{1}\left\{ #1 \right\}} % bold 1 style
+        \newcommand{\ind}[1]{\mathbb{I}\left\{ #1 \right\}}  % double-struck I style
+        \newcommand{\I}[1]{\ind{#1}}                            % alias
+
+        % ==========================
+        % Independence / Non-independence
+        %  - Bare symbol:  $X \indep Y$, $X \nindep Y$, $X \notindep Y$
+        %  - Braced args:  $\indep{X}{Y}$, $\nindep{X}{Y}$, $\notindep{X}{Y}$
+        % ==========================
+        \makeatletter
+        \newcommand{\indep}{\@ifnextchar\bgroup\indep@two\indep@bare}
+        \newcommand{\indep@two}[2]{#1 \, \mathrel{\perp\!\!\!\perp} \, #2}
+        \newcommand{\indep@bare}{\mathrel{\perp\!\!\!\perp}}
+
+        \newcommand{\nindep}{\@ifnextchar\bgroup\nindep@two\nindep@bare}
+        \newcommand{\nindep@two}[2]{#1 \, \not\!\perp\!\!\!\perp \, #2}
+        \newcommand{\nindep@bare}{\not\!\perp\!\!\!\perp}
+
+        \newcommand{\notindep}{\@ifnextchar\bgroup\notindep@two\notindep@bare}
+        \newcommand{\notindep@two}[2]{#1 \, \not\!\perp\!\!\!\perp \, #2}
+        \newcommand{\notindep@bare}{\not\!\perp\!\!\!\perp}
+        \makeatother
+        % ==========================
+        % Interventions / Graphical
+        % ==========================
+        \newcommand{\doop}[1]{\mathrm{do}\!\left( #1 \right)}  % do-operator
+        \newcommand{\dsep}{\mathrel{\perp\!\!\!\perp}}       % d-separation relation
+
+        % ==========================
+        % Potential outcomes & shorthands
+        % ==========================
+        \newcommand{\Y}[1]{Y^{#1}}                 % Y^a
+        \newcommand{\Ya}{Y^a}
+        \newcommand{\Yone}{Y^1}
+        \newcommand{\Yzero}{Y^0}
+
+        % ==========================
+        % Standard causal estimands
+        % ==========================
+        \newcommand{\DefATE}{\E\!\left[ \Yone - \Yzero \right]}
+        \newcommand{\DefATT}{\E\!\left[ \Yone - \Yzero \mid A=1 \right]}
+        \newcommand{\DefATC}{\E\!\left[ \Yone - \Yzero \mid A=0 \right]}
+        \newcommand{\DefCATE}[1]{\E\!\left[ \Yone - \Yzero \mid #1 \right]}
+
+        % ==========================
+        % Identification building blocks
+        % ==========================
+        \newcommand{\gform}[1]{\sum_{l} \E\!\left[ Y \mid A=#1,\, L=l \right] \, \PP(L=l)}
+        \newcommand{\ipw}[2]{\frac{\indf{#1}}{\PP(#1\mid #2)}} % stabilized IPW form
+
+        % ==========================
+        % Risk measures
+        % ==========================
+        \DeclareMathOperator{\RD}{RD}
+        \DeclareMathOperator{\OR}{OR}
+
+        % ==========================
+        % Optimization operators
+        % ==========================
+        \DeclareMathOperator*{\argmin}{arg\,min}
+        \DeclareMathOperator*{\argmax}{arg\,max}
+        % Numbers & units alignment (optional but useful)
+        \usepackage{siunitx}
+        \sisetup{detect-all}
+        %===========================
+        % Verbatim settings for code wrapping
+        %===========================
+        % fvextra extends fancyvrb and understands Pandoc's Highlighting env
+        \usepackage{fvextra}
+        % Apply to all Verbatim environments (captures chunk output too)
+        \fvset{breaklines,breakanywhere,breaksymbol=}
+        % Crucial: redefine Pandoc's Highlighting env so wrapping works
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+          commandchars=\\\{\},
+          breaklines,
+          breakanywhere,
+          breaknonspaceingroup % enables breaks inside \NormalTok{...}
+        }

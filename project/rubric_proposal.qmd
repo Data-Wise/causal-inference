@@ -1,0 +1,13 @@
+---
+title: "STAT 579: Project Proposal Grading Rubric"
+---
+
+This rubric outlines the criteria for evaluating your project proposal. The proposal is graded out of 50 points and accounts for 10% of your final course grade. The goal of this deliverable is to ensure that you have a well-defined, feasible, and causally-grounded research plan.
+
+| Component | Weight | Criteria for Excellence (A) | Criteria for Proficiency (B) | Criteria for Developing (C/Below) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Causal Question & Motivation** | 10 pts | The causal question is specific, clear, and unambiguous. The motivation is compelling, grounded in public health/scientific relevance, and supported by appropriate citations. | The question is causal but could be more specific. The motivation is present but may be overly broad or not well-supported. | The question is associational, vague, or poorly defined. The motivation is unclear or absent. |
+| **Data Source** | 10 pts | The proposed dataset is clearly identified and is appropriate for the causal question. Key variables (exposure, outcome, confounders) are correctly identified. | A dataset is identified, but its appropriateness is not fully justified. The list of key variables may be incomplete. | No specific dataset is identified, or the chosen dataset is clearly unsuitable for the research question. |
+| **Causal Model (DAG)** | 15 pts | The DAG is plausible, clearly drawn, and includes the key exposure, outcome, and confounders. The justification for the DAG's structure is thoughtful and demonstrates a strong understanding of the topic. | The DAG is present but may be overly simplistic or contain questionable causal arrows. The justification is superficial. | The DAG is missing, illegible, or fundamentally incorrect (e.g., contains cycles, reverses obvious causal pathways). |
+| **Target Trial Protocol** | 10 pts | The key components of the target trial (eligibility, treatment strategies, outcome) are clearly and precisely defined, demonstrating a strong grasp of the emulation framework. | The target trial components are listed but may be vague or poorly aligned with the causal question and data. | The target trial protocol is not described or is fundamentally misunderstood. |
+| **Proposed Method(s) & Feasibility** | 5 pts | The proposed causal method is appropriate for the question and data. The plan is feasible within the scope of the course, and potential challenges are acknowledged. | A causal method is proposed but may not be the most appropriate. The feasibility of the plan is questionable. | No causal method is proposed, or the proposed method is incorrect for the stated problem. |

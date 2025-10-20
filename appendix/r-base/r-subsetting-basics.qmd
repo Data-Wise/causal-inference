@@ -1,0 +1,365 @@
+---
+title: "Sub-setting Data in R"
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+## Introduction
+
+Sub-setting data in R is a fundamental operation for data manipulation and analysis. It involves selecting specific rows, columns, or elements of a data structure based on conditions or indices. This tutorial explores sub-setting techniques in R using **Base R** and **`tidyverse`** packages. It will provide comprehensive examples, tips, and nuances to master this essential skill.
+
+Packages and Functions Covered:
+
+- **Base R Functions**: `[]`, `subset()`
+- **Tidyverse Functions**: `dplyr::filter()`, `dplyr::select()`, `dplyr::slice()`, `dplyr::pull()`
+
+Use Cases:
+
+- Extracting subsets of data for focused analysis.
+- Filtering data for visualization or modeling.
+- Reducing dataset size for computation efficiency.
+- Handling missing or specific data points.
+
+Benefits:
+
+- **Base R**: Lightweight and does not require additional installations.
+- **Tidyverse**: Provides clean, readable syntax and integrates well with pipelines (`|>`).
+
+## Getting Started
+
+Loading the Package:
+
+```{r}
+pacman::p_load(dplyr, tidyr) # Loads or installs the dplyr and tidyr packages
+```
+
+Basic Usage: Select rows where `mpg > 20` using both approaches:
+
+**Base R**:
+
+```{r}
+data(mtcars)
+mtcars[mtcars$mpg > 20, ]
+```
+
+**Tidyverse**:
+
+```{r}
+mtcars |>
+    dplyr::filter(mpg > 20)
+```
+
+## Key Functions and Features
+
+### Base R: Sub-setting with `[]`
+
+**Description**:
+The simplest and most versatile method for sub-setting in R. Use `[]` to extract rows, columns, or individual elements from data frames or matrices.
+
+**Syntax**:
+
+```r
+data[rows, columns]
+```
+
+**Examples**:
+
+1. Select rows where `mpg > 20`:
+
+```{r}
+mtcars[mtcars$mpg > 20, ]
+```
+
+2. Select specific columns:
+
+```{r}
+mtcars[, c("mpg", "cyl")]
+```
+
+3. Combine row and column conditions:
+
+```{r}
+mtcars[mtcars$mpg > 20, c("mpg", "cyl")]
+```
+
+**Nuances**:
+
+- Omitting rows or columns selects all:
+
+```{r}
+mtcars[mtcars$mpg > 20, ] # All columns selected
+mtcars[, c("mpg", "cyl")] # All rows selected
+```
+
+- Negative indexing excludes rows or columns:
+
+```{r}
+mtcars[-c(1, 2), ] # Exclude first two rows
+```
+
+### Base R: `subset()`
+
+**Description**:
+Provides a more human-readable syntax for sub-setting.
+
+**Syntax**:
+
+```r
+subset(data, subset, select)
+```
+
+**Examples**:
+
+1. Subset rows where `mpg > 20` and select `mpg` and `cyl` columns:
+
+```{r}
+subset(mtcars, mpg > 20, select = c(mpg, cyl))
+```
+
+2. Subset using multiple conditions:
+
+```{r}
+subset(mtcars, mpg > 20 & cyl == 6, select = c(mpg, cyl))
+```
+
+**Nuances**:
+
+- Non-standard evaluation allows simpler syntax but can lead to ambiguities. Use column names explicitly when necessary.
+
+### Tidyverse: `dplyr::filter()`
+
+**Description**:
+Filters rows based on logical conditions.
+
+**Syntax**:
+
+```r
+dplyr::filter(data, condition)
+```
+
+**Examples**:
+
+1. Filter rows with `mpg > 20`:
+
+```{r}
+mtcars |>
+    dplyr::filter(mpg > 20)
+```
+
+2. Filter with multiple conditions:
+
+```{r}
+mtcars |>
+    dplyr::filter(mpg > 20 & cyl == 6)
+```
+
+3. Use dynamic variables in filtering:
+
+```{r}
+threshold <- 20
+mtcars |>
+    dplyr::filter(mpg > threshold)
+```
+
+**Nuances**:
+
+- Use `|` for "or" conditions:
+
+```{r}
+mtcars |>
+    dplyr::filter(mpg > 20 | cyl == 6)
+```
+
+- Filter with `is.na()` to handle missing values:
+
+```{r}
+mtcars |>
+    dplyr::filter(!is.na(mpg))
+```
+
+### Tidyverse: `dplyr::select()`
+
+**Description**:
+Selects specific columns from a data frame.
+
+**Syntax**:
+
+```r
+dplyr::select(data, columns)
+```
+
+**Examples**:
+
+1. Select specific columns:
+
+```{r}
+mtcars |>
+    dplyr::select(mpg, cyl)
+```
+
+2. Use helpers for dynamic selection:
+
+```{r}
+mtcars |>
+    dplyr::select(starts_with("d"))
+```
+
+**Nuances**:
+
+- Combine helpers for advanced selection:
+
+```{r}
+mtcars |>
+    dplyr::select(starts_with("d"), ends_with("t"))
+```
+
+### Tidyverse: `dplyr::slice()`
+
+**Description**:
+Selects rows by position.
+
+**Syntax**:
+
+```r
+dplyr::slice(data, row_numbers)
+```
+
+**Examples**:
+
+1. Select the first five rows:
+
+```{r}
+mtcars |>
+    dplyr::slice(1:5)
+```
+
+2. Random sampling:
+
+```{r}
+mtcars |>
+    dplyr::slice_sample(n = 5)
+```
+
+3. Select rows by percentages:
+
+```{r}
+mtcars |>
+    dplyr::slice_sample(prop = 0.1) # 10% of rows
+```
+
+### Tidyverse: `dplyr::pull()`
+
+**Description**:
+Extracts a single column as a vector.
+
+**Syntax**:
+
+```r
+dplyr::pull(data, column)
+```
+
+**Examples**:
+
+1. Pull the `mpg` column:
+
+```{r}
+mtcars |>
+    dplyr::pull(mpg)
+```
+
+2. Combine with filtering:
+
+```{r}
+mtcars |>
+    dplyr::filter(cyl == 6) |>
+    dplyr::pull(mpg)
+```
+
+**Nuances**:
+
+- Useful for extracting data for external functions:
+
+```{r}
+mean(mtcars |> dplyr::pull(mpg))
+```
+
+## In-Depth Examples
+
+### Example 1: Dynamic Filtering with External Variables
+
+Objective: Filter rows based on user-defined thresholds for `mpg` and `hp`.
+
+Steps:
+
+1. Define thresholds:
+
+```{r}
+mpg_threshold <- 20
+hp_threshold <- 100
+```
+
+2. Base R:
+
+```{r}
+mtcars[mtcars$mpg > mpg_threshold & mtcars$hp > hp_threshold, ]
+```
+
+3. Tidyverse:
+
+```{r}
+mtcars |>
+    dplyr::filter(mpg > mpg_threshold & hp > hp_threshold)
+```
+
+## Advanced Features
+
+Customization:
+
+- Create reusable functions for sub-setting:
+
+```{r}
+filter_cars <- function(data, mpg_threshold, cyl_threshold) {
+    data |>
+        dplyr::filter(mpg > mpg_threshold, cyl == cyl_threshold)
+}
+
+filter_cars(mtcars, 20, 6)
+```
+
+Integration:
+
+- Combine `tidyr` for reshaping with sub-setting:
+
+```{r}
+mtcars |>
+    tidyr::pivot_longer(cols = everything()) |>
+    dplyr::filter(value > 20)
+```
+
+## Troubleshooting and FAQs
+
+- **Issue**: "undefined columns selected"
+	Fix: Double-check column names.
+
+- **Issue**: Sub-setting returns no rows.
+	Fix: Ensure logical conditions are met.
+
+FAQs:
+
+- How to sub-set with regex?
+	Use `grepl()` in Base R or `matches()` in `dplyr::select()`:
+
+```{r}
+mtcars |>
+    dplyr::select(matches("^m"))
+```
+
+## Best Practices
+
+- Preview data before sub-setting using `head()` or `glimpse()`.
+- Chain operations for clarity in `tidyverse`.
+- Avoid hard-coding indices; use dynamic variables.
+
+## Conclusion
+
+Recap: Sub-setting is a powerful tool for extracting specific data. Base R provides flexibility, while `tidyverse` offers an elegant syntax for modern workflows.

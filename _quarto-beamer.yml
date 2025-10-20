@@ -1,0 +1,32 @@
+project:
+  type: default
+  output-dir: _beamer
+  render:
+  - "slides/"
+  - "!lectures/*.qmd"
+  - "!index.qmd"
+  - "!contents.qmd"
+  - "!home*.qmd"
+  - "!r_help.qmd"
+  # - "!r-code-data-book.qmd"
+  # - "!data-files-book.qmd"
+  - "!appendix/"
+  - "!assignments/"
+  - "!resources/"
+  - "!syllabus/"
+  - "!blog/"
+  - "!exams/"
+format:
+  beamer:
+    classoption: "aspectratio=169"
+    slide-level: 2
+    theme: metropolis
+    # navigation: empty
+    colortheme: rose
+    fonttheme: structurebold
+    section-titles: true
+    incremental: false
+    #outertheme: default
+    # toc: true
+    # toc-depth: 2
+    number-sections: false

@@ -1,0 +1,301 @@
+---
+title: "Data Transformation and Wrangling in R"
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+
+# Data Transformation and Wrangling in R
+
+## 1. Introduction
+
+### Overview
+
+Data transformation and wrangling involve cleaning, reshaping, and modifying data to prepare it for analysis. This tutorial introduces:
+
+- **Base R Functions**: `subset()`, `transform()`, `merge()`.
+- **tidyverse Functions**: `dplyr::filter()`, `dplyr::mutate()`, `tidyr::pivot_longer()`, and others.
+
+### Use Cases
+
+- Filtering rows based on conditions.
+- Adding or modifying columns.
+- Reshaping data between wide and long formats.
+- Combining or joining datasets.
+
+### Benefits
+
+- **Base R**: Built into R, no additional installations required.
+- **tidyverse**: Consistent syntax and powerful chaining with the pipe operator `|>`.
+
+## 2. Getting Started
+
+### Loading the Package
+
+```{r}
+# Base R requires no additional loading.
+
+# Load tidyverse package using pacman
+pacman::p_load(tidyverse)
+```
+
+## 3. Key Functions and Features
+
+### Using Base R
+
+#### Filtering Rows
+
+**Description**: Extract rows based on a condition.
+
+**Syntax**:
+
+```r
+subset(x, subset, select = NULL)
+```
+
+**Arguments**:
+
+- `x`: A data frame or similar object.
+- `subset`: Logical expression indicating rows to keep.
+- `select`: Columns to retain, or `NULL` to keep all.
+
+**Example**:
+
+```{r}
+data(iris)
+# Filter rows where Species is "setosa"
+subset(iris, Species == "setosa")
+```
+
+#### Modifying Columns
+
+**Description**: Add or modify columns in a data frame.
+
+**Syntax**:
+
+```r
+transform(data, ...)
+```
+
+**Arguments**:
+
+- `data`: A data frame.
+- `…`: Expressions specifying transformations.
+
+**Example**:
+
+```{r}
+# Add a new column for Sepal Area
+iris <- transform(iris, Sepal.Area = Sepal.Length * Sepal.Width)
+head(iris)
+```
+
+#### Joining Data
+
+**Description**: Combine datasets based on common columns (keys).
+
+**Syntax**:
+
+```r
+merge(x, y, by, all)
+```
+
+**Arguments**:
+
+- `x`, `y`: Data frames to merge.
+- `by`: Column names to use as keys. Defaults to all common columns.
+- `all`: Logical. `TRUE` for full outer join; `FALSE` for inner join.
+
+**Example**:
+
+```{r}
+# Create example datasets
+df1 <- data.frame(ID = 1:3, Value = c(10, 20, 30))
+df2 <- data.frame(ID = 2:4, Score = c(15, 25, 35))
+# Merge on ID
+merge(df1, df2, by = "ID")
+```
+
+### Using Tidyverse
+
+#### Filtering Rows
+
+**Description**: Select rows using conditions with `dplyr::filter()`.
+
+**Syntax**:
+
+```r
+dplyr::filter(.data, ...)
+```
+
+**Arguments**:
+
+- `.data`: A data frame or tibble.
+- `…`: Logical conditions. Rows where the condition is `TRUE` are retained.
+
+**Example**:
+
+```{r}
+# Filter rows where Species is "setosa"
+iris |>
+  dplyr::filter(Species == "setosa")
+```
+
+#### Adding or Modifying Columns
+
+**Description**: Create or modify columns using `dplyr::mutate()`.
+
+**Syntax**:
+
+```r
+dplyr::mutate(.data, ...)
+```
+
+**Arguments**:
+
+- `.data`: A data frame or tibble.
+- `…`: Name-value pairs where names are new or existing column names, and values are expressions.
+
+**Example**:
+
+```{r}
+# Add Sepal.Area column
+iris |>
+  dplyr::mutate(Sepal.Area = Sepal.Length * Sepal.Width)
+```
+
+#### Reshaping Data
+
+**Description**: Convert data between wide and long formats with `tidyr::pivot_longer()`.
+
+**Syntax**:
+
+```r
+tidyr::pivot_longer(data, cols, names_to, values_to)
+```
+
+**Arguments**:
+
+- `data`: A data frame or tibble.
+- `cols`: Columns to pivot into rows.
+- `names_to`: Name of the new column containing the names of the pivoted variables.
+- `values_to`: Name of the new column containing the values of the pivoted variables.
+
+**Example**:
+
+```{r}
+# Convert iris to long format
+iris_long <- iris |>
+  tidyr::pivot_longer(
+    cols = starts_with("Sepal"),
+    names_to = "Measurement",
+    values_to = "Value"
+  )
+head(iris_long)
+```
+
+#### Joining Data
+
+**Description**: Combine datasets using `dplyr::inner_join()`.
+
+**Syntax**:
+
+```r
+dplyr::inner_join(x, y, by)
+```
+
+**Arguments**:
+
+- `x`, `y`: Data frames or tibbles to join.
+- `by`: Column names to join by. Defaults to common column names.
+
+**Example**:
+
+```{r}
+df1 <- tibble(ID = 1:3, Value = c(10, 20, 30))
+df2 <- tibble(ID = 2:4, Score = c(15, 25, 35))
+df1 |>
+  dplyr::inner_join(df2, by = "ID")
+```
+
+## 4. In-Depth Examples
+
+### Example 1: Cleaning and Transforming Data
+
+**Objective**: Prepare `mtcars` for analysis by filtering rows, creating a new column, and summarizing data.
+
+**Steps**:
+
+1. Filter cars with `mpg > 20`.
+2. Add a column `Weight_kg` converting `wt` to kilograms.
+3. Summarize average MPG by the number of cylinders.
+
+**Code**:
+
+```{r}
+# Using Base R
+mtcars_filtered <- subset(mtcars, mpg > 20)
+mtcars_filtered <- transform(mtcars_filtered, Weight_kg = wt * 453.6)
+aggregate(mpg ~ cyl, data = mtcars_filtered, mean)
+
+# Using tidyverse
+mtcars |>
+  dplyr::filter(mpg > 20) |>
+  dplyr::mutate(Weight_kg = wt * 453.6) |>
+  dplyr::group_by(cyl) |>
+  dplyr::summarize(Average_MPG = mean(mpg))
+```
+
+## 5. Advanced Features
+
+### Customization
+
+**Base R**: Use `tapply()` for custom aggregations. **tidyverse**: Leverage `dplyr::group_by()` for grouped operations.
+
+**Example**:
+
+```{r}
+# Base R
+tapply(mtcars$mpg, mtcars$cyl, mean)
+
+# tidyverse
+mtcars |>
+  dplyr::group_by(cyl) |>
+  dplyr::summarize(Average_MPG = mean(mpg))
+```
+
+## 6. Troubleshooting and FAQs
+
+### Common Issues
+
+1. **`tidyr::pivot_longer()` errors**:
+
+	- Ensure column names in `cols` exist.
+	- Use `names_pattern` for extracting variable parts.
+2. **Merge Mismatches in Base R**:
+
+	- Verify columns in `by` are consistent between datasets.
+
+## 7. Best Practices
+
+1. Use **descriptive column names**.
+2. Keep data in **tidy format** for easier analysis.
+3. Prefer **tidyverse** for a consistent and readable workflow.
+
+## 8. Conclusion
+
+### Summary
+
+- **Base R**: Ideal for simple tasks.
+- **tidyverse**: Superior for complex workflows with a consistent syntax.
+
+### Next Steps
+
+Explore additional `tidyverse` packages like `lubridate` (dates) or `stringr` (text manipulation).
+
+## 9. References and Resources
+
+- [Base R Documentation](https://stat.ethz.ch/R-manual/R-devel/library/base/html/00Index.html)
+- [tidyverse Documentation](https://www.tidyverse.org/)
+- [R for Data Science](https://r4ds.had.co.nz/)
+

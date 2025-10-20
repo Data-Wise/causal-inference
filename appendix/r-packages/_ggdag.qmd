@@ -1,0 +1,128 @@
+---
+title: "ggdag: A Tutorial for Causal DAGs in R"
+execute: 
+  echo: true
+---
+
+This tutorial follows the core logic of the `ggdag` package, showing how to define, analyze, and visualize causal models in R.
+
+### The Core Idea: Tidy DAGs
+
+The power of `ggdag` comes from its integration with the `tidyverse`. The package works by converting a `dagitty` graph object into a **tidy data frame** (a tibble). In this format, each row represents a single node, and columns contain information like the node's name, its coordinates for plotting, and its causal role (e.g., exposure or outcome).
+
+This "tidy" structure is key because it allows you to use standard `ggplot2` functions to build and customize your DAG plots layer by layer.
+
+Let's start by defining a simple confounding model and then use `tidy_dagitty()` to see its underlying data structure.
+
+```{r}
+# Load the necessary packages
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(ggdag, tidyverse)
+
+# Define a DAG where Z confounds the X -> Y relationship
+confounder_dag <- dagify(
+    Y ~ X + Z,
+    X ~ Z,
+    exposure = "X",
+    outcome = "Y"
+)
+
+# Convert the DAG to a tidy data frame
+tidy_dag <- tidy_dagitty(confounder_dag)
+
+# Inspect the tidy output
+print(tidy_dag)
+#> # A DAG with 3 nodes and 3 edges
+#> #
+#> # Exposure: X
+#> # Outcome: Y
+#> #
+#> # A tibble: 3 × 8
+#>   name      x     y direction to     xend  yend circular
+#>   <chr> <dbl> <dbl> <fct>     <chr> <dbl> <dbl> <lgl>
+#> 1 X      3.37  2.01 ->        Y      4.41  2.01 FALSE
+#> 2 Y      4.41  2.01 <NA>      <NA>  NA    NA    FALSE
+#> 3 Z      3.89  2.97 ->        X      3.37  2.01 FALSE
+```
+
+As you can see, the DAG is now represented as a simple table, making it easy for `ggplot2` to map variables like `x`, `y`, `xend`, and `yend` to plotting aesthetics.
+
+-----
+
+### Plotting DAGs with `ggdag()`
+
+The primary plotting function, `ggdag()`, takes a DAG object and renders it. You can use themes like `theme_dag()` or `theme_dag_blank()` for a clean appearance.
+
+```{r}
+# Plot our simple confounding DAG
+ggdag(confounder_dag) +
+    theme_dag()
+```
+
+DAGs are particularly useful for understanding complex causal structures, like the "M-bias" graph, where two variables are ancestors of the exposure and outcome, respectively.
+
+```{r}
+# Define an M-bias DAG with unobserved variables U1 and U2
+m_bias_dag <- dagify(
+    Y ~ M2 + U1,
+    X ~ M1,
+    M1 ~ U2,
+    M2 ~ U1,
+    exposure = "X",
+    outcome = "Y",
+    latent = c("U1", "U2")
+)
+
+# Plot the M-bias DAG
+ggdag(m_bias_dag) +
+    theme_dag()
+```
+
+-----
+
+### Identifying Causal Paths and Bias
+
+The main analytical purpose of a DAG is to identify which variables you must **adjust for** to estimate a causal effect, free of confounding and other biases. This is a three-step process.
+
+#### 1. Visualize All Paths with `ggdag_paths()`
+```{r}
+ggdag_paths(m_bias_dag) +
+    theme_dag()
+```
+
+First, we identify all open paths between the exposure and outcome. A path is a route connecting two variables; it's "open" if it creates a statistical association. An open path that is not a causal path is a "backdoor" path that introduces bias.
+
+```{r}
+ggdag_paths(confounder_dag) +
+    theme_dag()
+```
+
+The plot clearly shows the causal path of interest (`X → Y`) and the biasing backdoor path (`X ← Z → Y`). Our goal is to block this backdoor path.
+
+#### 2. Find the Adjustment Set with `ggdag_adjustment_set()`
+
+Next, we use `ggdag_adjustment_set()` to automatically find a **sufficient adjustment set**. This is a minimal set of variables that, if conditioned on (e.g., included as covariates in a regression), will block all backdoor paths.
+
+```{r}
+ggdag_adjustment_set(confounder_dag, shadow = TRUE) +
+    theme_dag()
+```
+
+The plot correctly identifies `Z` as the variable we must adjust for. The `shadow = TRUE` argument is a nice way to make the adjustment set stand out.
+
+#### 3. Verify the Adjustment with `ggdag_dseparated()`
+
+Finally, how do we confirm our adjustment set works? We check for **d-separation**. Two variables are d-separated if there are no open paths between them. After we control for `Z`, `X` and `Y` should be d-separated (meaning all non-causal paths are blocked).
+
+The `ggdag_dseparated()` function visualizes this, showing a dashed line if the variables are d-separated.
+
+```{r}
+# Test for d-separation while controlling for Z
+ggdag_dseparated(confounder_dag, controlling_for = "Z") +
+    theme_dag() +
+    labs(title = "Controlling for Z blocks the backdoor path")
+```
+
+Success! The dashed line confirms that conditioning on `Z` closes the backdoor path, leaving only the causal effect of interest. This three-step workflow—`ggdag_paths`, `ggdag_adjustment_set`, and `ggdag_dseparated`—provides a rigorous and reproducible way to plan a causal analysis.
+
+Now that you've seen the standard workflow, are you interested in how to apply this to a more complex scenario, like one involving mediation?

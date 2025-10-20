@@ -1,0 +1,55 @@
+---
+title: "How To Read a Statistical Paper" 
+---
+
+The goal when reading a methodological paper is not to memorize every formula but to build a robust **mental model** of the author's argument. You want to understand the *problem* they solved, the *logic* of their solution, the *assumptions* required for it to work, and its ultimate *impact*. This active, model-building approach is far more effective than passive reading.
+
+We will use a **Three-Pass Approach** designed to manage cognitive load and build your understanding from a scaffold to a fully-formed structure.
+
+## Pass 1: The Bird's-Eye View – Building the Scaffold (15 Minutes) 🗺️
+
+Don't start by reading page one. Your first goal is to create a mental "map" of the paper's purpose and structure. This provides a scaffold for your brain to hang the details on later, which significantly reduces cognitive load.
+
+1. **Read the Abstract, Introduction, and Conclusion First:** Read these three sections carefully. At the end of this step, you should be able to answer, in simple terms:
+	- **The Problem:** What specific challenge or gap in knowledge existed before this paper was written?
+	- **The Solution:** What is the main idea, method, or framework this paper proposes?
+	- **The Claim:** What do the authors claim is the primary impact or takeaway of their work?
+2. **Scan the Section Headings:** Look at the structure of the paper. How do the authors build their argument from the problem to the solution?
+3. **Examine Figures and Conceptual Tables:** Look at any diagrams (like DAGs), charts, or conceptual tables. Read their captions. These often contain the most important ideas in a condensed, visual format.
+
+At the end of this pass, you shouldn't understand the details, but you should have a clear sense of the paper's story.
+
+## Pass 2: The Deep Dive – Adding the Bricks with Active Recall (1-2 Hours) 🧱
+
+Now, read the paper from start to finish, but with an active, questioning mindset. Your goal is to deconstruct the argument, not just consume it.
+
+1. **"Translate" the Math:** When you encounter a block of equations, your goal is not to re-derive the proofs. Instead, focus on the English sentences *before and after* the math. Your task is to **translate the mathematical statement into a conceptual one**. For example, when you see the formula for the propensity score, you should translate it in your notes as: *"This is the probability of getting the treatment, given the measured covariates L."*
+2. **Focus on the Assumptions:** For causal inference papers, **assumptions are the most important part**. They are the weak points of any argument. When an assumption is stated (e.g., "unconfoundedness," "exclusion restriction"), stop and ask:
+	- What does this assumption mean conceptually?
+	- Why is it necessary for the author's argument to work?
+	- Is this assumption testable? If not, in what real-world scenarios might it be plausible or implausible?
+3. **Engage in Active Recall:** After reading each major section, **stop, look away from the page, and ask yourself: "What was the single most important point of that section?"** Try to summarize it in one or two sentences, either in your head or in your notes. This act of forcing your brain to *retrieve* the information is far more powerful for learning than passively re-reading the text.
+
+## Pass 3: The Feynman Technique – Solidifying Understanding (30 Minutes) ✍️
+
+You only truly understand something when you can explain it simply. This final pass solidifies your mental model and reveals any remaining gaps in your knowledge.
+
+1. **Put the paper away.** Open a blank document or grab a piece of paper.
+2. **Explain the paper to an imaginary first-year graduate student.** Your explanation must clearly and simply answer the following five questions:
+	- **What was the central problem the authors were trying to solve?**
+	- **What was their key insight or proposed solution?**
+	- **In simple terms, what is the core logic for *why* their solution works?**
+	- **What are the 1-3 critical assumptions it relies on to be valid?**
+	- **What is the single biggest limitation or most important implication of this work?**
+
+If you get stuck or find yourself using jargon you can't define, **you've found the edge of your understanding.** Go back to the paper and focus specifically on that part. This technique is the most efficient way to build deep, lasting comprehension.
+
+## Example Application: The Feynman Technique for Week 5 (Rosenbaum & Rubin, 1983)
+
+After reading the paper, your Feynman explanation might look like this:
+
+- **Problem:** In observational studies, people who get a treatment are different from those who don't across many variables (confounders). Trying to adjust for all of them in a single regression model is complicated and non-transparent.
+- **Solution:** They proposed the **propensity score**—the probability of getting treated given your set of covariates. They proved you only need to adjust for this single number to remove bias from all *observed* confounders.
+- **Logic:** The propensity score has a "balancing property." At any given value of the score, the distribution of the covariates is the same between the treated and untreated groups, just like in a randomized experiment.
+- **Assumptions:** This only works if you've measured all the important confounders (**unconfoundedness**) and if there are both treated and untreated people at every level of the propensity score (**positivity/overlap**). Unconfoundedness is a huge, untestable assumption.
+- **Impact:** This revolutionized observational research by creating a two-step process: first, focus on study design by creating balanced groups, and only then, perform the outcome analysis. Its biggest limitation is that it does nothing to solve the problem of *unmeasured* confounders.

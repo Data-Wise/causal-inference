@@ -1,0 +1,55 @@
+---
+title: "Readings & Critique Hub"
+---
+
+Welcome! This page is your central navigation point for everything related to our weekly paper critiques. The ability to critically read, synthesize, and question the primary literature is the single most important skill you will develop in this course.
+
+<!-- Our approach is built on a "Trifecta" model where we engage with each topic through three lenses: the modern textbook summary (**The Map** 🗺️), a foundational methodological paper (**The Journal** 🧭), and a real-world application (**The Expedition** ⛰️). -->
+
+## 📍 Core Resources & Navigation
+
+Everything you need for the weekly critiques can be accessed from the links below.
+
+| Resource | Description |
+|:-----------------------------------|:-----------------------------------|
+| 📜 [**Weekly Readings Schedule**](readings/weekly_paper_critique_schedule.qmd) | The complete week-by-week schedule of all required readings, including mapped textbook chapters, foundational papers, and case studies. |
+| 🧐 [**How to Read a Technical Paper**](readings/how_to_read_technical_paper.qmd) | **(Start Here!)** A step-by-step guide on how to approach dense, theoretical papers without getting lost in the proofs. |
+| ✍️ [**Writing Critique Guidelines**](readings/writing_critique_guidlines.qmd) | A detailed guide on how to structure your analysis of a foundational paper, focusing on its logic, assumptions, and impact. |
+| ✅ [**Templates, Checklists & Rubric**](readings/templates_rubric.qmd) | Access the critique template and the official grading rubric. |
+
+## 🗓️ Weekly Readings & Student Leaders
+
+Each week, the assigned **Student Leader** will select **one** paper for the class to read and critique by Thursday of the prior week.
+
+| Week | Topic | Paper Option (Classic / Modern) | Student Leader |
+|:-----------------|:-----------------|:-----------------|:-----------------|
+| **3** | Exchangeability, Positivity, Consistency | Holland (1986) / Hernán (2018) | GA |
+| **4** | Confounding & Selection Bias | Hernán et al. (2004) / Cole & Hernán (2002) | DB |
+| **5** | Propensity Scores | Rosenbaum & Rubin (1983) / Austin (2011) | CB |
+| **6** | IPTW & Marginal Structural Models | Robins et al. (2000) / Cole & Hernán (2008) | CG |
+| **7** | G-computation & TMLE | Robins (1986) / Petersen & van der Laan (2014) | AK |
+| **8** | Instrumental Variables | Angrist (1990) / Angrist & Pischke (2010) | EK |
+| **9** | Effect Modification & Interaction | Rothman (1974) / VanderWeele (2019) | EL |
+| **10** | Mediation I (Foundations) | Baron & Kenny (1986) / Imai et al. (2010) | GM |
+| **11** | Mediation II & Principal Stratification | Robins & Greenland (1992) / Daniel et al. (2015) | KMG |
+| **12** | Sensitivity Analysis | Rosenbaum (1987) / VanderWeele & Ding (2017) | MS |
+| **13** | Target Trial Emulation | Robins (1987) / Hernán et al. (2008) | HZ |
+
+## 🎓 Roles & Responsibilities
+
+#### 🧑‍🏫 Discussion Leader
+
+1.  **Submit Paper Choice:** Email your selected paper to the instructor by **Thursday of the week prior** to your assigned week.
+2.  **Post Discussion Starter:** Post your discussion starter in the weekly Canvas thread by **Sunday at 11:59 pm**. It must include:
+    -   A \~300-word summary of the paper.
+    -   Your answers to the three guiding questions from the [Weekly Readings Schedule](readings/weekly_paper_critique_schedule.qmd).
+    -   A key takeaway from the paper.
+3.  **Lead In-Class Discussion:** Be prepared to lead the in-class discussion on Tuesday.
+
+#### ✍️ All Other Students
+
+1.  **Read:** Read the paper selected by the Discussion Leader.
+2.  **Post Critique:** Post your critique in the weekly Canvas thread by **Monday at 11:59 pm**. It must include:
+    -   A brief summary of the paper.
+    -   Your answers to the three guiding questions from the [Weekly Readings Schedule](readings/weekly_paper_critique_schedule.qmd).
+    -   A personal takeaway from the paper.

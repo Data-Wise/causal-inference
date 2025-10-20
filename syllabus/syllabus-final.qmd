@@ -1,0 +1,139 @@
+---
+title: "STAT 579: Applied Causal Inference"
+# filters:
+#   # Run Quarto's default filters first
+#   - quarto
+#   - section-bibliographies
+# reference-section-title: References
+# citeproc: false
+# section-bibliographies:
+#   level: 2  # For subsections (### headings)
+#   minlevel: 2
+---
+
+::: {.cell}
+## Instructor & Logistics
+
+|                  |                                          |
+| :--------------- | :--------------------------------------- |
+| **Instructor**   | Dr. Davood Tofighi                       |
+| **Affiliation**  | Department of Mathematics and Statistics |
+| **Email**        | Through Canvas                           |
+| **Office Hours** | TBD – Office/Zoom                        |
+| **Class Time**   | Tuesdays & Thursdays, 9:30 AM – 10:45 AM |
+:::
+
+## Course Overview
+
+This graduate-level seminar introduces the **theory and application of causal inference**, with a strong emphasis on **biostatistical and epidemiological contexts**. The course builds from **conceptual foundations and core assumptions** to **modern estimation methods** for causal effects, emphasizing **target trial emulation** as a unifying framework.
+
+Key frameworks and tools include:
+
+- Potential Outcomes Framework & SUTVA
+- Directed Acyclic Graphs (DAGs)
+- Propensity Scores, IPW, and Doubly Robust Methods
+- Instrumental Variables
+- Mediation Analysis (NDE/NIE)
+- Marginal Structural Models (MSMs)
+- Sensitivity Analysis
+
+### Instructor’s Approach
+
+Causal inference is not just a toolbox—it's a **rigorous way of thinking** about cause and effect. We will prioritize:
+
+- **Precise causal questions** (not just statistical associations).
+- **Transparency of assumptions** (via DAGs and formal notation).
+- **Identification before estimation** (thinking carefully about what is learnable from data).
+- **Critical robustness assessment** (sensitivity, replication, target trial framing).
+
+## Learning Objectives
+
+By the end of the course, students will be able to:
+
+1.  Formulate and distinguish causal from associational questions.
+2.  Represent assumptions using DAGs and counterfactual notation.
+3.  Evaluate and apply key assumptions (SUTVA, exchangeability, positivity).
+4.  Implement modern causal inference methods (propensity scores, IPW, MSMs, IVs, G-computation).
+5.  Decompose effects via mediation analysis.
+6.  Conduct sensitivity analyses for unmeasured confounding.
+7.  Frame observational studies as target trial emulations.
+8.  Critically evaluate causal claims in the literature.
+
+## Assessment and Grading
+
+::: {.cell}
+| Component                            | Weight | $\qquad \qquad \textrm{Description}$                                                                                                                                                                                                          |
+| :----------------------------------- | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Weekly Concept Checks**            | 10%    | $\qquad$ Short, low-stakes exercises on assumptions, DAGs, and interpretation.                                                                                                                                                 |
+| **Problem Sets (3–4 sets)**          | 25%    | $\qquad$ Analytical and coding assignments covering key methods (e.g., propensity scores, IV, mediation).                                                                                                                      |
+| **Paper Critique & Discussion Lead** | 20%    | $\qquad$ Each student will lead one class discussion of an assigned paper. This involves reconstructing the authors' DAG, explicitly stating their assumptions, and proposing a plan to assess the robustness of the findings. |
+| **Final Project**                    | 35%    | $\qquad$ Independent research project framed as a target trial emulation. Includes a 10% proposal and 25% final paper.                                                                                                         |
+| **Final Presentation**               | 10%    | $\qquad$ 15-minute conference-style presentation defending your project's causal assumptions and interpreting the results.                                                                                                     |
+:::
+
+## Course Materials
+
+### Required (Freely Available Online)
+
+- Hernán, M. A., & Robins, J. M. (2024). *Causal Inference: What If*. Chapman & Hall/CRC.
+  [https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/)
+
+- Neal, B. (2020). *Introduction to Causal Inference*.
+  [https://www.bradyneal.com/causal-inference-course](https://www.bradyneal.com/causal-inference-course)
+
+### Recommended
+- Huntington-Klein, N. (n.d.). *The Effect: An Introduction to Research Design and Causality | The Effect*. Retrieved August 22, 2025, from [https://theeffectbook.net/](https://theeffectbook.net/)
+
+- Barrett, M., McGowan, L. D., & Gerke, T. (2025, August 21). Causal Inference in R. [https://www.r-causal.org/](https://www.r-causal.org/)
+- Cunningham, S. (2021). *Causal Inference: The Mixtape*. Yale University Press. URL: [https://mixtape.scunning.com](https://mixtape.scunning.com)
+- VanderWeele, T. J. (2015). *Explanation in Causal Inference*. Oxford University Press, 2015. (Excellent resource specifically for mediation).
+- Pearl J, Glymour M, Jewell NP. *Causal Inference in Statistics: A Primer.* Wiley, 2016. (Primer is a more accessible introduction to Pearl's framework). Focuses heavily on DAGs and structural causal models.
+- Imbens GW, Rubin DB. *Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction.* Cambridge University Press, 2015. (Focuses heavily on the potential outcomes framework and design-based inference).
+
+### Software
+- **Required:** R and RStudio (or another modern IDE like VS Code). While code will be demonstrated, students are expected to have intermediate proficiency in R. The focus will be on the application and interpretation of packages, not on learning R from scratch.
+- **Core Packages:** `tidyverse`, `dagitty`, `ggdag`, `MatchIt`, `WeightIt`, `cobalt`, `ivreg`, `mediation`, `EValue`.
+
+## Course Schedule (14 Weeks)
+
+### Part I: Foundations
+
+| Week | Dates      | Core Topic                                       | Primary Readings         | Project Link                      | Paper Critique                                                     |
+| ---- | ---------- | ------------------------------------------------ | ------------------------ | --------------------------------- | ------------------------------------------------------------------ |
+| 1    | Aug 19, 21 | What is a Causal Effect? Counterfactuals & SUTVA | HR Ch. 1–2; Neal Ch. 1–2 | Define your causal question       | Instructor-led demo critique (introducing assignment expectations) |
+| 2    | Aug 26, 28 | DAGs & Assumption Transparency                   | Neal Ch. 3; HR Ch. 6     | Draw a preliminary DAG            | Student critique                                                   |
+| 3    | Sep 2, 4   | Exchangeability, Positivity, Consistency         | HR Ch. 7; Neal Ch. 4     | Identify assumptions for your DAG | Student critique                                                   |
+| 4    | Sep 9, 11  | Confounding, Selection, Measurement Bias         | HR Ch. 8–9               | Consider biases in your dataset   | Student critique                                                   |
+
+### Part II: Estimation Methods
+
+| Week | Dates         | Core Topic                              | Primary Readings            | Project Link                       | Paper Critique   |
+| ---- | ------------- | --------------------------------------- | --------------------------- | ---------------------------------- | ---------------- |
+| 5    | Sep 16, 18    | Propensity Scores (matching, weighting) | HR Ch. 12–13; Neal Ch. 7    | Select adjustment strategy         | Student critique |
+| 6    | Sep 23, 25    | IPTW, MSMs, Doubly Robust Estimators    | HR Ch. 15; Neal Ch. 7.5–7.6 | Evaluate MSM relevance             | Student critique |
+| 7    | Sep 30, Oct 2 | G-computation                           | HR Ch. 20–21                | Explore g-methods for your project | Student critique |
+| 8    | Oct 7         | Instrumental Variables                  | HR Ch. 16; Neal Ch. 9       | Assess natural experiments         | Student critique |
+
+_**Note:** UNM Fall Break is Oct 9–10. Thursday's class is cancelled._
+
+### Part III: Advanced Topics & Applications
+
+| Week | Dates      | Core Topic                              | Primary Readings                 | Project Link              | Paper Critique   |
+| ---- | ---------- | --------------------------------------- | -------------------------------- | ------------------------- | ---------------- |
+| 9    | Oct 14, 16 | Effect Modification                     | HR Ch. 4–5; Neal Ch. 10          | **Project Proposal Due**  | Student critique |
+| 10   | Oct 21, 23 | Mediation Analysis I (Foundations)      | VanderWeele Ch. 1–2; Neal Ch. 14 | Refine DAG with mediators | Student critique |
+| 11   | Oct 28, 30 | Mediation II & Principal Stratification | VanderWeele Ch. 3; HR Ch. 23     | -                         | Student critique |
+| 12   | Nov 4, 6   | Sensitivity Analysis                    | Neal Ch. 8; HR Ch. 14            | Plan robustness checks    | Student critique |
+| 13   | Nov 11, 13 | Target Trial Emulation                  | HR Ch. 22                        | Reframe project as trial  | Student critique |
+| 14   | Nov 18, 20 | **Final Presentations**                 | –                                | Present findings          | –                |
+
+_**Note:** Thanksgiving Break is Nov 27-28._
+
+**Finals Week (Dec 8–13):** Final Project Paper Due.
+
+## Course Policies
+
+- **Late Work:** Deadlines are firm. Late work will be penalized 10% per day unless a prior arrangement is made for a documented emergency.
+- **Academic Integrity:** Collaboration on ideas is encouraged, but all submitted work must be your own.
+- **Participation & Respect:** Active, inclusive, and evidence-based dialogue is expected.
+- **Accessibility:** Students requiring accommodations should contact the Accessibility Resource Center and provide the instructor with an official letter.

@@ -1,0 +1,242 @@
+---
+title: "Tutorial: Using the emmeans R Package"
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+
+## 1. Introduction
+
+The `emmeans` package in R simplifies post-hoc analysis and estimation of marginal means from statistical models. It provides tools to estimate, compare, and test means across levels of predictors while accounting for the model structure.
+
+## Overview
+
+- **Purpose**: Provides estimated marginal means (EMMs) or least-squares means.
+- **Core Features**:
+  - Compute EMMs for any combination of factors.
+  - Perform pairwise comparisons or custom contrasts.
+  - Integrate with popular visualization packages like `ggplot2`.
+  - Easily handle model interactions and transformations.
+- **Key Supported Models**:
+  - Linear models (`lm`, `aov`).
+  - Generalized linear models (`glm`).
+  - Mixed-effects models (`lme4`, `nlme`).
+
+## What Are Marginal Means?
+
+Marginal means are predicted values from a model, adjusted to account for the distribution of covariates or other factors. They provide a clearer interpretation of group effects compared to raw means.
+
+## 2. Getting Started
+
+## Loading the Package
+
+```{r}
+library(emmeans)
+```
+
+## Example Dataset
+
+We will use the `warpbreaks` dataset, which contains data on the number of breaks in yarn (response variable `breaks`) across two factors: wool type (`wool`) and tension level (`tension`).
+
+## Basic Model
+
+```{r}
+# Fitting a linear model
+lm_model <- lm(breaks ~ wool * tension, data = warpbreaks)
+```
+
+## Basic Marginal Means
+
+```{r}
+# Marginal means by wool
+emmeans(lm_model, ~ wool)
+```
+
+## 3. Key Functions in `emmeans`
+
+## 3.1 `emmeans()`
+
+The `emmeans()` function is the foundation of the package, used to estimate marginal means.
+
+**Usage**:
+
+```r
+emmeans(object, specs, by = NULL, options = NULL, ...)
+```
+
+**Arguments**:
+
+- **`object`**: A fitted model (e.g., `lm`, `glm`, or `lmer`).
+- **`specs`**: Formula specifying factors for which marginal means are computed. Use `|` to specify conditions (e.g., `~ wool | tension`).
+- **`by`**: Variables to group results.
+- **`options`**: Adjustments like type of prediction (`response`, `link`, etc.).
+
+**Examples**:
+
+```{r}
+# Marginal means for wool
+emmeans(lm_model, ~wool)
+
+# Marginal means of tension within each wool group
+emmeans(lm_model, ~ tension | wool)
+```
+
+## 3.2 `contrast()`
+
+The `contrast()` function performs post-hoc comparisons between marginal means, such as pairwise comparisons or custom contrasts.
+
+**Usage**:
+
+```r
+contrast(object, method = "pairwise", interaction = FALSE, by = NULL, ...)
+```
+
+**Arguments**:
+
+- **`object`**: An `emmGrid` object (output of `emmeans()`).
+- **`method`**: Type of comparison. Common methods:
+	- `"pairwise"`: Pairwise differences.
+	- `"poly"`: Polynomial contrasts.
+	- `"eff"`: Effect contrasts (deviation from overall mean).
+- **`interaction`**: Defines interaction contrasts, generating contrasts of contrasts for multi-factor interactions.
+- **`by`**: Grouping variables for separate contrasts.
+
+**Examples**:
+
+```{r}
+# Pairwise comparisons of tension levels
+warp.emm <- emmeans(lm_model, ~ tension | wool)
+contrast(warp.emm, method = "pairwise")
+
+# Custom contrasts for tension levels
+contrast(warp.emm, list(mid.vs.ends = c(-1, 2, -1) / 2, lo.vs.hi = c(1, 0, -1)))
+```
+
+## 3.3 `pairs()`
+
+This function simplifies pairwise comparisons (shortcut for `contrast(…, method = "pairwise")`).
+
+**Usage**:
+
+```r
+pairs(object, reverse = FALSE, ...)
+```
+
+**Arguments**:
+
+- **`reverse`**: If `TRUE`, reverses the order of comparisons.
+
+**Example**:
+
+```{r}
+# Pairwise comparisons for tension
+pairs(warp.emm)
+```
+
+## 4. Advanced Functionality
+
+## 4.1 Interaction Contrasts
+
+Interaction contrasts allow you to compare interactions between factors. The `interaction` argument in `contrast()` enables this.
+
+**Example**:
+
+```{r}
+# Interaction contrast for wool and tension
+interaction_contrast <- contrast(warp.emm, interaction = c(wool = "eff", tension = "poly"))
+interaction_contrast
+coef(interaction_contrast)  # View coefficients
+```
+
+## 4.2 Scaling and Offsetting
+
+Use `scale` and `offset` to transform results for interpretation (e.g., converting units).
+
+**Example**:
+
+```{r}
+# Convert temperature from Celsius to Fahrenheit
+mod <- lm(Water.Temp ~ poly(stack.loss, degree = 2), data = stackloss)
+emm <- emmeans(mod, "stack.loss", at = list(stack.loss = 10 * (1:4)))
+contrast(emm, "identity", scale = 9 / 5, offset = 32)
+```
+
+## 4.3 Adjusting for Multiple Comparisons
+
+Use the `adjust` argument to control corrections like Bonferroni or Tukey:
+
+```{r}
+contrast(warp.emm, method = "pairwise", adjust = "tukey")
+```
+
+## 5. Visualizing Results
+
+## Interaction Plots
+
+The `emmip()` function creates interaction plots to visualize EMMs:
+
+```{r}
+# Interaction plot for wool and tension
+library(ggplot2)
+emmip(warp.emm, wool ~ tension)
+```
+
+## Pairwise Comparisons Plot
+
+```{r}
+# Pairwise comparison plot
+plot(pairs(warp.emm))
+```
+
+## 6. Common Issues and Troubleshooting
+
+## Common Issues
+
+1. **Degrees of freedom not available**:
+
+	- Some models (e.g., Bayesian) require manual specification of degrees of freedom.
+2. **Invalid contrast method**:
+
+	- Ensure the `method` matches the structure of your `emmGrid` object.
+
+## Best Practices
+
+- Always inspect the `emmGrid` object using `summary()` before applying contrasts.
+- Use `confint()` to obtain confidence intervals.
+- Apply `adjust` for proper corrections in multiple comparisons.
+
+## 7. Detailed Argument Reference
+
+## `emmeans()` Specific Arguments
+
+- **`specs`**: Defines the terms of interest. For example:
+	- `~ factor1`: Marginal means for `factor1`.
+	- `~ factor1 | factor2`: Marginal means of `factor1` grouped by `factor2`.
+
+## `contrast()` Specific Arguments
+
+- **`interaction`**: Defines contrasts for interactions. Example:
+
+```{r}
+contrast(warp.emm, interaction = list(wool = "pairwise", tension = "eff"))
+```
+
+- **`scale` and `offset`**: For transforming estimates. Example:
+
+```{r}
+contrast(warp.emm, method = "identity", scale = 2, offset = 1)
+```
+## 8. Conclusion
+
+The `emmeans` package provides a robust framework for estimating and interpreting marginal means. With extensive support for complex models and versatile post-hoc analysis tools, it is essential for data analysis workflows.
+
+## Next Steps
+
+- Explore advanced vignettes in the package documentation.
+- Integrate results into visualizations with `ggplot2`.
+
+## 9. References and Resources
+
+- [emmeans CRAN Page](https://cran.r-project.org/package=emmeans)
+- [Vignettes: Estimated Marginal Means](https://cran.r-project.org/web/packages/emmeans/vignettes/emmeans.html)
+- [GitHub Repository](https://github.com/rvlenth/emmeans)

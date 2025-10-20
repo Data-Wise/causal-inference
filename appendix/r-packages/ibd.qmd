@@ -1,0 +1,65 @@
+---
+title: "Tutorial for the ibd Package"
+date: "3/15/2025"
+date-modified: last-modified
+date-format: long
+---
+
+# A Comprehensive Tutorial on the R Package 'ibd' for Incomplete Block Designs
+
+The `ibd` package provides tools for creating and analyzing **Incomplete Block Designs** (IBDs) in R, facilitating efficient experimentation when it's not possible to include all treatments in each experimental block.
+
+## Introduction
+
+### Overview
+
+The 'ibd' R package (version 1.5) is designed for working with Incomplete Block Designs - experimental arrangements where not all treatments appear in every block[2]. This is particularly useful in situations where testing all treatments in a single block is impractical due to resource constraints or experimental limitations.
+
+Key functions in the package include:
+
+- `find_design()` - For discovering efficient IBD designs
+- `bibd()` - For creating Balanced Incomplete Block Designs
+- `pbibd()` - For creating Partially Balanced Incomplete Block Designs
+- `design_efficiency()` - For evaluating the statistical efficiency of designs
+- `analyze_ibd()` - For analyzing data collected from incomplete block experiments
+
+### Use Cases
+
+- Agricultural field trials with limited land or resources
+- Clinical trials where patient availability or grouping is constrained
+- Industrial experiments where testing all treatments in each batch is unfeasible
+- Plant breeding and genomic selection studies where not all lines can be tested in all locations[8]
+- Any experimental scenario where resource constraints prevent complete blocking
+
+### Benefits
+
+- Enables efficient experimentation with a large number of treatments
+- Provides statistically rigorous designs when complete blocking is impossible
+- Optimizes experimental efficiency by balancing treatment comparisons
+- Reduces experimental costs while maintaining statistical power
+- Facilitates the analysis of data collected from incomplete designs[8]
+
+## Getting Started
+
+### Loading the Package
+
+```{r}
+pacman::p_load(ibd)
+```
+
+### Basic Usage
+
+Let's create a simple balanced incomplete block design for an experiment with 7 treatments in blocks of size 3:
+
+```{r}
+# Create a balanced incomplete block design
+design <- ibd::bibd(v = 7, b = 3, k = 3, r = 3, lambda = 1)
+
+# View the design structure
+print(design)
+
+# Check the properties of the design
+summary(design)
+```
+
+This creates a design where each treatment appears in 3 blocks, and each pair of treatments appears together in exactly 1 block, ensuring balance in treatment comparisons.

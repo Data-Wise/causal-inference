@@ -1,0 +1,222 @@
+---
+title: "Creating Data Frames in R"
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+
+# Creating Data Frames in R
+
+## Introduction
+
+### Overview
+
+Creating data frames is fundamental in R for managing and analyzing tabular data. This tutorial explores:
+
+- **Base R Functions:** `data.frame()` and `as.data.frame()`.
+- **`tidyverse` Functions:** `tibble::tibble()` and `dplyr::data_frame()`.
+
+Data frames allow structured data storage, enabling row and column manipulations akin to spreadsheets.
+
+### Use Cases
+
+- Cleaning and structuring raw data.
+- Aggregating results from computations.
+- Preparing data for visualization or modeling.
+
+### Benefits
+
+- **Base R:** Straightforward and widely supported.
+- **`tidyverse`:** Intuitive syntax, compatibility with the pipe operator `|>`, and enhanced features like printing.
+
+## Getting Started
+
+### Loading the Package
+
+```{r}
+# Use pacman to load packages
+pacman::p_load(tidyverse)
+```
+
+### Basic Usage in Base R
+
+```{r}
+# Create a simple data frame
+data_base <- data.frame(
+    Name = c("Alice", "Bob", "Charlie"),
+    Age = c(25, 30, 35),
+    Score = c(85.5, 90.3, 78.9)
+)
+data_base
+```
+
+### Basic Usage in `tidyverse`
+
+```{r}
+# Create a tibble
+data_tidy <- tibble::tibble(
+    Name = c("Alice", "Bob", "Charlie"),
+    Age = c(25, 30, 35),
+    Score = c(85.5, 90.3, 78.9)
+)
+data_tidy
+```
+
+## Key Functions and Features
+
+### Base R Functions
+
+#### Description
+
+`data.frame()` creates data frames from vectors or lists.
+
+#### Syntax
+
+```r
+#| echo: fenced
+data.frame(x, ..., row.names = NULL, check.rows = FALSE, check.names = TRUE)
+```
+
+#### Example
+
+```{r}
+data_example <- data.frame(
+    ID = 1:3,
+    Category = c("A", "B", "A"),
+    Value = c(100, 200, 150)
+)
+data_example
+```
+
+### `tidyverse` Functions
+
+#### Description
+
+`tibble::tibble()` constructs modern data frames with automatic column type detection.
+
+#### Syntax
+
+```r
+tibble::tibble(...)
+```
+
+#### Example
+
+```{r}
+data_tidy_example <- tibble::tibble(
+    ID = 1:3,
+    Category = c("A", "B", "A"),
+    Value = c(100, 200, 150)
+)
+data_tidy_example
+```
+
+## In-Depth Examples
+
+### Example 1: Joining Data Frames
+
+#### Objective
+
+Combine two data frames by a common key.
+
+#### Steps
+
+```{r}
+df1 <- tibble::tibble(ID = 1:3, Value1 = c(10, 20, 30))
+df2 <- tibble::tibble(ID = 2:4, Value2 = c(40, 50, 60))
+merged <- dplyr::left_join(df1, df2, by = "ID")
+merged
+```
+
+#### Output
+
+Observe how `NA` fills for unmatched rows.
+
+### Example 2: Filtering and Selecting
+
+#### Objective
+
+Filter rows where `Value1 > 15` and select specific columns.
+
+#### Steps
+
+```{r}
+filtered <- merged |>
+    dplyr::filter(Value1 > 15) |>
+    dplyr::select(ID, Value1)
+filtered
+```
+
+## Advanced Features
+
+### Customization
+
+#### Adjust Column Names
+
+```{r}
+colnames(data_base) <- c("FullName", "Years", "ExamScore")
+data_base
+```
+
+#### Add Calculated Columns
+
+```{r}
+data_tidy <- data_tidy |>
+    dplyr::mutate(Grade = ifelse(Score > 80, "Pass", "Fail"))
+data_tidy
+```
+
+### Integration with Visualization
+
+Generate a plot from the data.
+
+```{r}
+ggplot2::ggplot(data_tidy, ggplot2::aes(x = Age, y = Score)) +
+    ggplot2::geom_point() +
+    ggplot2::labs(title = "Age vs. Score", x = "Age", y = "Score")
+```
+
+### Optimization Tips
+
+- Use `data.table` for large data sets.
+- Predefine column types for better memory usage.
+
+## Troubleshooting and FAQs
+
+### Common Issues
+
+1. **Data Mismatch:** Ensure column lengths match when creating data frames.
+
+```r
+# Error example
+# data.frame(a = 1:3, b = 1:4)
+```
+
+2. **Type Conversion Warnings:** Avoid unintended type coercion by specifying `stringsAsFactors = FALSE`.
+
+### FAQs
+
+- **Why use `tibble`?** `tibble` provides cleaner, more readable output, and better handling of column names and types.
+
+## Best Practices
+
+- Use consistent column names and data types.
+- Validate data integrity before further processing.
+- Leverage `tidyverse` pipes for readability and maintainability.
+
+## Conclusion
+
+### Summary
+
+- Base R is great for quick setups and legacy code.
+- `tidyverse` excels for scalable, readable, and modern workflows.
+
+### Next Steps
+
+Explore advanced techniques like `data.table` or `R6` for complex data operations.
+
+## References and Resources
+
+- [Base R Documentation](https://www.rdocumentation.org/)
+- [Tidyverse Guide](https://www.tidyverse.org/)
+- [R for Data Science](https://r4ds.had.co.nz/)

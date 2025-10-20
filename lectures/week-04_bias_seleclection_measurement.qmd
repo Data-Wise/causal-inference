@@ -1,0 +1,590 @@
+---
+title: "Confounding and Selection Bias"
+---
+
+# Overview
+
+Welcome to Week 4. In our last session, we established a formal definition of **confounding** and introduced the **backdoor criterion** as our primary tool for identifying causal effects by conditioning on a sufficient set of covariates. The central lesson was that to estimate the causal effect of an exposure $A$ on an outcome $Y$, we must block all non-causal paths between them.
+
+This week, we confront a critical and counter-intuitive reality: conditioning on variables is not always helpful. In fact, conditioning on the *wrong* variables can introduce bias where none existed. We will explore two major types of "bad controls":
+
+1. **Mediators:** Variables that lie on the causal pathway between exposure and outcome.
+2. **Colliders:** Variables that are a common *effect* of the exposure and the outcome (or their ancestors).
+
+The second half of our week is dedicated to **selection bias**. We will treat it not as a separate, unrelated problem, but as a special, and very common, case of collider-stratification bias. This powerful insight, articulated clearly in @hernan2020causalwhatif, allows us to use the same graphical tool—the DAG—to diagnose and reason about confounding and selection bias simultaneously.
+
+# Learning Objectives
+
+By the end of this week's module and lab, you will be able to:
+
+1. **Distinguish** between confounders, mediators, and colliders on a Directed Acyclic Graph (DAG) and explain the consequences of conditioning on each.
+2. **Identify** potential "bad controls" in a research scenario and articulate why adjusting for them would bias the total causal effect estimate.
+3. **Define** selection bias formally as conditioning on a variable that is a collider or a descendant of a collider.
+4. **Construct** DAGs that include a selection node ($S$) to represent and diagnose potential selection bias in study designs (e.g., from loss-to-follow-up or Berkson's paradox).
+5. **Simulate** data in R to demonstrate how conditioning on a collider induces a spurious association and how selection into a dataset can bias an otherwise valid causal estimate.
+
+# R Packages
+
+We'll use the following packages this week. `pacman` will install any missing packages for you.
+
+```{r}
+#| label: load-packages
+#| message: false
+#| warning: false
+
+if (!require("pacman")) {
+  install.packages("pacman")
+}
+pacman::p_load(
+  dagitty, # For creating and analyzing DAGs
+  ggdag, # For plotting DAGs with ggplot2
+  tidyverse, # For data manipulation and visualization
+  broom, # For tidying model outputs
+  knitr # For table formatting
+)
+
+# Set a consistent theme for our plots
+theme_set(theme_dag())
+```
+
+# Comprehensive Topic Explanation
+
+## The Problem with "Controlling for Everything"
+
+A common, but misguided, impulse in observational research is to include every available pre-treatment covariate in a regression model. This is sometimes called the "Table 2 Fallacy" or "kitchen sink" regression. The hope is that by conditioning on a rich set of variables, we are more likely to have satisfied the backdoor criterion and controlled for confounding.
+
+However, causal inference is not about blind adjustment; it's about *principled* adjustment guided by a causal model. A variable's role in a causal system determines whether we should condition on it. As we will see, conditioning on the wrong variables is as damaging as failing to condition on the right ones.
+
+## "Bad Controls": Why More Adjustment Isn't Always Better
+
+A "bad control" is any variable that, when conditioned on, either introduces bias or blocks a causal path of interest. We will focus on the two most important types: mediators and colliders.
+
+## Mediators: Blocking the Causal Path
+
+A **mediator** (or intermediate variable) is a variable that lies on the causal pathway from the exposure $A$ to the outcome $Y$. The causal structure is $A \rightarrow M \rightarrow Y$.
+
+  - **Total Causal Effect**: The overall effect of $A$ on $Y$ is the sum of its direct effect ($A \rightarrow Y$) and its indirect effect ($A \rightarrow M \rightarrow Y$).
+  - **The Problem with Adjustment**: When we condition on a mediator $M$, we block the indirect causal path. The resulting estimate is only for the *direct effect* of $A$ on $Y$. If our research question is about the *total effect* of the exposure, then adjusting for a mediator will bias our estimate.
+
+::: {.callout-example}
+
+## Example: Aspirin, Blood Clotting, and Heart Attacks
+
+Suppose we want to estimate the total effect of taking aspirin ($A$) on the risk of a heart attack ($Y$). A primary mechanism by which aspirin works is by reducing blood clotting ($M$).
+
+The DAG is: **Aspirin** $\rightarrow$ **Blood Clotting** $\rightarrow$ **Heart Attack**.
+
+If we run a regression of `Heart Attack ~ Aspirin + Blood Clotting`, we are asking: "What is the effect of Aspirin on heart attack risk *among people with the same level of blood clotting*?" This effectively removes the very pathway through which aspirin has its intended effect. Our estimate for Aspirin would be biased towards the null, reflecting only any other potential non-clotting-related mechanisms.
+
+:::
+
+## Colliders: Creating Spurious Associations
+
+A **collider** is a variable that is a common *effect* of two other variables. In the context of a DAG with exposure $A$ and outcome $Y$, a variable $C$ is a collider if the path is $A \rightarrow C \leftarrow Y$.
+
+This is the most dangerous and counter-intuitive structure in causal inference.
+
+  - **Unconditionally Independent**: If two variables $A$ and $Y$ are marginally independent (no path between them), they are unassociated.
+  - **Conditionally Dependent**: **Conditioning on a collider opens the path between its causes.** It creates a spurious, non-causal association between $A$ and $Y$ where none existed before.
+
+This phenomenon is often called **collider-stratification bias** or **endogenous selection bias**.
+
+## Selection Bias as a Special Case of Collider Bias
+
+The insight that selection bias is simply collider bias is one of the most unifying concepts in modern epidemiology (@hernan2020causalwhatif, Ch. 8). We can represent the mechanism of selection into our study with a special node, $S$. Typically, $S=1$ means an individual is included in the analysis, and $S=0$ means they are not.
+
+**Selection bias occurs whenever we condition on a collider, and our analysis sample is, by definition, conditioned on $S=1$.**
+
+Therefore, selection bias is present if our selection variable $S$ is a collider on a path between $A$ and $Y$ (or their ancestors).
+
+::: {.callout-example}
+
+## Classic Examples of Selection Bias
+
+1. **Berkson's Paradox (Hospital-based studies):** Suppose we are studying the relationship between two independent diseases, say diabetes ($A$) and cholecystitis ($Y$), using a hospital dataset. A patient is likely to be hospitalized ($S=1$) if they have diabetes, or if they have cholecystitis, or both.
+
+	  - **DAG:** Diabetes $\rightarrow$ Hospitalization $\leftarrow$ Cholecystitis.
+	  - **Bias:** Hospitalization ($S$) is a collider. In the general population, the two diseases are unassociated. But *among hospitalized patients*, knowing a patient has diabetes makes it *less likely* they have cholecystitis to explain their hospitalization. Conditioning on $S=1$ creates a spurious inverse association.
+
+2. **Loss to Follow-up (Cohort Studies):** We are studying the effect of a toxic exposure ($A$) on mortality ($Y$). The study requires yearly follow-up visits. Suppose the exposure itself causes side effects that make people more likely to drop out of the study ($A \rightarrow S=0$). Also suppose that people who are becoming sicker (a precursor to $Y$) are also more likely to miss visits and drop out ($Y \leftarrow U \rightarrow S=0$, where $U$ is health status).
+
+	  - **DAG:** $A \rightarrow S \leftarrow U \rightarrow Y$. (Here we model remaining in the study, S, being caused by treatment and health status).
+	  - **Bias:** Remaining in the study ($S=1$) is a collider. By analyzing only the subjects who complete the study, we condition on this collider, inducing a spurious association between $A$ and $Y$.
+:::
+
+# Intuitive Clarifications of Challenging Ideas
+
+## Analogy: The Sprinkler, Rain, and Wet Grass
+
+This is a classic analogy from @pearl2009causality used to understand colliders.
+
+  - Let $A$ = The sprinkler is on.
+  - Let $Y$ = It is raining.
+  - Let $C$ = The grass is wet.
+
+The causal structure is: **Sprinkler** $\rightarrow$ **Wet Grass** $\leftarrow$ **Rain**.
+
+"Wet Grass" is a collider.
+
+  - **Unconditionally:** In general, knowing the sprinkler is on tells you nothing about whether it's raining. $A$ and $Y$ are independent.
+  - **Conditionally:** Suppose you look outside and see **the grass is wet** ($C=1$). Now, if you also learn that the **sprinkler is on** ($A=1$), you would rightly conclude that it is probably **not raining** ($Y=0$). The two independent causes have become conditionally dependent (in this case, negatively correlated) once we know their common effect.
+
+## Confounder vs. Collider: The Golden Rule of Adjustment
+
+The most critical distinction to master is between a confounder and a collider.
+
+| Feature         | Confounder ($L$)                               | Collider ($C$)                                |
+| --------------- | ---------------------------------------------- | --------------------------------------------- |
+| **Visual (DAG)**| A *common cause*: $A \leftarrow L \rightarrow Y$ | A *common effect*: $A \rightarrow C \leftarrow Y$ |
+| **Path Type** | Creates a "backdoor" non-causal path.          | Is the endpoint of a "v-structure".           |
+| **Bias** | **Causes** bias if left unadjusted.            | **Creates** bias if adjusted for.             |
+| **Action** | **Adjust** for it to block the backdoor path.  | **Do NOT adjust** for it. Leave it alone.     |
+
+
+# Simple, Hand-Calculation Numerical Example(s)
+
+## Demonstrating Collider Bias by Hand
+
+Let's prove numerically that conditioning on a collider induces an association.
+
+Suppose we have a population of 1000 people. We are interested in a gene ($A$) and a behavior ($Y$), which are, in this hypothetical world, completely independent. Let's say a person can either have the gene ($A=1$) or not ($A=0$), and they can either engage in the behavior ($Y=1$) or not ($Y=0$).
+
+  - Prevalence of Gene: $P(A=1) = 0.5$
+  - Prevalence of Behavior: $P(Y=1) = 0.5$
+  - Because they are independent, the joint probability is just the product: $P(A=1, Y=1) = P(A=1) \times P(Y=1) = 0.25$.
+
+Now, let's introduce a collider, $C$, which is "being selected into a special study." The study only recruits people who have *either* the gene or the behavior. So, $C=1$ if $A=1$ or $Y=1$.
+
+Let's build a table for our population of 1000:
+
+| Gene (A) | Behavior (Y) | Number of People (Total Pop) | Selected into Study (C=1)? |
+|:--------:|:------------:|:----------------------------:|:--------------------------:|
+|     0    |       0      | $1000 \times 0.5 \times 0.5 = 250$ |             No             |
+|     0    |       1      | $1000 \times 0.5 \times 0.5 = 250$ |             Yes            |
+|     1    |       0      | $1000 \times 0.5 \times 0.5 = 250$ |             Yes            |
+|     1    |       1      | $1000 \times 0.5 \times 0.5 = 250$ |             Yes            |
+
+**Step 1: Check for association in the full population.**
+The risk of the behavior ($Y=1$) among those without the gene ($A=0$) is:
+$P(Y=1 | A=0) = \frac{N(A=0, Y=1)}{N(A=0)} = \frac{250}{250+250} = 0.5$
+The risk of the behavior ($Y=1$) among those with the gene ($A=1$) is:
+$P(Y=1 | A=1) = \frac{N(A=1, Y=1)}{N(A=1)} = \frac{250}{250+250} = 0.5$
+The risks are identical. As designed, **there is no association between A and Y** in the full population.
+
+**Step 2: Check for association *within the study sample* (i.e., conditional on C=1).**
+Our study sample consists of the 750 people for whom $C=1$.
+
+  - Among those in the study who do NOT have the gene ($A=0$), all 250 of them MUST have the behavior ($Y=1$).
+	$P(Y=1 | A=0, C=1) = \frac{N(A=0, Y=1, C=1)}{N(A=0, C=1)} = \frac{250}{250} = 1.0$
+  - Among those in the study who DO have the gene ($A=1$), some have the behavior ($Y=1$) and some don't ($Y=0$). The total number of people with the gene in the study is $250+250=500$.
+	$P(Y=1 | A=1, C=1) = \frac{N(A=1, Y=1, C=1)}{N(A=1, C=1)} = \frac{250}{500} = 0.5$
+
+The risks are now completely different (1.0 vs 0.5)\! By restricting our analysis to the study sample, we have created a spurious negative association. It looks like having the gene is "protective" against the behavior, which is false. This is collider bias.
+
+# R Code Examples & Interpretation
+
+## Visualizing Causal Structures with `dagitty` and `tikz`
+
+First, let's visualize the three key structures: confounder, mediator, and collider.
+
+```{r}
+#| label: fig-dags
+#| fig-cap: "DAGs for Confounding, Mediation, and Collider Structures"
+#| fig-subcap:
+#|   - "Confounder (Common Cause)"
+#|   - "Mediator (Causal Pathway)"
+#|   - "Collider (Common Effect)"
+#| layout-ncol: 3
+
+# Confounder
+plot(dagitty("dag { L -> A -> Y; L -> Y }"))
+
+# Mediator
+plot(dagitty("dag { A -> M -> Y }"))
+
+# Collider
+plot(dagitty("dag { A -> C <- Y }"))
+```
+
+<!-- 
+For a higher quality output suitable for publications, we can use LaTeX's `tikz` package.
+
+```{.tikz}
+\begin{figure}
+\centering
+\begin{tikzpicture}[node distance=1.5cm, main/.style={draw, circle}]
+    \node[main] (A) {$A$};
+    \node[main] (Y) [right of=A] {$Y$};
+    \node[main] (C) [below of=A, yshift=-0.5cm, xshift=0.75cm] {$C$};
+    \path[->] (A) edge (C);
+    \path[->] (Y) edge (C);
+    \caption{A Collider Structure Drawn with TiKZ}
+\end{tikzpicture}
+\end{figure}
+``` -->
+
+## Simulating and Identifying Collider Bias
+
+Let's replicate our hand-calculation example in R. We'll simulate data where an exposure `A` and outcome `Y` are independent, but both cause a third variable, `C`.
+
+```{r}
+#| label: sim-collider
+#| message: false
+#| warning: false
+
+set.seed(123)
+n <- 10000
+# A and Y are independent standard normal variables
+df <- tibble(
+  A = rnorm(n),
+  Y = rnorm(n)
+)
+
+# C is a collider, caused by both A and Y
+df <- df |>
+  mutate(C = 0.8 * A + 0.8 * Y + rnorm(n))
+
+# Model 1: The correct model (no adjustment)
+# We regress Y on A. The coefficient should be near 0.
+m1 <- lm(Y ~ A, data = df)
+
+# Model 2: The incorrect model (adjusting for collider C)
+# We regress Y on A, but control for C. This will induce bias.
+m2 <- lm(Y ~ A + C, data = df)
+
+# Tidy the results into a table
+bind_rows(
+  tidy(m1, conf.int = TRUE) |> mutate(Model = "Correct: Y ~ A"),
+  tidy(m2, conf.int = TRUE) |> mutate(Model = "Incorrect: Y ~ A + C")
+) |>
+  filter(term == "A") |>
+  select(Model, term, estimate, p.value, conf.low, conf.high) |>
+  kable(
+    caption = "Comparing Models With and Without Collider Adjustment",
+    digits = 3,
+    col.names = c(
+      "Model Specification",
+      "Term",
+      "Estimate",
+      "P-value",
+      "2.5%",
+      "97.5%"
+    )
+  )
+```
+
+**Interpretation:**
+As you can see from the table, in the correct model (`Y ~ A`), the coefficient for `A` is very close to zero and the p-value is large. This correctly reflects our data generating process where `A` and `Y` are independent.
+
+However, in the incorrect model where we foolishly "control for" the collider `C`, the coefficient for `A` becomes -0.47 with a tiny p-value. The model has manufactured a strong, spurious negative association. This demonstrates that adjusting for a collider is a critical error that can lead to completely wrong conclusions.
+
+## Diagnosing Paths with `dagitty`
+
+The `dagitty` package is more than just a plotting tool; it's an analysis engine. We can ask it to identify adjustment sets.
+
+```{r}
+#| label: dagitty-analysis
+
+# Define the collider DAG
+collider_dag <- dagitty("dag{ A -> C <- Y }")
+
+# What paths exist between A and Y?
+paths(collider_dag, from = "A", to = "Y")
+```
+
+The output shows `paths: 0`, meaning there are no open paths between A and Y. They are d-separated.
+
+Now, what happens if we condition on `C`?
+
+```{r}
+#| label: dagitty-analysis-conditioned
+# Check paths when conditioning on C
+paths(collider_dag, from = "A", to = "Y", Z = "C")
+```
+
+`dagitty` confirms that conditioning on `C` **opens** the path `A -> C <- Y`. This is the formal representation of collider bias.
+
+# 5. Hands-On R Lab
+
+## Lab: The Weight Loss App Paradox
+
+**Purpose:** This lab is designed to give you hands-on experience with identifying and simulating selection bias. You will see how restricting your dataset to a non-random subset of the population can severely bias your results.
+
+**Lab Objectives:**
+
+1. Draw a DAG to represent a realistic selection bias scenario.
+2. Write R code to simulate data based on your DAG.
+3. Compare the results of an analysis on the full population versus the selected sub-population.
+4. Interpret the difference and articulate the causal mechanism of the bias.
+
+**Scenario:**
+A tech company has developed a new smartphone app ($A$) designed to promote weight loss ($Y$). They provide you with a dataset to evaluate its effectiveness. The exposure, $A$, is whether a user was randomly encouraged to use a new, enhanced feature set ($A=1$) versus the standard app ($A=0$). The outcome, $Y$, is weight loss in kg after 6 months.
+
+However, there's a catch: the dataset they gave you only contains **active users**, defined as users who logged into the app at least once a week for all 6 months ($S=1$). Users who stopped using the app were dropped from the dataset.
+
+**Warm-up Questions (Retrieval Practice):**
+
+1. What is the difference between a common cause and a common effect? Which one is a collider?
+2. Why is conditioning on a mediator problematic if you want to estimate the total causal effect?
+3. In Berkson's Paradox, what is the collider?
+
+## **Task 1: Draw the DAG**
+
+Your first task is to draw a plausible DAG for this scenario. Think about what causes a user to remain active ($S=1$). It's likely related to their initial motivation (which might also be related to their baseline health, $U$) and whether they are seeing results (i.e., the app is working for them, which is related to the outcome $Y$). For simplicity, let's assume the enhanced feature ($A$) also directly increases engagement.
+
+**Instructions:** Draw a DAG including nodes for $A$ (Enhanced App), $Y$ (Weight Loss), $S$ (Active User), and an unmeasured confounder $U$ (e.g., User's Baseline Motivation/Health) that affects both weight loss and continued use.
+
+```{r}
+#| label: student-dag-task
+#| eval: false
+
+# TODO: Use dagitty code to create the DAG described above.
+# Hint: You'll need arrows from A to S, Y to S, and U to both Y and S.
+# Don't forget the main causal arrow from A to Y!
+
+my_dag <- dagitty::dagitty(
+  "dag {
+
+  # Your code here
+  
+}"
+)
+
+ggdag::ggdag(my_dag) +
+  ggdag::theme_dag()
+
+```
+
+<details>
+
+<summary>
+Solution to Task 1
+</summary>
+
+```{r}
+#| label: solution-dag
+#| fig-cap: "DAG for the Weight Loss App Selection Bias Scenario"
+
+# S is our selection variable (Active User)
+# U is an unmeasured confounder (Motivation/Health)
+selection_dag <- dagitty::dagitty(
+  "dag {
+  A [exposure]
+  Y [outcome]
+  S 
+  U 
+  
+  A -> Y
+  A -> S 
+  Y -> S
+  U -> Y
+  U -> S
+}"
+)
+
+ggdag::ggdag_status(selection_dag) +
+  labs(title = "Is S a Collider?")
+```
+
+**Explanation:** In this DAG, $S$ is a collider because it has arrows pointing into it from both $A$ and $Y$. It is also a collider on the path involving the unmeasured confounder $U$ ($A \rightarrow Y \leftarrow U \rightarrow S \leftarrow A$). By selecting only active users ($S=1$), we are conditioning on a collider, which will create bias.
+
+\</details>
+
+## **Task 2: Simulate Data Based on the DAG**
+
+Now, let's simulate a dataset that conforms to the causal structure you just drew.
+
+**Instructions:** Fill in the `…` sections in the skeleton code below to generate the data. We will assume a true average causal effect of the enhanced app ($A=1$) of **2 kg** weight loss.
+
+```{r}
+#| label: student-sim-task
+#| eval: false
+
+set.seed(42)
+n_full_pop <- 20000
+
+# 1. Simulate the unmeasured confounder U (Motivation)
+u <- rnorm(n_full_pop, mean = 10, sd = 2)
+
+# 2. Simulate the randomized exposure A
+a <- rbinom(n_full_pop, 1, 0.5)
+
+# 3. Simulate the outcome Y (Weight Loss)
+# Y should depend on A (the true effect) and U.
+# The coefficient for 'a' should be 2.
+y <- ... + ... + rnorm(n_full_pop, mean = 0, sd = 2)
+
+# 4. Simulate the selection mechanism S (Active User)
+# S should depend on A, Y, and U. We'll use a logistic model.
+# The probability of being active increases with A, Y, and U.
+prob_s <- plogis(... + ... + ... - 10) # The -10 is just to scale the probability
+s <- rbinom(n_full_pop, 1, prob_s)
+
+# 5. Assemble the full and selected datasets
+full_population <- tibble(A = a, Y = y, U = u, S = s)
+selected_sample <- filter(full_population, S == 1)
+
+# Check the sizes of the datasets
+cat("Full population size:", nrow(full_population), "\n")
+cat("Selected sample size:", nrow(selected_sample), "\n")
+
+```
+
+\<details>
+
+\<summary>Solution to Task 2\</summary>
+
+```{r}
+#| label: solution-sim
+set.seed(42)
+n_full_pop <- 20000
+
+# 1. Simulate U
+u <- rnorm(n_full_pop, mean = 10, sd = 2)
+
+# 2. Simulate A
+a <- rbinom(n_full_pop, 1, 0.5)
+
+# 3. Simulate Y. True effect of A is 2.
+y <- 2 * a + 0.5 * u + rnorm(n_full_pop, mean = 0, sd = 2)
+
+# 4. Simulate S
+prob_s <- plogis(0.5 * a + 0.3 * y + 0.2 * u - 10)
+s <- rbinom(n_full_pop, 1, prob_s)
+
+# 5. Assemble datasets
+full_population <- tibble(A = a, Y = y, U = u, S = s)
+selected_sample <- filter(full_population, S == 1)
+
+# Check sizes
+cat("Full population size:", nrow(full_population), "\n")
+cat("Selected sample size:", nrow(selected_sample), "\n")
+```
+
+\</details>
+
+## **Task 3: Analyze Both Datasets**
+
+Now for the moment of truth. Let's estimate the effect of $A$ on $Y$ in both the full population (our impossible, God's-eye view) and the realistic, selected sample that the company gave us.
+
+**Instructions:** Run a simple linear regression of $Y$ on $A$ for both the `full_population` and `selected_sample` datasets.
+
+```{r}
+#| label: student-analysis-task
+#| eval: false
+
+# TODO: Fit a model on the full population
+model_full <- lm(...)
+
+# TODO: Fit a model on the selected sample
+model_selected <- lm(...)
+
+# Compare results
+# (The code below will work once you've defined the models)
+bind_rows(
+  tidy(model_full) |> mutate(Sample = "Full Population"),
+  tidy(model_selected) |> mutate(Sample = "Selected Sample")
+) |>
+  filter(term == "A") |>
+  select(Sample, estimate, std.error, p.value) |>
+  kable(digits = 3)
+```
+
+\<details>
+
+\<summary>Solution to Task 3\</summary>
+
+```{r}
+#| label: solution-analysis
+#| tbl-cap: "Comparison of Causal Effect Estimates"
+
+# Fit a model on the full population
+model_full <- lm(Y ~ A, data = full_population)
+
+# Fit a model on the selected sample
+model_selected <- lm(Y ~ A, data = selected_sample)
+
+# Compare results
+bind_rows(
+  tidy(model_full) |> mutate(Sample = "Full Population (Truth)"),
+  tidy(model_selected) |> mutate(Sample = "Selected Sample (Biased)")
+) |>
+  filter(term == "A") |>
+  select(Sample, estimate, std.error, p.value) |>
+  kable(
+    digits = 3,
+    col.names = c("Sample", "Estimated Effect", "Std. Error", "P-value")
+  )
+```
+
+\</details>
+
+## **Task 4: Reflection and Interpretation**
+
+**Instructions:** Look at the table from Task 3. Answer the following questions.
+
+1. What is the estimated effect of the app in the full population? How does this compare to the true effect we specified in the simulation?
+2. What is the estimated effect of the app in the selected sample? Is it close to the true effect?
+3. What is the direction of the bias (i.e., did selection make the app look more or less effective)?
+4. In plain language, explain *why* the estimate from the selected sample is biased. What non-causal association was created by only looking at active users?
+
+\<details>
+
+\<summary>Solution to Reflection\</summary>
+
+1. The estimated effect in the **full population** is \~2.03. This is very close to the true effect of 2.0 we built into our simulation. Because $A$ was randomized, a simple comparison gives the right answer.
+2. The estimated effect in the **selected sample** is \~1.44. This is substantially lower than the true effect.
+3. The bias is **negative** or **towards the null**. Selection bias made the app appear less effective than it truly is.
+4. The estimate is biased because we conditioned on a collider ($S$). In this group of "active users," a spurious association is created. Think about it: among active users ($S=1$), if someone in the standard app group ($A=0$) is still active, they must have had very high initial motivation ($U$) or been getting unusually good results for other reasons. Conversely, someone in the enhanced app group ($A=1$) might remain active even with lower motivation because the app itself is more engaging. This creates a situation where, *within the selected group*, those with $A=0$ have, on average, higher values of unmeasured positive factors ($U$) than those with $A=1$. This makes the $A=0$ group's outcomes look better than they should, biasing the estimated effect of $A$ downwards.
+
+\</details>
+
+# 6. Common Pitfalls & Checks
+
+::: {.callout-warning}
+
+# The "Kitchen Sink" is not a Causal Strategy
+
+The biggest pitfall is adjusting for variables without a causal model. Never assume that controlling for more variables is better. Adjustment must be justified by a DAG and the goal of closing backdoor paths while not opening new ones by conditioning on colliders or mediators.
+
+:::
+
+::: {.callout-tip}
+
+# A Heuristic: Pre-Treatment vs. Post-Treatment
+
+A good rule of thumb is to **be extremely cautious about adjusting for any variable measured *after* the exposure has occurred**. Post-treatment variables are often mediators or colliders. While there are advanced methods that do adjust for post-treatment variables, they require great care. When in doubt, only adjust for pre-treatment variables that are common causes of exposure and outcome.
+
+:::
+
+::: {.callout-question}
+
+# Check Your Understanding
+
+**Q:** You are studying the effect of a job training program ($A$) on wages ($Y$). You have data on participants' employment status one month after the program ends ($M$). Should you include $M$ in your regression to estimate the total effect of the program on wages?
+
+**A:** No. Employment status one month after the program is very likely a **mediator**. The program ($A$) helps people get jobs ($M$), which in turn leads to higher wages ($Y$). Adjusting for $M$ would block this primary causal pathway and severely underestimate the total effect of the program.
+:::
+
+# 7. Advanced Teaching Activities & Interactivity
+
+1. **Think-Pair-Share: Critique a Real Paper.**
+
+	  - **Activity:** I will distribute a published observational study. In pairs, you will:
+		1. Read the "Methods" section to identify the exposure, outcome, and covariates the authors adjusted for.
+		2. Draw a plausible DAG representing the causal relationships between these variables *before* looking at the results.
+		3. Examine the list of variables in their main regression model (often "Table 2" or "Table 3"). Did they adjust for any potential mediators or colliders according to your DAG?
+		4. Be prepared to share your critique with the class. Does their adjustment strategy seem justified?
+2. **Problem-Based Case Study: The ICU Paradox.**
+
+	  - **Scenario:** A data scientist at a large hospital finds that patients admitted to the Intensive Care Unit (ICU) have a higher mortality rate than patients admitted to a general ward. The raw data suggests that ICU admission is harmful. However, we know that patients are sent to the ICU *because* they are severely ill. Let $A$ = ICU admission, $Y$ = Mortality, and $L$ = Severity of illness at admission.
+	  - **Prompt 1:** Draw the DAG for $A$, $Y$, and $L$. What is the role of $L$?
+	  - **Prompt 2 (The Twist):** Now, suppose you want to study the effect of a new ventilator procedure ($V$) given *within the ICU* on patient mortality ($Y$). Your dataset *only contains ICU patients*. What is the role of ICU admission in this new DAG? How might this affect your ability to estimate the causal effect of $V$ on $Y$ for *all* patients? (Hint: This is selection bias).
+
+3. **Interleaving Quiz:**
+
+	  - Q1: The structure $A \leftarrow L \rightarrow Y$ represents __________. To estimate the effect of A on Y, you should (adjust for / not adjust for) L.
+	  - Q2: You run a study on academic success ($Y$) and find a negative correlation between being a student-athlete ($A$) and GPA *among students at an elite university* ($C=1$). Is it possible that in the general population, being a student-athlete has no effect or even a positive effect on academic potential? What is the name for this phenomenon?
+	  - Q3: The assumption that $P(A=a|L=l) \> 0$ for all levels of $L$ is called __________.
+
+# References

@@ -1,0 +1,145 @@
+% ==========================
+% Fancy page style with optional logo (top-right)
+% ==========================
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{url}
+
+% Set graphics path to include assets directory
+\graphicspath{{assets/images/}{./assets/images/}{../assets/images/}}
+
+% ----- Brand accent for header rule (edit if desired)
+\definecolor{Accent}{HTML}{2451A6}
+
+% ----- Ensure enough headroom for logo and text
+\setlength{\headheight}{14pt}
+
+% ----- User-configurable toggles (can be overridden per .qmd via \renewcommand)
+\newif\ifshowlogo
+\showlogotrue                     % re-enable logo
+\providecommand{\logobase}{logo}  % just the filename since we set graphics path
+\providecommand{\logoheight}{11pt}    % logo height (fits default \headheight)
+\providecommand{\coursecode}{STAT 579}
+\providecommand{\coursesite}{\url{https://github.com/Data-Wise/causal-inference}}
+
+% Alternative logo paths for testing
+\providecommand{\logobasealt}{logo}
+\providecommand{\logobaseabs}{logo}
+
+% ----- Resolve a logo path if one exists (prefers .png, then .pdf)
+\newcommand{\resolvedlogopath}{}  % empty default
+
+% Try to find logo with different extensions
+\IfFileExists{\logobase.png}{%
+  \renewcommand{\resolvedlogopath}{\logobase.png}%
+}{%
+  \IfFileExists{\logobase.pdf}{%
+    \renewcommand{\resolvedlogopath}{\logobase.pdf}%
+  }{%
+    % none found; leave empty
+  }%
+}
+
+% Debug: Print the resolved path (comment out in production)
+\typeout{Logo path resolved to: \resolvedlogopath}
+\typeout{Logo base path: \logobase}
+\typeout{Logo absolute path: \logobaseabs}
+
+% ----- Fancy baseline (Quarto will emit \pagestyle{fancy} when page-style: fancy)
+\fancyhead{}%
+\fancyfoot{}%
+
+% Running marks: section on left, subsection on right
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+\renewcommand{\subsectionmark}[1]{\markright{#1}}
+
+% Header content
+\fancyhead[LE]{\small \textsc{\leftmark}}
+\fancyhead[RO]{%
+  \ifshowlogo
+    % Try logo first, fall back to text if it fails
+    \trylogomultiple
+  \else
+    \small \textsc{\rightmark}%
+  \fi
+}
+
+% Try multiple logo options
+\newcommand{\trylogomultiple}{%
+  % Try multiple logo files with error handling
+  \includegraphics[height=\logoheight]{logo-small.png}%
+}
+
+% Debug version that shows what's happening
+\newcommand{\debuglogoinclusion}{%
+  \textcolor{red}{[DEBUG: Attempting logo inclusion]}%
+  \includegraphics[height=\logoheight]{logo-small.png}%
+  \textcolor{green}{[DEBUG: Logo inclusion complete]}%
+}
+
+% Simple colored box as logo placeholder
+\newcommand{\logoplaceholder}{%
+  \textcolor{Accent}{\rule{1.5cm}{0.8pt}}%
+}
+
+% Fallback to text if logo fails
+\newcommand{\logofallback}{%
+  \textcolor{Accent}{\textbf{STAT}}%
+}
+
+% Alternative logo display method for debugging
+\newcommand{\debuglogo}{%
+  \ifshowlogo
+    \ifx\resolvedlogopath\empty
+      \textcolor{red}{[LOGO NOT FOUND]}%
+    \else
+      \textcolor{green}{[LOGO: \resolvedlogopath]}%
+    \fi
+  \else
+    \textcolor{blue}{[LOGO DISABLED]}%
+  \fi
+}
+
+% Test logo inclusion directly
+\newcommand{\testlogo}{%
+  \includegraphics[height=0.5cm]{logo.png}%
+}
+
+% Footer content
+\fancyfoot[LO,RE]{\small \coursecode\ — \texttt{\coursesite}}
+\fancyfoot[LE,RO]{\small Page \thepage\ of \pageref{LastPage}}
+
+% Rules: thin colored header rule; no foot rule
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{Accent}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrulewidth}{0pt}
+
+% Make LaTeX 'plain' (often page 1) consistent
+\fancypagestyle{plain}{%
+  \fancyhead{}%
+  \fancyfoot{}%
+  \fancyfoot[LE,RO]{\small Page \thepage\ of \pageref{LastPage}}
+  \fancyfoot[LO,RE]{\small \coursecode\ — \texttt{\coursesite}}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+% ----- Optional alternates you can select per document
+\fancypagestyle{clean}{%
+  \fancyhead{}\fancyfoot{}%
+  \fancyfoot[RO]{\small \thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
+\fancypagestyle{exam}{%
+  \fancyhead{}\fancyfoot{}%
+  \fancyhead[LO,LE]{\small \coursecode\ — Exam}%
+  \fancyhead[RO,RE]{\small \today}%
+  \fancyfoot[LO,LE]{\scriptsize \textcolor{gray}{Confidential — Do Not Distribute}}%
+  \fancyfoot[RO,RE]{\small \thepage/\pageref{LastPage}}%
+  \renewcommand{\headrulewidth}{0.4pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}

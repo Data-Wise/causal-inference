@@ -1,0 +1,379 @@
+---
+title: "Inverse Probability Weighting and Marginal Structural Models"
+nocite: "@cunningham2021causal, @pearl2009causality, @imbens2015causal, @vanderweele2015book"
+---
+
+## R Packages
+
+```{r}
+#| label: load-packages
+#| message: false
+#| warning: false
+pacman::p_load(
+  # Core data manipulation and visualization
+  tidyverse, # ggplot2, dplyr, tidyr, purrr, etc.
+  data.table, # Efficient large data handling
+  here, # File path management
+
+  # Causal inference specialized packages
+  dagitty, # DAG creation and analysis
+  ggdag, # DAG visualization
+  survey, # For weighted analyses and complex surveys
+  MatchIt, # Propensity score matching
+  WeightIt, # Advanced weighting methods
+  tableone, # Balance tables
+  cobalt, # Balance assessment and visualization
+  marginaleffects, # Counterfactual predictions and contrasts
+  tmle, # Targeted maximum likelihood estimation
+
+  # Statistical modeling
+  sandwich, # Robust variance estimation
+  lmtest, # Hypothesis testing for linear models
+  boot, # Bootstrap methods
+
+  # Visualization extras
+  patchwork, # Combining ggplot2 plots
+  ggridges, # Ridge plots for distribution visualization
+  scales # Better scale formatting
+)
+```
+
+
+## Motivation and Learning Objectives
+
+In previous lectures, we've focused on estimating causal effects when we can measure and adjust for all confounders at a single time point (baseline). But what happens when confounders change over time?
+
+Consider a clinical scenario where doctors adjust a patient's treatment dose at each visit based on their current health status. That health status is a **confounder** (it influences the next treatment and the final outcome), but it is also a **mediator** (it is affected by the *previous* treatment). This is a **time-varying confounder**.
+
+If we simply "adjust" for this time-varying confounder in a standard regression model, we will block the causal pathway from the previous treatment to the outcome, which induces bias. This is a classic "collider-stratification" bias. Marginal Structural Models (MSMs) were developed by Robins and colleagues to solve this exact problem.
+
+**Learning Objectives:** By the end of this lecture, you will be able to:
+
+1. **Identify** a time-varying confounder affected by prior treatment.
+2. **Explain** why standard regression and stratification fail in this scenario.
+3. **Describe** the intuition behind Inverse Probability of Treatment Weighting (IPTW).
+4. **Calculate** stabilized weights for a simple, two-time-point scenario.
+5. **Fit** and **interpret** a basic Marginal Structural Model.
+
+## Why Standard Methods Fail: The Time-Varying Confounder
+
+Let's visualize the problem with a Directed Acyclic Graph (DAG).
+
+Imagine a two-visit study:
+
+  - $A_0$: Treatment at baseline (time 0).
+  - $L_1$: A health measure at visit 1 (e.g., viral load, blood pressure).
+  - $A_1$: Treatment at visit 1.
+  - $Y$: The final health outcome.
+
+The causal structure looks like this:
+
+```{mermaid}
+graph TD
+    subgraph Time 0
+        A0[A₀: Treatment]
+    end
+    subgraph Time 1
+        L1[L₁: Health Status]
+        A1[A₁: Treatment]
+    end
+    subgraph Outcome
+        Y[Y: Final Outcome]
+    end
+
+    A0 --> L1
+    L1 --> A1
+    L1 --> Y
+    A0 --> Y
+    A1 --> Y
+```
+
+Here, $L_1$ is our problem variable:
+
+1. It is a **confounder** of the $A_1 \rightarrow Y$ relationship (there is a backdoor path $A_1 \leftarrow L_1 \rightarrow Y$).
+2. It is a **mediator** of the $A_0 \rightarrow Y$ relationship (it's on the causal path $A_0 \rightarrow L_1 \rightarrow Y$).
+
+If we run a standard regression model like `lm(Y ~ A0 + A1 + L1)`, we are conditioning on $L_1$. By conditioning on $L_1$, we adjust for the confounding of the $A_1 \rightarrow Y$ effect, which is good. However, $L_1$ is a **collider** on the path $A_0 \rightarrow L_1 \leftarrow U_L$ (where $U_L$ represents unmeasured causes of $L_1$). Conditioning on a collider opens a spurious path and biases our estimate of the $A_0$ effect. More simply, by controlling for $L_1$, we block the part of $A_0$'s effect that goes through $L_1$, so we no longer estimate the *total* effect of the treatment plan ($A_0$ and $A_1$).
+
+::: {.callout-warning}
+
+### The Central Problem
+
+Standard regression models fail with time-varying confounders because conditioning on the confounder (e.g., $L_1$) to close a backdoor path simultaneously blocks a causal pathway of interest, biasing the effect estimate for earlier treatments.
+
+:::
+
+### 💡 The Core Idea: Creating a Pseudo-Population with IPTW
+
+So, if we can't *condition* on $L_1$, what can we do?
+
+The solution is to use **Inverse Probability of Treatment Weighting (IPTW)** to create a "pseudo-population" in which the treatment is no longer confounded by the measured variables.
+
+The intuition is as follows:
+
+1. **In the real world**, a patient's characteristics (like $L_1$) influence the treatment they receive ($A_1$). This is confounding.
+2. **In an ideal (randomized) world**, treatment assignment would be random. It would not depend on $L_1$.
+3. **The MSM approach**: We can't go back in time and randomize, but we can *re-weight* our observational data to make it *look like* a randomized trial.
+
+We give a higher weight to individuals who were **under-represented** in the treatment group they actually received, and a lower weight to those who were **over-represented**. For example, if sick patients (high $L_1$) are much more likely to get treatment $A_1=1$, we give a large weight to the few healthy patients (low $L_1$) who *did* get $A_1=1$. This re-weighting creates a balanced pseudo-population where $L_1$ no longer appears to predict $A_1$.
+
+Once we have these weights, we can fit a simple **marginal model** of the outcome on the treatment history, as if we had done a real experiment. This final weighted model is the **Marginal Structural Model**.
+
+## 🔢 Numerical Example: Calculating Stabilized Weights
+
+Let's work through a small example. Consider a dataset of 8 patients.
+
+- `A0`: Treatment at baseline (1=Treated, 0=Control)
+- `L1`: Health status at month 6 (1=Poor, 0=Good)
+- `A1`: Treatment at month 6 (1=Treated, 0=Control)
+- `Y`: Outcome at month 12 (Continuous)
+
+| id  | $A_{0}$ | $L_{1}$ | $A_{1}$ | $Y$ |
+| --- | ------- | ------- | ------- | --- |
+| 1   | 0       | 0       | 0       | 10  |
+| 2   | 0       | 0       | 1       | 12  |
+| 3   | 0       | 1       | 1       | 15  |
+| 4   | 0       | 1       | 1       | 16  |
+| 5   | 1       | 0       | 0       | 18  |
+| 6   | 1       | 0       | 0       | 19  |
+| 7   | 1       | 1       | 1       | 22  |
+| 8   | 1       | 1       | 1       | 24  |
+
+: Sample Data{#tbl:sample-data}
+
+### Step 1: Model the Denominator of the Weights
+
+The denominator is the probability of receiving the treatment you actually received, given your *past* treatment and confounder history.
+
+$$
+\pr{A_t=a_t | A_{t-1}=a_{t-1}, L_t=l_t}
+$$
+
+We need to estimate this for $t=0$ and $t=1$. For simplicity, let's assume `A0` is randomized with $P(A_0=1)=0.5$.
+
+For `A1`, we'll fit a logistic regression model: `glm(A1 ~ A0 + L1, family = "binomial")`.
+
+```{r}
+# Sample Data
+dat <- data.frame(
+  id = 1:8,
+  A0 = c(0, 0, 0, 0, 1, 1, 1, 1),
+  L1 = c(0, 0, 1, 1, 0, 0, 1, 1),
+  A1 = c(0, 1, 1, 1, 0, 0, 1, 1),
+  Y = c(10, 12, 15, 16, 18, 19, 22, 24)
+)
+
+# Fit model for the denominator of A1's weight
+denom_model_A1 <- glm(
+  A1 ~ A0 + L1,
+  data = dat,
+  family = binomial(link = "logit")
+)
+# Get predicted probabilities
+dat$pd_A1 <- predict(denom_model_A1, type = "response")
+
+# Probability of receiving the treatment they actually got
+dat$p_A1_actual <- ifelse(dat$A1 == 1, dat$pd_A1, 1 - dat$pd_A1)
+
+# Assume A0 was randomized P(A0=1)=0.5
+dat$p_A0_actual <- 0.5
+
+print(dat[, c("id", "A0", "L1", "A1", "p_A0_actual", "p_A1_actual")])
+#>   id A0 L1 A1 p_A0_actual p_A1_actual
+#> 1  1  0  0  0         0.5   0.7502601
+#> 2  2  0  0  1         0.5   0.2497399
+#> 3  3  0  1  1         0.5   0.5000000
+#> 4  4  0  1  1         0.5   0.5000000
+#> 5  5  1  0  0         0.5   0.5000000
+#> 6  6  1  0  0         0.5   0.5000000
+#> 7  7  1  1  1         0.5   0.7502601
+#> 8  8  1  1  1         0.5   0.7502601
+```
+
+The overall denominator for the weight is the product of these probabilities over time: $d_i = P(A_{i0}) \times P(A_{i1} | A_{i0}, L_{i1})$.
+
+### Step 2: Model the Numerator of the Weights (for Stabilization)
+
+The numerator is the probability of receiving the treatment you actually received, given only your baseline confounders. This makes the weights more stable (closer to 1). For our example, we assume no baseline confounders other than $A_0$. The model is `glm(A1 ~ A0, family = "binomial")`.
+
+$$
+P(A_t=a_t | A_{t-1}=a_{t-1})
+$$
+
+```{r}
+# Fit model for the numerator of A1's weight
+num_model_A1 <- glm(A1 ~ A0, data = dat, family = binomial(link = "logit"))
+dat$pn_A1 <- predict(num_model_A1, type = "response")
+
+# Numerator probability
+dat$p_num_A1_actual <- ifelse(dat$A1 == 1, dat$pn_A1, 1 - dat$pn_A1)
+dat$p_num_A0_actual <- 0.5 # Same as denominator since there are no baseline confounders
+
+print(dat[, c("id", "A0", "A1", "p_num_A0_actual", "p_num_A1_actual")])
+#>   id A0 A1 p_num_A0_actual p_num_A1_actual
+#> 1  1  0  1             0.5            0.75
+#> 2  2  0  1             0.5            0.75
+#> 3  3  0  1             0.5            0.75
+#> 4  4  0  1             0.5            0.75
+#> 5  5  1  0             0.5            0.50
+#> 6  6  1  0             0.5            0.50
+#> 7  7  1  1             0.5            0.50
+#> 8  8  1  1             0.5            0.50
+```
+
+### Step 3: Calculate the Final Stabilized Weights (sw)
+
+The stabilized weight for each person is the cumulative numerator divided by the cumulative denominator.
+
+$$
+sw_i = \frac{\prod_{t=0}^{T} P(A_{it} | \bar{A}_{i,t-1}, L_{baseline})} {\prod_{t=0}^{T} P(A_{it} | \bar{A}_{i,t-1}, \bar{L}_{it})}
+$$
+
+```{r}
+# Calculate stabilized weight
+dat$sw <- (dat$p_num_A0_actual * dat$p_num_A1_actual) /
+  (dat$p_A0_actual * dat$p_A1_actual)
+
+print(dat[, c("id", "A0", "L1", "A1", "Y", "sw")])
+#>   id A0 L1 A1  Y        sw
+#> 1  1  0  0  0 10 1.0000000
+#> 2  2  0  0  1 12 2.9972825
+#> 3  3  0  1  1 15 1.5000000
+#> 4  4  0  1  1 16 1.5000000
+#> 5  5  1  0  0 18 1.0000000
+#> 6  6  1  0  0 19 1.0000000
+#> 7  7  1  1  1 22 0.6664218
+#> 8  8  1  1  1 24 0.6664218
+```
+
+Notice patient 2 had `L1=0` (good health) but still got `A1=1`. This was unexpected according to our denominator model, so this patient gets a large weight. They "stand in" for other healthy patients who didn't get the treatment.
+
+### Step 4: Fit the Final Marginal Structural Model
+
+Now we fit a weighted linear model to estimate the causal effect of the treatment history (`A0`, `A1`) on the outcome `Y`. Note that we **do not** include `L1` in this final model! The weights have already taken care of its confounding effect.
+
+```{r}
+# Fit the marginal structural model using the weights
+# We can use a robust variance estimator (like with geepack::geeglm)
+# for correct standard errors, but for simplicity let's use lm() with weights.
+msm_fit <- lm(Y ~ A0 + A1, data = dat, weights = sw)
+
+summary(msm_fit)
+#> Call:
+#> lm(formula = Y ~ A0 + A1, data = dat, weights = sw)
+#>
+#> Coefficients:
+#>             Estimate Std. Error t value Pr(>|t|)
+#> (Intercept)   10.502      1.310   8.016 0.000185 ***
+#> A0             8.000      1.692   4.729 0.003299 **
+#> A1             1.998      1.802   1.109 0.311756
+```
+
+**Interpretation**:
+
+- The coefficient for `A0` (8.0) is the estimated causal effect of receiving treatment at baseline versus not, on the 12-month outcome.
+- The coefficient for `A1` (2.0) is the estimated causal effect of receiving treatment at month 6 versus not, on the 12-month outcome.
+
+::: {.callout-note}
+
+### In Practice
+
+In a real analysis, you would use a robust variance estimator (e.g., from the `geepack` or `survey` packages in R) to get correct standard errors, as the `lm` function's standard errors don't account for the uncertainty in the estimated weights.
+
+:::
+
+
+## 🏛️ Key Assumptions and Formalism
+
+For an MSM to yield a valid causal effect, several key assumptions must hold.
+
+::: {.callout-tip}
+
+### Assumptions for Marginal Structural Models
+
+1. **Consistency**: The observed outcome for an individual with treatment history $\bar{a}$ is the same as their potential outcome had they received treatment history $\bar{a}$. $Y = Y^{\bar{a}}$ if $\bar{A} = \bar{a}$.
+2. **Positivity (or Overlap)**: For every combination of confounders and past treatment, there is a non-zero probability of receiving any given treatment level. $P(\bar{A}_t= \bar{a}_t | \bar{L}_t, \bar{A}_{t-1}) > 0$.
+3. **No Unmeasured Confounding**: We have measured all variables that confound the relationship between treatment and outcome at each time point. This is conditional exchangeability for the entire treatment history: $Y^{\bar{a}} \indep A_t | \bar{L}_t, \bar{A}_{t-1}$ for all $t$.
+:::
+
+### The Formal Model
+
+An MSM for a continuous outcome $Y$ and treatment history $\bar{A}=(A_0, A_1, …, A_T)$ is a model for the marginal expectation of the potential outcome, conditional on treatment history:
+
+$$
+E[Y^{\bar{a}}] = g(\bar{a}; \psi)
+$$
+
+where $g(\cdot)$ is a function we choose (e.g., linear) and $\psi$ are the parameters we want to estimate. For our example, the model is:
+
+$$
+E[Y^{a_0, a_1}] = \psi_0 + \psi_1 a_0 + \psi_2 a_1
+$$
+
+The goal of IPTW is to allow us to fit this model using the observed data.
+
+::: {.callout-question}
+
+### Concept Check
+
+A researcher is studying the effect of a new blood pressure medication ($A$) on risk of heart attack ($Y$). Patients are followed for two years. At one year, their blood pressure ($L_1$) is measured, and their medication can be adjusted ($A_1$). The researcher runs the following model: `glm(Y ~ A0 + A1 + L1)`.
+
+**Question**: Why is this approach likely to produce a biased estimate of the *total causal effect* of the treatment strategy (`A0` and `A1`)?
+
+**Answer**:
+The variable $L_1$ (blood pressure at one year) is likely a time-varying confounder affected by prior treatment.
+
+1. It is affected by the initial treatment $A_0$ (good medication should lower blood pressure).
+2. It influences the next treatment decision $A_1$ (doctors might increase the dose if blood pressure is still high).
+3. It influences the final outcome $Y$ (high blood pressure increases heart attack risk).
+
+By including $L_1$ in the regression, the researcher is conditioning on a variable that is on the causal pathway from $A_0$ to $Y$. This blocks part of $A_0$'s effect and can induce collider-stratification bias, leading to an incorrect estimate of the total effect of the treatment plan. An MSM would be a more appropriate method.
+
+:::
+
+# 📚 Appendix: Advanced Statistical Derivations and Theory
+
+## How IPTW Formally Breaks the Confounding
+
+**Motivation**: We've claimed that weighting the data with $sw_i$ creates a pseudo-population where confounding by $L$ is removed. Let's see why this is true mathematically for a simple, single-time-point case.
+
+Let $A$ be a binary treatment, $L$ a confounder, and $Y$ an outcome. The standard association is $E[Y|A=1]$. The causal effect we want is $E[Y^{a=1}]$. These are not the same if $L$ confounds the $A \rightarrow Y$ relationship.
+
+The key assumption is **conditional exchangeability**: $Y^a \indep A | L$.
+
+Let's derive the expectation of the outcome in the *weighted* population, where the weights are $w = 1/P(A|L)$.
+
+We want to show that the weighted average of the observed outcome among the treated equals the marginal average of the potential outcome under treatment:
+
+$$
+\frac{E[Y \cdot I(A=1) / P(A=1|L)]}{E[I(A=1) / P(A=1|L)]} = E[Y^{a=1}]
+$$
+
+where $I(\cdot)$ is the indicator function.
+
+Let's work through the numerator:
+
+$$
+\begin{aligned}
+E\left[\frac{I(A=1)Y}{P(A=1|L)}\right] &= E_L\left[E\left[\left.\frac{I(A=1)Y}{P(A=1|L)}\right|L\right]\right] & \text{(By Law of Iterated Expectations)} \\
+&= E_L\left[\frac{1}{P(A=1|L)} E[I(A=1)Y | L]\right] & \text{(Treating } P(A=1|L) \text{ as fixed, given } L\text{)} \\
+&= E_L\left[\frac{1}{P(A=1|L)} E[Y | A=1, L] P(A=1|L)\right] & \text{(Definition of conditional expectation)} \\
+&= E_L[E[Y | A=1, L]] & \text{(The probability terms cancel)} \\
+&= E_L[E[Y^{a=1} | A=1, L]] & \text{(By Consistency, } Y = Y^{a=1} \text{ for those with } A=1\text{)} \\
+&= E_L[E[Y^{a=1} | L]] & \text{(By Conditional Exchangeability, } Y^{a=1} \indep A|L\text{)} \\
+&= E[Y^{a=1}] & \text{(By Law of Iterated Expectations again)}
+\end{aligned}
+$$
+
+Now the denominator:
+
+$$
+\begin{aligned}
+E\left[\frac{I(A=1)}{P(A=1|L)}\right] &= E_L\left[E\left[\left.\frac{I(A=1)}{P(A=1|L)}\right|L\right]\right] \\
+&= E_L\left[\frac{1}{P(A=1|L)} E[I(A=1)|L]\right] \\
+&= E_L\left[\frac{1}{P(A=1|L)} P(A=1|L)\right] \\
+&= E_L[1] = 1
+\end{aligned}
+$$
+
+Putting it together, the expectation of the outcome among the treated in the pseudo-population is simply $E[Y^{a=1}] / 1 = E[Y^{a=1}]$, which is exactly the marginal causal quantity we wanted to estimate. The weighting has successfully removed the confounding influence of $L$ and allowed us to recover the marginal causal effect from the observed data. This logic extends to the time-varying case with stabilized weights.

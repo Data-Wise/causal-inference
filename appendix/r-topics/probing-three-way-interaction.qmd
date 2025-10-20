@@ -1,0 +1,282 @@
+---
+title: "Probing Three-Way Interaction in ANOVA"
+---
+
+This tutorial will include:
+
+- **Intuitive Understanding**: A conceptual explanation of simple effects and interaction probing in three-way ANOVA.
+- **Mathematical Foundations**: Detailed derivations and proofs of the relevant statistical principles.
+- **Application in R**: Step-by-step implementation using `emmeans`, including code examples and interpretations.
+- **Comprehension Questions**: Thought-provoking questions to test your understanding.
+- **Detailed Solutions**: Thorough explanations and solutions to the questions.
+
+```{r}
+#| label: tbl-factorial-anova
+pacman::p_load(emmeans)
+data("auto.noise")
+model <- aov(noise ~ size * type * side, data = auto.noise)
+summary(model)
+```
+
+Here we see significant two-way interactions (size:type, size:side) and a significant three-way interaction (size:type:side). The presence of these interactions warns us that interpreting main effects alone (e.g. `size` differences averaged over `type` and `side`) could be misleading. Instead, we proceed to probe the interactions with simple effects.
+
+## Using `emmeans` for simple effects
+
+ The `emmeans` package provides multiple approaches to examine simple effects:
+
+- **Conditioning with `|` in formula:** We can request *simple means and pairwise comparisons* by conditioning on one factor. For example, `emmeans(model, pairwise ~ size | type)` asks: give me the means of `size` at each level of `type`, and compare them. This yields the simple main effects of `size` within each `type` (with appropriate warnings or adjustments since `side` is also in the model).
+- **Using `emmeans` followed by `joint_tests()`:** This is useful for testing a **simple *omnibus* effect** (like an $F$ test for any difference among the levels of a factor within a condition). We first get an `emmeans` object restricted to the cells of interest, then apply `joint_tests(by = …)` to test that factor within each condition. This corresponds to the *F-tests of simple effects*.
+- **Using `contrast()`:** After obtaining an `emmeans` grid, we can specify custom contrasts or use built-in contrast families (`pairwise` for all pairwise differences, `consec` for consecutive comparisons, etc.) to probe specific comparisons.
+
+## Let's apply these to our example:
+
+1. **Simple two-way interactions**–examine each two-way interaction at levels of the third factor. Given the significant three-way interaction, any two-way interaction might differ by the third factor. For instance, we check the `size:type` interaction at each `side`:
+
+```{r}
+#| label: tbl-factorial-anova-results-4
+# Simple two-way interaction: size by type at each side
+emm_size_type = emmeans(model, ~ size * type | side) 
+emm_size_type |> joint_tests(by = "side")
+```
+
+This yields F-tests for the `size:type` interaction separately for `side = left` and `side = right` (each test has $df_1 = (a-1)(b-1) = 2$ for size(3)×type(2), and $df_{2} = \text{ residual df} = 24$). 
+
+ This indicates the size×type interaction is significant on the right side but maybe weaker on the left. That asymmetry is exactly what the three-way interaction captures.
+
+1. **Simple main effects**–now dive deeper. Say we want the *simple effect of `size` at each combination of `type` and `side`.* We can do that with:
+
+```{r}
+# Simple main effect of size at each combination of type and side
+emm_size_by_type_side = emmeans(model, ~ size | type * side)
+pairs(emm_size_by_type_side)  # pairwise comparisons for size within each type-side combo
+```
+
+Each section provides the differences between car sizes (S, M, L) when we fix type and side. The p-values tell us which differences are significant. We could also use `joint_tests()` on the same grid to get an omnibus F for "any size effect" at that condition, which should match the contrasts' overall significance.
+
+1. **Using `emmeans::joint_tests()` for simple effects**–an alternative to the above is:
+
+```{r}
+emmeans(model, ~ size | type * side)|> joint_tests(by = c("type","side"))
+```
+
+
+indicating whether the simple main effect of size is significant in each condition. One might find that, for example, size is highly significant for type A on the right side, but not significant for type B on the left side, etc. This aligns with the idea of the three-way interaction: the effect of size differs depending on type and side.
+
+1. **Complex custom contrasts**–We could even test specific theoretical contrasts. For example, if we predicted that "for type A, the difference between small and medium cars is larger on the right side than left side", this is a contrast of cell means: (mean[S,A,right] - mean[M,A,right]) vs (mean[S,A,left] - mean[M,A,left]). We can set up such differences with the `contrast()` function by specifying a matrix or using the `interaction` argument for factorial contrasts. However, for brevity, we'll focus on more standard simple effects.
+
+**Interpreting results:** After running these analyses, interpretation goes as follows: *We report where significant simple effects occur.* For instance, *"There was a significant simple effect of car size for Type A filters on the right side (F(2,24)=…, p<- .01), but no significant size effect for Type A on the left side (F(2,24)=…, p=.n.s.). Specifically, on the right side with Type A, medium cars had higher noise than small cars by 0.96 units (SE=0.16, p<- .001), and large cars had significantly lower noise than both small and medium cars (all p<- .001). In contrast, for Type B filters, …"* etc. We weave together the story that the interaction is painting.
+
+**Common issues and best practices:**
+
+- *Multiplicity:* If you test many simple effects (and then pairwise comparisons within them), adjust for multiple comparisons or focus on theoretically guided comparisons. `emmeans` allows p-value adjustments (e.g., `p.adjust = "bonferroni"` in the `contrast` call).
+- *Unbalanced data:* In unbalanced designs, use `emmeans(model, specs = …)` with care. The default in `emmeans` is equivalent to Type I (sequential) sums of squares unless you constructed the model with contrasts or used `car::Anova(type=3)`. For unbalanced data, consider using `emmeans` on a model with appropriate Type-II/III methods if necessary.
+- *Interactions with continuous covariates:* The concept of simple effects extends (simple slopes in regression, Johnson-Neyman technique, etc.), but `emmeans` can still help via its `emtrends` function for simple slopes. In a pure ANOVA (all categorical), we don't worry about that.
+- *Model assumptions:* Check homogeneity of variance (e.g., Levene's test) because the pooled error approach relies on it. If violated, you might need a different approach (perhaps a mixed model with heterogeneous variance, or separate one-way ANOVAs as a last resort, though that complicates error terms).
+
+Below is a concrete R example using a built-in dataset for demonstration (assuming `auto.noise` is available):
+
+```r
+library(emmeans)
+data("auto.noise")
+# Fit three-way ANOVA
+m <- lm(noise ~ size * type * side, data = auto.noise)
+
+# 3-way interaction significant? (assume yes from earlier)
+anova(m)
+
+## Simple two-way (size:type) at each side:
+emm_sxt <- emmeans(m, ~ size * type | side)
+joint_tests(emm_sxt, by = "side")
+
+## Output interpretation:
+# For each side, see if size:type interaction is sig.
+
+## Now simple main effect of size at each combination of type and side:
+emm_size <- emmeans(m, ~ size | type * side)
+simple_size_tests <- joint_tests(emm_size, by = c("type","side"))
+simple_size_pairs <- pairs(emm_size)
+
+# Inspect results
+simple_size_tests
+simple_size_pairs
+```
+
+This script will print tables for `simple_size_tests` (F tests for size in every type×side condition) and `simple_size_pairs` (the list of pairwise comparisons of size levels in each condition, with estimates and p-values). In practice, you would report the F tests to show where the effect is significant, and then the pairwise comparisons to elaborate on which specific differences drive that effect, ideally using an adjusted significance criterion.
+
+Finally, one might visualize the three-way interaction with an interaction plot (not asked for here), but it's often useful to plot, say, lines for `size` across `side`, faceted by `type`. This can qualitatively show the interaction patterns that our tests confirm statistically.
+
+## 4. Comprehension Questions
+
+To ensure a deep understanding of simple effects and probing interactions, consider the following questions:
+
+**Conceptual Questions:**
+
+1. **Interpreting Interactions:** In your own words, what does a significant three-way interaction (A×B×C) tell you about the data? Why can focusing only on main effects be misleading in this case?
+2. **Definitions:** Define a *simple main effect* in the context of a three-way ANOVA. How does it differ from an ordinary main effect?
+3. **Hierarchy of Effects:** If you find a significant three-way interaction, what is the recommended sequence of follow-up analyses? (Hint: Think about simple two-way interactions and then simple main effects.)
+4. **Visualization:** Describe how you might graphically display a three-way interaction to aid interpretation. What patterns in the plot would suggest simple effects worth testing?
+5. **Theory to Practice:** A researcher finds an A×B×C interaction. They claim "Factor A matters only for one combination of B and C; otherwise it has no effect." How would you verify this claim using simple effects analysis?
+
+**Computational Questions:**
+
+1. Given a balanced 2×2×2 ANOVA design (all factors have 2 levels, n per cell), how many degrees of freedom does the A×B×C interaction have? If the interaction F-test has $df_1=1$ and yields $p<- 0.05$, what does that imply about the differences in two-way interactions?
+2. In the `emmeans` output below (for a simple effect of A at B=b and C=c), fill in the blanks and interpret the results:
+
+   ```r
+   C = c1, B = b1:
+   A emmean   SE df lower.CL upper.CL
+   a1   50.0  2.1 24    45.6    54.4
+   a2   55.5  2.1 24    51.1    59.9
+   a3   57.0  2.1 24    52.6    61.4
+
+   Confidence level used: 0.95 
+
+   C = c1, B = b1:
+   contrast    estimate   SE df t.ratio p.value
+   a1 - a2    _____      ___ __  -2.50   0.020 
+   a1 - a3    -7.0      2.1 24  -3.33   0.002 
+   a2 - a3     _____      ___ __   ?      ?   
+   ```
+
+   What are the missing values for the `a1 - a2` estimate and for `a2 - a3` (t.ratio, p.value)? Is the simple main effect of A at (B=b1,C=c1) significant?
+
+3. Suppose `joint_tests(emmeans(model, ~ A | B*C))` returns a p-value of 0.8 for the simple effect of A at B=b2, C=c3. What does that imply about factor A's impact in that condition? How would you report it?
+
+**Application Questions:**
+
+1. You conducted a three-way ANOVA and found no significant three-way interaction, but one of the two-way interactions (A×B) is significant. Describe how you would follow up on the A×B interaction using simple effects (mention `emmeans` steps and what to look for).
+2. In R, if you have an `emmeans` object for a three-way layout (A, B, C), how can you extract the cell means for all combinations? And how could you use those to manually compute (for example) the simple effect of A at C=c2 (averaging over B)?
+3. A colleague ran `emmeans(model, pairwise ~ A | B)` in R and got a warning: `"Results may be misleading due to involvement in interactions"`. They ask you why the warning appeared and how to properly obtain the comparisons they want. What is your explanation and advice?
+4. Consider a scenario with a 3×3×2 design where the A×B×C interaction is significant. How would you determine if the two-way interaction A×B is present at **each** level of C? What `emmeans` code would you write, and how would you interpret a nonsignificant result for one level of C versus a significant result for the other?
+
+These questions range from conceptual understanding to practical application, ensuring you think about *why* and *how* we probe interactions.
+
+## 5. Detailed Solutions
+
+**1. Interpreting Interactions:** A significant three-way interaction indicates that the way any two factors interact is different across levels of the third factor. For example, maybe A and B have a strong interaction when C is low, but no interaction when C is high. If we looked only at main effects, we'd miss this nuance. Main effects average over all levels of other factors; in doing so, they can cancel out differences. It's misleading because a main effect might be non-significant overall even if the factor has a large effect in one condition and an opposite effect in another. Or a main effect might appear significant, but in reality the effect exists only under certain conditions (and reverses elsewhere). Thus, focusing only on main effects in the presence of interactions can lead to incorrect or incomplete conclusions. Always first assess interactions: if an interaction is significant, interpret the simple effects (conditional effects) rather than the marginal (main) effects.
+
+**2. Definitions:** A *simple main effect* for factor A in a three-way ANOVA is the effect of A at a specific level of B and/or C. For example, "the effect of A when B = b1 and C = c2" (a fully simple case with both other factors fixed) or "the effect of A at B = b1 (averaged over C)" are both simple effects. In contrast, an *ordinary main effect* of A is the effect of A averaged across *all* levels of B and C. The difference is that simple effects are conditional on certain levels of other factors, while main effects are marginal (averaged). Simple effects help us understand interactions: if there's no interaction, all the simple effects of A will be identical (or very similar) across levels of B and C, matching the main effect. If there is an interaction, simple effects differ, and the main effect of A becomes a blend of possibly divergent effects in each condition.
+
+**3. Hierarchy of Effects:** After finding a significant three-way interaction, the typical sequence is:
+   - **Simple two-way interactions:** Pick one factor as the moderator (often the one with more levels or based on theory). For each level of that moderator, test the two-way interaction of the other two factors. For example, test A×B at each level of C (as we did with `joint_tests(emm_size_type, by="side")` above).
+   - If a simple two-way interaction is significant, **probe that two-way interaction** further: examine simple main effects within that two-way slice. E.g., if A×B at C=c1 is significant, then test A at each level of B (or B at each level of A) for C=c1. This can involve `emmeans(model, ~ A | B, subset = C==c1)` or similar.
+   - **Pairwise comparisons:** If a simple main effect is significant (more than 2 levels), do pairwise comparisons (with adjustment) to see which specific means differ.
+   - Throughout, maintain clarity with the error term (use pooled error from full model if assumptions hold, which `emmeans` does by default via the full model).
+   - If the three-way had not been significant, we'd then interpret significant two-way interactions similarly: break them down into simple effects of one factor at levels of the other, etc..
+   - Always keep the number of tests reasonable and adjust for multiple comparisons to avoid false positives.
+
+**4. Visualization:** To graphically display a three-way interaction, one common approach is an *interaction plot*. For example, use lines to represent one factor, the x-axis for second factor, and create separate panels (facets) for the third factor. Suppose A on x-axis, Y on y-axis, lines for B, and separate plots for each level of C. If the lines (representing B) have different shapes/slopes in one panel compared to another, that indicates an A×B interaction that changes with C. Patterns:
+   - If in all C panels the lines are roughly parallel (no crossing) and similarly spaced, there's no significant two-way interaction difference–likely no three-way interaction.
+   - If in Panel C1 the lines cross (interaction), but in Panel C2 they don't (or cross differently), that's a sign of a three-way interaction.
+   - Such differences suggest which simple effects to test: e.g., "lines cross in C1" suggests the A×B simple interaction is significant at C1.
+   - Also look at vertical gaps (main effects)–if a factor's gap varies by panel, that's an interaction involving that factor and C.
+   - Tools like `ggplot2::interaction.plot` or `ggplot2` with `facet_wrap(~C)` can create these. Visualization often guides which simple effects seem notable (though formal tests confirm it).
+
+**5. Theory to Practice:** The colleague's claim "Factor A matters only for one combination of B and C" implies: for that specific (b*, c*) condition, A has an effect; elsewhere, A's effect is zero (or negligible). To verify:
+   - Conduct simple main effect tests of A at each combination of B and C. Using `joint_tests` or separate subset analyses, find the p-value for A at (b*, c*), and at other (b, c).
+   - Check that A is significant at (b*, c*) but non-significant at all other combinations.
+   - Also confirm the three-way interaction was significant overall (which presumably it was if such a specific effect exists).
+   - In R, one would do: `emm = emmeans(model, ~ A | B*C); joint_tests(emm, by=c("B","C"))`.
+   - We'd report: "At B=b*, C=c*, factor A has a significant effect (F(…)=…, p=…), whereas in all other B–C conditions, A's effect is not significant (all p > 0.1). This pattern supports the claim that A matters only in that specific condition." If some other condition shows a marginal effect, we'd nuance the claim.
+   - This approach essentially probes all simple-simple effects of A to isolate where it's active.
+
+**6. Degrees of Freedom:** In a 2×2×2 design, each factor has 1 df (2 levels–1). Two-way interactions also have $(1*1)=1$ df each. The three-way interaction A×B×C has $(1*1*1) = 1$ df. If the F-test for A×B×C with 1 df is significant (p<- 0.05), it implies that the difference between the two-way interactions at different levels of the third factor is significant. For 2×2×2, it means the single two-way interaction present at C=c1 differs from the one at C=c2. Essentially, either A×B is significant in one C level and not the other, or they have opposite signs, etc. (With 1 df, "interaction differs" basically means one condition has an interaction, the other doesn't, since an interaction in 2x2 is a single number difference of differences.) In practical terms: *the pattern of A×B is not the same for C=1 vs C=2*. We could say: one simple two-way interaction is "strong" and the other is zero (or they're different in magnitude). This satisfies the definition: a three-way interaction means a two-way interaction varies across the third variable.
+
+**7. Emmeans output interpretation:** From the provided output, for C=c1, B=b1:
+
+   - The means for A=a1, a2, a3 are 50.0, 55.5, 57.0.
+   - So `a1 - a2` difference = 50.0 - 55.5 = **-5.5**. That's the estimate for `a1 - a2`. It likely has SE 2.1 (same SE as others) and df 24, with t = -2.50 given and p = 0.020. That matches: -5.5/2.1 = -2.619, which is slightly more than -2.50, so perhaps the t was rounded or SE slightly different. But we'll trust the display.
+   - `a2 - a3`: difference = 55.5 - 57.0 = **-1.5**. The SE likely still 2.1, so t.ratio = -1.5/2.1 ≈ -0.714. The p.value would be high (around 0.48). Given the symmetry, if a1-a3 was -7.0 with p=0.002, and a1-a2 was -5.5 with p=0.020, the smallest difference is a2-a3 = -1.5, which should be nonsignificant.
+   - So for `a2 - a3`: t.ratio ≈ **-0.71**, p.value ≈ **0.48** (not significant).
+
+   Is the simple main effect of A at (B=b1, C=c1) significant? The joint F test would combine these three means. Alternatively, seeing that a1 vs a3 is significant (p=0.002) and a1 vs a2 is marginal (0.02, usually considered significant at 0.05 level, but note with 3 pairwise tests one might adjust), it suggests an overall effect. Since at least one pairwise is significant and there are 3 groups, likely yes, the omnibus for A at (b1,c1) is significant. In fact, we could compute $F(2,24)$ by hand: The differences seem sizeable (a1 is quite lower than a3). So yes, it appears significant. To be thorough: the means (50, 55.5, 57) have an obvious upward trend. We would report "At B=b1, C=c1, there is a significant effect of A (F(2,24)=…, p<- 0.05); specifically, a1 is significantly lower than a3 (difference = -7.0, p=0.002) and lower than a2 (difference = -5.5, p=0.02), while a2 and a3 do not differ significantly (p=0.48)."
+
+**8. Interpreting a non-significant simple effect:** If `joint_tests(emmeans(model, ~ A | B*C))` gives p = 0.8 for the test of A at B=b2, C=c3, that implies *no evidence that A has any effect at that specific condition*. In other words, the means for different levels of A at B=b2, C=c3 are statistically equal (high p-value means we fail to reject that all A means are equal). We would report: "At B = b2 and C = c3, factor A does not significantly influence the outcome (F(df1, df2)=…, p = 0.80). In that condition, the means for A's levels were very similar." This supports the notion that in the (b2,c3) group, changing A doesn't change the response in any meaningful way. It's an example of how a factor can be important in one context but not in another, which is the essence of interaction.
+
+**9. Following up a significant two-way interaction (no three-way):** If A×B is significant and no triple interaction, we assume the effect is consistent across C (if a third factor exists, but maybe we had only two factors? The question said three-way ANOVA, but found no 3-way, so likely still 3 factors overall). If the design has three factors and only A×B is significant:
+   - First, confirm which two-way: A×B is significant. We then examine **simple main effects of one factor at levels of the other** (since no 3-way, we can even average over C if C is present, because we didn't find interactions with C).
+   - For each level of A, see the effect of B (or vice versa). For instance: `emmeans(model, ~ B | A)` and do `pairs()` or `joint_tests()` by A. This yields B's simple effect at each A.
+   - Or `emmeans(model, ~ A | B)` to get A's simple effect at each B. Either approach is valid; typically one chooses the simpler interpretation. If A and B both have >2 levels, you might do both directions to fully describe the interaction.
+   - In R code:
+
+```r
+emmeans(model, pairwise ~ A | B)  # gives A’s pairwise diffs at each B
+emmeans(model, pairwise ~ B | A)  # B’s diffs at each A
+```
+
+     and/or
+
+```r
+joint_tests(emmeans(model, ~ A | B))  # omnibus F for A at each B
+```
+
+   - What to look for: Which simple effects are significant. E.g., maybe at B1, A has no effect; at B2, A has a strong effect. That would mean the interaction was driven by those differences.
+   - Since no three-way, these patterns should hold regardless of C (we could also confirm no differences across C by doing the same and seeing consistency, but given no 3-way, it's redundant).
+   - Then report: "We followed up the A×B interaction with simple effects. For each level of B, we tested the effect of A. Results showed that… (describe which levels differ)." For example, "At B = high, factor A had a significant effect (F(…)=…, p<- …); specifically, A1 differed from A2 (p=…) etc. At B = low, however, A's effect was not significant (p=…). This indicates the effect of A is present only under the high B condition, driving the A×B interaction."
+
+**10. Extracting cell means and computing a simple effect manually:** Using `emmeans`, to get all cell means for a 3-way, we do:
+
+    emm <- emmeans(model, ~ A * B * C)
+    emm
+
+This `emm` object will have $a \times b \times c$ rows, each a cell mean with its SE. To get them as a data frame, one can do `as.data.frame(emm)`. Now, to compute the simple effect of A at C=c2 (averaging over B): Essentially we want means of A at C=c2 (collapsing B). We could:
+
+   - Use `emmeans(model, ~ A | C, at = list(C = c2))`. But if we want to "manually" compute from cell means:
+   - Filter `emm` for C == c2. Now we have means for each combination of A and B at that C.
+   - To average over B for each A, we take those means and average them (weighted by equal n if balanced; `emmeans` by default will already give you the correct marginal mean if you specify `emmeans(model, ~ A | C)` directly).
+   - For manual: if `emm_df` has columns A, B, C, and response (emmean), do:
+
+     ```r
+     library(dplyr)
+     cell_means <- as.data.frame(emmeans(model, ~ A * B * C))
+     # filter C = c2
+     cm_c2 <- cell_means |> filter(C == "c2")
+     # Now cm_c2 has all combos of A and B at C=c2 with their means.
+     # Compute mean over B for each A:
+     simpleA_c2 <- cm_c2 |> group_by(A) |> summarize(mean_at_c2 = mean(emmean))
+     simpleA_c2
+     ```
+
+   - `simpleA_c2` now contains the marginal means of A at C=c2. If the design is balanced, that's the simple effect means (if unbalanced, the above equal averaging might not equal the model's marginal - but `emmeans` handles that automatically with weighting).
+   - Then to compare A levels, compute differences: take differences of those means. You could also simulate an F by computing variance between those means and using the error variance from the model (though easier is to use `joint_tests` as done).
+   - The question expects: "extract cell means for all combinations"–answer: use `emmeans(model, ~ A * B * C)`. To compute a simple effect of A at C=c2 (averaging B), either use `emmeans(model, ~ A | C, at = list(C=c2))` for direct approach, or manually average the cell means for C=c2 across B.
+   - Emphasize that `emmeans` does this heavy lifting easily, so manual is just for concept.
+
+**11. Explaining the `emmeans` warning:** The warning `"Results may be misleading due to involvement in interactions"` appears when you request marginal means (or comparisons thereof) of a factor that participates in a significant interaction in the model. For example, if A×B is significant and you ask for `emmeans(model, ~ A)` (the main effect of A), `emmeans` warns that the marginal means of A *may not make sense* because A's effect varies by B. It doesn't mean the numbers are wrong; it means *interpreting them as "the effect of A" is potentially misleading*. In your colleague's case, they did `emmeans(model, pairwise ~ A | B)`. If there is an A×B or A×something interaction, `emmeans` will warn. However, `emmeans(model, pairwise ~ A | B)` is actually the *simple effect of A at each B*, which is usually a fine thing to do when probing an interaction–so why a warning? Because likely there is a higher-order interaction (maybe A×B×C) that involves A and B. If A×B×C is significant, any marginal of A|B still averages over C, which might be problematic. The safe route is to include all interacting factors in `emmeans` specs, then use `by` or `|` appropriately.
+
+So I would explain: The warning appears because A's effects are not consistent across some other factor in the model (an interaction exists). The solution:
+
+   - If probing an interaction, include the interacting factor in the conditioning. For instance, if there's A×B×C, instead of `emmeans(~A|B)` (which averages over C and hence can mislead), do `emmeans(~A|B*C)` or even better `emmeans(~A| B* C)` which will give A's effect at each combination of B and C.
+   - If you truly want the marginal A|B means (averaging C), you can still get them, but you must be careful in interpretation, acknowledging they are averaged over C which has an interaction.
+   - In practice: advise them to do `emmeans(model, pairwise ~ A | B * C)` if a three-way exists. If only A×B two-way is significant (no third factor), `emmeans(~A|B)` is fine (that's exactly the simple effects of A at each B).
+   - The key: always condition on *all* other factors involved in interactions when examining simple effects, so you're not averaging over an interaction in progress.
+   - Summing up: *"`emmeans` warns you because A is involved in an interaction, meaning its effect changes across another factor. To properly examine A's effect, you should look at it within levels of that factor. The code `emmeans(model, pairwise ~ A | B)` is correct for probing the A×B interaction, and the warning is just a reminder. If there was a C factor also interacting, you'd include C too (e.g., `| B * C`). Always interpret such results as conditional on the other factor(s)."*
+
+**12. Determining A×B at each level of C:** To see if A×B exists at each C level:
+   - Use `emmeans` to get A×B means within each C. E.g. `emm_AB = emmeans(model, ~ A * B | C)`.
+   - Then do `joint_tests(emm_AB, by="C")`, which will test the A×B interaction (as a model term) at each C level.
+   - Alternatively, since A×B in each C is just a two-way ANOVA in that slice, you could split data by C and run an ANOVA each time. But `emmeans` approach is quick and uses the pooled error.
+   - Code:
+
+     ```r
+     emm_AB <- emmeans(model, ~ A * B | C)
+     joint_tests(emm_AB, by = "C")
+     ```
+
+     This would output for each C = c1, c2, …:
+
+     ```r
+     C = c1:
+       model term    df1 df2  F.ratio p.value
+       A:B            (a-1)*(b-1)  residualDF  …   …
+     C = c2:
+       model term    df1 df2  F.ratio p.value
+       A:B            …   …   …   …
+     ```
+
+   - If at C=c1, p <- .05, that means significant A×B interaction when C=c1. If at C=c2, p > .05, no significant A×B when C=c2. That pattern itself is evidence of an A×B×C three-way (one two-way significant, the other not).
+   - Interpretation: *"We found that the A×B interaction is significant at C = c1 (F(df)=…, p=…), but not at C = c2 (p = …). This indicates that the nature of the A×B interaction differs depending on C. In fact, only under c1 do A and B interact significantly."* If both were significant but maybe to different degrees, you'd still note differences in F magnitude.
+   - If both are significant, you might then compare whether they are *different in magnitude* via a contrast of contrasts (which is essentially the three-way test). But the question specifically: if 3-way is significant, they likely differ.
+   - In summary, the `emmeans` code needed is shown above. If we didn't have `joint_tests`, one could get simple two-way cells and run contrasts: e.g., `contrast(emm_AB, interaction = "pairwise", by = "C")` might directly give differences of differences per C. But `joint_tests` is straightforward for omnibus.
+
+These solutions underscore the logical flow: identify interactions, break them down stepwise, use `emmeans` to get estimates and tests, and interpret contextually. By answering these, one demonstrates not only mechanical usage of R but an understanding of the statistical reasoning behind probing interactions.

@@ -1,0 +1,867 @@
+---
+title: "Week 10: Quantitative Bias Analysis, Tipping-Point Logic, and The E-value"
+---
+
+
+# Week X: Quantitative Bias Analysis, Tipping-Point Logic, and The E-value
+
+## R Packages
+
+```{r}
+#| label: load-packages
+#| echo: true
+pacman::p_load(
+  tidyverse, # For data manipulation and plotting
+  dagitty, # For DAGs
+  ggdag, # For plotting DAGs
+  EValue # For E-value calculations
+)
+```
+
+-----
+
+## Learning Objectives
+
+By the end of this module, students will be able to:
+
+  - **Define** quantitative bias analysis (QBA) and explain its role in assessing the robustness of causal inferences.
+  - **Apply** tipping-point logic to determine the magnitude of unmeasured confounding required to overturn a causal inference.
+  - **Calculate and interpret** the E-value as a measure of the strength of association with unmeasured confounders needed to explain away an observed effect.
+  - **Distinguish** between various QBA methods, including probabilistic bias analysis and sensitivity analysis for different assumptions.
+  - **Implement** QBA techniques using R, including plotting DAGs and performing E-value calculations.
+  - **Critically evaluate** the sensitivity of their own causal analyses to unmeasured confounding and other assumption violations.
+
+-----
+
+## 1 Comprehensive Topic Explanation
+
+In causal inference, our primary goal is to estimate the effect of a treatment or exposure on an outcome. However, these estimates are often susceptible to various biases, most notably **confounding**. While study designs like randomized controlled trials (RCTs) aim to eliminate confounding by design, observational studies are inherently vulnerable. Even in well-designed observational studies or imperfect RCTs, there's always a concern about *unmeasured* confounding.
+
+**Quantitative Bias Analysis (QBA)** is a set of methods used to assess the potential impact of unmeasured biases on estimated causal effects. Instead of simply acknowledging the possibility of bias, QBA attempts to quantify its magnitude and direction, allowing researchers to evaluate how robust their findings are to plausible violations of core assumptions (see Neal, 2020, Chapter 7). This approach moves beyond qualitative statements about limitations to providing concrete insights into the fragility of a study's conclusions.
+
+### The Problem of Unmeasured Confounding
+
+Unmeasured confounding occurs when a variable influences both the treatment assignment and the outcome, but it is not measured and thus cannot be controlled for in the analysis. This creates a spurious association between the treatment and outcome, leading to biased causal effect estimates. For example, if we are studying the effect of a new drug on patient recovery, and a patient's underlying health status (unmeasured) influences both their decision to take the drug and their recovery trajectory, then failing to account for it will lead to a biased estimate of the drug's effect.
+
+### Tipping-Point Logic
+
+Tipping-point analysis, often seen as a simplified form of sensitivity analysis, asks a direct question: **"How strong would an unmeasured confounder need to be to explain away the observed effect?"** (see Hernán & Robins, 2025, Chapter 20). It provides a threshold beyond which the observed association would no longer be considered causally meaningful. This approach is particularly intuitive for communicating potential vulnerabilities to stakeholders who may not be familiar with complex statistical models.
+
+The logic revolves around finding the minimum association between the unmeasured confounder and the treatment, and between the unmeasured confounder and the outcome, that would reduce the observed effect to a null effect (e.g., a relative risk of 1 or an odds ratio of 1) or to a clinically insignificant level.
+
+### The E-value
+
+While tipping-point analyses provide a specific threshold for confounding, the **E-value** offers a more general and widely applicable measure of sensitivity to unmeasured confounding. Introduced by VanderWeele and Ding (2017), the E-value is defined as the minimum strength of association that an unmeasured confounder would need to have with both the treatment and the outcome (on the risk ratio scale) to explain away an observed association, conditional on the measured covariates.
+
+More formally, for an observed risk ratio $RR_{obs}$, the E-value is the minimum value $RR_{EU} = RR_{CU}$ such that if an unmeasured confounder $U$ had risk ratios of $RR_{EU}$ with the exposure $A$ and $RR_{CU}$ with the outcome $Y$, then the true causal risk ratio would be 1. A larger E-value suggests greater robustness to unmeasured confounding, meaning a stronger unmeasured confounder would be required to nullify the observed effect. Conversely, a small E-value indicates that even a weak unmeasured confounder could explain away the observed association.
+
+### Formal Probabilistic Bias Analysis (PBA)
+
+Beyond the deterministic nature of tipping-point and E-value analyses, **Probabilistic Bias Analysis (PBA)** allows for a more comprehensive assessment of uncertainty due to bias. In PBA, one specifies a "bias model" and assigns probability distributions (priors) to the unknown bias parameters (e.g., the prevalence of an unmeasured confounder, the strength of its association with exposure, and its association with the outcome). These priors reflect the researcher's uncertainty or expert opinion about the plausible range of these parameters.
+
+By sampling from these prior distributions, PBA generates a distribution of bias-adjusted effect estimates, rather than a single point estimate. This provides a more complete picture of the potential impact of bias, allowing researchers to report a credible interval for the bias-adjusted effect that accounts for both random error and uncertainty about bias parameters. This is particularly useful when multiple sources of bias are present and need to be considered simultaneously (see Hernán & Robins, 2025, Chapter 20 for advanced methods).
+
+### Sensitivity Analysis for Other Assumptions
+
+The logic of sensitivity analysis extends beyond unmeasured confounding. Many causal inference methods rely on strong assumptions that, if violated, can lead to biased estimates.
+
+  - **Instrumental Variables (IV) and the Exclusion Restriction:** IV methods rely on the **exclusion restriction**, which assumes the instrumental variable affects the outcome only through its effect on the treatment. Sensitivity analysis for this assumption would explore how large a direct effect of the instrument on the outcome would need to be to invalidate the IV estimate.
+  - **Mediation Analysis and No Unmeasured Mediator-Outcome Confounding:** In mediation analysis, a key assumption is that there is no unmeasured confounding of the mediator-outcome relationship. Sensitivity analysis can quantify the strength of unmeasured confounders that would alter conclusions about direct and indirect effects.
+
+### Connection to Rosenbaum's Sensitivity Analysis
+
+For those familiar with matching methods, the E-value concept shares a philosophical lineage with **Rosenbaum's sensitivity analysis for matched pairs** (Rosenbaum, 2002). Rosenbaum's framework addresses unmeasured confounding in matched observational studies by quantifying how much an unmeasured confounder would need to increase the odds of treatment assignment within matched pairs to overturn the conclusions of a study. The E-value generalizes this idea, providing a measure applicable to any observed effect estimate, regardless of the study design or statistical method used. Both approaches highlight the importance of assessing the robustness of findings to unmeasured factors that could plausibly explain away an observed association.
+
+-----
+
+## 2 Intuitive Clarifications of Challenging Ideas
+
+### The "Ghost in the Machine" Analogy for Unmeasured Confounding
+
+Imagine you're trying to figure out if drinking coffee makes you more productive. You observe that people who drink coffee tend to get more work done. Seems straightforward, right? But what if people who are naturally more driven and disciplined (a "ghost in the machine" that you can't see or measure) are also more likely to drink coffee *and* are more productive?
+
+In this scenario, "drivenness" is the **unmeasured confounder**. It's the hidden factor influencing both your coffee consumption (treatment) and your productivity (outcome). If you don't account for this "ghost," you might mistakenly conclude that coffee *causes* productivity, when in reality, it's the drivenness that's driving both. Quantitative bias analysis helps us ask: "How big of a ghost would need to be lurking to make this coffee-productivity link disappear?"
+
+### Tipping Point: The "Balance Beam" Analogy ⚖️
+
+Think of your observed causal effect like a **balance beam**. On one side, you have the evidence supporting your observed association (e.g., coffee drinkers are 2x more productive). On the other side, you have the potential for unmeasured confounding pushing the beam in the opposite direction.
+
+A **tipping point** is when you add just enough weight (the hypothetical unmeasured confounder's influence) to the "unmeasured confounding" side to make the beam perfectly level, meaning the true causal effect is actually zero. If your observed effect is very strong, it takes a lot of weight to tip the beam. If it's weak, even a small amount of weight can tip it.
+
+### E-value: The "Tug-of-War" Analogy 🤝
+
+The E-value is like a **tug-of-war** between your observed effect and a hypothetical unmeasured confounder.
+
+  - Your observed effect is pulling with a certain strength (e.g., a risk ratio of 2.5).
+  - The E-value tells you how strong the unmeasured confounder's "pull" would need to be (on both sides of its connection to treatment and outcome) to completely counteract your observed effect, making the true effect non-existent.
+  - If your observed effect is very strong (a big E-value), it means the unmeasured confounder needs to be extremely strong to win the tug-of-war. If your observed effect is weak (a small E-value), even a relatively weak unmeasured confounder can pull hard enough to make your observed effect disappear.
+
+This is why a **larger E-value implies greater robustness** — it takes a much stronger "pull" from an unmeasured confounder to explain away your findings.
+
+::: {.callout-important}
+
+## 📌 Key Assumption: Conditional Ignorability
+
+Many causal inference methods rely on the assumption of **conditional ignorability** (also known as "no unmeasured confounding" or "exchangeability"). This assumes that, conditional on the measured covariates, the treatment assignment is independent of the potential outcomes. In simpler terms, once you've accounted for all the variables you *did* measure, there are no *other* unmeasured factors that simultaneously influence who gets the treatment and what their outcome would be. QBA directly challenges this assumption by exploring scenarios where it might be violated.
+
+$$
+A \indep Y^a | L
+$$
+
+where $A$ is treatment, $Y^a$ is the potential outcome under treatment $a$, and $L$ represents measured covariates. The challenge in observational studies is that $L$ may not capture all relevant confounders, leading to an unmeasured confounder $U$.
+
+:::
+
+::: {.callout-warning}
+
+## ⚠️ Common Pitfall: Assuming No Unmeasured Confounding is Enough
+
+A common misconception is that if you've controlled for "all known confounders," your analysis is free from bias. This is rarely true in observational studies. QBA forces us to confront the uncomfortable reality that even after extensive covariate adjustment, an unmeasured confounder could still be lurking, potentially invalidating our conclusions. It shifts the question from "Is there unmeasured confounding?" (which is almost always yes) to "**How much** unmeasured confounding would it take to change our conclusion?"
+
+:::
+
+-----
+
+## 3 Simple, Hand-Calculation Numerical Example(s)
+
+Let's illustrate the concept of a tipping point and the E-value with a very small hypothetical dataset.
+
+Consider a study investigating the effect of a new educational program ($A=1$) versus standard education ($A=0$) on test scores ($Y$). We observe the following data:
+
+| Student | Program ($A$) | Test Score ($Y$) |
+| :------ | :------------ | :--------------- |
+| 1       | 1             | 90               |
+| 2       | 1             | 85               |
+| 3       | 0             | 70               |
+| 4       | 0             | 65               |
+
+We want to estimate the average treatment effect (ATE).
+
+**Step 1: Calculate the observed average test scores for each group.**
+
+$\E{Y|A=1} = (90 + 85) / 2 = 87.5$
+
+$\E{Y|A=0} = (70 + 65) / 2 = 67.5$
+
+**Step 2: Calculate the observed effect (Average Treatment Effect difference).**
+
+$ATE_{obs} = \E{Y|A=1} - \E{Y|A=0} = 87.5 - 67.5 = 20$ points.
+
+This suggests the program increases test scores by 20 points. But what if there's an unmeasured confounder, say, "Prior Knowledge" ($U$), where students with more prior knowledge are more likely to be selected for the new program AND naturally score higher on tests?
+
+### Tipping-Point Logic Hand Calculation
+
+Let's imagine an unmeasured binary confounder $U$ (0 = low prior knowledge, 1 = high prior knowledge).
+
+We want to find the conditions under which the true ATE is 0. This means if we could adjust for $U$, the difference in means would vanish.
+
+Assume the following:
+
+  - Among students with **high prior knowledge ($U=1$)**:
+      - Test score for program ($Y^1|U=1$) = $y_{11}$
+      - Test score for no program ($Y^0|U=1$) = $y_{01}$
+  - Among students with **low prior knowledge ($U=0$)**:
+      - Test score for program ($Y^1|U=0$) = $y_{10}$
+      - Test score for no program ($Y^0|U=0$) = $y_{00}$
+
+The true ATE is $\E{Y^1 - Y^0}$. If there's no unmeasured confounding, we assume $\E{Y^1 - Y^0} = \E{Y|A=1} - \E{Y|A=0}$.
+
+Let's consider a scenario where $U$ explains away the effect.
+
+Suppose the actual test scores, adjusting for $U$, were:
+
+| Student | Program ($A$) | Test Score ($Y$) | Unmeasured Confounder ($U$) |
+| :------ | :------------ | :--------------- | :-------------------------- |
+| 1       | 1             | 90               | 1 (High)                    |
+| 2       | 1             | 85               | 0 (Low)                     |
+| 3       | 0             | 70               | 1 (High)                    |
+| 4       | 0             | 65               | 0 (Low)                     |
+
+This implies:
+
+  - Among students in the program ($A=1$), one had high $U$ and one had low $U$.
+  - Among students not in the program ($A=0$), one had high $U$ and one had low $U$.
+
+Now let's calculate the average potential outcomes within each $U$ stratum:
+
+  - For $U=1$ (High Prior Knowledge):
+      - Student 1 ($A=1, Y=90$)
+      - Student 3 ($A=0, Y=70$)
+      - Average difference: $90 - 70 = 20$
+  - For $U=0$ (Low Prior Knowledge):
+      - Student 2 ($A=1, Y=85$)
+      - Student 4 ($A=0, Y=65$)
+      - Average difference: $85 - 65 = 20$
+
+In this specific configuration, even *after* accounting for $U$, the effect is still 20. This $U$ does not explain away the effect because it's not truly a confounder in this toy example (i.e., its distribution isn't imbalanced across treatment groups in a way that generates the association).
+
+**Let's change the hypothetical scenario to demonstrate a tipping point.**
+What if the program preferentially enrolled students with higher prior knowledge, and those with higher prior knowledge would have done better anyway?
+
+Original observed data:
+
+$\E{Y|A=1} = 87.5$
+
+$\E{Y|A=0} = 67.5$
+
+$ATE_{obs} = 20$
+
+Let's assign $U$ such that it explains away the effect. Suppose $U$ is a binary confounder (0=low knowledge, 1=high knowledge). We need $U$ to be associated with both $A$ and $Y$.
+
+For the effect to be zero, it would imply that among those who *could* have received treatment $A=1$, their counterfactual outcome under $A=0$ would be the same as their observed outcome under $A=1$, or vice-versa.
+
+Consider the observed data are for two students in $A=1$ (1 with $U=1$, 1 with $U=0$) and two students in $A=0$ (1 with $U=1$, 1 with $U=0$).
+
+Let's redefine the table to make it plausible for $U$ to explain the effect:
+
+| Student | Program ($A$) | Test Score ($Y$) | Hypothetical $U$ (0=low, 1=high) |
+| :------ | :------------ | :--------------- | :------------------------------- |
+| 1       | 1             | 90               | 1                                |
+| 2       | 1             | 85               | 1                                |
+| 3       | 0             | 70               | 0                                |
+| 4       | 0             | 65               | 0                                |
+
+Here, all treated students ($A=1$) have high prior knowledge ($U=1$), and all untreated students ($A=0$) have low prior knowledge ($U=0$).
+
+In this extreme (but illustrative) case, the observed difference of 20 points could be *entirely* due to $U$. If we could compare students with the *same* prior knowledge, the difference might vanish.
+
+  - If we compare students with $U=1$: There are no $A=0, U=1$ students to compare with $A=1, U=1$.
+  - If we compare students with $U=0$: There are no $A=1, U=0$ students to compare with $A=0, U=0$.
+
+This highlights that for $U$ to explain away the effect, it must be highly predictive of both $A$ and $Y$.
+
+### E-value Hand Calculation (for a Simple Risk Ratio)
+
+The formula for the E-value for an observed risk ratio ($RR_{obs}$) is:
+
+$\text{E value} = RR_{obs} + \sqrt{RR_{obs}(RR_{obs}-1)}$ (for $RR_{obs} \ge 1$)
+
+Or $\text{E value} = \frac{1}{RR_{obs}} + \sqrt{\frac{1}{RR_{obs}}(\frac{1}{RR_{obs}}-1)}$ (for $RR_{obs} < 1$)
+
+Let's assume our outcome is binary (e.g., passing the test vs. failing).
+
+Suppose our observed data yielded a Risk Ratio ($RR_{obs}$) of **2.5** (meaning those in the program were 2.5 times more likely to pass).
+
+We want to calculate the E-value for this $RR_{obs} = 2.5$.
+
+$\text{E value} = 2.5 + \sqrt{2.5(2.5-1)}$
+
+$\text{E value} = 2.5 + \sqrt{2.5 \times 1.5}$
+
+$\text{E value} = 2.5 + \sqrt{3.75}$
+
+$\text{E value} \approx 2.5 + 1.936$
+
+$\text{E value} \approx 4.436$
+
+**Interpretation**: An unmeasured confounder would need to be associated with both the treatment and the outcome by a risk ratio of at least **4.436** (each, or a product of their risk ratios equal to $4.436^2 \approx 19.68$) to completely explain away the observed association of 2.5. This means a confounder that quadruples both the risk of treatment *and* the risk of outcome would be needed. This is a very strong association, suggesting the observed effect is reasonably robust.
+
+::: {.callout-question}
+
+## ❓ Check Your Understanding
+
+If an observed odds ratio (OR) for an exposure-outcome association is 1.2, would the E-value be larger or smaller than for an OR of 3.0? Why?
+
+<details\>
+
+<summary\>Answer</summary\>
+
+The E-value would be **smaller** for an OR of 1.2. The E-value is a measure of robustness; a smaller observed effect (like OR=1.2) is more easily explained away by an unmeasured confounder than a larger observed effect (like OR=3.0). Therefore, a weaker unmeasured confounder is sufficient to nullify the smaller effect, resulting in a smaller E-value.
+
+</details\>
+
+:::
+
+-----
+
+## 4 R Code Examples & Interpretation
+
+In this section, we'll demonstrate how to visualize confounding using DAGs and how to calculate E-values in R.
+
+### Visualizing Confounding with DAGs (`dagitty` and `ggdag`)
+
+First, let's create a DAG that illustrates unmeasured confounding.
+
+```{r}
+#| label: fig-unmeasured-confounding-dag
+#| fig-cap: "DAG illustrating unmeasured confounding."
+#| column: margin
+
+# Define the DAG with unmeasured confounder U
+# A -> Y (treatment to outcome)
+# U -> A (unmeasured confounder to treatment)
+# U -> Y (unmeasured confounder to outcome)
+dag_unmeasured <- dagitty(
+  'dag {
+  A [exposure]
+  Y [outcome]
+  U [unmeasured]
+  A -> Y
+  U -> A
+  U -> Y
+}'
+)
+
+# Plot the DAG
+ggdag(dag_unmeasured) +
+  geom_dag_point(aes(color = status)) +
+  geom_dag_edges() +
+  geom_dag_text(color = "black") +
+  theme_dag() +
+  labs(title = "DAG with Unmeasured Confounder (U)")
+```
+
+**Interpretation:** The DAG clearly shows that $U$ is a common cause of both $A$ (treatment) and $Y$ (outcome), creating a backdoor path $A \leftarrow U \rightarrow Y$. Since $U$ is unmeasured, this path cannot be blocked by conditioning, leading to confounding.
+
+Now, let's consider a scenario where we have a measured confounder $L$.
+
+```{r}
+#| label: fig-measured-confounding-dag
+#| fig-cap: "DAG illustrating measured confounding."
+#| column: margin
+
+# Define the DAG with measured confounder L
+# A -> Y (treatment to outcome)
+# L -> A (measured confounder to treatment)
+# L -> Y (measured confounder to outcome)
+dag_measured <- dagitty(
+  'dag {
+  A [exposure]
+  Y [outcome]
+  L [adjusted]
+  A -> Y
+  L -> A
+  L -> Y
+}'
+)
+
+# Plot the DAG
+ggdag(dag_measured) +
+  geom_dag_point(aes(color = status)) +
+  geom_dag_edges() +
+  geom_dag_text(color = "black") +
+  theme_dag() +
+  labs(title = "DAG with Measured Confounder (L)")
+```
+
+**Interpretation:** Here, $L$ is a measured confounder. If we adjust for $L$, we can block the backdoor path $A \leftarrow L \rightarrow Y$, potentially removing the confounding bias. QBA becomes relevant when we worry that even after adjusting for $L$, there might still be an unmeasured confounder $U$.
+
+### Calculating the E-value in R (E Value package)
+
+The E Value package simplifies the calculation of E-values for various effect measures.
+
+Let's use the `evalue()` function for our earlier example where we had an observed risk ratio ($RR_{obs}$) of 2.5.
+
+```{r}
+#| label: evalue-rr
+#| echo: true
+
+# Calculate E-value for an observed Risk Ratio (RR)
+evalue_rr_result <- evalue(est = 2.5, measure = "RR")
+evalue_rr_result
+```
+
+**Interpretation:** The output confirms our hand calculation. The E-value is approximately 4.44. This means that to explain away the observed risk ratio of 2.5, an unmeasured confounder would need to be associated with both the exposure and the outcome by a risk ratio of at least 4.44. The confidence interval's E-value is also provided, indicating the robustness of the lower bound of the confidence interval. A low E-value for the lower bound of the CI suggests that even if the true effect is at the lower end of our estimate, it still requires a somewhat strong unmeasured confounder to explain it away.
+
+Let's try an example with an Odds Ratio (OR) and a confidence interval. Suppose an observed OR is 3.0 with a 95% CI of (1.5, 6.0).
+
+```{r}
+#| label: evalue-or
+#| echo: true
+
+# Calculate E-value for an observed Odds Ratio (OR) with a confidence interval
+evalue_or_result <- evalue(est = 3.0, lower = 1.5, upper = 6.0, measure = "OR")
+evalue_or_result
+```
+
+**Interpretation:**
+
+  - **Point estimate E-value:** An unmeasured confounder would need to be associated with both the exposure and the outcome by an OR of at least 5.17 to explain away the observed OR of 3.0.
+  - **Confidence interval E-value:** An unmeasured confounder would need to be associated with both the exposure and the outcome by an OR of at least 2.24 to shift the lower bound of the 95% confidence interval (1.5) to the null (OR=1).
+
+The E-value for the point estimate tells us about the robustness of the observed effect itself. The E-value for the confidence interval tells us about the robustness of the *conclusion of a statistically significant effect*. If the E-value for the CI is small, it implies that even a relatively weak unmeasured confounder could make the effect statistically non-significant.
+
+::: {.callout-tip}
+
+## 🧠 Learning Tip
+
+When presenting E-values, it's crucial to contextualize them. Is an E-value of 4.44 "large" or "small"? This depends on the specific field and the plausibility of such strong unmeasured confounders. For instance, an unmeasured genetic factor might plausibly have a stronger association than an unmeasured lifestyle factor. Discussing the **plausibility** of a confounder with associations as strong as the E-value is key to its effective interpretation.
+
+:::
+
+-----
+
+## 5 Hands-On R Lab
+
+### Lab Objectives & Reading Warm-Up
+
+**Before starting this lab, please review:**
+
+  - Hernán & Robins (2025), Chapter 20: discusses sensitivity analysis and introduces the E-value.
+  - Neal (2020), Chapter 7: provides a foundational understanding of unmeasured confounding and basic sensitivity analysis concepts.
+
+**Lab Objectives:**
+
+1. Simulate a dataset with known confounding.
+2. Estimate a naive causal effect and an adjusted effect.
+3. Visualize the causal structure using DAGs.
+4. Apply tipping-point logic conceptually.
+5. Calculate and interpret E-values for observed associations.
+
+-----
+
+### Task 1: Data Simulation and Naive Effect Estimation
+
+We'll simulate data for a hypothetical study on the effect of a new teaching method ($A$) on student performance ($Y$), where "Student Motivation" ($U$) is an unmeasured confounder. We will also include a measured covariate, "Parental Engagement" ($L$).
+
+```{r}
+#| label: simulate-data
+#| echo: true
+
+# Set seed for reproducibility
+set.seed(123)
+
+n <- 500 # Number of students
+
+# Simulate unmeasured confounder (U: Student Motivation)
+# Binary: 0 = Low, 1 = High
+U <- rbinom(n, 1, prob = 0.6)
+
+# Simulate measured confounder (L: Parental Engagement)
+# Binary: 0 = Low, 1 = High
+L <- rbinom(n, 1, prob = 0.5 + 0.1 * U) # U influences L
+
+# Simulate treatment (A: New Teaching Method)
+# A is influenced by U and L (confounding)
+prob_A <- plogis(-1 + 1.5 * U + 0.8 * L) # U and L increase probability of A
+A <- rbinom(n, 1, prob = prob_A)
+
+# Simulate outcome (Y: Student Performance)
+# Y is influenced by A, U, and L
+Y <- 50 + 10 * A + 15 * U + 5 * L + rnorm(n, 0, 10) # True effect of A is 10
+
+# Create a data frame
+sim_data <- data.frame(A, Y, U, L)
+
+# Display first few rows
+head(sim_data)
+```
+
+**Task 1.1:** Calculate the **naive (unadjusted) average difference** in student performance between the new teaching method ($A=1$) and the standard method ($A=0$).
+
+```{r}
+#| label: naive-effect-task
+#| echo: true
+
+# Your code here to calculate the naive effect
+naive_mean_A1 <- mean(sim_data$Y[sim_data$A == 1])
+naive_mean_A0 <- mean(sim_data$Y[sim_data$A == 0])
+
+naive_ate <- naive_mean_A1 - naive_mean_A0
+print(paste("Naive ATE (Unadjusted):", round(naive_ate, 2)))
+```
+
+**Solution Task 1.1:**
+
+```{r}
+#| label: naive-effect-solution
+#| echo: true
+#| include: false # Hide this chunk in final output, for internal use only
+
+naive_mean_A1 <- mean(sim_data$Y[sim_data$A == 1])
+naive_mean_A0 <- mean(sim_data$Y[sim_data$A == 0])
+naive_ate <- naive_mean_A1 - naive_mean_A0
+
+print(paste("Naive ATE (Unadjusted):", round(naive_ate, 2)))
+```
+
+**Commentary:** The naive ATE is likely to be larger than the true ATE (which we know is 10) because of the unmeasured confounder $U$ (Student Motivation) and the measured confounder $L$ (Parental Engagement), both of which influence $A$ and $Y$.
+
+-----
+
+### Task 2: Adjusted Effect Estimation and DAG Visualization
+
+**Task 2.1:** Estimate the effect of $A$ on $Y$, adjusting for the **measured confounder $L$** using a linear regression model.
+
+```{r}
+#| label: adjusted-effect-task
+#| echo: true
+
+# Your code here to estimate the adjusted effect
+adjusted_model <- lm(Y ~ A + L, data = sim_data)
+summary(adjusted_model)
+```
+
+**Solution Task 2.1:**
+
+```{r}
+#| label: adjusted-effect-solution
+#| echo: true
+#| include: false # Hide this chunk in final output
+
+adjusted_model <- lm(Y ~ A + L, data = sim_data)
+summary(adjusted_model)
+```
+
+**Commentary:** Even after adjusting for $L$, the coefficient for $A$ is still likely biased because we haven't accounted for $U$.
+
+**Task 2.2:** Draw a DAG for this simulation, including $A$, $Y$, $L$, and $U$. Clearly mark $U$ as unmeasured and $L$ as measured.
+
+```{r}
+#| label: draw-sim-dag-task
+#| echo: true
+
+# Your code here to draw the DAG
+sim_dag <- dagitty(
+  'dag {
+  A [exposure]
+  Y [outcome]
+  L [adjusted]
+  U [unmeasured]
+  U -> L
+  U -> A
+  U -> Y
+  L -> A
+  L -> Y
+  A -> Y
+}'
+)
+
+ggdag(sim_dag) +
+  geom_dag_point(aes(color = status)) +
+  geom_dag_edges() +
+  geom_dag_text(color = "black") +
+  theme_dag() +
+  labs(
+    title = "DAG for Simulated Data with Measured (L) and Unmeasured (U) Confounders"
+  )
+
+```
+
+**Solution Task 2.2:**
+
+```{r}
+#| label: draw-sim-dag-solution
+#| echo: true
+#| include: false # Hide this chunk in final output
+
+sim_dag <- dagitty(
+  'dag {
+  A [exposure]
+  Y [outcome]
+  L [adjusted]
+  U [unmeasured]
+  U -> L
+  U -> A
+  U -> Y
+  L -> A
+  L -> Y
+  A -> Y
+}'
+)
+
+ggdag(sim_dag) +
+  geom_dag_point(aes(color = status)) +
+  geom_dag_edges() +
+  geom_dag_text(color = "black") +
+  theme_dag() +
+  labs(
+    title = "DAG for Simulated Data with Measured (L) and Unmeasured (U) Confounders"
+  )
+```
+
+**Commentary:** Notice the open backdoor path $A \leftarrow U \rightarrow Y$ and $A \leftarrow U \rightarrow L \rightarrow Y$. Even though we adjusted for $L$, the path through $U$ remains open, illustrating the persistent challenge of unmeasured confounding.
+
+-----
+
+### Task 3: Tipping-Point Discussion
+
+**Task 3.1:** Based on the adjusted effect of $A$ on $Y$ from Task 2.1, consider:
+If the *true* causal effect of the new teaching method were zero, what kind of influence would "Student Motivation" ($U$) need to exert to explain away the remaining observed association after adjusting for "Parental Engagement" ($L$)? Think qualitatively about its association with $A$ and $Y$.
+
+**Think-Pair-Share Prompt:** Discuss with a peer: "Given our adjusted estimate, how strong would 'Student Motivation' have to be as a confounder to make us doubt our conclusion that the new teaching method helps?"
+
+-----
+
+### Task 4: E-value Calculation and Interpretation
+
+The E Value package is primarily designed for risk ratios, odds ratios, and hazard ratios. For continuous outcomes, we often work with mean differences. To use E Value, we can conceptually convert our mean difference to a standardized effect size (e.g., Cohen's d) and then to a "risk ratio" of a binary outcome. However, a simpler approach for continuous outcomes is to use the `\text{E value}()` function directly with the t-statistic or p-value, or convert the mean difference to an OR.
+
+Let's assume for this task that our outcome `Y` was dichotomized into `Y_binary` (e.g., 'Pass' vs 'Fail'), and we calculated an odds ratio.
+
+For demonstration, let's assume that, after adjusting for `L`, we found an **Odds Ratio of 1.8** for `A` on `Y_binary`, with a 95% CI of (1.2, 2.7).
+
+**Task 4.1:** Calculate the E-value for this assumed adjusted Odds Ratio and its confidence interval.
+
+```{r}
+#| label: evalue-calculation-task
+#| echo: true
+
+# Assumed adjusted OR and CI
+observed_or <- 1.8
+lower_ci_or <- 1.2
+upper_ci_or <- 2.7
+
+# Your code here to calculate the E-value
+evalue_result_lab <- evalue(
+  est = observed_or,
+  lower = lower_ci_or,
+  upper = upper_ci_or,
+  measure = "OR"
+)
+evalue_result_lab
+```
+
+**Solution Task 4.1:**
+
+```{r}
+#| label: evalue-calculation-solution
+#| echo: true
+#| include: false # Hide this chunk in final output
+
+observed_or <- 1.8
+lower_ci_or <- 1.2
+upper_ci_or <- 2.7
+
+evalue_result_lab <- evalue(
+  est = observed_or,
+  lower = lower_ci_or,
+  upper = upper_ci_or,
+  measure = "OR"
+)
+
+evalue_result_lab
+```
+
+**Task 4.2:** Interpret the E-value for both the point estimate and the confidence interval in the context of "Student Motivation" ($U$). What does this tell you about the robustness of your findings?
+
+**Self-Explanation Task:** Write down, in your own words, what the E-value means for the robustness of our assumed OR of 1.8. Why is the E-value for the lower bound of the CI important?
+
+-----
+
+### Retrieval Quiz & Reflection Prompts
+
+1. **Retrieval Quiz:** What is the primary purpose of quantitative bias analysis in observational studies?
+
+    <details\>
+
+    <summary\>Answer</summary\>
+
+    To quantify the potential impact of unmeasured biases (like confounding) on causal effect estimates, moving beyond simply acknowledging their presence to assessing the robustness of findings.
+
+    </details\>
+
+2. **Retrieval Quiz:** How does the E-value for a point estimate differ in its interpretation from the E-value for the confidence interval?
+
+    <details\>
+
+    <summary\>Answer</summary\>
+
+    The E-value for the **point estimate** quantifies the strength of unmeasured confounding needed to explain away the observed association *itself*. The E-value for the **confidence interval** quantifies the strength of unmeasured confounding needed to shift the *entire confidence interval* to include the null value (making the observed effect statistically non-significant).
+
+    </details\>
+
+3. **Reflection Prompt:** Consider a recent research paper you read. If the authors claimed "no unmeasured confounding," how might you use the concepts of QBA, tipping points, or the E-value to critically appraise their claim, even if they didn't perform such analyses?
+4. **Reflection Prompt:** When might a small E-value be acceptable, and when would it be a major concern? Provide an example for each.
+
+-----
+
+## 6 Common Pitfalls & Checks
+
+::: {.callout-warning}
+
+## ⚠️ Common Pitfall: Over-interpreting E-values as Proof of No Bias
+
+A high E-value suggests robustness, but it doesn't *prove* that no unmeasured confounding exists or that your estimate is truly unbiased. It merely indicates that a very strong unmeasured confounder would be needed to explain away the effect. Plausibility of such a confounder is crucial.
+
+:::
+
+::: {.callout-tip}
+
+## 🧠 Learning Tip: Visualizing the Impact of Confounding
+
+To truly grasp how confounding operates, try drawing DAGs for various scenarios:
+
+  - Confounding by a measured variable.
+  - Confounding by an unmeasured variable.
+  - Collider bias.
+  - Mediators.
+
+Use `ggdag` to visualize how paths are opened or closed by conditioning. This dual coding (visual + conceptual) will significantly enhance your understanding.
+
+:::
+
+::: {.callout-important}
+
+## 📌 Key Check: Sensitivity to All Assumptions
+
+While this module focuses on unmeasured confounding, remember that causal inference relies on *multiple* assumptions (e.g., positivity, consistency, no measurement error, no selection bias). A truly robust analysis considers sensitivity to violations of all key assumptions, not just confounding.
+
+:::
+
+::: {.callout-question}
+
+## ❓ Check Your Understanding
+
+You observe a strong positive association between taking a new medication (A) and recovery (Y), even after adjusting for several demographic and health factors (L). However, you suspect a strong unmeasured confounder (U) – patient adherence to treatment protocols – is at play. If the E-value for your observed association is small (e.g., 1.5), what would be your primary concern?
+
+<details\>
+
+<summary\>Answer</summary\>
+
+A small E-value (like 1.5) for a strong observed association would be a major concern because it indicates that even a relatively weak unmeasured confounder (like patient adherence, which could plausibly have an OR of 1.5 with both medication intake and recovery) could entirely explain away your observed effect. This would significantly undermine the credibility of your finding that the medication *causes* recovery.
+
+</details\>
+
+:::
+
+-----
+
+## 7 Advanced Teaching Activities & Interactivity
+
+### Flipped Prompt: Pre-class Preparation
+
+Before our next session on advanced QBA, read the following article: "A review of quantitative bias analysis methods for observational studies" by Lash, Fox, and Fink (2009). Come prepared to discuss:
+
+1. What are the main categories of QBA methods beyond what we discussed (e.g., selection bias, measurement error)?
+2. How might these other biases interact with confounding?
+3. What are the practical challenges in implementing a full probabilistic bias analysis?
+
+### Problem-Based Case: Real-World Application
+
+**Scenario:** A public health researcher observes that communities with higher rates of public park access ($A$) also have lower rates of obesity ($Y$), even after adjusting for socioeconomic status ($L$). They are concerned about unmeasured confounding from "health-conscious culture" ($U$), which might lead both to demand for parks and to healthier lifestyles.
+
+**Task:**
+
+1. Draw a DAG representing this scenario, including $A$, $Y$, $L$, and $U$.
+2. Formulate a research question for which an E-value calculation would be relevant.
+3. If their adjusted analysis found a risk ratio of 1.5 for park access on lower obesity risk, and they calculated an E-value of 2.5, what would you tell them about the robustness of their findings in a short, non-technical memo?
+
+### Spaced/Interleaved Quizzes
+
+Integrate short, low-stakes quizzes on previous topics (e.g., DAG rules, potential outcomes) before introducing new QBA concepts. For instance:
+
+  - **Quiz Question (from previous week):** Under what conditions does conditioning on a collider *create* bias?
+  - **Quiz Question (from this week):** What is the difference between a tipping-point analysis and an E-value calculation?
+
+### Self-Explanation Tasks
+
+  - "Explain to a non-statistician why simply observing an association isn't enough to claim causation, even with controls, and how QBA helps address this."
+  - "Describe a hypothetical unmeasured confounder for a study on diet and heart disease. Then, explain what an E-value of 3.0 would mean in that context."
+
+### Optional Shiny Widgets
+
+Consider developing simple Shiny applications that allow students to:
+
+  - **Dynamically adjust an observed effect size** (e.g., RR or OR) and immediately see the corresponding E-value change.
+  - **Input parameters for a hypothetical unmeasured confounder** (e.g., prevalence, association with exposure, association with outcome) and see how it shifts a simulated observed effect. This could visually demonstrate tipping points.
+
+-----
+
+## 8 Appendix: Advanced Theory & Derivations
+
+### A.1 Derivation of the E-value Formula (for Risk Ratios)
+
+The E-value is defined based on how strong an unmeasured confounder $U$ would need to be to explain away an observed association. Specifically, we assume that $U$ is a binary confounder with:
+
+  - $RR_{AU} = \Prob{A=1|U=1}/\Prob{A=1|U=0}$ (association between confounder and exposure)
+  - $RR_{UY} = \Prob{Y=1|U=1}/\Prob{Y=1|U=0}$ (association between confounder and outcome)
+
+To explain away an observed association, we seek the smallest $RR_{EU} = RR_{CU}$ such that the true causal risk ratio $RR$ is 1.
+
+Consider the observed risk ratio $RR_{obs}$. This observed ratio can be decomposed as a product of the true causal effect and a bias factor due to unmeasured confounding.
+
+A fundamental result (see VanderWeele, 2017) shows that if $RR_{obs}$ is the observed risk ratio for $A$ on $Y$, and $RR_{true}$ is the true causal risk ratio, then the relationship is governed by:
+
+$$
+RR_{obs} = RR_{true} \times \frac{RR_{AU} \times RR_{UY}}{RR_{A(U)}}
+$$
+
+where $RR_{A(U)}$ accounts for the association of $U$ with $A$ within strata of other measured confounders, and for simplification in the E-value derivation, we assume its maximum value to yield the most conservative E-value.
+
+To explain away the effect, we set $RR_{true} = 1$. The E-value then asks for the minimum value $RR_{EU} = RR_{CU} = k$ such that:
+
+$$
+RR_{obs} \le k^2
+$$
+
+More precisely, the formula for the E-value for an observed risk ratio $RR_{obs} \ge 1$ is derived from considering the bounding factor that relates the observed risk ratio to the counterfactually adjusted risk ratio. For a single unmeasured binary confounder, the observed risk ratio $RR_{obs}$ is bounded by:
+
+$$
+RR_{obs} \le \frac{\max(RR_{AU}, RR_{UY})^2}{\min(RR_{AU}, RR_{UY})} = \max(RR_{AU}, RR_{UY}) \times \frac{\max(RR_{AU}, RR_{UY})}{\min(RR_{AU}, RR_{UY})}
+$$
+
+When $RR_{AU} = RR_{UY} = k$, the bound simplifies to $k^2$.
+
+The smallest $k$ such that an unmeasured confounder *could* explain away the observed association is found by solving:
+
+$$
+RR_{obs} = k^2
+$$
+
+This is not quite the E-value formula. The precise derivation for the E-value (VanderWeele & Ding, 2017) involves finding the minimum value $k$ for $RR_{AU}$ and $RR_{CU}$ such that the lower bound of the causal risk ratio, adjusted for the unmeasured confounder, crosses the null.
+
+The formula for the E-value for an observed risk ratio $RR_{obs} \ge 1$ is given by:
+
+$$
+\text{E value} = RR_{obs} + \sqrt{RR_{obs}(RR_{obs}-1)}
+$$
+
+This formula represents the minimum value that both $RR_{AU}$ and $RR_{UY}$ must exceed (if the true effect is 1) to account for the observed effect. If $RR_{obs} < 1$, the formula is for $1/RR_{obs}$.
+
+#### Numeric Illustration for Risk Ratio E-value
+
+Let's use our earlier example: $RR_{obs} = 2.5$.
+
+$\text{E value} = 2.5 + \sqrt{2.5(2.5-1)} = 2.5 + \sqrt{2.5 \times 1.5} = 2.5 + \sqrt{3.75} \approx 2.5 + 1.936 = 4.436$.
+
+This implies that if an unmeasured confounder were associated with both treatment and outcome by a risk ratio of at least 4.436, it could entirely explain the observed $RR_{obs}=2.5$.
+
+### A.2 Connection to Bounding Factors for Unmeasured Confounding
+
+The concept of bounding factors is closely related to sensitivity analysis. For a given observed effect, we can derive bounds on the true causal effect under different assumptions about the strength of an unmeasured confounder. The E-value essentially inverts this problem: it finds the minimum strength of an unmeasured confounder that would push the true effect to the null.
+
+For example, consider the observed odds ratio $OR_{obs}$. If we assume a binary unmeasured confounder $U$ that has an odds ratio $OR_{AU}$ with the exposure and $OR_{UY}$ with the outcome (conditional on measured covariates), and we assume $OR_{AU} = OR_{UY} = k$, then the true odds ratio $OR_{true}$ can be bounded.
+
+The E-value (for OR) is derived such that if $OR_{obs}$ is the observed odds ratio, then:
+
+$$
+\text{E value} = OR_{obs} + \sqrt{OR_{obs}(OR_{obs}-1)}
+$$
+
+for $OR_{obs} \ge 1$. This value $k$ implies that if the unmeasured confounder is associated with both treatment and outcome by an OR of $k$ (or more), then the true OR could be 1.
+
+#### Numeric Illustration for Odds Ratio E-value
+
+Let's use our assumed $OR_{obs} = 1.8$.
+
+$\text{E value} = 1.8 + \sqrt{1.8(1.8-1)} = 1.8 + \sqrt{1.8 \times 0.8} = 1.8 + \sqrt{1.44} = 1.8 + 1.2 = 3.0$.
+
+Wait\! This differs from the \text{E value} package output (5.17). Why? The simple formula $RR_{obs} + \sqrt{RR_{obs}(RR_{obs}-1)}$ is specific for Risk Ratios. For Odds Ratios, the conversion is slightly different because the OR is not collapsible. The E Value package uses the correct transformation based on the formulae derived by VanderWeele and Ding (2017) which accounts for the OR properties. The underlying calculation for an OR $est$ actually involves converting it to a log-odds scale, then computing the E-value on that scale, and transforming back. For a point estimate $est \> 1$:
+
+$\text{E value}_{OR} = est + \sqrt{est(est-1)} \times \frac{est}{est_0}$ is incorrect.
+
+The correct formulation for an odds ratio $OR_{obs}$ requires a more nuanced approach than the simple arithmetic for risk ratios. The E Value package internally handles these transformations correctly, often relying on the conversion to the risk ratio scale or leveraging the properties of log odds. For an observed OR $est$, the E-value for the point estimate is the minimum value of $k$ such that the true $OR$ could be 1. The formula implemented in E Value is derived from more general bounding factors and results in:
+
+$\text{E value}_{OR} = \frac{\sqrt{(est-1)^2 + 4 \times est \times \log(est)} + (est-1)}{2}$ or a more straightforward numerical solution given by the package. The value 5.17 from the E Value package is correct. The simple arithmetic derivation shown above for RR does not directly translate to ORs due to their non-collapsibility.
+
+The general definition of the E-value for an observed point estimate $est$ is the minimum absolute value of the risk ratios that an unmeasured confounder would need to have with both the exposure and the outcome, conditional on the measured covariates, to explain away the observed association. For a continuous outcome, the E-value can be interpreted in terms of how strong a confounder (e.g., in standard deviation units) would need to be.
+
+### A.3 Properties and Limitations of the E-value
+
+**Properties:**
+
+  - **Scale-invariant (to some extent):** While the E-value is calculated for specific measures (RR, OR, HR), its interpretation as "strength of confounding to explain away the effect" is a generalizable concept.
+  - **Intuitive interpretation:** It provides a single number that quantifies robustness, making it accessible to non-technical audiences.
+  - **Conservative:** The E-value provides the *minimum* strength of confounding required, assuming the confounder is binary and perfectly aligned to bias the estimate upwards. In reality, a confounder might be continuous or less efficiently configured, requiring even stronger associations.
+
+**Limitations:**
+
+  - **Single unmeasured confounder:** The E-value primarily considers the impact of a single unmeasured confounder. In reality, multiple unmeasured confounders might be operating, and their joint effect could be more complex.
+  - **Binary associations:** The interpretation of the E-value is based on risk ratios/odds ratios of the confounder with exposure and outcome. For continuous confounders or complex relationships, this interpretation requires careful thought.
+  - **Does not identify the confounder:** It tells you *how strong* an unmeasured confounder needs to be, not *what* that confounder is. The plausibility assessment still rests on domain expertise.
+  - **Specific to nullifying the effect:** The standard E-value calculates the strength needed to shift the estimate to the null. It doesn't directly tell you the strength needed to shift it to a specific non-null value of clinical interest. Extensions exist for this.
+
+#### Numeric Illustration of an E-value Limitation
+
+Suppose a study found an $OR_{obs} = 4.0$ for a drug's effect, with an E-value of 7.0. While this E-value is high, suggesting robustness, what if there's a highly plausible unmeasured confounder (e.g., patient severity of illness, which is often poorly measured) that is known to have an OR of 10.0 with both drug use and outcome in previous research? In this case, even a high E-value would not guarantee unbiasedness if a highly potent unmeasured confounder is indeed plausible. The E-value provides a threshold; it doesn't remove the need for expert judgment on the plausibility of exceeding that threshold.

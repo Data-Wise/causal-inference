@@ -1,0 +1,15 @@
+project:
+  output-dir: _powerpoint
+  render:
+    - "slides/" 
+    - "!lectures/"
+    - "!index.qmd"
+    - "!contents.qmd"
+    - "!home*.qmd"
+    - "!appendix/"
+    - "!assignments/"
+    - "!resources/"
+    - "!syllabus/"
+format:
+  pptx:
+    reference-doc: UNM-PowerPoint-Template1.pptx

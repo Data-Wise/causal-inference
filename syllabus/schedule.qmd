@@ -1,0 +1,47 @@
+---
+title: "STAT 579: Course Schedule"
+---
+
+This page provides a detailed week-by-week schedule for STAT 579. Readings should be completed *before* the first class of the week.
+
+-   **HR:** Hernán, M. A., & Robins, J. M. (2024). *Causal Inference: What If*.
+-   **Neal:** Neal, B. (2020). *Introduction to Causal Inference*.
+-   **Cunningham:** Cunningham, S. (2021). *Causal Inference: The Mixtape*.
+-   **VanderWeele:** VanderWeele, T. J. (2015). *Explanation in Causal Inference*.
+
+### **Part I: Foundations of Causal Inference**
+
+| Week | Dates | Core Topic | Primary Readings | Optional Reading (Cunningham) | Project Connection |
+|:-----------|:-----------|:-----------|:-----------|:-----------|:-----------|
+| **1** | Aug 19, 21 | What is a Causal Effect? | **HR:** Ch. 1–2; **Neal:** Ch. 1–2 | Ch. 2: Potential Outcomes | Define your causal question. |
+| **2** | Aug 26, 28 | DAGs & Assumption Transparency | **Neal:** Ch. 3; **HR:** Ch. 6 | Ch. 3: Directed Acyclic Graphs | Draw a preliminary DAG. |
+| **3** | Sep 2, 4 | Exchangeability, Positivity | **HR:** Ch. 7; **Neal:** Ch. 4 | Ch. 4: Regression | Identify assumptions for your DAG. |
+| **4** | Sep 9, 11 | Bias (Confounding, Selection) | **HR:** Ch. 8–9 | - | Consider biases in your dataset. |
+
+### **Part II: Estimation Methods**
+
+| Week | Dates | Core Topic | Primary Readings | Optional Reading (Cunningham) | Project Connection |
+|:-----------|:-----------|:-----------|:-----------|:-----------|:-----------|
+| **5** | Sep 16, 18 | Propensity Scores | **HR:** Ch. 12–13; **Neal:** Ch. 7 | Ch. 5: Matching & Subclassification | Select adjustment strategy. |
+| **6** | Sep 23, 25 | IPTW & MSMs | **HR:** Ch. 15; **Neal:** Ch. 7.5–7.6 | - | Evaluate MSM relevance. |
+| **7** | Sep 30, Oct 2 | G-computation | **HR:** Ch. 20–21 | - | Explore g-methods. |
+| **8** | Oct 7 | Instrumental Variables | **HR:** Ch. 16; **Neal:** Ch. 9 | Ch. 8: Instrumental Variables | Assess natural experiments. |
+
+***Note:** UNM Fall Break is Oct 9–10. Thursday's class is cancelled.*
+
+### **Part III: Advanced Topics & Applications**
+
+| Week | Dates | Core Topic | Primary Readings | Project Connection |
+|:--------------|:--------------|:--------------|:--------------|:--------------|
+| **9** | Oct 14, 16 | Effect Modification | **HR:** Ch. 4–5; **Neal:** Ch. 10 | **Milestone: Project Proposal Due.** |
+| **10** | Oct 21, 23 | Mediation I (Foundations) | **VanderWeele:** Ch. 1–2; **Neal:** Ch. 14 | Refine DAG with mediators. |
+| **11** | Oct 28, 30 | Mediation II (Application) | **VanderWeele:** Ch. 3; **HR:** Ch. 23 | - |
+| **12** | Nov 4, 6 | Sensitivity Analysis | **Neal:** Ch. 8; **HR:** Ch. 14 | Plan robustness checks. |
+| **13** | Nov 11, 13 | Target Trial Emulation | **HR:** Ch. 22 | Reframe project as a trial. |
+| **14** | Nov 18, 20 | **Final Presentations** | - | Present your findings. |
+
+***Note:** Thanksgiving Break is Nov 27-28.*
+
+------------------------------------------------------------------------
+
+**Finals Week (Dec 8–13):** Final Project Paper Due.

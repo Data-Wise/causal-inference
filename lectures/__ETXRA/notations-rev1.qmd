@@ -1,0 +1,186 @@
+---
+title: "Causal Inference Notation Guide"
+---
+
+# 📘 STAT 579: Comprehensive Notation Guide (Final Version)
+
+## 1. Custom LaTeX Macros
+
+A well-defined preamble is key for efficiency. These macros provide shortcuts for commonly used mathematical notation.
+
+```latex
+% --- Core Symbols & Operators ---
+\newcommand{\PP}{\mathbb{P}} % probability
+\newcommand{\E}[1]{\mathbb{E}\left[#1\right]} % Expectation
+\newcommand{\Es}[2]{\mathbb{E}_{#1}\left[#2\right]} % Expectation with subscript
+\newcommand{\Prob}[1]{\mathbb{P}\left(#1\right)} % Probability with parentheses
+\newcommand{\var}[1]{\operatorname{Var}\left[#1\right]}
+\newcommand{\cov}[2]{\operatorname{Cov}\left(#1, #2\right)}
+\newcommand{\indep}{\perp\!\!\!\perp} % Independence symbol
+\newcommand{\doop}[1]{\operatorname{do}\left(#1\right)} % do-operator
+\newcommand{\ind}[1]{\mathbb{I}\left\{#1\right\}}   % Indicator function
+
+% --- Mathematical Sets & Vectors ---
+\newcommand{\RR}{\mathbb{R}} % Real numbers
+\newcommand{\NN}{\mathbb{N}} % Natural numbers
+\newcommand{\vect}[1]{\mathbf{#1}} % Vector notation
+```
+
+## 2. Variables, Notation, and Their Support
+
+At the heart of any causal analysis are key variables. It's crucial to distinguish between a **random variable** and a **fixed value**. The **support** of a random variable is the set of all possible values it can take.
+
+| Symbol                 | Type                         | Support ($\mathcal{A}$, $\mathcal{Y}$, etc.) | Description & Interpretation                                                                                                   |
+| :--------------------- | :--------------------------- | :------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
+| $i$                    | **Fixed** Index              | ${1, \dots, n}$                              | A single unit or individual in a sample of size $n$                                                                            |
+| $A, A_i$               | **Random** Variable          | $\mathcal{A}$, typically ${0, 1}$            | **Treatment/Exposure**. The value of $A_i$ is not known until it is observed                                                   |
+| $a$                    | **Fixed** Value              | $a \in \mathcal{A}$                          | A specific, hypothetical level of treatment (e.g., $a=1$)                                                                      |
+| $Y, Y_i$               | **Random** Variable          | $\mathcal{Y} \subseteq \mathbb{R}$           | **Outcome**. The variable we want to affect                                                                                    |
+| $y$                    | **Fixed** Value              | $y \in \mathcal{Y}$                          | A specific, hypothetical outcome value                                                                                         |
+| $X, X_i$               | **Random Variable**          | $\mathcal{X} \subseteq \RR$                  | **Covariates**. A variable of baseline characteristics (e.g., age) that may affect treatment assignment or the outcome         |
+| $\vect{X}, \vect{X}_i$ | **Random Vector**            | $\mathcal{X} \subseteq \RR^d$                | A **vector of baseline covariates**. Bold **X** signifies a collection of multiple variables (e.g., age, sex, baseline health) |
+| $Z, Z_i$               | **Random** Variable          | $\mathcal{Z}$, typically ${0, 1}$            | An **Instrumental Variable (IV)**                                                                                              |
+| $M, M_i$               | **Random** Variable          | $\mathcal{M} \subseteq \RR$                  | A **Mediator**. A post-treatment variable on the causal pathway                                                                |
+| $C$, $C_i$             | Explicit confounder variable | $\mathcal{C} \subseteq \RR$                  | Variable explicitly used to distinguish from general covariates                                                                |
+| $\vect{C}$             | Vector of confounders        | $\mathcal{C} \subseteq \RR^d$                | Vector of explicit confounding variables                                                                                       |
+| $L$, $L_i$             | Time-indexed confounder      | $\mathcal{L} \subseteq \RR$                  | Time-indexed or longitudinal confounder (in MSM contexts)                                                                      |
+| $\vect{L}$             | Vector of confounders        | $\mathcal{L} \subseteq \RR^d$                | Vector of time-indexed or longitudinal confounders (in MSM contexts)                                                           |
+
+
+## 3. The Potential Outcomes Framework
+
+This framework forces us to think about counterfactual worlds to define causal effects.
+
+| Notation        | How to Read It                                                                                  | Random vs. Fixed                                                                                                      | Interpretation                                                                                                                                                         |
+| :-------------- | :---------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| $Y_i^a$         | "The potential outcome `Y` for individual `i` under treatment `a`."                             | $Y_i^a$ is a **random variable**. The superscript `a` is a **fixed value**.                                           | This represents the outcome that *would have been observed* for person `i` if their treatment had been set to level `a`.                                               |
+| $A_i^z$         | "The potential treatment `A` for individual `i` under instrument `z`."                          | $A_i^z$ is a **random variable**. The superscript `z` is a **fixed value**.                                           | This is the treatment person `i` *would have* if their instrument `Z` were set to `z`.                                                                                 |
+| $Y^{a, M^{a'}}$ | "Y under treatment `a` and the mediator value that *would have occurred* under treatment `a'`." | $Y^{a, M^{a'}}$ is a **random variable**. Superscripts `a` and `a'` are **fixed**. $M^{a'}$ is a **random variable**. | A nested counterfactual for mediation. It asks: what would `Y` be if we set `A` to `a` but forced `M` to the value it would have naturally taken if `A` had been `a'`? |
+
+## 4. Fundamental Causal Assumptions
+
+No causal conclusion is possible without untestable assumptions. Being explicit about them is paramount.
+
+| Assumption                      | Notation / Name                             | Explanation                                                                                                                                                                                      |
+| :------------------------------ | :------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Consistency**                 | If $A_i = a$, then $Y_i = Y_i^a$.           | The observed outcome for an individual is their potential outcome corresponding to the treatment they actually received. This links the observed data to the counterfactual world.               |
+| **SUTVA**                       | Stable Unit Treatment Value Assumption      | Two parts: (1) **No interference**: My treatment doesn't affect your outcome. (2) **One version of treatment**: The effect of the treatment is the same for everyone who receives it.            |
+| **Exchangeability**             | $Y^a \indep A$                              | The potential outcomes are independent of the treatment that was *actually assigned*. This is the "as if random" assumption that holds in an ideal RCT.                                          |
+| **Conditional Exchangeability** | $Y^a \indep A \mid \vect{X}$                | Within levels of the covariates $\vect{X}$, treatment assignment is random. This is the key assumption for observational studies, also called **ignorability** or **no unmeasured confounding**. |
+| **Positivity**                  | $0 < \Prob{A=a \mid \vect{X}=\vect{x}} < 1$ | For every group of individuals with the same covariate values $\vect{x}$, some received treatment and some did not. There are no groups with a 0% or 100% chance of treatment.                   |
+
+## 5. Directed Acyclic Graphs (DAGs) 📈
+
+DAGs are visual representations of our causal assumptions, providing a powerful way to assess confounding. A DAG consists of nodes (variables) and directed edges (arrows) representing causal effects.
+
+| Concept          | Description                                                                                                                                                                                                                                             | Example                                                                                                                      |
+| :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------- |
+| **Path**         | A sequence of connected nodes. Can go along or against arrows.                                                                                                                                                                                          | $A \to M \to Y$ is a causal path. $A \leftarrow X \to Y$ is a non-causal path.                                               |
+| **Confounder**   | A common cause of $A$ and $Y$.                                                                                                                                                                                                                          | A variable $X$ with paths $X \to A$ and $X \to Y$. This creates a "backdoor" path.                                           |
+| **Mediator**     | A variable $M$ on the causal pathway from $A$ to $Y$.                                                                                                                                                                                                   | A variable $M$ in the path $A \to M \to Y$.                                                                                  |
+| **Collider**     | A common *effect* of two other variables.                                                                                                                                                                                                               | A variable $C$ in a path like $A \to C \leftarrow Y$. Conditioning on a collider *opens* a non-causal path and induces bias. |
+| **d-separation** | A graphical rule for determining if variables are independent. Two variables are d-separated if all paths between them are blocked. A path is blocked if it contains a non-collider that is conditioned on, or a collider that is *not* conditioned on. |                                                                                                                              |
+
+### Identification With DAGs
+
+  - **The `do`-operator:** $\E{Y \mid \doop{A=a}}$ represents the expectation of $Y$ in a hypothetical world where we **intervene** and set `A=a` for everyone. This is mathematically equivalent to the potential outcome expectation $\E{Y^a}$.
+  - **Backdoor Criterion:** The causal effect of $A$ on $Y$ is identified if we can find a set of covariates $\vect{X}$ that blocks all non-causal ("backdoor") paths from $A$ to $Y$. If $\vect{X}$ satisfies this, then:
+
+$$
+\E{Y^a} = \sum_{\vect{x}} \E{Y \mid A=a, \vect{X}=\vect{x}} \Prob{\vect{X}=\vect{x}}
+$$
+
+
+## 6. Causal Mediation Analysis
+
+Mediation analysis decomposes the total effect of $A$ on $Y$ into a **direct effect** and an **indirect effect** that travels through a mediator $M$.
+
+### Estimands
+
+- **Natural Direct Effect (NDE):** The effect of changing treatment from 0 to 1 while forcing the mediator to stay at the level it would have naturally taken under no treatment.
+
+$$
+\text{NDE} = \E{Y^{a=1, M^{a=0}} - Y^{a=0, M^{a=0}}}
+$$
+
+- **Natural Indirect Effect (NIE):** The effect of holding treatment fixed at 1, but changing the mediator from its natural level under control to its natural level under treatment.
+
+$$
+\text{NIE} = \E{Y^{a=1, M^{a=1}} - Y^{a=1, M^{a=0}}}
+$$
+
+- **Total Effect (TE):** $\text{TE} = \text{NDE} + \text{NIE} = \E{Y^1 - Y^0}$
+
+### Mediation Assumptions (The "4-Way" Assumptions)
+
+To identify the NDE and NIE, we need four conditional exchangeability assumptions (no unmeasured confounding) for the following relationships, conditional on baseline covariates $\vect{X}$:
+
+1. The effect of treatment $A$ on the outcome $Y$.
+2. The effect of treatment $A$ on the mediator $M$.
+3. The effect of the mediator $M$ on the outcome $Y$.
+4. There is no confounder of the $M-Y$ relationship that is itself affected by the treatment $A$.
+
+
+## 7. Estimation Strategies
+
+### 7.1 Standardization (G-Formula)
+
+- **Goal:** Estimate $\E{Y^a}$ by modeling the outcome.
+- **Formula:**
+$$
+\E{Y^a} = \sum_x \E{Y \mid A=a, \vect{X}= \vect{x}} \Prob{\vect{X}= \vect{x}} = \Es{\vect{X}}{\E{Y \mid A=a, \vect{X}=\vect{x}}}
+$$
+
+### 7.2 Inverse Probability Weighting (IPW)
+
+- **Goal:** Create a "pseudo-population" where treatment assignment is independent of $\vect{X}$.
+- **Propensity Score:** The probability of receiving treatment: $e(\vect{X}) = \Prob{A=1 \mid \vect{X}}$.
+- **IP Weight (for ATE):** The weight for each individual `i` is the inverse of their probability of receiving the treatment they actually got:
+
+$$
+w_i = \frac{A_i}{e(\vect{X}_i)} + \frac{1-A_i}{1-e(\vect{X}_i)}
+$$
+
+- **ATE Estimator:**
+
+$$
+\hat{\E{Y^a}} = \frac{1}{n}\sum_{i=1}^n \frac{\ind{A_{i}=a}Y_{i}}{\Prob{A_{i}=a \mid \vect{X}_{i}}}
+$$
+
+## More on Nested Counterfactual in Mediation Analysis
+
+While the parenthesis notation $Y(a, M(a'))$ is arguably more explicit, the superscript notation $Y^{a, M^{a'}}$ is also widely used, particularly in the tradition of Pearl's work. The key is to be very precise in our interpretation.
+
+Here is the revised section using the superscript notation, with a detailed breakdown to ensure clarity.
+
+### Deconstructing Mediation: A Guide to Superscript Notation
+
+The nested potential outcome notation used in mediation, $Y^{a, M^{a'}}$, is powerful and compact, but it requires careful interpretation to distinguish between direct interventions and natural counterfactual values.
+
+Let's break it down to fully understand its meaning. Think of the superscript as having two distinct components that describe a complex hypothetical world.
+
+- **The First Component: A Direct Intervention on $A$**
+    - The $a$ in the superscript represents a direct **intervention**. We are imagining a world where we actively set the treatment $A$ to the fixed value $a$.
+- **The Second Component: A Counterfactual Value for $M$**
+    - The $M^{a'}$ part is more subtle. This does **not** mean we are intervening on $M$. Instead, $M^{a'}$ represents the **potential value of the mediator**.
+    - **How to Read $M^{a'}$**: "The value that the mediator $M$ would have naturally taken if treatment $A$ had been set to $a'$." This is a random variable, representing a natural outcome under a hypothetical condition.
+
+#### Putting It All Together: $Y^{a, M^{a'}}$
+
+The full expression combines these two ideas:
+
+> "The potential outcome $Y$ that would be realized if we **intervened** to set treatment $A$ to $a$, while the mediator $M$ simultaneously took on the value it would have **naturally** had if treatment had been set to $a'$."
+
+This notation describes a complex counterfactual scenario where one variable ($A$) is set by intervention, while another variable ($M$) is determined by a separate counterfactual condition.
+
+#### Revisiting The Causal Estimands with Superscript Notation
+
+This detailed interpretation makes the definitions of the direct and indirect effects clear.
+
+- **Natural Direct Effect (NDE)**
+    - **Formula**: $\text{NDE} = \E{Y^{a=1, M^{a=0}} - Y^{a=0, M^{a=0}}}$
+    - **Interpretation**: We compare two hypothetical worlds. In both, the mediator is held to the value it would have *naturally taken under the control condition* ($M^{a=0}$). The only difference is our direct intervention on $A$, changing it from 0 to 1. Any resulting change in the average outcome is therefore the direct effect of $A$ that does not pass through $M$.
+- **Natural Indirect Effect (NIE)**
+    - **Formula**: $\text{NIE} = \E{Y^{a=1, M^{a=1}} - Y^{a=1, M^{a=0}}}$
+    - **Interpretation**: Here, our direct intervention on $A$ is held constant at the treated level ($a=1$) in both scenarios. The only thing we change is the mediator's value—from the natural level it would have under control ($M^{a=0}$) to the natural level it would have under treatment ($M^{a=1}$). Any change in the average outcome must be due to the causal pathway that is transmitted *through* the mediator.
+

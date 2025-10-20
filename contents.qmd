@@ -1,0 +1,64 @@
+---
+title: "Course Content - STAT 440/540"
+date: "7/12/2025"
+date-modified: last-modified
+date-format: long
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-expand: true
+    anchor-sections: true
+---
+
+## Course Syllabus
+
+The course syllabus contains **all essential details** about the course structure, policies, assignments, and exam dates.
+
+-   📄 [Download Full Course Syllabus (PDF)]
+
+    ::: callout-important
+    **You must read the syllabus carefully**, as it contains critical information not available elsewhere.
+    :::
+
+  [Download Full Course Syllabus (PDF)]: https://Data-Wise.github.io/regression/syllabus/syllabus-final.pdf
+
+## Lecture Notes
+
+Lecture notes and slides will be posted on the **Course GitHub Page** in **HTML format**.
+
+-   📚 [Access Lecture Notes]
+
+  [Access Lecture Notes]: home_lectures.qmd
+
+::: callout-note
+GitHub Pages may cache content. Refresh your browser if the notes appear outdated.
+:::
+
+## Course Schedule
+
+The course schedule provides a week-by-week breakdown of topics, reading assignments, and due dates.
+
+-   📅 [View Course Schedule]
+
+  [View Course Schedule]: https://Data-Wise.github.io/regression/syllabus/schedule
+
+## Assignments
+
+Assignments will be posted on Canvas and must be submitted via Canvas. All assignments require the use of the **Quarto template** provided.
+
+-   🔗 [Quarto Template]
+
+  [Quarto Template]: https://github.com/course-page-url/template
+
+## R Code and Data Files from the Textbook
+
+Links to the R code and data files from the textbook and to the data sets used in the textbook are provide in the [Appendix]
+
+  [Appendix]: home_appendix.qmd
+
+## R Help and Tutorials Provided by the Instructor
+
+I provided a list of R tutorials and resources that you may find helpful in the [Appendix]
+
+  [Appendix]: home_appendix.qmd

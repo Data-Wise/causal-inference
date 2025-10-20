@@ -1,0 +1,101 @@
+project:
+  type: website
+  render:
+    - "*.qmd"
+    - "!templates/"
+    - "!appendix/"
+    - "!assignments/"
+    - "lectures/"
+profiles:
+  group:
+  - [ default, pdf ]
+metadata-files:
+  - _website.yml
+bibliography: "references.bib"
+csl: "assets/csl/apa.csl"
+author:
+  name: "{{< var author >}}"
+  url: "{{< var url >}}"
+  email: "{{< var email >}}"
+  orcid: "{{< var orcid >}}"
+  affiliations: "{{< var affiliations >}}"
+df-print: paged
+execute:
+  eval: true
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+  cache: true
+branding:
+  primary: "#0056b3" # Main color for buttons, links, and highlights
+  secondary: "#ffc107" # Accent color
+  banner:
+    color: "#ffffff" # Background color
+    text-color: "#0056b3" # Text color
+    logo: "assets/images/banner-logo.png" # Optional logo in banner
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-expand: false
+    toc-float:
+      collapsed: true
+    theme:
+      light: [ cosmo, "assets/styles/css/styles.scss" ]
+      dark: [ darkly, "assets/styles/css/styles.scss" ]
+    smooth-scroll: true
+    toc-location: right
+    page-navigation: true
+    link-external-newwindow: true
+    link-external-icon: true
+    code-copy: true
+    footnotes-backlink: true
+    number-sections: false
+    number-depth: 3
+    code-fold: true
+    code-overflow: wrap
+    standalone: false
+    fig-align: center
+    callout-icon: true
+    date: last-modified
+    date-format: "MMM-DD-YYYY"
+    lightbox: auto
+    css: "assets/styles/css/home.css"
+    page-layout: article
+    title-block-banner: true
+    highlight-style: pygments
+    downloads: [ pdf ]
+    page-footer:
+      left: "© 2025 Davood Tofighi • STAT 579"
+      right:
+      - text: "License: CC BY 4.0"
+        href: https://creativecommons.org/licenses/by/4.0/
+      - icon: github
+        href: https://github.com/Data-Wise/causal-inference
+    grid:
+      margin-width: 350px
+    footnotes-hover: true
+    mermaid:
+      theme: neutral
+    header-includes:
+    - '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">'
+    include-in-header:
+    - includes/mathjax-macros.html
+filters:
+- diagram
+diagram:
+  engine:
+    tikz:
+      documentclass: standalone
+      execpath: xelatex
+      header-includes:
+      - '\usepackage{adjustbox}'
+      - '\usetikzlibrary{arrows, fit, shapes, shapes.geometric, arrows, arrows.meta, decorations.markings, positioning}'
+  cache: true
+  format:
+    html: png
+    pdf: pdf
+  dpi: 192
+metadata:
+  resource-path: ["includes", "templates" ]

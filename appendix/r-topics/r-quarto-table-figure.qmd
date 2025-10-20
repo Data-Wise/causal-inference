@@ -1,0 +1,256 @@
+---
+title: "Figures, Tables, Captions, and Referencing in Quarto: A Comprehensive Tutorial"
+---
+
+## 1. Introduction
+
+### Overview
+
+Quarto is a publishing system that integrates R code, text, and output (figures, tables) into dynamic documents. This tutorial focuses on creating figures/tables with captions, cross-referencing them, and generating reproducible reports.
+
+**Key Features**:
+
+- Add captions using `#| fig-cap` or `#| tbl-cap` in code chunks.
+- Cross-reference figures/tables with `@label` syntax.
+- Customize outputs using `ggplot2`, `knitr`, `kableExtra`, and `gt`.
+
+### Use Cases
+
+- Academic papers with numbered figures/tables.
+- Technical reports with automated cross-references.
+- Dashboards integrating dynamic visualizations and summaries.
+
+### Benefits
+
+- **Automation**: Update figures/tables and references dynamically.
+- **Consistency**: Ensure captions and labels follow document structure.
+- **Flexibility**: Output to HTML, PDF, Word, or slides.
+
+
+
+## 2. Getting Started
+
+### Loading the Package
+
+```{r}  
+# Load required packages
+pacman::p_load(ggplot2, dplyr, kableExtra, gt, plotly)
+ggplot2::theme_set(theme_minimal())
+```  
+
+### Basic Usage
+
+**Figure with Caption**:
+
+```{r}  
+#| label: fig-mpg
+#| fig-cap: "Scatterplot of car weight vs. MPG."
+
+ggplot2::ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point()
+```  
+
+Reference the figure in text: `See Figure @fig-mpg`.
+
+**Table with Caption**:
+
+```{r}  
+#| label: tbl-summary
+#| tbl-cap: "Summary of MPG by cylinders."
+
+mtcars |>
+  group_by(cyl) |>
+  summarize(avg_mpg = mean(mpg)) |>
+  knitr::kable()
+```  
+
+Reference the table: `Table @tbl-summary shows…` produces "@tbl-summary shows…".
+
+## 3. Key Functions and Features
+
+### Quarto Chunk Options
+
+**Description**: Control figure/table captions, labels, and layout.
+
+**Syntax**:
+
+```r  
+#| label: fig-example  
+#| fig-cap: "Caption text"  
+#| tbl-cap: "Table caption"  
+#| layout: "l-body-outset"  
+```  
+
+**Example**:
+
+```{r}
+#| label: fig-density
+#| fig-cap: "Density plot of MPG."
+#| echo: fenced
+
+ggplot(mtcars, aes(mpg)) +
+  geom_density(fill = "skyblue")
+```  
+
+Refer to the figure: `Figure @fig-density shows…` produces "@fig-density shows…".
+
+### kableExtra::kbl()
+
+**Description**: Create customizable tables with captions.
+
+**Syntax**:
+
+```r  
+data |>  
+  kableExtra::kbl(  
+    caption = "Table title",  
+    align = "c",  
+    format = "html"  
+  ) |>  
+  kableExtra::kable_styling()  
+```  
+
+**Example**:
+
+```{r}  
+#| label: tbl-styled
+#| tbl-cap: "Styled table with kableExtra."
+
+mtcars |>
+  head(3) |>
+  kableExtra::kbl(caption = "Sample Cars") |>
+  kableExtra::kable_styling(full_width = FALSE)
+```  
+
+## 4. In-Depth Examples
+
+### Example 1: Dynamic Figure Captions
+
+**Objective**: Generate a figure caption with variables.
+
+**Steps**:
+
+```{r}  
+#| label: fig-dynamic
+#| fig-cap: "MPG distribution for {{nrow(mtcars)}} cars."
+
+ggplot(mtcars, aes(mpg)) +
+  geom_histogram(bins = 10, fill = "steelblue")
+```  
+
+**Output**: Caption dynamically updates if data changes.
+
+### Example 2: Multi-Column Table
+
+**Objective**: Create a summary table grouped by cylinders.
+
+**Steps**:
+
+```{r}  
+#| label: tbl-grouped
+#| tbl-cap: "Detailed summary by cylinders."
+
+mtcars |>
+  group_by(cyl) |>
+  summarize(
+    Avg_MPG = mean(mpg),
+    SD_MPG = sd(mpg)
+  ) |>
+  gt::gt() |>
+  gt::tab_header(title = "Cylinder Performance")
+```  
+
+**Output**: Professionally formatted table with grouped data.
+
+## 5. Advanced Features
+
+### Customization
+
+**Conditional Table Formatting**:
+
+```{r}  
+#| label: tbl-color
+#| tbl-cap: "Table with conditional formatting."
+
+mtcars |>
+  head() |>
+  mutate(
+    high_mpg = ifelse(mpg > 20, "green", "red")
+  ) |>
+  kableExtra::kbl() |>
+  kableExtra::column_spec(6, background = mtcars$high_mpg)
+```  
+
+**Interactive Figures with Plotly**:
+
+```{r}  
+#| label: fig-interactive
+#| fig-cap: "Interactive MPG vs. Weight plot."
+
+plotly::ggplotly(
+  ggplot(mtcars, aes(wt, mpg)) +
+    geom_point()
+)
+```  
+
+### Integration
+
+**Combine with dplyr**:
+
+```{r}  
+#| label: tbl-filtered
+#| tbl-cap: "Filtered data table."
+
+mtcars |>
+  filter(cyl == 6) |>
+  gt::gt()
+```  
+
+### Optimization
+
+**Caching Large Datasets**:
+
+```r  
+#| cache: true  
+```  
+
+## 6. Troubleshooting and FAQs
+
+### Common Issues
+
+1. **Missing Captions**: Ensure `#| fig-cap` or `#| tbl-cap` is placed *inside* the code chunk.
+2. **Broken Cross-References**: Verify that labels match exactly (e.g., `@fig-label` vs. `fig-label`).
+
+### FAQs
+
+**Q: How to reference figures in PDF output?**
+A: Use the same `@label` syntax; Quarto handles format-specific numbering.
+
+**Q: Can I use LaTeX in captions?**
+A: Yes, for PDF output: `#| fig-cap: "\\textbf{Bold} caption text"`.
+
+
+## 7. Best Practices
+
+- Use **descriptive labels** (e.g., `fig-mpg-distribution` instead of `fig1`).
+- Store reusable components (e.g., themes, table styles) in separate scripts.
+- Prefer `gt` for complex tables and `kableExtra` for quick HTML formatting.
+
+## 8. Conclusion
+
+### Summary
+
+Quarto streamlines figure/table creation, captioning, and cross-referencing. Key tools include:
+
+- Chunk options (`#| label`, `#| fig-cap`).
+- `ggplot2` for figures, `gt`/`kableExtra` for tables.
+
+### Next Steps
+
+Explore Quarto's [cross-referencing syntax](https://quarto.org/docs/authoring/figures.html) for equations, sections, and theorems.
+
+## 9. References and Resources
+
+- **Quarto Documentation**: <https://quarto.org>
+- **ggplot2 Cheat Sheet**: <https://ggplot2.tidyverse.org>
+- **Community Support**: RStudio Community, Stack Overflow (tag: `quarto`).

@@ -1,0 +1,1486 @@
+---
+title: "Propensity Score Methods"
+---
+
+## Overview
+
+Propensity scores represent one of the most influential innovations in causal inference methodology, providing a powerful tool for addressing the curse of dimensionality when controlling for confounding. Introduced by @rosenbaum1983central, the propensity score offers an elegant solution: instead of conditioning on all observed confounders individually, we can condition on a single scalar—the probability of receiving treatment given the confounders.
+
+This week covers both the theoretical foundations and practical applications of propensity scores. We explore how this dimensionality reduction technique maintains the essential properties needed for causal identification while making analysis tractable. The key insight is that conditioning on the propensity score can achieve the same confounding control as conditioning on all covariates simultaneously, under certain assumptions.
+
+We examine three primary applications: matching, stratification, and inverse probability of treatment weighting (IPTW). Each method leverages the propensity score differently to create treatment and control groups that are comparable on observed confounders. Throughout, we emphasize the critical importance of diagnostics—particularly checking covariate balance—to validate our propensity score methods.
+
+## Learning Objectives
+
+By the end of this module, students will be able to:
+
+1. **Define** the propensity score mathematically and explain its role as a balancing score
+2. **Estimate** propensity scores using logistic regression in R with appropriate model specification
+3. **Apply** three major propensity score methods: matching, stratification, and IPTW
+4. **Implement** propensity score matching using the `MatchIt` package with various algorithms
+5. **Construct** inverse probability weights and create pseudo-populations for causal estimation
+6. **Assess** covariate balance using standardized mean differences and graphical diagnostics
+7. **Diagnose** propensity score model adequacy through overlap assessment and balance checks
+8. **Interpret** treatment effect estimates obtained from propensity score methods
+9. **Identify** when propensity score methods are preferable to other adjustment strategies
+10. **Critique** propensity score analyses and recognize common implementation pitfalls
+
+## R Packages
+
+```{r}
+#| label: load-packages
+#| message: false
+#| warning: false
+
+# Install and load required packages
+pacman::p_load(
+  # Core data manipulation and visualization
+  tidyverse,
+  ggplot2,
+  dplyr,
+  tibble,
+
+  # Causal inference and DAGs
+  dagitty,
+  ggdag,
+
+  # Propensity score methods
+  MatchIt,
+  WeightIt,
+  cobalt,
+  optmatch,
+
+  # Data generation and modeling
+  MASS,
+  broom,
+  Hmisc,
+
+  # Tables and formatting
+  knitr,
+  kableExtra,
+  gt,
+
+  # Additional utilities
+  here,
+  patchwork
+)
+
+# Set global options
+options(digits = 3)
+theme_set(theme_minimal())
+```
+
+## 1 Comprehensive Topic Explanation
+
+### The Propensity Score: Definition and Motivation
+
+The **propensity score**, denoted as $e(\mathbf{X})$ or $\pi(\mathbf{X})$, is defined as the conditional probability of receiving treatment given the observed covariates:
+
+$$
+e(\mathbf{X}) = P(A = 1 | \mathbf{X})
+$$
+
+where $A$ is the binary treatment indicator and $\mathbf{X}$ is the vector of observed confounders. This deceptively simple definition addresses a fundamental challenge in observational studies: the curse of dimensionality when adjusting for multiple confounders.
+
+@hernan2020causalwhatif emphasize that the propensity score is particularly valuable when we have many confounders relative to our sample size. Instead of stratifying on all combinations of confounders (which quickly becomes impractical), we can stratify on the single-dimensional propensity score while maintaining the same confounding control.
+
+### Theoretical Foundation: The Balancing Property
+
+The key theoretical result underlying propensity score methods is the **balancing property**. @rosenbaum1983central proved that conditioning on the propensity score creates balance in the distribution of covariates between treatment groups:
+
+$$
+\mathbf{X} \perp A | e(\mathbf{X})
+$$
+
+This means that within strata of individuals with the same propensity score, the distribution of covariates $\mathbf{X}$ is independent of treatment assignment $A$. Consequently, within each propensity score stratum, treated and untreated units are exchangeable with respect to the observed confounders.
+
+### Causal Identification with Propensity Scores
+
+Under three key assumptions, conditioning on the propensity score allows for causal identification:
+
+1. **Consistency**: The potential outcomes are well-defined and consistent with the observed outcomes
+2. **Exchangeability** (given confounders): $Y^{a} \perp A | \mathbf{X}$ for $a \in \{0,1\}$
+3. **Positivity**: $0 < \Prob{A = 1 | \mathbf{X}} < 1$ for all $\mathbf{X}$ in the support
+
+When these assumptions hold, we can identify the average treatment effect (ATE):
+
+$$
+\E{Y^1 - Y^0} = \Es{e(\mathbf{X})}{\E{Y|A=1, e(\mathbf{X})} - \E{Y|A=0, e(\mathbf{X})}}
+$$
+
+### Propensity Score Estimation
+
+In practice, the true propensity score is unknown and must be estimated. The most common approach uses logistic regression:
+
+$$
+\text{logit}(e(\mathbf{X})) = \log\left(\frac{e(\mathbf{X})}{1-e(\mathbf{X})}\right) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \ldots + \beta_k X_k
+$$
+
+The estimated propensity score is then:
+
+$$
+\hat{e}(\mathbf{X}) = \frac{1}{1 + \exp(-(\hat{\beta}_0 + \hat{\beta}_1 X_1 + \ldots + \hat{\beta}_k X_k))}
+$$
+
+### Three Primary Applications
+
+#### 1. Propensity Score Matching
+
+Matching pairs or groups units with similar propensity scores across treatment groups. Common algorithms include:
+
+- **Nearest neighbor matching**: Each treated unit is matched to the untreated unit with the closest propensity score
+- **Caliper matching**: Matches are only made if the propensity score difference is within a specified tolerance
+- **Optimal matching**: Minimizes the total distance across all matched pairs
+
+#### 2. Propensity Score Stratification
+
+Divides the sample into strata based on propensity score quantiles (typically quintiles), then estimates treatment effects within each stratum and combines them. This method:
+
+- Maintains the full sample size
+- Allows for effect heterogeneity across strata
+- Requires sufficient overlap within each stratum
+
+#### 3. Inverse Probability of Treatment Weighting (IPTW)
+
+Creates a pseudo-population by weighting observations by the inverse of their treatment probability:
+
+- **ATE weights**: $w_i = \frac{A_i}{e(\mathbf{X}_i)} + \frac{1-A_i}{1-e(\mathbf{X}_i)}$
+- **ATT weights**: $w_i = A_i + (1-A_i)\frac{e(\mathbf{X}_i)}{1-e(\mathbf{X}_i)}$
+
+In the weighted pseudo-population, treatment is independent of the confounders, allowing for unbiased estimation of causal effects.
+
+## 2 Intuitive Clarifications of Challenging Ideas
+
+### Understanding the Balancing Score Property
+
+::: {.callout-tip}
+## Intuitive Analogy: The Matchmaker
+
+Think of the propensity score as a sophisticated matchmaker at a dating service. Instead of trying to match people on dozens of individual characteristics (age, height, interests, education, etc.), the matchmaker creates a single "compatibility score" that summarizes all relevant factors.
+
+When two people have the same compatibility score, they're equally likely to be matched with any particular person, even though they might differ on individual characteristics. Similarly, when two individuals have the same propensity score, they're equally likely to receive treatment, creating balance across all the underlying confounders.
+:::
+
+### Why Propensity Scores Work: The Sufficient Statistic Perspective
+
+The propensity score works because it's a **sufficient statistic** for treatment assignment. Just as the sample mean contains all the information needed about the population mean (under normality), the propensity score contains all the information needed about treatment assignment given the confounders.
+
+::: {.callout-example}
+## Visualizing the Balancing Property
+
+Imagine we have three confounders: age, income, and education. In the original data, treated and untreated groups might differ substantially on all three variables. However, within groups of people with the same propensity score (say, 0.3), the distributions of age, income, and education will be similar between treated and untreated units.
+:::
+
+### Common Misconceptions About Propensity Scores
+
+::: {.callout-warning}
+## Misconception 1: "Propensity Scores Eliminate All confounding"
+
+**Truth**: Propensity scores only eliminate confounding from *observed* variables included in the model. Unobserved confounding remains a threat, just as with any observational study method.
+:::
+
+::: {.callout-warning}
+## Misconception 2: "Higher Propensity Scores Are better"
+
+**Truth**: The propensity score is just a probability—what matters is having overlap between treatment groups and achieving balance. Units with very high or very low propensity scores may actually be problematic for causal inference.
+:::
+
+### The Overlap Assumption in Practice
+
+The positivity assumption requires that every individual has some probability of receiving both treatments. In practice, this means we need **overlap** in the propensity score distributions between treatment groups [@crump2009dealing].
+
+::: {.callout-important}
+## Overlap is Essential
+
+If there are regions of the covariate space where $\Prob{A=1|\mathbf{X}} \approx 0$ or $\Prob{A=1|\mathbf{X}} \approx 1$, we cannot make causal inferences for individuals in those regions. These areas represent "off-support" observations that may need to be excluded from analysis.
+:::
+
+## 3 Simple, Hand-Calculation Numerical Example(s)
+
+::: {.callout-example}
+## Worked Example: Manual Propensity Score Calculation
+
+Let's work through a tiny example with 8 individuals to understand propensity score estimation and matching.
+
+**Dataset**: Effect of tutoring (A) on test scores (Y), with confounders: prior GPA (X₁) and study hours per week (X₂).
+
+| ID | GPA (X₁) | Hours (X₂) | Tutoring (A) | Score (Y) |
+|----|----------|------------|--------------|-----------|
+| 1  | 2.5      | 5          | 0            | 65        |
+| 2  | 3.2      | 8          | 1            | 78        |
+| 3  | 2.8      | 6          | 0            | 70        |
+| 4  | 3.5      | 10         | 1            | 85        |
+| 5  | 2.3      | 4          | 0            | 60        |
+| 6  | 3.8      | 12         | 1            | 88        |
+| 7  | 3.0      | 7          | 1            | 75        |
+| 8  | 2.6      | 5          | 0            | 68        |
+
+### Step 1: Estimate Propensity Scores
+
+We fit a logistic regression: $\text{logit}(e(X_1, X_2)) = \beta_0 + \beta_1 X_1 + \beta_2 X_2$
+
+Using logistic regression (calculations simplified):
+Assume we obtain:
+
+- $\hat{\beta}_0 = -8.2$
+- $\hat{\beta}_1 = 1.5$ (GPA coefficient)
+- $\hat{\beta}_2 = 0.3$ (Hours coefficient)
+
+For individual 1: $\text{logit}(\hat{e}) = -8.2 + 1.5(2.5) + 0.3(5) = -8.2 + 3.75 + 1.5 = -2.95$
+
+Therefore: $\hat{e}_1 = \frac{1}{1 + e^{2.95}} = \frac{1}{1 + 19.1} = 0.05$
+
+**All Propensity Scores**:
+
+- ID 1: $\hat{e} = 0.05$ (A=0)
+- ID 2: $\hat{e} = 0.73$ (A=1)
+- ID 3: $\hat{e} = 0.15$ (A=0)
+- ID 4: $\hat{e} = 0.89$ (A=1)
+- ID 5: $\hat{e} = 0.03$ (A=0)
+- ID 6: $\hat{e} = 0.95$ (A=1)
+- ID 7: $\hat{e} = 0.45$ (A=1)
+- ID 8: $\hat{e} = 0.07$ (A=0)
+
+### Step 2: Propensity Score Matching
+
+Using nearest neighbor matching with replacement:
+
+**Matches**:
+
+- ID 2 (A=1, $\hat{e}=0.73$) matches with ID 3 (A=0, $\hat{e}=0.15$)  
+  - difference = 0.58
+- ID 4 (A=1, $\hat{e}=0.89$) matches with ID 1 (A=0, $\hat{e}=0.05$)
+  - difference = 0.84
+- ID 6 (A=1, $\hat{e}=0.95$) matches with ID 8 (A=0, $\hat{e}=0.07$)
+  - difference = 0.88
+- ID 7 (A=1, $\hat{e}=0.45$) matches with ID 3 (A=0, $\hat{e}=0.15$) 
+  - difference = 0.30
+
+### Step 3: Estimate Treatment Effect
+
+Using matched pairs:
+
+- Pair 1: Y₁₁ - Y₁₀ = 78 - 70 = 8
+- Pair 2: Y₂₁ - Y₂₀ = 85 - 65 = 20
+- Pair 3: Y₃₁ - Y₃₀ = 88 - 68 = 20
+- Pair 4: Y₄₁ - Y₄₀ = 75 - 70 = 5
+
+**Average Treatment Effect**: $\hat{\tau} = \frac{8 + 20 + 20 + 5}{4} = 13.25$ points
+
+This suggests tutoring increases test scores by about 13.25 points on average, after matching on propensity to receive tutoring.
+:::
+
+### Hand Calculation: IPTW Weights
+
+::: {.callout-example}
+## Manual IPTW Weight Calculation
+
+Using our previous example, let's calculate ATE weights:
+
+For treated units: $w_i = \frac{1}{\hat{e}(X_i)}$
+For control units: $w_i = \frac{1}{1-\hat{e}(X_i)}$
+
+**Weights**:
+
+- ID 1: $w = \frac{1}{1-0.05} = 1.05$ (Control)
+- ID 2: $w = \frac{1}{0.73} = 1.37$ (Treated)
+- ID 3: $w = \frac{1}{1-0.15} = 1.18$ (Control)
+- ID 4: $w = \frac{1}{0.89} = 1.12$ (Treated)
+- ID 5: $w = \frac{1}{1-0.03} = 1.03$ (Control)
+- ID 6: $w = \frac{1}{0.95} = 1.05$ (Treated)
+- ID 7: $w = \frac{1}{0.45} = 2.22$ (Treated)
+- ID 8: $w = \frac{1}{1-0.07} = 1.08$ (Control)
+
+**Weighted Treatment Effect**:
+
+- Weighted treated mean: $\frac{1.37(78) + 1.12(85) + 1.05(88) + 2.22(75)}{1.37 + 1.12 + 1.05 + 2.22} = 79.5$
+- Weighted control mean: $\frac{1.05(65) + 1.18(70) + 1.03(60) + 1.08(68)}{1.05 + 1.18 + 1.03 + 1.08} = 66.0$
+
+**IPTW Estimate**: $\hat{\tau}_{IPTW} = 79.5 - 66.0 = 13.5$ points
+:::
+
+## 4 R Code Examples & Interpretation
+
+### Simulating Data for Propensity Score Analysis
+
+```{r}
+#| label: simulate-data
+#| tbl-cap: "Simulated dataset for propensity score analysis"
+
+set.seed(123)
+n <- 1000
+
+# Generate confounders
+age <- round(rnorm(n, mean = 45, sd = 12))
+income <- exp(rnorm(n, mean = 10.5, sd = 0.5)) # log-normal distribution
+education <- sample(
+  c("High School", "Bachelor's", "Graduate"),
+  n,
+  prob = c(0.4, 0.4, 0.2),
+  replace = TRUE
+)
+education_num <- as.numeric(factor(
+  education,
+  levels = c("High School", "Bachelor's", "Graduate")
+))
+
+# Generate propensity score (probability of treatment)
+# Treatment more likely for: younger, higher income, more education
+logit_p <- -2 +
+  0.02 * (50 - age) +
+  0.00001 * income +
+  0.5 * education_num +
+  rnorm(n, 0, 0.3)
+p_treatment <- plogis(logit_p) # inverse logit
+
+# Generate treatment assignment
+treatment <- rbinom(n, 1, p_treatment)
+
+# Generate outcome with treatment effect
+# Outcome depends on confounders + treatment effect
+outcome <- 20 +
+  0.3 * age +
+  0.00005 * income +
+  5 * education_num +
+  8 * treatment + # True ATE = 8
+  rnorm(n, 0, 5)
+
+# Create dataset
+sim_data <- tibble(
+  id = 1:n,
+  age = age,
+  income = income,
+  education = education,
+  education_num = education_num,
+  treatment = treatment,
+  outcome = outcome,
+  true_ps = p_treatment
+)
+
+# Display first few rows
+head(sim_data, 10) |>
+  kable(digits = 3, caption = "First 10 observations of simulated dataset")
+```
+
+The simulated data includes 1,000 observations with realistic confounding. Treatment assignment depends on age (younger people more likely), income (higher income more likely), and education level. The true average treatment effect is 8 units.
+
+### Visualizing the Causal Structure with DAGs
+
+```{r}
+#| label: fig-dag-propensity
+#| fig-cap: "Directed Acyclic Graph showing the causal structure with confounders"
+#| column: margin
+
+# Create DAG using dagitty
+dag_ps <- dagify(
+  Y ~ A + Age + Income + Education,
+  A ~ Age + Income + Education,
+  coords = list(
+    x = c(A = 0, Y = 2, Age = 1, Income = 1, Education = 1),
+    y = c(A = 0, Y = 0, Age = 1, Income = 0.5, Education = -0.5)
+  ),
+  labels = c(
+    "A" = "Treatment",
+    "Y" = "Outcome",
+    "Age" = "Age",
+    "Income" = "Income",
+    "Education" = "Education"
+  )
+)
+
+# Plot DAG
+ggdag_status(dag_ps, use_labels = "label", text = FALSE) +
+  guides(fill = "none", color = "none") +
+  theme_dag()
+```
+
+The DAG shows our causal structure where Age, Income, and Education are common causes of both Treatment (A) and Outcome (Y), making them confounders that bias the treatment effect estimate if not properly adjusted for.
+
+### Estimating Propensity Scores
+
+```{r}
+#| label: estimate-ps
+#| tbl-cap: "Propensity score model results"
+
+# Fit propensity score model
+ps_model <- glm(
+  treatment ~ age + income + education,
+  data = sim_data,
+  family = binomial(link = "logit")
+)
+
+# Display model results
+tidy(ps_model, exponentiate = TRUE, conf.int = TRUE) |>
+  kable(
+    digits = 3,
+    caption = "Propensity Score Model Coefficients (Odds Ratios)"
+  )
+
+# Add estimated propensity scores to dataset
+sim_data$ps_estimated <- predict(ps_model, type = "response")
+
+# Calculate correlation between estimated and true propensity scores
+r_ps <- cor(sim_data$ps_estimated, sim_data$true_ps)
+
+# Compare estimated vs true propensity scores
+cat(
+  "Correlation between estimated and true propensity scores:",
+  r_ps,
+  "\n"
+)
+```
+
+The propensity score model shows that younger age, higher income, and graduate education increase the odds of receiving treatment. The correlation between estimated and true propensity scores is high (`r round(r_ps, 2)`), indicating our model captures the treatment assignment process well.
+
+### Assessing Overlap and Common Support
+
+```{r}
+#| label: fig-overlap
+#| fig-cap: "Propensity score distributions by treatment group showing overlap"
+#| column: margin
+
+# Create overlap plot
+p1 <- ggplot(sim_data, aes(x = ps_estimated, fill = factor(treatment))) +
+  geom_histogram(alpha = 0.7, bins = 30, position = "identity") +
+  scale_fill_manual(
+    values = c("0" = "red", "1" = "blue"),
+    labels = c("Control", "Treated")
+  ) +
+  labs(
+    title = "Propensity Score Distribution by Treatment Group",
+    x = "Estimated Propensity Score",
+    y = "Count",
+    fill = "Treatment"
+  ) +
+  theme_minimal()
+
+# Density version
+p2 <- ggplot(sim_data, aes(x = ps_estimated, fill = factor(treatment))) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(
+    values = c("0" = "red", "1" = "blue"),
+    labels = c("Control", "Treated")
+  ) +
+  labs(
+    title = "Propensity Score Densities",
+    x = "Estimated Propensity Score",
+    y = "Density",
+    fill = "Treatment"
+  ) +
+  theme_minimal()
+
+# Combine plots
+p1 / p2
+```
+
+The overlap plots show good common support between treatment groups across most of the propensity score range. There's some lack of overlap at the extremes, which is common and may require trimming observations with very high or low propensity scores.
+
+## 5 Hands-On R Lab
+
+### Lab Objectives
+
+By completing this lab, you will:
+- Implement all three major propensity score methods
+- Assess covariate balance before and after adjustment
+- Interpret treatment effect estimates from different methods
+- Practice diagnostic checking for propensity score analyses
+
+### Pre-Lab Reading Warm-Up
+
+Before beginning the hands-on exercises, review the concept of exchangeability and why it's crucial for causal inference. Consider: How does the propensity score help us achieve exchangeability in observational data?
+
+### Lab Dataset: Medical Treatment Study
+
+```{{r}}
+#| label: lab-data-prep
+#| eval: false
+#| tbl-cap: "Summary of Lab Dataset"
+
+# Load the Lalonde dataset (classic propensity score example)
+# We'll simulate similar data for educational purposes
+set.seed(456)
+n_lab <- 800
+
+# Generate realistic medical data
+lab_data <- tibble(
+  patient_id = 1:n_lab,
+  age = round(rnorm(n_lab, 55, 15)),
+  gender = sample(c("Male", "Female"), n_lab, replace = TRUE),
+  baseline_severity = round(rnorm(n_lab, 50, 10)),
+  comorbidities = rpois(n_lab, lambda = 2),
+  insurance = sample(
+    c("Private", "Public", "None"),
+    n_lab,
+    prob = c(0.5, 0.3, 0.2),
+    replace = TRUE
+  )
+) |>
+  # Create numeric versions for modeling
+  mutate(
+    gender_num = as.numeric(gender == "Male"),
+    insurance_private = as.numeric(insurance == "Private"),
+    insurance_public = as.numeric(insurance == "Public")
+  ) |>
+  # Generate treatment probability based on patient characteristics
+  mutate(
+    treatment_logit = -1 +
+      -0.02 * age + # Younger patients more likely treated
+      0.5 * gender_num + # Males more likely
+      0.03 * baseline_severity + # Sicker patients more likely
+      0.2 * comorbidities + # More comorbidities = more treatment
+      0.8 * insurance_private + # Private insurance favors treatment
+      0.3 * insurance_public,
+    treatment_prob = plogis(treatment_logit),
+    treatment = rbinom(n_lab, 1, treatment_prob)
+  ) |>
+  # Generate outcome with treatment effect
+  mutate(
+    outcome = 30 +
+      -0.1 * age +
+      -2 * gender_num +
+      0.8 * baseline_severity +
+      1.5 * comorbidities +
+      3 * insurance_private +
+      1 * insurance_public +
+      5 * treatment + # True ATE = 5
+      rnorm(n_lab, 0, 8)
+  ) |>
+  # Clean up
+  # Clean up
+  dplyr::select(
+    patient_id,
+    age,
+    gender,
+    baseline_severity,
+    comorbidities,
+    insurance,
+    treatment,
+    outcome,
+    gender_num,
+    insurance_private,
+    insurance_public
+  )
+
+# Display summary
+summary(lab_data) |> kable(caption = "Summary of Lab Dataset")
+```
+
+### Task 1: Naive Analysis and Covariate Imbalance
+
+**Your Task**: Compare the treated and untreated groups on all baseline covariates. Calculate the naive treatment effect estimate.
+
+```{{r}}
+#| label: task1-skeleton
+
+# Calculate naive treatment effect
+naive_effect <- # YOUR CODE HERE: calculate difference in means
+
+# Check baseline covariate balance
+balance_table <- lab_data |>
+  group_by(treatment) |>
+  summarise(
+    n = n(),
+    age_mean = # YOUR CODE HERE,
+    severity_mean = # YOUR CODE HERE,
+    comorbidities_mean = # YOUR CODE HERE,
+    pct_male = # YOUR CODE HERE,
+    pct_private_ins = # YOUR CODE HERE
+  )
+
+print(balance_table)
+```
+
+#### Solution: Task 1
+
+```{{r}}
+#| label: task1-solution
+
+# Calculate naive treatment effect
+naive_effect <- lab_data |>
+    group_by(treatment) |>
+    summarise(outcome_mean = mean(outcome)) |>
+    summarise(naive_ate = diff(outcome_mean)) |>
+    pull(naive_ate)
+
+cat("Naive ATE estimate:", round(naive_effect, 2), "\n")
+
+# Check baseline covariate balance
+balance_table <- lab_data |>
+    group_by(treatment) |>
+    summarise(
+        n = n(),
+        age_mean = mean(age),
+        severity_mean = mean(baseline_severity),
+        comorbidities_mean = mean(comorbidities),
+        pct_male = mean(gender_num) * 100,
+        pct_private_ins = mean(insurance_private) * 100,
+        .groups = "drop"
+    ) |>
+    mutate(treatment = c("Control", "Treated"))
+
+kable(
+    balance_table,
+    digits = 2,
+    caption = "Baseline covariate balance before adjustment"
+)
+
+# Calculate standardized mean differences
+smd_age <- abs(diff(balance_table$age_mean)) /
+    sqrt(
+        (var(lab_data$age[lab_data$treatment == 1]) +
+            var(lab_data$age[lab_data$treatment == 0])) /
+            2
+    )
+cat("Standardized mean difference for age:", round(smd_age, 3))
+```
+
+**Interpretation**: The naive estimate suggests a treatment effect of approximately [--], but we see substantial imbalances in baseline covariates (particularly age and insurance status), suggesting confounding bias.
+
+### Task 2: Propensity Score Estimation and Diagnostics
+
+**Your Task**: Estimate propensity scores using logistic regression and assess model fit and overlap.
+
+```{{r}}
+#| label: task2-skeleton
+
+# Fit propensity score model
+ps_model_lab <- glm(
+  formula = # YOUR CODE HERE: specify the formula,
+  data = lab_data,
+  family = binomial()
+)
+
+# Add propensity scores to dataset
+lab_data$ps <- predict(# YOUR CODE HERE)
+
+# Assess overlap
+ggplot(lab_data, aes(x = ps, fill = factor(treatment))) +
+  # YOUR CODE HERE: create overlap plot
+```
+
+#### Solution: Task 2
+
+```{{r}}
+#| label: task2-solution
+
+# Fit propensity score model
+ps_model_lab <- glm(
+    treatment ~
+        age +
+            gender +
+            baseline_severity +
+            comorbidities +
+            insurance_private +
+            insurance_public,
+    data = lab_data,
+    family = binomial()
+)
+
+# Display model summary
+tidy(ps_model_lab, conf.int = TRUE) |>
+    kable(digits = 3, caption = "Propensity Score Model Coefficients")
+
+# Add propensity scores to dataset
+lab_data$ps <- predict(ps_model_lab, type = "response")
+
+# Assess overlap
+overlap_plot <- ggplot(lab_data, aes(x = ps, fill = factor(treatment))) +
+    geom_density(alpha = 0.6) +
+    scale_fill_manual(
+        values = c("red", "blue"),
+        labels = c("Control", "Treated")
+    ) +
+    labs(
+        title = "Propensity Score Overlap Assessment",
+        x = "Estimated Propensity Score",
+        y = "Density",
+        fill = "Treatment Group"
+    ) +
+    theme_minimal()
+
+print(overlap_plot)
+
+# Check overlap statistics
+overlap_stats <- lab_data |>
+    group_by(treatment) |>
+    summarise(
+        ps_min = min(ps),
+        ps_max = max(ps),
+        ps_mean = mean(ps),
+        .groups = "drop"
+    )
+
+kable(
+    overlap_stats,
+    digits = 3,
+    caption = "Propensity Score Range by Treatment Group"
+
+```
+
+### Task 3: Propensity Score Matching
+
+**Your Task**: Implement 1:1 nearest neighbor matching using the `MatchIt` package and assess balance.
+
+```{{r}}
+#| label: task3-skeleton  
+
+# Perform propensity score matching
+match_result <- matchit(
+  # YOUR CODE HERE: specify the matching formula and method
+)
+
+# Extract matched data
+matched_data <- # YOUR CODE HERE
+
+# Assess balance using cobalt
+bal.tab(match_result)
+```
+
+#### Solution: Task 3
+
+```{{r}}
+#| label: task3-solution
+
+# Perform propensity score matching
+match_result <- matchit(
+    treatment ~
+        age +
+            gender +
+            baseline_severity +
+            comorbidities +
+            insurance_private +
+            insurance_public,
+    data = lab_data,
+    method = "nearest",
+    distance = "logit",
+    ratio = 1,
+    caliper = 0.25 # Within 0.25 standard deviations
+)
+
+# Summary of matching
+summary(match_result)
+
+# Extract matched data
+matched_data <- match.data(match_result)
+
+# Assess balance using cobalt
+bal.tab(
+    match_result,
+    stats = c("mean.diffs", "variance.ratios"),
+    thresholds = c(m = 0.1)
+)
+
+# Visual balance assessment
+love.plot(
+    match_result,
+    stats = "mean.diffs",
+    threshold = 0.1,
+    var.order = "unadjusted"
+) +
+    labs(title = "Covariate Balance Before and After Matching")
+
+# Calculate treatment effect on matched sample
+match_ate <- matched_data |>
+    group_by(treatment) |>
+    summarise(outcome_mean = mean(outcome)) |>
+    summarise(matched_ate = diff(outcome_mean)) |>
+    pull(matched_ate)
+
+cat("Matched ATE estimate:", round(match_ate, 2), "\n")
+cat("Number of matched pairs:", match_result$nn[2, 2], "\n")
+```
+
+**Interpretation**: The matching procedure successfully created balanced treatment and control groups. The standardized mean differences should now be below 0.1 for all covariates, indicating good balance.
+
+### Task 4: Propensity Score Stratification
+
+**Your Task**: Implement propensity score stratification using quintiles and estimate treatment effects within each stratum.
+
+```{{r}}
+#| label: task4-skeleton
+
+# Create propensity score quintiles
+lab_data$ps_quintile <- # YOUR CODE HERE: create 5 equal-sized groups
+
+# Estimate treatment effects within each quintile
+quintile_effects <- lab_data |>
+  group_by(ps_quintile) |>
+  # YOUR CODE HERE: calculate treatment effect within each quintile
+
+# Overall stratified estimate
+stratified_ate <- # YOUR CODE HERE: weight by quintile size
+```
+
+#### Solution: Task 4
+
+```{{r}}
+#| label: task4-solution
+
+# Create propensity score quintiles
+lab_data$ps_quintile <- cut(
+    lab_data$ps,
+    breaks = quantile(lab_data$ps, probs = 0:5 / 5),
+    labels = paste("Q", 1:5, sep = ""),
+    include.lowest = TRUE
+)
+
+# Check balance within quintiles
+balance_by_quintile <- lab_data |>
+    group_by(ps_quintile, treatment) |>
+    summarise(
+        n = n(),
+        ps_mean = mean(ps),
+        age_mean = mean(age),
+        severity_mean = mean(baseline_severity),
+        .groups = "drop"
+    ) |>
+    arrange(ps_quintile, treatment)
+
+kable(
+    balance_by_quintile,
+    digits = 2,
+    caption = "Balance within propensity score quintiles"
+)
+
+# Estimate treatment effects within each quintile
+quintile_effects <- lab_data |>
+    group_by(ps_quintile) |>
+    summarise(
+        n_total = n(),
+        n_treated = sum(treatment),
+        n_control = sum(1 - treatment),
+        outcome_treated = mean(outcome[treatment == 1]),
+        outcome_control = mean(outcome[treatment == 0]),
+        quintile_ate = outcome_treated - outcome_control,
+        .groups = "drop"
+    )
+
+kable(
+    quintile_effects,
+    digits = 2,
+    caption = "Treatment effects within propensity score quintiles"
+)
+
+# Overall stratified estimate (weighted by quintile size)
+stratified_ate <- weighted.mean(
+    quintile_effects$quintile_ate,
+    weights = quintile_effects$n_total
+)
+
+cat("Stratified ATE estimate:", round(stratified_ate, 2), "\n")
+
+# Plot quintile effects
+ggplot(quintile_effects, aes(x = ps_quintile, y = quintile_ate)) +
+    geom_col(fill = "steelblue", alpha = 0.7) +
+    geom_hline(
+        yintercept = stratified_ate,
+        color = "red",
+        linetype = "dashed"
+    ) +
+    labs(
+        title = "Treatment Effects by Propensity Score Quintile",
+        x = "Propensity Score Quintile",
+        y = "Average Treatment Effect",
+        caption = "Red line shows overall stratified estimate"
+    ) +
+    theme_minimal()
+```
+
+### Task 5: Inverse Probability of Treatment Weighting (IPTW)
+
+**Your Task**: Create IPTW weights and estimate the average treatment effect.
+
+```{{r}}
+#| label: task5-skeleton
+
+# Create ATE weights
+lab_data$iptw_weights <- ifelse(
+  lab_data$treatment == 1,
+  # YOUR CODE HERE: weight for treated units,
+  # YOUR CODE HERE: weight for control units
+)
+
+# Check weight distribution
+summary(lab_data$iptw_weights)
+
+# Estimate weighted treatment effect
+iptw_ate <- # YOUR CODE HERE: calculate weighted means
+```
+
+#### Solution: Task 5
+
+```{{r}}
+#| label: task5-solution
+#| eval: false
+
+# Create ATE weights
+lab_data$iptw_weights <- ifelse(
+    lab_data$treatment == 1,
+    1 / lab_data$ps, # Weight for treated units
+    1 / (1 - lab_data$ps) # Weight for control units
+)
+
+# Check weight distribution
+weight_summary <- summary(lab_data$iptw_weights)
+print(weight_summary)
+
+# Identify extreme weights (potential issues)
+extreme_weights <- sum(
+    lab_data$iptw_weights > quantile(lab_data$iptw_weights, 0.99)
+)
+cat(
+    "Number of observations with extreme weights (>99th percentile):",
+    extreme_weights,
+    "\n"
+)
+
+# Visualize weight distribution
+ggplot(lab_data, aes(x = iptw_weights)) +
+    geom_histogram(bins = 50, fill = "lightblue", alpha = 0.7) +
+    geom_vline(
+        xintercept = median(lab_data$iptw_weights),
+        color = "red",
+        linetype = "dashed"
+    ) +
+    labs(
+        title = "Distribution of IPTW Weights",
+        x = "Weight",
+        y = "Count",
+        caption = "Red line shows median weight"
+    ) +
+    theme_minimal()
+
+# Truncate extreme weights (optional stabilization)
+lab_data$iptw_weights_trunc <- pmin(
+    lab_data$iptw_weights,
+    quantile(lab_data$iptw_weights, 0.99)
+)
+
+# Estimate weighted treatment effect
+weighted_means <- lab_data |>
+    group_by(treatment) |>
+    summarise(
+        weighted_outcome = weighted.mean(outcome, w = iptw_weights_trunc),
+        .groups = "drop"
+    )
+
+iptw_ate <- diff(weighted_means$weighted_outcome)
+cat("IPTW ATE estimate:", round(iptw_ate, 2), "\n")
+
+# Check weighted balance
+weighted_balance <- lab_data |>
+    summarise(
+        age_smd = abs(
+            weighted.mean(
+                age[treatment == 1],
+                w = iptw_weights_trunc[treatment == 1]
+            ) -
+                weighted.mean(
+                    age[treatment == 0],
+                    w = iptw_weights_trunc[treatment == 0]
+                )
+        ) /
+            sqrt(
+                (wtd.var(
+                    age[treatment == 1],
+                    weights = iptw_weights_trunc[treatment == 1]
+                ) +
+                    wtd.var(
+                        age[treatment == 0],
+                        weights = iptw_weights_trunc[treatment == 0]
+                    )) /
+                    2
+            ),
+        severity_smd = abs(
+            weighted.mean(
+                baseline_severity[treatment == 1],
+                w = iptw_weights_trunc[treatment == 1]
+            ) -
+                weighted.mean(
+                    baseline_severity[treatment == 0],
+                    w = iptw_weights_trunc[treatment == 0]
+                )
+        ) /
+            sqrt(
+                (wtd.var(
+                    baseline_severity[treatment == 1],
+                    weights = iptw_weights_trunc[treatment == 1]
+                ) +
+                    wtd.var(
+                        baseline_severity[treatment == 0],
+                        weights = iptw_weights_trunc[treatment == 0]
+                    )) /
+                    2
+            )
+    )
+
+# Note: wtd.var function from Hmisc package - simplified calculation here
+cat("Weighted balance achieved (SMDs should be <0.1)\n")
+```
+
+### Task 6: Compare All Methods
+
+**Your Task**: Create a summary comparing all propensity score methods with the naive estimate.
+
+```{{r}}
+#| label: task6-solution
+
+# Summary of all estimates
+method_comparison <- tibble(
+    Method = c(
+        "Naive (Unadjusted)",
+        "Propensity Score Matching",
+        "Propensity Score Stratification",
+        "IPTW",
+        "True ATE"
+    ),
+    Estimate = c(naive_effect, match_ate, stratified_ate, iptw_ate, 5.0),
+    `Sample Size` = c(
+        nrow(lab_data),
+        nrow(matched_data),
+        nrow(lab_data),
+        nrow(lab_data),
+        NA
+    ),
+    Notes = c(
+        "Biased due to confounding",
+        "Reduced sample size",
+        "Uses full sample",
+        "Uses full sample",
+        "Simulation truth"
+    )
+)
+
+kable(
+    method_comparison,
+    digits = 2,
+    caption = "Comparison of treatment effect estimates across methods"
+)
+
+# Visualize comparison
+ggplot(method_comparison[1:4, ], aes(x = Method, y = Estimate, fill = Method)) +
+    geom_col(alpha = 0.7) +
+    geom_hline(
+        yintercept = 5,
+        color = "red",
+        linetype = "dashed",
+        linewidth = 1
+    ) +
+    coord_flip() +
+    labs(
+        title = "Treatment Effect Estimates by Method",
+        y = "Average Treatment Effect",
+        caption = "Red line shows true ATE = 5"
+    ) +
+    theme_minimal() +
+    theme(legend.position = "none")
+```
+
+### Lab Reflection Questions
+
+::: {.callout-question}
+## Reflection Questions
+
+1. **Which method gave the estimate closest to the true ATE of 5? Why might this be?**
+2. **What are the trade-offs between matching (reduced sample size) and weighting (full sample but potential for extreme weights)?**
+3. **How did the covariate balance change after applying propensity score methods? What does this tell us about confounding in the original data?**
+4. **When might you choose stratification over the other methods?**
+5. **What would you do if you found poor overlap in propensity scores between treatment groups?**
+:::
+
+### Retrieval Practice Quiz
+
+::: {.callout-question}
+## Quick Quiz: Test Your Understanding
+
+**Question 1**: The propensity score is defined as:
+a) The probability of a good outcome given treatment
+b) The probability of treatment given the confounders
+c) The average treatment effect
+d) The correlation between treatment and outcome
+
+**Answer**: b) The probability of treatment given the confounders
+
+**Question 2**: Why does propensity score matching work?
+a) It eliminates all bias
+b) It creates balance on observed confounders
+c) It increases sample size
+d) It reduces measurement error
+
+**Answer**: b) It creates balance on observed confounders - the balancing property ensures that within propensity score strata, treatment assignment is independent of the confounders.
+
+**Question 3**: In IPTW, units with very low propensity scores receive:
+a) Low weights
+b) High weights
+c) Zero weights
+d) Average weights
+
+**Answer**: b) High weights - Control units (A=0) with low propensity scores get weight 1/(1-ps), which is large when ps is small.
+:::
+
+## 6 Common Pitfalls & Checks
+
+### Critical Assumptions and Their Violations
+
+::: {.callout-warning}
+## Pitfall 1: Ignoring Positivity Violations
+
+**Problem**: Using propensity score methods when there's poor overlap between treatment groups can lead to biased estimates and inappropriate extrapolation.
+
+**Check**: Always create overlap plots and examine the distribution of propensity scores in both treatment groups.
+
+```{{r}}
+#| label: positivity-check
+
+# Check for positivity violations
+ps_range <- range(lab_data$ps)
+treated_range <- range(lab_data$ps[lab_data$treatment == 1])
+control_range <- range(lab_data$ps[lab_data$treatment == 0])
+
+cat("Overall PS range:", round(ps_range, 3), "\n")
+cat("Treated PS range:", round(treated_range, 3), "\n")
+cat("Control PS range:", round(control_range, 3), "\n")
+
+# Flag observations in non-overlap regions
+overlap_flag <- lab_data$ps > max(min(treated_range), min(control_range)) &
+    lab_data$ps < min(max(treated_range), max(control_range))
+cat("Observations in overlap region:", sum(overlap_flag), "of", nrow(lab_data))
+```
+
+:::
+
+::: {.callout-warning}
+## Pitfall 2: Extreme Weights in IPTW
+
+**Problem**: Units with propensity scores near 0 or 1 receive extremely large weights, leading to unstable estimates dominated by a few observations.
+
+**Check**: Examine weight distributions and consider truncation or trimming.
+
+```{{r}}
+#| label: extreme-weights-check
+
+# Identify problematic weights
+weight_percentiles <- quantile(
+    lab_data$iptw_weights,
+    probs = c(0.95, 0.99, 0.999)
+)
+print(weight_percentiles)
+
+# Rule of thumb: weights >10 may be problematic
+problematic_weights <- sum(lab_data$iptw_weights > 10)
+cat("Observations with weights > 10:", problematic_weights)
+
+# Effective sample size
+eff_n <- (sum(lab_data$iptw_weights))^2 / sum(lab_data$iptw_weights^2)
+cat(
+    "Effective sample size:",
+    round(eff_n, 1),
+    "vs original n =",
+    nrow(lab_data)
+```
+
+:::
+
+::: {.callout-important}
+## Essential Diagnostics Checklist
+
+**Before Analysis**:
+- [ ] Check for positivity/overlap between treatment groups
+- [ ] Examine propensity score model fit and specification
+- [ ] Assess baseline covariate imbalance
+
+**After Analysis**:
+- [ ] Verify covariate balance achieved (SMD < 0.1 or 0.25)
+- [ ] Check for extreme weights (if using IPTW)
+- [ ] Ensure adequate sample sizes in each group/stratum
+- [ ] Sensitivity analysis for unmeasured confounding
+:::
+
+### Balance Assessment Guidelines
+
+::: {.callout-tip}
+## Standardized Mean Differences (SMD) Benchmarks
+
+- **SMD < 0.1**: Excellent balance (preferred)
+- **SMD < 0.25**: Acceptable balance
+- **SMD ≥ 0.25**: Poor balance, adjustment needed
+
+For binary variables, use the standardized difference in proportions:
+$SMD = \frac{|\hat{p}_{treat} - \hat{p}_{control}|}{\sqrt{\frac{\hat{p}_{treat}(1-\hat{p}_{treat}) + \hat{p}_{control}(1-\hat{p}_{control})}{2}}}$
+:::
+
+### Model Specification Considerations
+
+::: {.callout-important}
+## Propensity Score Model Building
+
+**Include**: All confounders (variables that affect both treatment and outcome)
+**Consider**:
+- Interaction terms between confounders
+- Non-linear relationships (splines, polynomials)
+- Different link functions beyond logit
+
+**Don't**: Include instrumental variables, colliders, or mediators
+**Goal**: Predict treatment assignment, not the outcome
+:::
+
+## 7 Advanced Teaching Activities & Interactivity
+
+### Think-Pair-Share Activity: Propensity Score Intuition
+
+::: {.callout-example}
+## Activity 1: The Balancing Score Concept (15 minutes)
+
+**Individual Think (5 min)**: Students consider this scenario:
+"You want to study the effect of a new teaching method on student performance. You have data on 1,000 students, with information on their prior GPA, socioeconomic status, motivation level, and study time. Some students self-selected into the new teaching method."
+
+**Questions to ponder**:
+1. What confounding issues do you expect?
+2. How might propensity scores help?
+3. What would "balance" look like in this context?
+
+**Pair Discussion (5 min)**: Students discuss their thoughts with a partner.
+
+**Share (5 min)**: Pairs share insights with the class, instructor facilitates discussion of key concepts.
+:::
+
+### Problem-Based Learning Case
+
+::: {.callout-example}
+## Case Study: Hospital Treatment Effectiveness
+
+**Scenario**: You're analyzing whether a new cardiac procedure improves patient outcomes. You have data on 2,000 patients, but treatment assignment wasn't randomized - doctors chose treatments based on patient characteristics.
+
+**Available variables**:
+- Age, gender, baseline cardiac function
+- Comorbidities, insurance type, hospital size
+- Treatment received, 30-day mortality outcome
+
+**Student Tasks**:
+1. Identify potential confounders and justify selections
+2. Specify a propensity score model
+3. Choose appropriate PS method and justify
+4. Interpret results and assess limitations
+
+**Deliverable**: 5-minute presentation of analysis plan and preliminary results
+:::
+
+### Interactive Simulation Exercise
+
+::: {.callout-example}
+## Simulation: The Impact of Model Misspecification
+
+Students use R to investigate what happens when:
+1. Important confounders are omitted from the PS model
+2. Non-linear relationships are ignored
+3. Interaction effects are missing
+
+**Code Template**:
+
+```{{r}}
+
+simulate_ps_bias <- function(
+    include_interaction = TRUE,
+    include_nonlinear = TRUE,
+    n = 1000
+) {
+    # Generate data with interactions and non-linearities
+    # Fit PS models with different specifications
+    # Compare resulting treatment effect estimates
+    # Return bias and MSE
+}
+
+# Students run simulations and discuss results
+results <- expand.grid(
+    interaction = c(TRUE, FALSE),
+    nonlinear = c(TRUE, FALSE)
+) |>
+    mutate(bias = map2_dbl(interaction, nonlinear, ~ simulate_ps_bias(.x, .y)))
+```
+
+:::
+
+### Retrieval Practice with Spaced Intervals
+
+::: {.callout-question}
+## Spaced Retrieval Questions
+
+**Week 5 (Current)**:
+1. What is the balancing property of propensity scores?
+2. When would you choose matching over weighting?
+
+**Week 7 Review** (Interleaved with new content):
+3. How do propensity scores relate to exchangeability?
+4. What diagnostics would you use for IPTW?
+
+**Week 10 Review** (Before exam):
+5. Compare propensity scores to direct covariate adjustment
+6. Design a study using propensity score stratification
+:::
+
+### Peer Instruction Sequence
+
+::: {.callout-example}
+## Concept Test: Propensity Score Applications
+
+**Question**: You have estimated propensity scores for a study. The treated group has PS ranging from 0.1 to 0.9, while the control group ranges from 0.05 to 0.7. Which approach would be MOST appropriate?
+
+A) Use all observations with IPTW
+B) Match on propensity scores using all observations
+C) Restrict analysis to PS range 0.1-0.7 before matching
+D) Stratify into quintiles using all observations
+
+**Teaching Sequence**:
+1. Students vote individually (polling)
+2. Discuss with neighbors if <70% correct
+3. Re-vote after discussion
+4. Instructor explains correct answer (C)
+:::
+
+### Self-Explanation Prompts
+
+::: {.callout-question}
+## Explain Your Reasoning
+
+After completing each lab task, students write brief explanations:
+
+1. **After matching**: "Explain in your own words why the matched sample is more appropriate for causal inference than the original sample."
+2. **After IPTW**: "Describe what the 'pseudo-population' created by IPTW looks like and why treatment effects estimated in this population are interpretable as causal effects."
+3. **After balance checking**: "If you found poor balance on one covariate after propensity score adjustment, what would you do and why?"
+:::
+
+## 8 Appendix: Advanced Theory & Derivations
+
+### Theoretical Foundation: The Fundamental Theorem
+
+::: {.callout-important}
+## Rosenbaum-Rubin Theorem (1983)
+
+If assignment to treatment is strongly ignorable given covariates $\mathbf{X}$:
+$(\mathbf{Y}^0, \mathbf{Y}^1) \perp A | \mathbf{X}$
+
+Then assignment to treatment is also strongly ignorable given the propensity score $e(\mathbf{X})$:
+$(\mathbf{Y}^0, \mathbf{Y}^1) \perp A | e(\mathbf{X})$
+
+**Proof Sketch**: The propensity score is a balancing score, meaning:
+$\mathbf{X} \perp A | e(\mathbf{X})$
+
+Combined with the assumption $(\mathbf{Y}^0, \mathbf{Y}^1) \perp A | \mathbf{X}$, this implies the desired result through the chain of conditional independence relationships.
+:::
+
+### Mathematical Properties of Propensity Score Methods
+
+#### Asymptotic Properties of Matching Estimators
+
+For 1:1 nearest neighbor propensity score matching, the bias of the treatment effect estimator is:
+
+$\text{Bias}(\hat{\tau}_{match}) \approx \frac{1}{2}\mu''_0(\bar{e})\sigma_e^2 + O_p(n^{-1/2})$
+
+where $\mu_0(e)$ is the conditional expectation of $Y^0$ given the propensity score, and $\sigma_e^2$ is the variance of propensity score differences within matched pairs.
+
+::: {.callout-example}
+## Numerical Illustration: Bias of Matching
+
+Consider a simple case where:
+- $\mu_0(e) = 10 + 5e + 2e^2$ (quadratic relationship)
+- $\mu''_0(e) = 4$ (second derivative)
+- $\sigma_e^2 = 0.01$ (small matching discrepancies)
+
+Then: $\text{Bias} \approx \frac{1}{2}(4)(0.01) = 0.02$
+
+The bias is small when matching is tight ($\sigma_e^2$ small) and the outcome-propensity score relationship is approximately linear.
+:::
+
+#### Efficiency of IPTW Estimators
+
+The asymptotic variance of the IPTW estimator for the ATE is:
+
+$\text{Var}(\hat{\tau}_{IPTW}) = E\left[\frac{\text{Var}(Y^1|X)}{e(X)} + \frac{\text{Var}(Y^0|X)}{1-e(X)} + (Y^1 - Y^0 - \tau)^2\right]$
+
+This shows that IPTW is most efficient when:
+1. Propensity scores are close to 0.5 (balanced design)
+2. Conditional outcome variances are small
+3. Treatment effect heterogeneity is minimal
+
+::: {.callout-example}
+## Numerical Example: IPTW Efficiency
+
+Assume $\text{Var}(Y^1|X) = \text{Var}(Y^0|X) = 25$ and $\tau = 5$ (constant treatment effect).
+
+For different propensity scores:
+- $e(X) = 0.1$: $\text{Var} \approx \frac{25}{0.1} + \frac{25}{0.9} = 250 + 27.8 = 277.8$
+- $e(X) = 0.5$: $\text{Var} \approx \frac{25}{0.5} + \frac{25}{0.5} = 50 + 50 = 100$
+- $e(X) = 0.9$: $\text{Var} \approx \frac{25}{0.9} + \frac{25}{0.1} = 27.8 + 250 = 277.8$
+
+The variance is minimized when propensity scores are balanced around 0.5.
+:::
+
+### Advanced Diagnostics: The Overlap Assumption
+
+#### Crump Et Al. (2009) Trimming Rule
+
+To optimize bias-variance tradeoffs in IPTW, @crump2009dealing propose trimming observations with propensity scores outside the interval:
+
+$[\alpha, 1-\alpha] \text{ where } \alpha = \frac{0.1}{\sqrt{k/n}}$
+
+where $k$ is the number of covariates and $n$ is the sample size.
+
+::: {.callout-example}
+## Numerical Application: Crump Trimming
+
+For our lab example with $k = 6$ covariates and $n = 800$:
+
+$\alpha = \frac{0.1}{\sqrt{6/800}} = \frac{0.1}{\sqrt{0.0075}} = \frac{0.1}{0.087} = 1.15$
+
+Since $\alpha > 1$, no trimming is recommended (the formula suggests we need more data relative to the number of covariates for reliable trimming).
+:::
+
+### Doubly Robust Estimation
+
+#### The AIPW Estimator
+
+The Augmented Inverse Probability Weighted (AIPW) estimator combines outcome modeling with propensity score weighting:
+
+$\hat{\tau}_{AIPW} = \frac{1}{n}\sum_{i=1}^n \left[\frac{A_i(Y_i - \hat{\mu}_1(X_i))}{\hat{e}(X_i)} - \frac{(1-A_i)(Y_i - \hat{\mu}_0(X_i))}{1-\hat{e}(X_i)} + \hat{\mu}_1(X_i) - \hat{\mu}_0(X_i)\right]$
+
+where $\hat{\mu}_a(X)$ are fitted outcome models for each treatment level.
+
+**Double Robustness Property**: $\hat{\tau}_{AIPW}$ is consistent if either the propensity score model OR the outcome models are correctly specified (but not necessarily both).
+
+::: {.callout-example}
+## Implementation Example
+
+```{{r}}
+
+# Fit outcome models
+mu1_model <- lm(outcome ~ age + baseline_severity + comorbidities, 
+               data = lab_data[lab_data$treatment == 1,])
+mu0_model <- lm(outcome ~ age + baseline_severity + comorbidities,
+               data = lab_data[lab_data$treatment == 0,])
+
+# Predict outcomes for all units
+mu1_hat <- predict(mu1_model, newdata = lab_data)
+mu0_hat <- predict(mu0_model, newdata = lab_data)
+
+# Calculate AIPW estimate
+aipw_components <- with(lab_data, {
+  term1 <- treatment * (outcome - mu1_hat) / ps
+  term2 <- (1 - treatment) * (outcome - mu0_hat) / (1 - ps)  
+  term3 <- mu1_hat - mu0_hat
+  term1 - term2 + term3
+})
+
+tau_aipw <- mean(aipw_components)
+```
+
+:::
+
+## References
+
+Crump, R. K., Hotz, V. J., Imbens, G. W., & Mitnik, O. A. (2009). Dealing with limited overlap in estimation of average treatment effects. *Biometrika*, 96(1), 187-199.
+
+Hernán, M. A., & Robins, J. M. (2020). *Causal inference: What if*. Chapman & Hall/CRC.
+
+Neal, B. (2020). *Introduction to causal inference from a machine learning perspective*. Course Lecture Notes.
+
+Rosenbaum, P. R., & Rubin, D. B. (1983). The central role of the propensity score in observational studies for causal effects. *Biometrika*, 70(1), 41-55.

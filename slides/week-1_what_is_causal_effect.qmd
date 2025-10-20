@@ -1,0 +1,277 @@
+---
+title: "Introduction to Causal Inference & the Potential Outcomes Framework"
+# subtitle: "STAT 579 • Applied Causal Inference"
+author: "Dr. Davood Tofighi"
+format: 
+  unm-revealjs:
+    slide-number: c/t
+    # logo: "images/ms.png"
+    chalkboard:
+      theme: chalkboard
+---
+
+## Why Causality?
+
+Correlation is **not** causation.  
+We ask: **Does X cause Y?**
+
+Examples:
+
+- Does ☕ **coffee** cause longer life?
+- Does 💊 a **drug** lower blood pressure?
+- Does 📚 **tutoring** improve exam scores?
+- Does 💵 raising the **minimum wage** increase unemployment?
+
+---
+
+## Warm-Up Poll
+
+**Claim:**  
+> "Coffee drinkers live longer."
+
+- Agree ☑️  
+- Disagree ❌  
+- Not sure 🤔  
+
+👉 **Think–Pair–Share:**  
+What other factors might explain this?
+
+---
+
+## Spurious Correlation
+
+Ice cream sales ↑  
+Shark attacks ↑  
+
+🦈 Do ice creams cause shark attacks?  
+
+👉 Lurking variable? (Answer: **temperature/season**)
+
+---
+
+## Motivating Cases
+
+- **Medicine**: New drug → blood pressure?  
+- **Education**: Tutoring → exam scores?  
+- **Economics**: Minimum wage → unemployment?  
+
+👉 *What kind of study would convince you?*
+
+---
+
+## Potential Outcomes Framework
+
+For each unit $i$:
+
+- $Y_i^{(1)}$: Outcome if **treated**  
+- $Y_i^{(0)}$: Outcome if **not treated**
+
+Individual causal effect:
+
+
+$$\tau_i = Y_i^{(1)} - Y_i^{(0)}$$
+
+## Concept Check 1
+
+Which statement is true?  
+
+A. We can always observe both $Y^{(1)}$ and $Y^{(0)}$.  
+B. The causal effect is $Y^{(1)} + Y^{(0)}$.  
+C. The causal effect is the difference $Y^{(1)} - Y^{(0)}$.  
+D. Potential outcomes are irrelevant.  
+
+👉 Discuss and vote.
+
+## The Fundamental Problem
+
+⚠️ Only **one** potential outcome observed:  
+- If treated: observe $Y^{(1)}$.  
+- If not treated: observe $Y^{(0)}$.  
+
+This is the **Fundamental Problem of Causal Inference**.  
+
+---
+
+## Example: Tutoring Program
+
+| Student | $Y^{(1)}$ With Tutoring | $Y^{(0)}$ Without Tutoring | Effect |
+|---------|---------------------------|------------------------------|--------|
+| Sarah   | 85                        | 80                           | +5     |
+| Alex    | 78                        | ?                            | ???    |
+| Jamie   | ?                         | 82                           | ???    |
+
+👉 Which values are *counterfactual*?
+
+## Scaffolding Activity
+
+Treatment: *attending today’s lecture*  
+Outcome: *knowledge tomorrow*  
+
+Write down for yourself:  
+- $Y^{(1)}$ = outcome if you attended.  
+- $Y^{(0)}$ = outcome if you skipped.  
+
+👉 Which do you observe?  
+
+## Average Causal Effect (ACE)
+
+We usually care about the **population average**:
+
+
+$$ACE = \mathbb{E}[Y^{(1)} - Y^{(0)}]$$
+
+
+But we cannot see both potential outcomes → need assumptions.
+
+## Concept Check 2
+
+If we only observe one outcome per person, how can we estimate ACE?  
+
+A. We can’t — causal inference is impossible.  
+B. Use averages across groups, under assumptions.  
+C. Guess the missing outcomes.  
+D. Average observed outcomes with missing values.  
+
+👉 Small group discussion.
+
+## Key Assumptions
+
+### 1. SUTVA
+- Outcomes not affected by *others’* treatment.
+- No hidden versions of treatment.  
+
+Example: My test score ≠ influenced by your tutoring.  
+Violation: Herd immunity in vaccines.
+
+## SUTVA Violations
+
+- **Interference**: Peer effects in education (your study group matters).  
+- **Hidden versions**: Drug dose differences, not accounted for.  
+
+👉 Class prompt: What other fields violate SUTVA?
+
+---
+
+### 2. Ignorability
+
+Treatment ⟂ Potential Outcomes given covariates.  
+
+- **RCTs**: holds by design.  
+- **Observational**: must adjust for confounders.  
+
+---
+
+## DAG Illustration
+
+```{r}
+library(ggdag)
+dag <- dagify(
+    Y ~ T + H,
+    T ~ H,
+    exposure = "T",
+    outcome = "Y"
+)
+ggdag(dag, text = FALSE) + theme_void()
+```
+
+Confounding path: Health → Treatment, Health → Outcome.  
+
+---
+
+## Concept Check 3
+
+Which DAG adjustment recovers causality?  
+
+A. Adjust for Treatment only.  
+B. Adjust for Outcome only.  
+C. Adjust for Health (confounder).  
+D. No adjustment needed.  
+
+---
+
+## Worked Example: RCT
+
+- 100 patients randomized: Drug vs Placebo.  
+- Randomization balances confounders.  
+
+$$
+ACE = \mathbb{E}[Y^{(1)}] - \mathbb{E}[Y^{(0)}]
+$$
+
+✅ Ignorability holds by design.  
+
+---
+
+## Worked Example: Observational Study
+
+Patients **self-select** treatment.  
+
+- Healthier → more likely to take drug.  
+- Bias introduced.  
+
+👉 Brainstorm: Which covariates to adjust for?  
+
+---
+
+## Extended Example: Vaccine Trial
+
+Treatment: vaccination.  
+Outcome: illness.  
+Counterfactual: what if unvaccinated?  
+
+⚠️ Violation: My outcome depends on whether others are vaccinated. (Herd immunity → SUTVA fails)  
+
+---
+
+## Nuance: ACE Vs ATE Vs ATT
+
+- **ACE / ATE**: Average treatment effect, entire population.  
+- **ATT**: Effect on the treated.  
+- **ATC**: Effect on the controls.  
+
+👉 Ask: In policy, which is most relevant?
+
+---
+
+## Common Misconceptions
+
+❌ We can observe both potential outcomes.  
+✅ Only one observed per unit.  
+
+❌ Association = causation.  
+✅ Confounding & bias distort.  
+
+❌ RCTs are always possible.  
+✅ Often infeasible → rely on observational designs.
+
+---
+
+## Practice Quiz
+
+1. What is the **Fundamental Problem**?  
+2. State one **SUTVA violation**.  
+3. Why does randomization solve ignorability?  
+4. What does ATT mean?  
+
+---
+
+## Summary
+
+- **Potential outcomes**: $Y^{(1)}, Y^{(0)}$.  
+- **Fundamental problem**: missing counterfactuals.  
+- **Assumptions**: SUTVA & Ignorability.  
+- **RCTs**: solve confounding by design.  
+- **Observational**: need adjustment.  
+
+---
+
+## Exit Ticket
+
+Design a causal study:  
+
+1. Define treatment.  
+2. Write $Y^{(1)}, Y^{(0)}$.  
+3. Identify assumptions.  
+4. State which effect (ATE, ATT, ATC) matters.  
+
+👉 Share with your group.

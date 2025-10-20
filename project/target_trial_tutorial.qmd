@@ -1,0 +1,161 @@
+---
+title: "Target Trial Emulation (TTE) vs Just Analyzing the Data"
+subtitle: "The Two Approaches: A Tale of Two Analysts"
+---
+
+## The Two Approaches: A Tale of Two Analysts
+
+Imagine we have a large electronic health record (EHR) dataset and we want to answer the question: "Does taking statins prevent cardiovascular disease (CVD)?"
+
+### Approach 1: "Just Analyzing the Data" 😥
+
+A traditional approach might look like this:
+
+1. **Data First:** Open the dataset. Identify a variable for "statin use" (e.g., `statin_ever_used`) and an outcome variable for "CVD."
+2. **Model:** Choose a regression model. Let's use logistic regression: `CVD ~ statin_ever_used + age + sex + diabetes`.
+3. **Result:** Fit the model. Look at the odds ratio for `statin_ever_used`. If it's less than 1 and the p-value is significant, conclude that statins are protective.
+
+This seems straightforward, but it is filled with hidden pitfalls. The causal question is vague, and the analysis is susceptible to numerous biases that are difficult to see without a more structured framework.
+
+### Approach 2: Target Trial Emulation (TTE) 👩‍🔬
+
+The TTE framework forces us to change our entire workflow.
+
+- **Mindset Shift:** We **start with the question, not the data**. Our first step is to design the ideal, hypothetical randomized controlled trial (RCT) we *wish* we could run to answer our question. This is our "target trial." Only after we have a complete "protocol" for this ideal trial do we turn to the observational data and see how well we can **emulate** it.
+
+This disciplined process makes our assumptions explicit and helps us proactively design an analysis that avoids common biases.
+
+---
+
+## Tutorial: Building the Target Trial Protocol
+
+The protocol of any trial (real or hypothetical) has key components. Let's define them for our statin/CVD question and contrast the TTE approach with the "just analyze" approach at each step.
+
+### 1. Eligibility Criteria
+
+- **The Question:** Who would be eligible to enroll in our ideal trial?
+- **"Just Analyze" Approach:** This is often an afterthought. We might just use all patients in the dataset who don't have missing values for our variables of interest.
+- **TTE Approach:** We must be explicit. For our statin trial, we might specify:
+    - *Inclusion:* Patients aged 40-75.
+    - *Exclusion:* Patients with a history of CVD at baseline (since we're studying prevention). Patients without continuous health plan enrollment for the prior year (to ensure we have their baseline data).
+    - **Why it matters:** Excluding prevalent users (those already on statins) and requiring a clean baseline period is crucial for avoiding selection bias and ensuring we are comparing apples to apples.
+
+### 2. Treatment Strategies
+
+- **The Question:** What are the precise interventions we are comparing?
+- **"Just Analyze" Approach:** We might use a vague `statin_ever_used` variable. But what does this mean? Did they take one pill? Take it for 10 years? This ambiguity is a major source of error.
+- **TTE Approach:** We must specify the strategies precisely, as in a real trial.
+    - **Strategy 1:** Initiate a statin (e.g., atorvastatin, simvastatin) at baseline.
+    - **Strategy 2:** Do not initiate a statin at baseline.
+    - **Why it matters:** This pushes us towards a "new-user" design, where we only include patients at the moment they become eligible to start the therapy. This is a powerful tool to prevent biases.
+
+### 3. Assignment Procedure
+
+- **The Question:** How are individuals assigned to a treatment strategy?
+- **"Just Analyze" Approach:** The assignment is whatever happened in the real world. We hope to "control for confounding" by adding covariates to a regression model.
+- **TTE Approach:** In our ideal target trial, we would assign treatment **randomly** at baseline. In the real world, this is obviously not the case; doctors assign statins for reasons (confounding). Our task is to **emulate randomization**. We do this by adjusting for a sufficient set of baseline confounders (identified by our DAG!) using methods like:
+    - **Inverse Probability of Treatment Weighting (IPTW):** Creating a "pseudo-population" where the confounders are no longer associated with treatment assignment.
+    - **Matching:** Matching treated individuals to untreated individuals with similar baseline characteristics.
+    - **Why it matters:** This makes the goal of "controlling for confounding" a deliberate design choice, not just a modeling exercise. We are explicitly trying to create groups that are exchangeable, just like in a real RCT.
+
+### 4. Follow-up Period
+
+- **The Question:** When does follow-up begin and end?
+- **"Just Analyze" Approach:** The start of follow-up is often poorly defined. Does it start when the patient enters the database? Or when they first use a statin?
+- **TTE Approach:** The start of follow-up (**time zero**) must be the same for everyone: the moment of treatment assignment (or emulation of assignment).
+    - For new users, this is the date of their first statin prescription.
+    - For non-users, we can assign a similar "index date."
+    - Follow-up ends at a pre-specified time (e.g., 5 years), or when CVD occurs, or when they leave the health plan (censoring).
+    - **Why it matters:** Properly defining time zero is the **single most effective way to prevent immortal time bias**. This bias occurs when a period of follow-up is misclassified as "unexposed" when it should be "not yet exposed," leading to a spurious protective effect.
+
+### 5. Outcome
+
+- **The Question:** How do we define the outcome?
+- **TTE Approach:** We need to specify the outcome just as we would in a trial protocol (e.g., "first diagnosis of a myocardial infarction or stroke, identified via ICD-10 codes during an inpatient hospital stay"). This clarity reduces measurement error.
+
+### 6. Causal Contrasts (Estimand)
+
+- **The Question:** What is the precise causal effect we are trying to estimate?
+- **"Just Analyze" Approach:** This is often implicit in the model output (e.g., an odds ratio).
+- **TTE Approach:** We specify our estimand up front. The two main choices are:
+    - **Intention-to-Treat (ITT) effect:** The effect of *assigning* the treatment strategy at baseline, regardless of whether the patient adheres to it later. This is often emulated in observational data.
+    - **Per-Protocol effect:** The effect of *adhering* to the treatment strategy over time. This is more complex and requires advanced methods like Marginal Structural Models (MSMs) to handle time-varying confounding.
+    - **Why it matters:** Being explicit about the estimand dictates the correct analysis plan and prevents misinterpretation of the results.
+
+### 7. Analysis Plan
+
+- **The Question:** How will we estimate the causal contrast?
+- **"Just Analyze" Approach:** Fit a single regression model.
+- **TTE Approach:** The analysis plan flows directly from all the previous design choices. If emulating an ITT effect, we might use a weighted Cox model (using IPTW) that compares the two groups from time zero. If estimating a per-protocol effect, we would need to specify how we will handle treatment switching and censoring.
+
+
+## Summary: Why Target Trial Emulation is Different
+
+| Feature | "Just Analyzing Data" | Target Trial Emulation |
+| :--- | :--- | :--- |
+| **Starting Point** | The dataset and its variables | A precise causal question & an ideal trial protocol |
+| **Assumptions** | Often implicit, hidden in the model | Explicitly stated in the protocol design |
+| **Bias Avoidance** | Reactive (hope regression "controls" for it) | Proactive (design choices to prevent bias) |
+| **Transparency** | Low; it's hard to know exactly what was compared | High; the emulated protocol is the roadmap for the analysis |
+| **Rigor** | Variable; prone to hidden errors | High; provides a systematic framework |
+
+In short, target trial emulation is not a statistical method. It's a **structured way of thinking**. It's the overarching framework that guides you to ask the right questions, design a sound observational analysis, choose the right statistical methods, and avoid preventable biases. It turns a simple data analysis into a credible scientific investigation.
+
+## Trial Emulation Example
+
+Here are the seven components of a target trial designed to answer the question: **"What is the effect of obtaining a bachelor's degree on personal income?"**
+
+### 1. Eligibility Criteria
+
+This defines the population for our hypothetical trial. We can't include everyone. We need a specific cohort of people who are at the point of making the decision.
+
+- **Eligible Population:** All individuals who graduated from a U.S. high school in a specific year (e.g., 2010), are between 17-19 years old at graduation, and have not yet enrolled in a 4-year college program.
+- **Exclusions:** Individuals who are not eligible to apply to a 4-year college or who already possess an associate's degree or other advanced vocational certification.
+
+### 2. Treatment Strategies
+
+These are the precise interventions we want to compare. "Getting a degree" is too vague.
+
+- **Strategy 1 (Treated):** Enroll in a 4-year bachelor's degree program within one year of high school graduation and successfully obtain a bachelor's degree within six years of high school graduation.
+- **Strategy 2 (Control):** Do not obtain a bachelor's degree within six years of high school graduation. (This group may enter the workforce, attend community college, or pursue vocational training.)
+
+### 3. Assignment Procedure
+
+In an ideal world, we would randomize. In our emulation, we mimic that randomization.
+
+- **Ideal Trial:** Eligible individuals would be randomly assigned at high school graduation to either pursue the "degree" strategy or the "no degree" strategy.
+- **Emulation:** We use observational data and adjust for the baseline factors that influence both the decision to attend college and future income. This is our **confounder set**. We would use methods like propensity score weighting or matching to balance the two groups on key baseline variables measured at high school graduation, such as:
+    - High School GPA and class rank
+    - Standardized test scores (SAT/ACT)
+    - Family income and socioeconomic status
+    - Parental education level
+    - High school quality and resources
+
+### 4. Follow-up Period
+
+This defines the timeline for our study, and **time zero** is critical.
+
+- **Start of Follow-up (Time Zero):** The clock starts for everyone at the same moment: right after high school graduation (e.g., September 1, 2010). This is the point of (emulated) randomization.
+- **End of Follow-up:** The follow-up period ends when the outcome is measured. A reasonable point would be 12 years after high school graduation, when individuals are approximately 30 years old and have had time to establish themselves in their careers.
+
+### 5. Outcome
+
+This is the specific event we are measuring.
+
+- **Primary Outcome:** Annual personal pre-tax income at age 30, measured in U.S. dollars. The data source (e.g., tax records, survey data) must be specified.
+
+### 6. Causal Contrasts (Estimand)
+
+This is the specific statistical quantity we aim to estimate.
+
+- **Estimand:** The **Average Treatment Effect (ATE)**. Specifically, we want to calculate the difference in mean annual income at age 30 between the group assigned to Strategy 1 and the group assigned to Strategy 2. This is an "intention-to-treat" estimand, as it measures the effect of being assigned to a strategy at baseline, regardless of eventual adherence (e.g., some people assigned to the college track might drop out).
+
+### 7. Analysis Plan
+
+This outlines the statistical steps to estimate the causal contrast.
+
+- **The Plan:**
+    1. Among the eligible cohort of 2010 high school graduates, fit a model (e.g., logistic regression) to estimate each person's probability of attending college based on the baseline confounders (GPA, family income, etc.). This yields the propensity score.
+    2. Use these propensity scores to calculate inverse probability of treatment weights (IPTW) to create a pseudo-population where the baseline confounders are balanced between the two groups.
+    3. In this weighted pseudo-population, calculate the mean income at age 30 in the group that obtained a degree and the group that did not.
+    4. The difference between these two means is the estimate of the causal effect. We would then calculate a 95% confidence interval around this estimate.

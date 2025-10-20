@@ -1,0 +1,166 @@
+---
+title: "Mediation Analysis Example"
+---
+
+## Scenario Setup
+
+**Research Question**: What is the effect of a job training program ($A$) on income ($Y$), and how much of this effect is mediated through skill level ($M$)?
+
+- **Treatment ($A$)**: Job training program ($A = 0$: no training, $A = 1$: training)
+- **Mediator ($M$)**: Skill level (continuous scale 0–100)
+- **Outcome ($Y$)**: Annual income (in thousands)
+- **Sample size**: $n = 1{,}000$ individuals
+
+## Generating Models
+
+The following are **generating models for observed outcomes**, which under consistency also determine the **potential outcomes** $M^{a}$ and $Y^{a, m}$.
+
+### Mediator Model (for $M$, a Function of $A$)
+
+$$
+M = \alpha_0 + \alpha_1 A + \varepsilon_M
+$$
+
+- $\alpha_0 = 60$: baseline skill level
+- $\alpha_1 = 15$: effect of training on skills
+
+From this model:
+
+- $M^1 = \alpha_0 + \alpha_1 = 75$
+- $M^0 = \alpha_0 = 60$
+
+### Outcome Model (for $Y$, as a Function of $A$, $M$, and $A \cdot M$)
+
+$$
+Y = \beta_0 + \beta_1 A + \beta_2 M + \beta_3 A M + \varepsilon_Y
+$$
+
+- $\beta_0 = 30$: baseline income
+- $\beta_1 = 8$: direct effect of training
+- $\beta_2 = 0.4$: effect of skills on income
+- $\beta_3 = 0.1$: interaction effect between training and skills
+
+## Comprehensive Calculation Table
+
+| Component | Formula | Calculation | Value |
+|----------:|:--------|:------------|------:|
+| **COUNTERFACTUAL MEDIATOR VALUES** ||||
+| $M^1$ | $\alpha_0 + \alpha_1 \cdot 1$ | $60 + 15$ | **75** |
+| $M^0$ | $\alpha_0 + \alpha_1 \cdot 0$ | $60 + 0$ | **60** |
+| **COUNTERFACTUAL OUTCOMES** ||||
+| $Y^{1, M^1}$ | $\beta_0 + \beta_1 + \beta_2 M^1 + \beta_3 \cdot 1 \cdot M^1$ | $30 + 8 + 0.4 \cdot 75 + 0.1 \cdot 75$ | **75.5** |
+| $Y^{0, M^1}$ | $\beta_0 + 0 + \beta_2 M^1 + 0 \cdot \beta_3 \cdot M^1$ | $30 + 0 + 0.4 \cdot 75$ | **60.0** |
+| $Y^{1, M^0}$ | $\beta_0 + \beta_1 + \beta_2 M^0 + \beta_3 \cdot 1 \cdot M^0$ | $30 + 8 + 0.4 \cdot 60 + 0.1 \cdot 60$ | **68.0** |
+| $Y^{0, M^0}$ | $\beta_0 + 0 + \beta_2 M^0 + 0 \cdot \beta_3 \cdot M^0$ | $30 + 0 + 0.4 \cdot 60$ | **54.0** |
+| **CAUSAL EFFECTS** ||||
+| Natural Direct Effect (NDE) | $Y^{1, M^0} - Y^{0, M^0}$ | $68.0 - 54.0$ | **14.0** |
+| Natural Indirect Effect (NIE) | $Y^{1, M^1} - Y^{1, M^0}$ | $75.5 - 68.0$ | **7.5** |
+| Total Effect (TE) | $Y^{1, M^1} - Y^{0, M^0}$ | $75.5 - 54.0$ | **21.5** |
+| Alternative NIE | $Y^{0, M^1} - Y^{0, M^0}$ | $60.0 - 54.0$ | **6.0** |
+| **VERIFICATION** ||||
+| NDE + NIE = TE? | $14.0 + 7.5$ |  | **21.5 ✓** |
+| **PROPORTIONS** ||||
+| % Mediated | $\frac{\text{NIE}}{\text{TE}} \times 100$ | $\frac{7.5}{21.5} \times 100$ | **34.9%** |
+| % Direct | $\frac{\text{NDE}}{\text{TE}} \times 100$ | $\frac{14.0}{21.5} \times 100$ | **65.1%** |
+
+## Interpretation
+
+### Key Findings
+
+1. **Total Effect**: The job training program increases income by \$21,500 on average.
+2. **Natural Direct Effect**: \$14,000 (65.1%) of the effect operates through pathways other than skill improvement.
+3. **Natural Indirect Effect**: \$7,500 (34.9%) of the effect is mediated via increased skill levels.
+4. **Mediation**: Roughly one-third of the program's benefit comes from skill enhancement.
+
+### Counterfactual Interpretation
+
+- $Y^{1, M^1} = 75.5$: Income if treated and skill develops as it would under treatment.
+- $Y^{1, M^0} = 68.0$: Income if treated but with skill level that would occur under no treatment.
+- $Y^{0, M^1} = 60.0$: Income if untreated but skill level is as if treated.
+- $Y^{0, M^0} = 54.0$: Income if untreated and skill level is as under no treatment.
+
+### Policy Implications
+
+- The program has **direct effects** beyond skills (e.g., networking, confidence, signaling).
+- The **mediator (skills)** contributes significantly but is not the dominant pathway.
+- Interventions should support both **skill acquisition** and **broader contextual benefits**.
+
+## Technical Notes
+
+- These are **structural models** for observed variables that also imply counterfactuals under **consistency and ignorability**.
+- The interaction term $\beta_3 = 0.1$ introduces **non-additivity** across treatment levels.
+- The alternative NIE (e.g., $Y^{0, M^1} - Y^{0, M^0}$) differs due to this interaction.
+- **Inference procedures** (e.g., bootstrapping or delta method) and **sensitivity analyses** are required in practice.
+
+# Worked Example: Calculating NDE, NIE, and TE for Three Individuals
+
+In this example, we use a structural equation model to simulate data for three individuals and calculate the **Natural Direct Effect (NDE)**, **Natural Indirect Effect (NIE)**, and **Total Effect (TE)** of a binary treatment $A$ on an outcome $Y$, mediated through variable $M$.
+
+## Model Setup
+
+We assume the following structural equations:
+
+### Mediator Model
+
+$$
+M = \alpha_0 + \alpha_1 A + \varepsilon_M
+$$
+
+- $\alpha_0 = 60$, $\alpha_1 = 15$
+
+### Outcome Model
+
+$$
+Y = \beta_0 + \beta_1 A + \beta_2 M + \beta_3 A \cdot M + \varepsilon_Y
+$$
+
+- $\beta_0 = 30$, $\beta_1 = 8$, $\beta_2 = 0.4$, $\beta_3 = 0.1$
+
+## Simulated Individual-Level Data
+
+| ID | $A$ | $\varepsilon_M$ | $\varepsilon_Y$ | $M^1$ | $M^0$ | $Y^{1, M^1}$ | $Y^{1, M^0}$ | $Y^{0, M^1}$ | $Y^{0, M^0}$ | NDE | NIE | TE |
+|----|--------|---------------------|---------------------|----------|----------|------------------|------------------|------------------|------------------|------|------|------|
+| 1  | 1      | 0                   | 0                   | 75       | 60       | 75.5             | 68.0             | 60.0             | 54.0             | 14.0 | 7.5  | 21.5 |
+| 2  | 0      | -3                  | 2                   | 72       | 57       | 76.0             | 68.5             | 60.8             | 54.8             | 13.7 | 7.5  | 21.2 |
+| 3  | 1      | 5                   | -1                  | 80       | 65       | 77.0             | 69.5             | 61.0             | 55.0             | 14.5 | 7.5  | 22.0 |
+
+## Step-by-Step: Individual 1
+
+### Step 1: Compute Potential Mediators
+
+- $M^1 = 60 + 15 \cdot 1 + 0 = 75$
+- $M^0 = 60 + 15 \cdot 0 + 0 = 60$
+
+### Step 2: Compute Potential Outcomes
+
+- $Y^{1, M^1} = 30 + 8 + 0.4 \cdot 75 + 0.1 \cdot 75 + 0 = 75.5$
+- $Y^{1, M^0} = 30 + 8 + 0.4 \cdot 60 + 0.1 \cdot 60 + 0 = 68.0$
+- $Y^{0, M^1} = 30 + 0 + 0.4 \cdot 75 + 0 + 0 = 60.0$
+- $Y^{0, M^0} = 30 + 0 + 0.4 \cdot 60 + 0 + 0 = 54.0$
+
+### Step 3: Calculate Effects
+
+- **NDE** = $Y^{1, M^0} - Y^{0, M^0} = 68.0 - 54.0 = 14.0$
+- **NIE** = $Y^{1, M^1} - Y^{1, M^0} = 75.5 - 68.0 = 7.5$
+- **TE** = $Y^{1, M^1} - Y^{0, M^0} = 75.5 - 54.0 = 21.5$
+
+## Interpretation
+
+- The **Total Effect** for individual 1 is **21.5**, which is decomposed into:
+  - **Natural Direct Effect**: 14.0 (not mediated by skill)
+  - **Natural Indirect Effect**: 7.5 (mediated through skill development)
+- The proportion mediated is:
+
+$$
+\frac{\text{NIE}}{\text{TE}} = \frac{7.5}{21.5} \approx 34.9\%
+$$
+
+## Observations Across Individuals
+
+- All individuals show similar **NIE** due to the same change in mediator under treatment ($\Delta M = 15$).
+- Variation in **TE** is driven by individual residuals $\varepsilon_M$ and $\varepsilon_Y$.
+- Slight differences in **NDE** and **TE** arise from heterogeneity introduced through $\varepsilon_Y$ and the interaction term $\beta_3 A M$.
+
+## Summary
+
+This example illustrates how to use structural models to simulate potential outcomes and decompose the total causal effect into direct and indirect components for **each unit**. These unit-level calculations help reveal individual heterogeneity in response to interventions—crucial in personalized medicine, education, or employment policy evaluation.

@@ -1,0 +1,190 @@
+---
+title: Tutorial on `model.tables()` Function in R
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+
+# Tutorial on `model.tables()` Function in R
+
+## Introduction
+
+### Overview
+
+The `model.tables()` function in the `stats` package generates summary tables for models fitted using `aov()`. It helps extract and interpret information such as effects or means for terms in a model. This function is particularly useful in analyzing complex ANOVA designs.
+
+Key components:
+
+- **Package**: `stats`
+- **Function**: `model.tables()`
+
+### Use Cases
+
+- Summarizing model terms in ANOVA fits.
+- Computing and displaying effects or means of factors.
+- Adding standard errors for results, when required.
+
+### Benefits
+
+- Provides detailed summaries of complex ANOVA models.
+- Facilitates interpretation of factor effects and mean responses.
+- Seamless integration with other ANOVA tools in R.
+
+
+## Getting Started
+
+### Basic Usage
+
+Here is a basic example using the `npk` dataset:
+
+```{r}
+data(npk)
+
+# Fit an ANOVA model
+npk.aov <- aov(yield ~ block + N * P * K, data = npk)
+
+# Generate a table of means
+model.tables(npk.aov, type = "means")
+```
+
+This generates a table summarizing mean responses for each term.
+
+## Key Functions and Features
+
+### Description
+
+The `model.tables()` function computes summary tables of effects or means for terms in an `aov` model.
+
+### Syntax
+
+```r
+model.tables(x, type = "effects", se = FALSE, cterms, ...)
+```
+
+#### Arguments
+
+- **x**: An `aov` model object.
+- **type**: Type of table to compute: `"effects"` (default) or `"means"`.
+- **se**: Logical indicating whether standard errors should be included.
+- **cterms**: A character vector specifying terms for which tables are computed (default: all terms).
+- **…**: Additional arguments passed to methods.
+
+### Example
+
+Compute effects for all terms:
+
+```{r}
+model.tables(npk.aov, type = "effects")
+```
+
+## In-Depth Examples
+
+### Title: Summarizing Mean Responses in a Three-Factor Design
+
+#### Objective
+
+Summarize the mean responses for combinations of factors in the `npk` dataset.
+
+#### Steps
+
+1. **Load the data**:
+
+```{r}
+data(npk)
+```
+
+2. **Fit the ANOVA model**:
+
+```{r}
+npk.aov <- aov(yield ~ block + N * P * K, data = npk)
+```
+
+3. **Generate mean tables**:
+
+```{r}
+model.tables(npk.aov, type = "means", se = TRUE)
+```
+
+4. **Interpret output**:
+
+	- Each term's mean response is displayed.
+	- Standard errors are included.
+
+### Title: Analyzing Effects in an ANOVA Model
+
+#### Objective
+
+Examine factor effects in the `npk` dataset.
+
+#### Steps
+
+1. **Define the model**:
+
+```{r}
+npk.aov <- aov(yield ~ block + N + P + K, data = npk)
+```
+
+2. **Compute effects**:
+
+```{r}
+model.tables(npk.aov, type = "effects", se = TRUE)
+```
+
+3. **Output explanation**:
+
+	- Lists coefficients for each term.
+	- Includes standard errors, helping gauge variability.
+
+## Advanced Features
+
+### Customization
+
+Focus on specific terms using `cterms`:
+
+```{r}
+model.tables(npk.aov, type = "means", cterms = c("N", "P"))
+```
+
+### Integration with Other Tools
+
+Combine with `TukeyHSD()` for pairwise comparisons:
+
+```{r}
+TukeyHSD(npk.aov)
+model.tables(npk.aov, type = "effects")
+```
+
+## Troubleshooting and FAQs
+
+### Common Issues
+
+1. **Error: "Weighted aov fits are not supported"**: Ensure the `aov` model is unweighted.
+2. **Missing terms in output**: Use `cterms` to specify required terms explicitly.
+
+### FAQs
+
+- **What types of models are supported?** Only `aov` objects and certain `aovlist` objects.
+- **Can it handle nested designs?** Yes, with appropriate formula specification.
+
+## Best Practices
+
+- Use `type = "effects"` to understand the contributions of each term.
+- Always include `se = TRUE` for better interpretability.
+- Validate model assumptions before interpreting tables.
+
+## Conclusion
+
+### Summary
+
+The `model.tables()` function is a versatile tool for summarizing ANOVA model results, offering insights into factor effects and mean responses. Its ability to compute standard errors enhances its utility for interpreting results.
+
+### Next Steps
+
+- Explore `TukeyHSD()` for post-hoc comparisons.
+- Combine with custom data preprocessing for more advanced analyses.
+
+## References and Resources
+
+- [R Documentation for `model.tables()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/model.tables.html)
+- [ANOVA Techniques in R](https://www.statmethods.net/stats/anova.html)
+- [Comprehensive Guide to R ANOVA Models](https://cran.r-project.org/doc/manuals/R-intro.pdf)

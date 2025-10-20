@@ -1,0 +1,2307 @@
+---
+title: "Inverse Probability Weighting and Marginal Structural Models"
+---
+
+## Overview
+
+This module introduces **Inverse Probability (IP) weighting** and **Marginal Structural Models (MSMs)** as fundamental approaches for estimating causal effects from observational data. Unlike stratification and outcome regression which we've studied previously, IP weighting creates a "pseudo-population" where treatment assignment becomes independent of measured confounders, allowing us to estimate causal effects by fitting simple associational models.
+
+We'll explore this methodology using the motivating example of estimating the causal effect of smoking cessation on body weight gain using data from the National Health and Nutrition Examination Survey Data I Epidemiologic Follow-up Study (NHEFS). This real-world application demonstrates how IP weighting handles high-dimensional confounding and extends to complex scenarios involving continuous treatments, effect modification, and missing data.
+
+The connection to marginal structural models provides a formal framework for understanding counterfactual outcomes and enables us to move beyond simple dichotomous treatments to more complex dose-response relationships.
+
+## Learning Objectives
+
+By the end of this module, students will be able to:
+
+1. **Explain** the conceptual foundation of IP weighting and how it creates a pseudo-population for causal inference (Knowledge/Comprehension)
+2. **Distinguish** between nonstabilized and stabilized IP weights, identifying when each is appropriate and computing both by hand for simple examples (Analysis)
+3. **Construct** and interpret marginal structural models for both dichotomous and continuous treatments, connecting model parameters to causal estimands (Application/Analysis)
+4. **Implement** IP weighting estimation in R using `dagitty`, `ggdag`, and appropriate modeling functions, including diagnostic checks for positivity violations (Application)
+5. **Evaluate** the assumptions required for valid IP weighting (exchangeability, positivity, consistency) and identify potential violations in real datasets (Evaluation)
+6. **Design** and execute a complete IP weighting analysis including confounder selection, model specification, weight estimation, and sensitivity analysis (Synthesis)
+
+## R Packages
+
+```{r}
+#| label: setup-packages
+#| message: false
+#| warning: false
+
+# Load required packages
+pacman::p_load(
+  tidyverse, # Data manipulation and visualization
+  dagitty, # Creating and analyzing DAGs
+  ggdag, # Visualizing DAGs with ggplot2
+  MatchIt, # Propensity score methods
+  WeightIt, # Flexible weighting framework
+  cobalt, # Covariate balance assessment
+  survey, # Survey-weighted analysis
+  broom, # Tidy model outputs
+  knitr, # Document formatting
+  kableExtra, # Enhanced tables
+  latex2exp, # LaTeX expressions in plots
+  MASS, # Statistical functions
+  boot, # Bootstrap methods
+  here, # File path management
+  janitor, # Data cleaning
+  patchwork # Combining plots
+)
+
+# Set theme for plots
+theme_set(theme_minimal(base_size = 12))
+```
+
+## Comprehensive Topic Explanation
+
+### The Fundamental Challenge
+
+Observational data presents a persistent challenge: treatments are not randomly assigned. Instead, treatment assignment depends on observed and unobserved characteristics that may also influence the outcome. This creates **confounding** - a mixing of the causal effect we want to estimate with selection effects that bias our estimates.
+
+Consider our motivating example: we want to estimate the causal effect of smoking cessation on weight gain using NHEFS data. Simply comparing mean weight gain between quitters and non-quitters gives us:
+
+- Quitters: $\Ehat{Y|A=1} = 4.5$ kg
+- Non-quitters: $\Ehat{Y|A=0} = 2.0$ kg
+- Naive difference: $4.5 - 2.0 = 2.5$ kg
+
+But this associational difference $\E{Y|A=1} - \E{Y|A=0}$ is not the causal difference $\E{Y^{a=1}} - \E{Y^{a=0}}$ we seek, because quitters and non-quitters differ systematically in characteristics that affect weight gain [@hernan2020causalwhatif].
+
+### IP Weighting: The Core Intuition
+
+IP weighting addresses confounding by creating a **pseudo-population** where treatment assignment is independent of measured confounders. The key insight is to weight each individual by the inverse probability of receiving the treatment they actually received.
+
+For individual $i$ with treatment $A_i$ and confounders $L_i$, the IP weight is:
+
+$$
+W_i^A = \frac{1}{f(A_i|L_i)}
+$${#eq-ip-weight}
+
+where $f(A_i|L_i)$ is the conditional probability (or density) of receiving treatment $A_i$ given confounders $L_i$.
+
+#### Why Does This Work?
+
+In the weighted pseudo-population, individuals who received an unlikely treatment (given their confounders) are up-weighted, while those who received a likely treatment are down-weighted. This rebalancing creates a population where:
+
+1. Treatment assignment is independent of confounders: $A \indep L$
+2. The standardized mean equals the counterfactual mean: $\ESub{ps}{Y|A=a} = \E{Y^a}$
+3. Association equals causation: We can estimate causal effects using simple associational models
+
+### Mathematical Foundation
+
+The pseudo-population has two crucial properties [@hernan2020causalwhatif]:
+
+**Property 1 (Independence)**: In the pseudo-population, $A \indep L$.
+
+**Property 2 (Preservation of Counterfactual Means)**:
+
+$$
+\ESub{ps}{Y|A=a} = \sum_l \E{Y|A=a, L=l} \prob{L=l} = \E{Y^a}
+$${#eq-ipw-causal-mean}
+
+The second equality holds under conditional exchangeability $Y^a \indep A | L$.
+
+### From Nonstabilized to Stabilized Weights
+
+The basic IP weights $W^A = 1/f(A|L)$ are called **nonstabilized weights**. While they create the desired pseudo-population, they can have high variability, leading to inefficient estimates.
+
+**Stabilized weights** address this by including the marginal treatment probability in the numerator:
+
+$$
+SW^A = \frac{f(A)}{f(A|L)}
+$${#eq-stabilized-ip-weight}
+
+where $f(A)$ is the marginal probability of treatment.
+
+For dichotomous treatment:
+
+- Treated individuals: $SW^A = \frac{\prob{A=1}}{\prob{A=1|L}}$
+- Untreated individuals: $SW^A = \frac{\prob{A=0}}{\prob{A=0|L}}$
+
+Stabilized weights preserve the causal interpretation while typically yielding more efficient estimates, especially in complex models.
+
+### Extension to Marginal Structural Models
+
+A **marginal structural model** specifies the relationship between treatment and counterfactual outcomes:
+
+$$
+\E{Y^a} = g(a; \boldsymbol{\beta})
+$${#eq-marginal-structural-model}
+
+where $g(\cdot)$ is a known function (e.g., linear, logistic) and $\boldsymbol{\beta}$ are parameters to be estimated.
+
+For example, a linear MSM for dichotomous treatment:
+
+$$
+\E{Y^a} = \beta_0 + \beta_1 a
+$$
+
+Here, $\beta_1 = \E{Y^{a=1}} - \E{Y^{a=0}}$ is the average causal effect.
+
+The key insight is that parameters of the MSM can be estimated by fitting the corresponding associational model to the IP-weighted pseudo-population:
+
+$$
+\E{Y|A} = \theta_0 + \theta_1 A
+$$
+
+Under our assumptions, $\hat{\theta}_1$ provides a consistent estimate of $\beta_1$.
+
+### Handling Complex Treatments
+
+#### Continuous Treatments
+
+For continuous treatments, IP weights require estimating probability density functions rather than probabilities. This typically involves assuming a distributional form (e.g., normal) and estimating parameters:
+
+$$
+f(A|L) \sim N(\mu_L, \sigma^2)
+$$
+
+where $\mu_L = \E{A|L}$ and $\sigma^2$ are estimated via regression.
+
+#### Polytomous Treatments
+
+For treatments with multiple categories, we use multinomial models to estimate $\prob{A=a|L}$ for each treatment level $a$.
+
+### Assumptions for Valid Inference
+
+IP weighting requires the same fundamental assumptions as other causal inference methods:
+
+1. **Exchangeability**: $Y^a \indep A | L$ (no unmeasured confounding)
+2. **Positivity**: $0 < \prob{A=a|L=l} < 1$ for all relevant $(a,l)$
+3. **Consistency**: $Y_i = Y_i^{a_i}$ when $A_i = a_i$
+
+Additionally, we need:
+
+4. **Correct model specification** for the propensity score $f(A|L)$
+
+Violations of positivity are particularly problematic for IP weighting, as they lead to extreme weights and unstable estimates.
+
+### Advantages and Limitations
+
+**Advantages:**
+
+- Separates design (weight estimation) from analysis phases
+- Natural extension to time-varying treatments
+- Transparent handling of effect modification
+- Robust to outcome model misspecification
+
+**Limitations:**
+
+- Sensitive to positivity violations
+- Requires correct propensity score model
+- Can be inefficient with extreme weights
+- Challenging for continuous treatments
+
+## Intuitive Clarifications of Challenging Ideas
+
+### The Pseudo-Population Metaphor
+
+Think of IP weighting as creating a **hypothetical randomized experiment**. In this imaginary study:
+
+- Everyone has the same probability of receiving each treatment level
+- We've "removed the arrows" from confounders to treatment in our causal diagram
+- The treatment assignment mechanism is now random rather than systematic
+
+::: {.callout-tip}
+### Visualization Aid
+
+Imagine we have 1000 people in our original study. After IP weighting, we might have an effective sample size that looks like 2000 people, but these aren't "new" people—they're weighted copies that rebalance the original sample to look like what we'd get from random assignment.
+:::
+
+### Why "Inverse" Probability?
+
+The term "inverse probability" often confuses students. Here's the intuition:
+
+- If someone has a **high** probability of receiving their observed treatment, they represent many similar people → **low** weight (down-weight the common case)
+- If someone has a **low** probability of receiving their observed treatment, they represent few similar people → **high** weight (up-weight the rare case)
+
+**Example:** Consider a smoker who quits despite having characteristics that typically predict continued smoking. This person gets a high weight because they represent the many similar smokers who didn't quit but would have gained weight if they had.
+
+### The Stabilization Concept
+
+Think of stabilized weights as **variance control**:
+
+- Nonstabilized weights: $1/\prob{\text{treatment}|\text{confounders}}$
+- Stabilized weights: $\prob{\text{treatment}}/\prob{\text{treatment}|\text{confounders}}$
+
+The numerator acts as a **stabilizing factor** that prevents weights from becoming too extreme while preserving the causal interpretation.
+
+::: {.callout-important}
+### Key Insight: Stabilization Preserves the Population
+
+Stabilized weights maintain the original population size in expectation: $\E{SW^A} = 1$. This means our effective sample size stays approximately the same, unlike nonstabilized weights where $\E{W^A} > 1$.
+:::
+
+### Marginal Vs Conditional Models
+
+A common source of confusion is the distinction between marginal structural models and conditional models:
+
+- **Conditional model**: $\E{Y|A, L} = \alpha_0 + \alpha_1 A + \alpha_2^T L$
+  - Includes confounders as covariates
+  - $\alpha_1$ is the effect adjusting for $L$
+
+- **Marginal structural model**: $\E{Y^a} = \beta_0 + \beta_1 a$
+  - No confounders in the model
+  - $\beta_1$ is the marginal (population-average) causal effect
+
+The MSM gives us the effect we'd see if we intervened on the entire population, while the conditional model gives us the effect within strata of $L$. This is a key distinction.
+
+### Common Misconceptions
+
+::: {.callout-warning}
+### Misconception 1: "IP Weighting Eliminates confounding"
+
+**Reality**: IP weighting creates a pseudo-population where confounding is absent, but this depends on measuring all relevant confounders and correct model specification.
+:::
+
+::: {.callout-warning}
+### Misconception 2: "Heavier Weights Are Always better"
+
+**Reality**: Extreme weights often indicate positivity violations or model misspecification. Weights should be examined for reasonableness.
+:::
+
+::: {.callout-warning}
+### Misconception 3: "Stabilized Weights Are Always preferred"
+
+**Reality**: For saturated models (like simple dichotomous treatment), stabilized and nonstabilized weights yield identical point estimates. Stabilized weights primarily help with efficiency in complex models.
+:::
+
+## Simple, Hand-Calculation Numerical Example(s)
+
+Let's work through IP weighting with a minimal example to build intuition.
+
+::: {.callout-example}
+### Worked Example: Smoking and Weight Gain
+
+Consider 6 individuals with data on:
+
+- $A$: Quit smoking (1=yes, 0=no)
+- $Y$: Weight gain (kg)
+- $L$: Age group (1=older, 0=younger)
+
+| Person | $L$ (Age) | $A$ (Quit) | $Y$ (Weight) |
+| ------ | --------- | ---------- | ------------ |
+| 1      | 0         | 0          | 1            |
+| 2      | 0         | 1          | 4            |
+| 3      | 1         | 0          | 2            |
+| 4      | 1         | 0          | 1            |
+| 5      | 1         | 1          | 3            |
+| 6      | 1         | 1          | 5            |
+
+### Step 1: Calculate Crude Association
+
+$$
+\Ehat{Y|A=1} = \frac{4+3+5}{3} = 4.0 \text{ kg}
+$$
+
+$$
+\Ehat{Y|A=0} = \frac{1+2+1}{3} = 1.33 \text{ kg}
+$$
+
+$$
+\text{Crude difference} = 4.0 - 1.33 = 2.67 \text{ kg}
+$$
+
+### Step 2: Estimate Propensity Scores
+
+Calculate $\ProbHat{A=1|L=l}$ for each age group:
+
+- Younger ($L=0$): 1 quit out of 2 total → $\ProbHat{A=1|L=0} = 0.5$
+- Older ($L=1$): 2 quit out of 4 total → $\ProbHat{A=1|L=1} = 0.5$
+
+### Step 3: Calculate Nonstabilized IP Weights
+
+For each person: $W^A_i = 1/\ProbHat{A=A_i|L=L_i}$
+
+| Person | $L$ | $A$ | $\ProbHat{A=A_i\|L=L_i}$ | $W^A_i$ |
+| ------ | --- | --- | ------------------------ | ------- |
+| 1      | 0   | 0   | 0.5                      | 2.0     |
+| 2      | 0   | 1   | 0.5                      | 2.0     |
+| 3      | 1   | 0   | 0.5                      | 2.0     |
+| 4      | 1   | 0   | 0.5                      | 2.0     |
+| 5      | 1   | 1   | 0.5                      | 2.0     |
+| 6      | 1   | 1   | 0.5                      | 2.0     |
+
+### Step 4: Estimate Causal Effect
+
+Using weighted means in the pseudo-population:
+
+$$
+\ProbHatSub{ps}{Y|A=1} = \frac{\sum_{A_i=1} W^A_i Y_i}{\sum_{A_i=1} W^A_i} = \frac{2.0(4) + 2.0(3) + 2.0(5)}{2.0 + 2.0 + 2.0} = \frac{24}{6} = 4.0
+$$
+
+$$
+\ProbHatSub{ps}{Y|A=0} = \frac{\sum_{A_i=0} W^A_i Y_i}{\sum_{A_i=0} W^A_i} = \frac{2.0(1) + 2.0(2) + 2.0(1)}{2.0 + 2.0 + 2.0} = \frac{8}{6} = 1.33
+$$
+
+$$
+\text{IP weighted difference} = 4.0 - 1.33 = 2.67 \text{ kg}
+$$
+
+### Step 5: Compare with Standardization
+
+For comparison, let's calculate the standardized estimate:
+
+$$
+\Ehat{Y^{a=1}} = \sum_l \Ehat{Y|A=1, L=l} \ProbHat{L=l}
+$$
+
+$$
+= \Ehat{Y|A=1, L=0} \times 0.33 + \Ehat{Y|A=1, L=1} \times 0.67
+$$
+
+$$
+= 4.0 \times 0.33 + 4.0 \times 0.67 = 4.0
+$$
+
+Similarly, $\Ehat{Y^{a=0}} = 1.33$.
+
+The standardized and IP weighted estimates agree, as expected!
+
+### Step 6: Stabilized Weights
+
+Let's calculate stabilized weights. First, estimate marginal probabilities:
+
+$$
+\ProbHat{A=1} = 3/6 = 0.5
+$$
+
+$$
+\ProbHat{A=0} = 3/6 = 0.5
+$$
+
+Stabilized weights: $SW^A_i = \ProbHat[A=A_i]/\ProbHat[A=A_i|L=L_i]$
+
+| Person | $\ProbHat[A=A_i]$ | $SW^A_i$ |
+| ------ | ----------------- | -------- |
+| 1      | 0.5               | 1.0      |
+| 2      | 0.5               | 1.0      |
+| 3      | 0.5               | 1.0      |
+| 4      | 0.5               | 1.0      |
+| 5      | 0.5               | 1.0      |
+| 6      | 0.5               | 1.0      |
+
+Since propensity scores equal marginal probabilities, stabilized weights all equal 1, and we get the same causal effect estimate.
+:::
+
+### Hand Calculation with Confounding
+
+::: {.callout-example}
+## Example with True Confounding
+
+Modify the data to show confounding:
+
+| Person | $L$ | $A$ | $Y$ | Notes             |
+| ------ | --- | --- | --- | ----------------- |
+| 1      | 0   | 0   | 3   | Young non-quitter |
+| 2      | 0   | 1   | 5   | Young quitter     |
+| 3      | 1   | 0   | 1   | Old non-quitter   |
+| 4      | 1   | 0   | 0   | Old non-quitter   |
+| 5      | 1   | 1   | 2   | Old quitter       |
+| 6      | 1   | 1   | 3   | Old quitter       |
+
+Now younger people (who gain more weight naturally) are equally likely to quit, but older people (who gain less weight naturally) are also equally likely to quit.
+
+### Crude Association
+
+- Quitters: $(5 + 2 + 3)/3 = 3.33$ kg
+- Non-quitters: $(3 + 1 + 0)/3 = 1.33$ kg
+- Crude difference: $2.0$ kg
+
+### Propensity Scores
+Same as before: $\ProbHat[A=1|L=0] = \ProbHat[A=1|L=1] = 0.5$
+
+### IP Weighted Analysis
+All weights are 2.0, giving the same $2.0$ kg effect.
+
+### Standardized Analysis
+
+$$
+\Ehat{Y^{a=1}} = E{Y|A=1,L=0} \times 0.33 + E{Y|A=1,L=1} \times 0.67
+$$
+
+$$
+= 5.0 \times 0.33 + 2.5 \times 0.67 = 3.33
+$$
+
+$$
+\Ehat{Y^{a=0}} = 3.0 \times 0.33 + 0.5 \times 0.67 = 1.33
+$$
+
+Causal effect: $3.33 - 1.33 = 2.0$ kg, matching IP weighting.
+:::
+
+## R Code Examples & Interpretation
+
+Let's implement IP weighting using simulated data that mimics the NHEFS structure.
+
+### Simulating NHEFS-like Data
+
+```{r}
+#| label: simulate-data
+#| echo: true
+
+set.seed(12345)
+n <- 1500
+
+# Generate baseline confounders
+age <- rnorm(n, mean = 43, sd = 12)
+age <- pmax(25, pmin(age, 74)) # Constrain to 25-74
+sex <- rbinom(n, 1, 0.5) # 1 = female
+race <- rbinom(n, 1, 0.15) # 1 = non-white
+education <- sample(1:5, n, replace = TRUE, prob = c(0.1, 0.2, 0.3, 0.25, 0.15))
+weight_baseline <- rnorm(n, mean = 70 + 5 * sex, sd = 15)
+cigarettes_day <- rpois(n, lambda = 20)
+years_smoking <- pmax(1, rnorm(n, mean = 25, sd = 8))
+exercise <- sample(1:3, n, replace = TRUE, prob = c(0.4, 0.4, 0.2))
+activity <- sample(1:3, n, replace = TRUE, prob = c(0.1, 0.8, 0.1))
+
+# Create treatment model (quit smoking)
+# Older, more educated, lower baseline smoking more likely to quit
+quit_logit <- -2 +
+  0.03 * age +
+  0.5 * education -
+  0.02 * cigarettes_day +
+  0.4 * sex -
+  0.01 * weight_baseline +
+  0.01 * years_smoking
+quit_prob <- plogis(quit_logit)
+quit <- rbinom(n, 1, quit_prob)
+
+# Create outcome model (weight gain)
+# Quitting causes weight gain, but also depends on confounders
+weight_gain <- 1 +
+  2.5 * quit +
+  0.02 * age -
+  0.8 * sex +
+  0.3 * race +
+  0.1 * education +
+  0.01 * weight_baseline -
+  0.05 * cigarettes_day +
+  rnorm(n, mean = 0, sd = 2)
+
+# Combine into dataset
+nhefs_sim <- tibble(
+  id = 1:n,
+  quit = quit,
+  weight_gain = weight_gain,
+  age = age,
+  sex = sex,
+  race = race,
+  education = education,
+  weight_baseline = weight_baseline,
+  cigarettes_day = cigarettes_day,
+  years_smoking = years_smoking,
+  exercise = exercise,
+  activity = activity
+)
+
+# Check crude association
+crude_effect <- nhefs_sim |>
+  group_by(quit) |>
+  summarise(mean_wt = mean(weight_gain), .groups = 'drop') |>
+  pull(mean_wt) |>
+  diff()
+
+cat("Crude association:", round(crude_effect, 2), "kg\n")
+cat("True causal effect: 2.5 kg\n")
+```
+
+### Creating and Visualizing the DAG
+
+```{r}
+#| label: fig-dag-smoking
+#| fig-cap: "Causal DAG for smoking cessation and weight gain"
+#| column: margin
+
+# Create DAG
+smoking_dag <- dagitty(
+  'dag {
+  Age [pos="0,0"]
+  Sex [pos="1,0"]  
+  Education [pos="2,0"]
+  Baseline_Weight [pos="0,1"]
+  Cigarettes [pos="1,1"]
+  Years_Smoking [pos="2,1"]
+  
+  Quit_Smoking [pos="1,2"]
+  Weight_Gain [pos="2,2"]
+  
+  Age -> Quit_Smoking
+  Sex -> Quit_Smoking  
+  Education -> Quit_Smoking
+  Baseline_Weight -> Quit_Smoking
+  Cigarettes -> Quit_Smoking
+  Years_Smoking -> Quit_Smoking
+  
+  Age -> Weight_Gain
+  Sex -> Weight_Gain
+  Education -> Weight_Gain  
+  Baseline_Weight -> Weight_Gain
+  Cigarettes -> Weight_Gain
+  
+  Quit_Smoking -> Weight_Gain
+}'
+)
+
+# Visualize DAG
+ggdag(smoking_dag, layout = "circle") +
+  theme_dag_blank() +
+  labs(
+    title = "Causal DAG: Smoking Cessation → Weight Gain",
+    subtitle = "Multiple confounders create backdoor paths"
+  )
+```
+
+```{r}
+#| label: confounder-analysis
+
+# Check for adjustment sets
+adjustmentSets(
+  smoking_dag,
+  exposure = "Quit_Smoking",
+  outcome = "Weight_Gain",
+  type = "minimal"
+)
+
+# Check implied independence statements
+impliedConditionalIndependencies(smoking_dag)
+```
+
+### Propensity Score Estimation
+
+```{r}
+#| label: propensity-model
+#| tbl-cap: "Logistic regression model for propensity scores"
+
+# Fit logistic model for Pr(A = 1 | L)
+ps_model <- glm(
+  quit ~
+    age +
+      I(age^2) +
+      sex +
+      race +
+      education +
+      weight_baseline +
+      cigarettes_day +
+      years_smoking +
+      factor(exercise) +
+      factor(activity),
+  data = nhefs_sim,
+  family = binomial()
+)
+
+# Display model summary
+ps_model |>
+  broom::tidy() |>
+  dplyr::select(term, estimate, std.error, p.value) |>
+  kable(digits = 3, col.names = c("Variable", "Estimate", "SE", "P-value")) |>
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+```{r}
+#| label: calculate-weights
+
+# Calculate predicted probabilities
+nhefs_sim$ps <- predict(ps_model, type = "response")
+
+# Calculate nonstabilized weights
+nhefs_sim$w_unstab <- ifelse(
+  nhefs_sim$quit == 1,
+  1 / nhefs_sim$ps,
+  1 / (1 - nhefs_sim$ps)
+)
+
+# Calculate stabilized weights
+marginal_prob <- mean(nhefs_sim$quit)
+nhefs_sim$w_stab <- ifelse(
+  nhefs_sim$quit == 1,
+  marginal_prob / nhefs_sim$ps,
+  (1 - marginal_prob) / (1 - nhefs_sim$ps)
+)
+
+# Summarize weights
+weight_summary <- nhefs_sim |>
+  dplyr::select(w_unstab, w_stab) |>
+  pivot_longer(everything(), names_to = "weight_type", values_to = "weight") |>
+  group_by(weight_type) |>
+  summarise(
+    Min = min(weight),
+    Q1 = quantile(weight, 0.25),
+    Mean = mean(weight),
+    Median = median(weight),
+    Q3 = quantile(weight, 0.75),
+    Max = max(weight),
+    .groups = 'drop'
+  )
+
+kable(weight_summary, digits = 2, caption = "Distribution of IP weights") |>
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+### Diagnostic Plots for Weights
+
+```{r}
+#| label: fig-weight-diagnostics
+#| fig-cap: "Diagnostic plots for IP weights"
+#| fig-height: 8
+
+# Create diagnostic plots
+p1 <- nhefs_sim |>
+  ggplot(aes(x = w_unstab)) +
+  geom_histogram(bins = 30, alpha = 0.7, color = "white") +
+  labs(
+    title = "Distribution of Nonstabilized Weights",
+    x = "Weight",
+    y = "Count"
+  ) +
+  geom_vline(
+    xintercept = mean(nhefs_sim$w_unstab),
+    color = "red",
+    linetype = "dashed"
+  )
+
+p2 <- nhefs_sim |>
+  ggplot(aes(x = w_stab)) +
+  geom_histogram(bins = 30, alpha = 0.7, color = "white") +
+  labs(
+    title = "Distribution of Stabilized Weights",
+    x = "Weight",
+    y = "Count"
+  ) +
+  geom_vline(
+    xintercept = mean(nhefs_sim$w_stab),
+    color = "red",
+    linetype = "dashed"
+  )
+
+p3 <- nhefs_sim |>
+  ggplot(aes(x = ps, y = w_stab, color = factor(quit))) +
+  geom_point(alpha = 0.6) +
+  labs(
+    title = "Stabilized Weights vs Propensity Score",
+    x = "Propensity Score",
+    y = "Stabilized Weight",
+    color = "Quit Smoking"
+  ) +
+  scale_color_manual(values = c("0" = "blue", "1" = "red"))
+
+p4 <- nhefs_sim |>
+  filter(w_stab > quantile(w_stab, 0.95)) |>
+  dplyr::select(id, quit, age, sex, ps, w_stab) |>
+  arrange(desc(w_stab)) |>
+  head(10) |>
+  ggplot(aes(x = reorder(id, w_stab), y = w_stab, fill = factor(quit))) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Individuals with Highest Weights",
+    x = "Subject ID",
+    y = "Stabilized Weight",
+    fill = "Quit"
+  ) +
+  scale_fill_manual(values = c("0" = "blue", "1" = "red"))
+
+(p1 / p2) | (p3 / p4)
+```
+
+### Covariate Balance Assessment
+
+```{r}
+#| label: fig-balance-plot
+#| fig-cap: "Covariate balance before and after IP weighting"
+
+# Function to calculate standardized differences
+std_diff <- function(x, trt, weights = NULL) {
+  if (is.null(weights)) {
+    weights <- rep(1, length(x))
+  }
+
+  x1 <- x[trt == 1]
+  x0 <- x[trt == 0]
+  w1 <- weights[trt == 1]
+  w0 <- weights[trt == 0]
+
+  mean1 <- weighted.mean(x1, w1)
+  mean0 <- weighted.mean(x0, w0)
+
+  var1 <- sum(w1 * (x1 - mean1)^2) / sum(w1)
+  var0 <- sum(w0 * (x0 - mean0)^2) / sum(w0)
+
+  (mean1 - mean0) / sqrt((var1 + var0) / 2)
+}
+
+# Calculate balance for key variables
+balance_vars <- c(
+  "age",
+  "sex",
+  "race",
+  "education",
+  "weight_baseline",
+  "cigarettes_day",
+  "years_smoking"
+)
+
+# Unweighted balance
+unweighted_balance <- map_dbl(
+  balance_vars,
+  ~ std_diff(nhefs_sim[[.x]], nhefs_sim$quit)
+)
+
+# Weighted balance
+weighted_balance <- map_dbl(
+  balance_vars,
+  ~ std_diff(nhefs_sim[[.x]], nhefs_sim$quit, nhefs_sim$w_stab)
+)
+
+balance_df <- tibble(
+  Variable = balance_vars,
+  Unweighted = unweighted_balance,
+  Weighted = weighted_balance
+) |>
+  pivot_longer(
+    cols = c(Unweighted, Weighted),
+    names_to = "Analysis",
+    values_to = "Std_Diff"
+  )
+
+# Plot balance
+balance_df |>
+  ggplot(aes(x = Std_Diff, y = Variable, color = Analysis)) +
+  geom_point(size = 3, position = position_dodge(width = 0.3)) +
+  geom_vline(xintercept = 0, linetype = "solid", alpha = 0.5) +
+  geom_vline(xintercept = c(-0.1, 0.1), linetype = "dashed", alpha = 0.5) +
+  labs(
+    title = "Covariate Balance Before and After IP Weighting",
+    subtitle = "Standardized differences should be close to 0 after weighting",
+    x = "Standardized Difference",
+    y = "Covariate",
+    color = "Analysis Type"
+  ) +
+  scale_color_manual(values = c("Unweighted" = "red", "Weighted" = "blue"))
+```
+
+### IP Weighted Effect Estimation
+
+```{r}
+#| label: ip-weighted-analysis
+#| tbl-cap: "IP weighted effect estimates"
+
+# Nonstabilized IP weighted analysis
+unstab_model <- lm(weight_gain ~ quit, data = nhefs_sim, weights = w_unstab)
+
+# Stabilized IP weighted analysis
+stab_model <- lm(weight_gain ~ quit, data = nhefs_sim, weights = w_stab)
+
+# Use robust standard errors
+library(sandwich)
+library(lmtest)
+
+unstab_robust <- coeftest(
+  unstab_model,
+  vcov = vcovHC(unstab_model, type = "HC1")
+)
+stab_robust <- coeftest(stab_model, vcov = vcovHC(stab_model, type = "HC1"))
+
+# Compare results
+results <- tibble(
+  Method = c("Crude", "Nonstabilized IP", "Stabilized IP", "True Effect"),
+  Estimate = c(
+    crude_effect,
+    unstab_robust["quit", "Estimate"],
+    stab_robust["quit", "Estimate"],
+    2.5
+  ),
+  SE = c(
+    NA,
+    unstab_robust["quit", "Std. Error"],
+    stab_robust["quit", "Std. Error"],
+    NA
+  ),
+  CI_Lower = c(
+    NA,
+    unstab_robust["quit", "Estimate"] -
+      1.96 * unstab_robust["quit", "Std. Error"],
+    stab_robust["quit", "Estimate"] - 1.96 * stab_robust["quit", "Std. Error"],
+    NA
+  ),
+  CI_Upper = c(
+    NA,
+    unstab_robust["quit", "Estimate"] +
+      1.96 * unstab_robust["quit", "Std. Error"],
+    stab_robust["quit", "Estimate"] + 1.96 * stab_robust["quit", "Std. Error"],
+    NA
+  )
+)
+
+results |>
+  kable(
+    digits = 3,
+    col.names = c("Method", "Estimate", "SE", "95% CI Lower", "95% CI Upper"),
+    caption = "Comparison of effect estimates"
+  ) |>
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+### Marginal Structural Models with Continuous Treatment
+
+```{r}
+#| label: continuous-msm
+
+# Create continuous treatment: change in smoking intensity
+# (negative = reduction, positive = increase)
+set.seed(12345)
+nhefs_continuous <- nhefs_sim |>
+  filter(cigarettes_day <= 25) |> # Restrict as in Hernan & Robins
+  mutate(
+    # Simulate change in cigarettes (continuous treatment)
+    change_cigs = cigarettes_day -
+      rpois(n(), lambda = cigarettes_day * 0.8),
+    # Adjust outcome for continuous treatment
+    weight_gain_cont = 1 +
+      0.1 * change_cigs -
+      0.002 * change_cigs^2 +
+      0.02 * age -
+      0.8 * sex +
+      0.3 * race +
+      rnorm(n(), 0, 2)
+  )
+
+# Estimate IP weights for continuous treatment
+# Assume change_cigs | L ~ N(mu_L, sigma^2)
+continuous_ps_model <- lm(
+  change_cigs ~
+    age +
+      I(age^2) +
+      sex +
+      race +
+      education +
+      weight_baseline +
+      cigarettes_day +
+      years_smoking +
+      factor(exercise) +
+      factor(activity),
+  data = nhefs_continuous
+)
+
+# Get predicted values and residual variance
+nhefs_continuous$pred_change <- predict(continuous_ps_model)
+sigma2 <- sigma(continuous_ps_model)^2
+
+# Calculate density f(A|L) assuming normality
+nhefs_continuous$f_a_given_l <- dnorm(
+  nhefs_continuous$change_cigs,
+  nhefs_continuous$pred_change,
+  sqrt(sigma2)
+)
+
+# Calculate marginal density f(A)
+marginal_model <- lm(change_cigs ~ 1, data = nhefs_continuous)
+marginal_mean <- coef(marginal_model)
+marginal_var <- sigma(marginal_model)^2
+nhefs_continuous$f_a <- dnorm(
+  nhefs_continuous$change_cigs,
+  marginal_mean,
+  sqrt(marginal_var)
+)
+
+# Stabilized weights for continuous treatment
+nhefs_continuous$sw_cont <- nhefs_continuous$f_a / nhefs_continuous$f_a_given_l
+
+# Check weight distribution
+cat("Continuous treatment stabilized weights:\n")
+cat("Range:", range(nhefs_continuous$sw_cont), "\n")
+cat("Mean:", mean(nhefs_continuous$sw_cont), "\n")
+
+# Fit marginal structural model E[Y^a] = β₀ + β₁a + β₂a²
+msm_continuous <- lm(
+  weight_gain_cont ~ change_cigs + I(change_cigs^2),
+  data = nhefs_continuous,
+  weights = sw_cont
+)
+
+msm_robust <- coeftest(
+  msm_continuous,
+  vcov = vcovHC(msm_continuous, type = "HC1")
+)
+print(msm_robust)
+```
+
+### Visualizing the Dose-Response Curve
+
+```{r}
+#| label: fig-dose-response
+#| fig-cap: "Estimated dose-response curve from marginal structural model"
+
+# Create prediction grid
+change_range <- seq(-20, 20, by = 1)
+predictions <- predict(
+  msm_continuous,
+  newdata = data.frame(change_cigs = change_range),
+  se.fit = TRUE
+)
+
+dose_response <- tibble(
+  change_cigs = change_range,
+  predicted = predictions$fit,
+  se = predictions$se.fit,
+  lower = predicted - 1.96 * se,
+  upper = predicted + 1.96 * se
+)
+
+dose_response |>
+  ggplot(aes(x = change_cigs, y = predicted)) +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.3) +
+  geom_line(color = "blue", size = 1) +
+  labs(
+    title = "Dose-Response Curve: Change in Smoking vs Weight Gain",
+    subtitle = "From IP weighted marginal structural model",
+    x = "Change in Cigarettes per Day",
+    y = "Predicted Weight Gain (kg)"
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5)
+```
+
+### Effect Modification Analysis
+
+```{r}
+#| label: effect-modification
+#| tbl-cap: "Testing effect modification by sex"
+
+# Include sex as effect modifier in MSM
+msm_interaction <- lm(
+  weight_gain ~ quit * sex + sex,
+  data = nhefs_sim,
+  weights = w_stab
+)
+
+interaction_robust <- coeftest(
+  msm_interaction,
+  vcov = vcovHC(msm_interaction, type = "HC1")
+)
+
+# Extract effects by sex
+effect_male <- coef(msm_interaction)["quit"]
+effect_female <- coef(msm_interaction)["quit"] +
+  coef(msm_interaction)["quit:sex"]
+
+cat("Effect in males:", round(effect_male, 2), "kg\n")
+cat("Effect in females:", round(effect_female, 2), "kg\n")
+cat(
+  "Interaction p-value:",
+  round(interaction_robust["quit:sex", "Pr(>|t|)"], 3),
+  "\n"
+)
+
+print(interaction_robust)
+```
+
+### Handling Missing Data with IP Weighting
+
+```{r}
+#| label: missing-data-analysis
+
+# Simulate missing outcome data
+set.seed(12345)
+# Missing depends on treatment, age, and baseline weight
+missing_prob <- plogis(
+  -1 +
+    0.5 * nhefs_sim$quit +
+    0.01 * nhefs_sim$age +
+    0.01 * nhefs_sim$weight_baseline
+)
+nhefs_sim$missing <- rbinom(nrow(nhefs_sim), 1, missing_prob)
+nhefs_sim$weight_gain_obs <- ifelse(
+  nhefs_sim$missing == 1,
+  NA,
+  nhefs_sim$weight_gain
+)
+
+cat("Proportion missing:", mean(nhefs_sim$missing), "\n")
+cat("Missing in quitters:", mean(nhefs_sim$missing[nhefs_sim$quit == 1]), "\n")
+cat(
+  "Missing in non-quitters:",
+  mean(nhefs_sim$missing[nhefs_sim$quit == 0]),
+  "\n"
+)
+
+# Estimate IP weights for censoring C = 1 if missing
+censoring_model <- glm(
+  I(missing == 0) ~
+    age +
+      sex +
+      race +
+      education +
+      weight_baseline +
+      cigarettes_day +
+      years_smoking +
+      factor(exercise) +
+      factor(activity) +
+      quit,
+  data = nhefs_sim,
+  family = binomial()
+)
+
+# Calculate censoring weights for uncensored individuals
+nhefs_uncensored <- nhefs_sim |> filter(missing == 0)
+nhefs_uncensored$prob_uncensored <- predict(
+  censoring_model,
+  newdata = nhefs_uncensored,
+  type = "response"
+)
+
+# Stabilized censoring weights
+marginal_uncensored <- mean(nhefs_sim$missing == 0)
+nhefs_uncensored$sw_cens <- marginal_uncensored /
+  nhefs_uncensored$prob_uncensored
+
+# Combined weights for treatment and censoring
+nhefs_uncensored$ps_uncensored <- predict(
+  ps_model,
+  newdata = nhefs_uncensored,
+  type = "response"
+)
+nhefs_uncensored$sw_trt_uncensored <- ifelse(
+  nhefs_uncensored$quit == 1,
+  marginal_prob / nhefs_uncensored$ps_uncensored,
+  (1 - marginal_prob) / (1 - nhefs_uncensored$ps_uncensored)
+)
+
+nhefs_uncensored$sw_combined <- nhefs_uncensored$sw_trt_uncensored *
+  nhefs_uncensored$sw_cens
+
+# Analysis accounting for missing data
+complete_case <- lm(weight_gain_obs ~ quit, data = nhefs_uncensored)
+ip_weighted_missing <- lm(
+  weight_gain_obs ~ quit,
+  data = nhefs_uncensored,
+  weights = sw_combined
+)
+
+missing_results <- tibble(
+  Analysis = c("Complete Case", "IP Weighted (Missing)", "True Effect"),
+  Estimate = c(
+    coef(complete_case)["quit"],
+    coef(ip_weighted_missing)["quit"],
+    2.5
+  )
+)
+
+missing_results |>
+  kable(digits = 3, caption = "Handling missing outcome data") |>
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+## 5 Hands-On R Lab
+
+### Lab Objectives
+
+By completing this lab, you will:
+1. Conduct a complete IP weighting analysis from data exploration to interpretation
+2. Assess and address violations of key assumptions
+3. Compare IP weighting with alternative methods
+4. Practice diagnostic checking and sensitivity analysis
+
+### Reading Warm-up
+
+Before beginning the hands-on exercises, review the following concepts:
+
+::: {.callout-question}
+### Pre-Lab Reflection Questions
+1. What are the three key assumptions required for IP weighting to provide unbiased causal effect estimates?
+2. Why might stabilized weights be preferred over nonstabilized weights?
+3. How would you recognize a violation of the positivity assumption in your data?
+4. What is the difference between a marginal structural model and a conditional outcome model?
+
+*Spend 5 minutes discussing these with a partner before proceeding.*
+:::
+
+### Dataset and Research Question
+
+We'll use a subset of the NHEFS data to estimate the causal effect of smoking cessation on 10-year weight change. The dataset includes baseline measurements from 1971-1975 and follow-up data from 1982.
+
+```{r}
+#| label: load-nhefs-data
+
+# For this lab, we'll use the simulated data created earlier
+# In practice, you would load the actual NHEFS data
+nhefs_lab <- nhefs_sim |>
+  dplyr::select(
+    id,
+    quit,
+    weight_gain,
+    age,
+    sex,
+    race,
+    education,
+    weight_baseline,
+    cigarettes_day,
+    years_smoking,
+    exercise,
+    activity
+  ) |>
+  # Add some realistic complications
+  mutate(
+    # Some extreme propensity scores
+    age = ifelse(id %in% sample(1:n(), 50), age + 15, age),
+    # Create near-positivity violations
+    extreme_case = (age > 65 & cigarettes_day > 30)
+  )
+
+head(nhefs_lab) |>
+  kable(caption = "First 6 rows of NHEFS-like data") |>
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+### Task 1: Exploratory Data Analysis
+
+**Your Turn**: Explore the relationship between treatment, outcome, and potential confounders.
+
+```{r}
+#| label: task1-skeleton
+#| eval: false
+
+# Complete the following code chunks
+
+# 1a. Calculate crude association
+crude_by_treatment <- nhefs_lab |>
+  group_by(___) |>
+  summarise(
+    n = n(),
+    mean_weight_gain = ___,
+    sd_weight_gain = ___,
+    .groups = 'drop'
+  )
+
+# 1b. Examine covariate distributions by treatment
+covariate_comparison <- nhefs_lab |>
+  group_by(quit) |>
+  summarise(
+    mean_age = ___,
+    prop_female = ___,
+    mean_baseline_weight = ___,
+    mean_cigarettes = ___,
+    .groups = 'drop'
+  )
+
+# 1c. Create visualization of treatment vs outcome
+ggplot(nhefs_lab, aes(x = ___, y = ___)) +
+  geom_boxplot() +
+  labs(title = "___", x = "___", y = "___")
+
+# 1d. Check for potential positivity violations
+extreme_summary <- nhefs_lab |>
+  group_by(extreme_case, quit) |>
+  summarise(n = n(), .groups = 'drop') |>
+  pivot_wider(names_from = quit, values_from = n, names_prefix = "quit_")
+```
+
+**Solution**:
+
+```{r}
+#| label: task1-solution
+#| eval: false
+# 1a. Calculate crude association
+crude_by_treatment <- nhefs_lab |>
+  group_by(quit) |>
+  summarise(
+    n = n(),
+    mean_weight_gain = mean(weight_gain),
+    sd_weight_gain = sd(weight_gain),
+    .groups = 'drop'
+  )
+
+print("Crude association by treatment:")
+print(crude_by_treatment)
+
+crude_diff <- diff(crude_by_treatment$mean_weight_gain)
+cat("\nCrude difference:", round(crude_diff, 2), "kg\n")
+
+# 1b. Examine covariate distributions by treatment
+covariate_comparison <- nhefs_lab |>
+  group_by(quit) |>
+  summarise(
+    mean_age = mean(age),
+    prop_female = mean(sex),
+    mean_baseline_weight = mean(weight_baseline),
+    mean_cigarettes = mean(cigarettes_day),
+    .groups = 'drop'
+  )
+
+print("\nCovariate distributions by treatment:")
+print(covariate_comparison)
+
+# 1c. Create visualization
+ggplot(nhefs_lab, aes(x = factor(quit), y = weight_gain)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, alpha = 0.3) +
+  labs(
+    title = "Weight Gain by Smoking Cessation Status",
+    x = "Quit Smoking (0=No, 1=Yes)",
+    y = "Weight Gain (kg)"
+  )
+
+# 1d. Check for potential positivity violations
+extreme_summary <- nhefs_lab |>
+  group_by(extreme_case, quit) |>
+  summarise(n = n(), .groups = 'drop') |>
+  pivot_wider(
+    names_from = quit,
+    values_from = n,
+    names_prefix = "quit_",
+    values_fill = 0
+  )
+
+print("\nPotential positivity violations:")
+print(extreme_summary)
+```
+
+### Task 2: Propensity Score Estimation and Diagnostics
+
+**Your Turn**: Fit a propensity score model and assess its adequacy.
+
+```{r}
+#| label: task2-skeleton
+#| eval: false
+
+# 2a. Fit propensity score model
+ps_formula <- quit ~ ___ # Include relevant confounders
+ps_model_lab <- glm(___, data = nhefs_lab, family = ___)
+
+# 2b. Calculate predicted probabilities and check range
+nhefs_lab$ps_est <- predict(___, type = "___")
+
+# Check range and distribution
+summary(___)
+
+# 2c. Create diagnostic plots
+# Histogram of propensity scores by treatment group
+ggplot(nhefs_lab, aes(x = ps_est, fill = factor(quit))) +
+  geom_histogram(alpha = 0.7, position = "___", bins = 30) +
+  labs(title = "___", x = "___", fill = "___")
+
+# 2d. Identify potential positivity violations
+pos_violations <- nhefs_lab |>
+  filter(ps_est < ___ | ps_est > ___) |> # Near 0 or 1
+  dplyr::select(id, quit, ps_est, age, cigarettes_day, extreme_case)
+```
+
+**Solution**:
+
+```{r}
+#| label: task2-solution
+#| eval: false
+
+# 2a. Fit propensity score model
+ps_formula <- quit ~
+  age +
+    I(age^2) +
+    sex +
+    race +
+    education +
+    weight_baseline +
+    cigarettes_day +
+    years_smoking +
+    factor(exercise) +
+    factor(activity)
+ps_model_lab <- glm(ps_formula, data = nhefs_lab, family = binomial())
+
+# Display key results
+ps_model_lab |>
+  broom::tidy() |>
+  filter(p.value < 0.05) |>
+  arrange(p.value) |>
+  dplyr::select(term, estimate, p.value) |>
+  kable(
+    digits = 3,
+    caption = "Significant predictors in propensity score model"
+  )
+
+# 2b. Calculate predicted probabilities
+nhefs_lab$ps_est <- predict(ps_model_lab, type = "response")
+
+cat("Propensity score distribution:\n")
+print(summary(nhefs_lab$ps_est))
+
+# 2c. Diagnostic plots
+p_hist <- ggplot(nhefs_lab, aes(x = ps_est, fill = factor(quit))) +
+  geom_histogram(alpha = 0.7, position = "identity", bins = 30) +
+  labs(
+    title = "Distribution of Propensity Scores by Treatment",
+    x = "Propensity Score",
+    fill = "Quit Smoking"
+  ) +
+  scale_fill_manual(values = c("0" = "blue", "1" = "red"))
+
+print(p_hist)
+
+# 2d. Identify potential positivity violations
+pos_violations <- nhefs_lab |>
+  filter(ps_est < 0.05 | ps_est > 0.95) |>
+  dplyr::select(id, quit, ps_est, age, cigarettes_day, extreme_case)
+
+cat("\nPotential positivity violations (PS < 0.05 or PS > 0.95):\n")
+print(pos_violations)
+cat("Number of violations:", nrow(pos_violations), "\n")
+```
+
+### Task 3: Weight Calculation and Assessment
+
+**Your Turn**: Calculate IP weights and assess their properties.
+
+```{r}
+#| label: task3-skeleton
+#| eval: false
+
+# 3a. Calculate nonstabilized weights
+nhefs_lab$w_unstab <- ifelse(
+  nhefs_lab$quit == 1,
+  ___, # For treated
+  ___ # For untreated
+)
+
+# 3b. Calculate stabilized weights
+marginal_quit_prob <- ___
+nhefs_lab$w_stab <- ifelse(
+  nhefs_lab$quit == 1,
+  ___, # For treated
+  ___ # For untreated
+)
+
+# 3c. Summarize weight distributions
+weight_stats <- nhefs_lab |>
+  dplyr::select(w_unstab, w_stab) |>
+  pivot_longer(everything()) |>
+  group_by(name) |>
+  summarise(
+    min = ___,
+    mean = ___,
+    max = ___,
+    sd = ___,
+    .groups = 'drop'
+  )
+
+# 3d. Create weight diagnostic plots
+# Your plotting code here
+
+# 3e. Check stabilized weight mean (should be ≈ 1)
+cat("Mean stabilized weight:", ___)
+```
+
+**Solution**:
+
+```{r}
+#| label: task3-solution
+#| eval: false
+# 3a. Calculate nonstabilized weights
+nhefs_lab$w_unstab <- ifelse(
+  nhefs_lab$quit == 1,
+  1 / nhefs_lab$ps_est,
+  1 / (1 - nhefs_lab$ps_est)
+)
+
+# 3b. Calculate stabilized weights
+marginal_quit_prob <- mean(nhefs_lab$quit)
+nhefs_lab$w_stab <- ifelse(
+  nhefs_lab$quit == 1,
+  marginal_quit_prob / nhefs_lab$ps_est,
+  (1 - marginal_quit_prob) / (1 - nhefs_lab$ps_est)
+)
+
+# 3c. Summarize weight distributions
+weight_stats <- nhefs_lab |>
+  dplyr::select(w_unstab, w_stab) |>
+  pivot_longer(everything()) |>
+  group_by(name) |>
+  summarise(
+    min = min(value),
+    mean = mean(value),
+    max = max(value),
+    sd = sd(value),
+    .groups = 'drop'
+  )
+
+kable(weight_stats, digits = 2, caption = "IP Weight Summary Statistics") |>
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+# 3d. Weight diagnostic plots
+p_weights <- nhefs_lab |>
+  dplyr::select(id, quit, w_unstab, w_stab) |>
+  pivot_longer(
+    cols = c(w_unstab, w_stab),
+    names_to = "weight_type",
+    values_to = "weight"
+  ) |>
+  ggplot(aes(x = weight)) +
+  geom_histogram(bins = 30, alpha = 0.7) +
+  facet_wrap(~weight_type, scales = "free") +
+  labs(title = "Distribution of IP Weights", x = "Weight Value", y = "Count")
+
+print(p_weights)
+
+# 3e. Check stabilized weight mean
+cat("Mean stabilized weight:", round(mean(nhefs_lab$w_stab), 3), "\n")
+cat("Expected value: 1.000\n")
+
+# Identify extreme weights
+extreme_weights <- nhefs_lab |>
+  filter(w_stab > quantile(w_stab, 0.99)) |>
+  dplyr::select(id, quit, ps_est, w_stab, age, cigarettes_day) |>
+  arrange(desc(w_stab))
+
+cat("\nIndividuals with highest weights:\n")
+print(head(extreme_weights))
+```
+
+### Task 4: Covariate Balance Assessment
+
+**Your Turn**: Evaluate whether IP weighting achieves covariate balance.
+
+```{r}
+#| label: task4-skeleton
+#| eval: false
+
+# 4a. Function to calculate weighted means
+weighted_mean_by_group <- function(var, trt, weights = NULL) {
+  if (is.null(weights)) {
+    weights <- rep(1, length(var))
+  }
+
+  # Calculate weighted means for each treatment group
+  mean_1 <- ___ # Treated group weighted mean
+  mean_0 <- ___ # Untreated group weighted mean
+
+  c(mean_0, mean_1, mean_1 - mean_0)
+}
+
+# 4b. Calculate balance for key variables
+balance_vars <- c(
+  "age",
+  "sex",
+  "race",
+  "education",
+  "weight_baseline",
+  "cigarettes_day"
+)
+
+# Unweighted balance
+unweighted <- map_dfr(
+  balance_vars,
+  ~ {
+    result <- weighted_mean_by_group(nhefs_lab[[.x]], nhefs_lab$quit)
+    tibble(
+      variable = .x,
+      mean_0 = result[1],
+      mean_1 = result[2],
+      diff = result[3]
+    )
+  }
+)
+
+# Weighted balance
+weighted <- map_dfr(
+  ___,
+  ~ {
+    result <- weighted_mean_by_group(___, ___, ___)
+    tibble(
+      variable = .x,
+      mean_0 = result[1],
+      mean_1 = result[2],
+      diff = result[3]
+    )
+  }
+)
+
+# 4c. Create balance plot
+# Your plotting code here
+```
+
+**Solution**:
+
+```{r}
+#| label: task4-solution
+#| eval: false
+# 4a. Function to calculate weighted means
+weighted_mean_by_group <- function(var, trt, weights = NULL) {
+  if (is.null(weights)) {
+    weights <- rep(1, length(var))
+  }
+
+  mean_1 <- sum(var[trt == 1] * weights[trt == 1]) / sum(weights[trt == 1])
+  mean_0 <- sum(var[trt == 0] * weights[trt == 0]) / sum(weights[trt == 0])
+
+  c(mean_0, mean_1, mean_1 - mean_0)
+}
+
+# 4b. Calculate balance for key variables
+balance_vars <- c(
+  "age",
+  "sex",
+  "race",
+  "education",
+  "weight_baseline",
+  "cigarettes_day"
+)
+
+# Unweighted balance
+unweighted <- map_dfr(
+  balance_vars,
+  ~ {
+    result <- weighted_mean_by_group(nhefs_lab[[.x]], nhefs_lab$quit)
+    tibble(
+      variable = .x,
+      mean_0 = result[1],
+      mean_1 = result[2],
+      diff = result[3]
+    )
+  }
+)
+unweighted$type <- "Unweighted"
+
+# Weighted balance
+weighted <- map_dfr(
+  balance_vars,
+  ~ {
+    result <- weighted_mean_by_group(
+      nhefs_lab[[.x]],
+      nhefs_lab$quit,
+      nhefs_lab$w_stab
+    )
+    tibble(
+      variable = .x,
+      mean_0 = result[1],
+      mean_1 = result[2],
+      diff = result[3]
+    )
+  }
+)
+weighted$type <- "Weighted"
+
+# Combine results
+balance_comparison <- bind_rows(unweighted, weighted)
+
+# Display balance table
+balance_comparison |>
+  dplyr::select(type, variable, diff) |>
+  pivot_wider(names_from = type, values_from = diff) |>
+  kable(digits = 3, caption = "Covariate Balance: Mean Differences") |>
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+# 4c. Balance plot
+balance_comparison |>
+  ggplot(aes(x = diff, y = variable, color = type)) +
+  geom_point(size = 3, position = position_dodge(width = 0.3)) +
+  geom_vline(xintercept = 0, linetype = "solid", alpha = 0.5) +
+  geom_vline(xintercept = c(-0.1, 0.1), linetype = "dashed", alpha = 0.3) +
+  labs(
+    title = "Covariate Balance Before and After IP Weighting",
+    x = "Standardized Difference",
+    y = "Covariate",
+    color = "Analysis"
+  ) +
+  scale_color_manual(values = c("Unweighted" = "red", "Weighted" = "blue"))
+```
+
+### Task 5: Causal Effect Estimation
+
+**Your Turn**: Estimate the causal effect and compute confidence intervals.
+
+```{r}
+#| label: task5-skeleton
+#| eval: false
+
+# 5a. Fit IP weighted outcome model
+ip_model <- lm(___, data = nhefs_lab, weights = ___)
+
+# 5b. Get robust standard errors
+library(sandwich)
+library(lmtest)
+ip_robust <- coeftest(ip_model, vcov = vcovHC(ip_model, type = "___"))
+
+# 5c. Extract causal effect estimate and CI
+causal_effect <- ip_robust["quit", "Estimate"]
+se <- ip_robust["quit", "Std. Error"]
+ci_lower <- causal_effect - ___ * se
+ci_upper <- causal_effect + ___ * se
+
+# 5d. Compare with crude estimate
+results_comparison <- tibble(
+  Method = c("Crude Association", "IP Weighted Causal Effect"),
+  Estimate = c(___, causal_effect),
+  CI_Lower = c(NA, ci_lower),
+  CI_Upper = c(NA, ci_upper)
+)
+
+# 5e. Bootstrap confidence interval (optional)
+# Your bootstrap code here
+```
+
+**Solution**:
+
+```{r}
+#| label: task5-solution
+#| eval: false
+# 5a. Fit IP weighted outcome model
+ip_model <- lm(weight_gain ~ quit, data = nhefs_lab, weights = w_stab)
+
+# 5b. Get robust standard errors
+ip_robust <- coeftest(ip_model, vcov = vcovHC(ip_model, type = "HC1"))
+print(ip_robust)
+
+# 5c. Extract estimates
+causal_effect <- ip_robust["quit", "Estimate"]
+se <- ip_robust["quit", "Std. Error"]
+ci_lower <- causal_effect - 1.96 * se
+ci_upper <- causal_effect + 1.96 * se
+
+# 5d. Compare results
+results_comparison <- tibble(
+  Method = c("Crude Association", "IP Weighted Causal Effect", "True Effect"),
+  Estimate = c(crude_diff, causal_effect, 2.5),
+  SE = c(NA, se, NA),
+  CI_Lower = c(NA, ci_lower, NA),
+  CI_Upper = c(NA, ci_upper, NA)
+)
+
+kable(
+  results_comparison,
+  digits = 3,
+  caption = "Comparison of causal effect estimates"
+) |>
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+# 5e. Bootstrap confidence intervals (optional advanced exercise)
+bootstrap_ip <- function(data, n_boot = 500) {
+  boot_estimates <- replicate(n_boot, {
+    # Sample with replacement
+    boot_data <- data[sample(nrow(data), replace = TRUE), ]
+
+    # Refit propensity model
+    ps_boot <- glm(ps_formula, data = boot_data, family = binomial())
+    boot_data$ps_boot <- predict(ps_boot, type = "response")
+
+    # Recalculate weights
+    marg_prob <- mean(boot_data$quit)
+    boot_data$w_boot <- ifelse(
+      boot_data$quit == 1,
+      marg_prob / boot_data$ps_boot,
+      (1 - marg_prob) / (1 - boot_data$ps_boot)
+    )
+
+    # Refit outcome model
+    outcome_boot <- lm(weight_gain ~ quit, data = boot_data, weights = w_boot)
+    coef(outcome_boot)["quit"]
+  })
+
+  c(quantile(boot_estimates, 0.025), quantile(boot_estimates, 0.975))
+}
+
+# Uncomment to run bootstrap (takes a few moments)
+# boot_ci <- bootstrap_ip(nhefs_lab)
+# cat("Bootstrap 95% CI:", round(boot_ci, 3), "\n")
+```
+
+### Task 6: Sensitivity Analysis
+
+**Your Turn**: Explore the sensitivity of results to modeling choices.
+
+```{r}
+#| label: task6-skeleton
+#| eval: false
+
+# 6a. Alternative propensity score model (fewer covariates)
+ps_simple <- glm(
+  quit ~ age + sex + education + cigarettes_day,
+  data = nhefs_lab,
+  family = binomial()
+)
+
+# Calculate weights and estimate effect
+nhefs_lab$ps_simple <- predict(___, type = "___")
+nhefs_lab$w_simple <- ifelse(
+  nhefs_lab$quit == 1,
+  marginal_quit_prob / ___,
+  (1 - marginal_quit_prob) / ___
+)
+
+simple_model <- lm(___, data = nhefs_lab, weights = ___)
+simple_effect <- coef(simple_model)["quit"]
+
+# 6b. Trimming extreme weights
+# Remove individuals with weights > 95th percentile
+weight_cutoff <- quantile(nhefs_lab$w_stab, ___)
+nhefs_trimmed <- nhefs_lab |> filter(w_stab <= ___)
+
+trimmed_model <- lm(___, data = nhefs_trimmed, weights = ___)
+trimmed_effect <- coef(trimmed_model)["quit"]
+
+# 6c. Compare sensitivity results
+sensitivity_results <- tibble(
+  Analysis = c("Full Model", "Simple Model", "Trimmed Weights"),
+  Effect = c(___, simple_effect, trimmed_effect),
+  N = c(nrow(nhefs_lab), nrow(nhefs_lab), nrow(nhefs_trimmed))
+)
+```
+
+**Solution**:
+
+```{r}
+#| label: task6-solution
+#| eval: false
+# 6a. Alternative propensity score model
+ps_simple <- glm(
+  quit ~ age + sex + education + cigarettes_day,
+  data = nhefs_lab,
+  family = binomial()
+)
+
+nhefs_lab$ps_simple <- predict(ps_simple, type = "response")
+nhefs_lab$w_simple <- ifelse(
+  nhefs_lab$quit == 1,
+  marginal_quit_prob / nhefs_lab$ps_simple,
+  (1 - marginal_quit_prob) / (1 - nhefs_lab$ps_simple)
+)
+
+simple_model <- lm(weight_gain ~ quit, data = nhefs_lab, weights = w_simple)
+simple_effect <- coef(simple_model)["quit"]
+
+# 6b. Trimming extreme weights
+weight_cutoff <- quantile(nhefs_lab$w_stab, 0.95)
+nhefs_trimmed <- nhefs_lab |> filter(w_stab <= weight_cutoff)
+
+trimmed_model <- lm(weight_gain ~ quit, data = nhefs_trimmed, weights = w_stab)
+trimmed_effect <- coef(trimmed_model)["quit"]
+
+# 6c. Compare sensitivity results
+sensitivity_results <- tibble(
+  Analysis = c("Full Model", "Simple Model", "Trimmed Weights"),
+  Effect = c(causal_effect, simple_effect, trimmed_effect),
+  N = c(nrow(nhefs_lab), nrow(nhefs_lab), nrow(nhefs_trimmed))
+)
+
+kable(
+  sensitivity_results,
+  digits = 3,
+  caption = "Sensitivity Analysis Results"
+) |>
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+cat(
+  "Weight trimming removed",
+  nrow(nhefs_lab) - nrow(nhefs_trimmed),
+  "observations\n"
+)
+cat("Range of sensitivity:", round(range(sensitivity_results$Effect), 3), "\n")
+```
+
+### Retrieval Quiz & Reflection
+
+::: {.callout-question}
+### Quiz Questions
+
+**Question 1**: Based on your analysis, what is the estimated causal effect of smoking cessation on weight gain, and how does it compare to the crude association?
+
+**Question 2**: Examine your covariate balance results. Which variables showed the largest imbalances before weighting, and were these adequately addressed by IP weighting?
+
+**Question 3**: Look at your weight distributions. What do extreme weights suggest about the data, and how might they affect the validity of your results?
+
+**Question 4**: How sensitive were your results to different modeling choices? What does this suggest about the robustness of your findings?
+
+**Question 5**: If you found individuals with propensity scores very close to 0 or 1, how would you handle this in a real analysis?
+:::
+
+### Reflection Prompts
+
+Take 10 minutes to reflect on and discuss with a partner:
+
+1. **Method Understanding**: How does IP weighting differ conceptually from stratification or regression adjustment? When might you prefer one approach over others?
+2. **Assumption Evaluation**: Which of the required assumptions (exchangeability, positivity, consistency) do you think is most likely to be violated in this smoking cessation example, and why?
+3. **Practical Considerations**: What challenges did you encounter in the analysis? How might these manifest in real-world applications?
+4. **Interpretation**: How would you explain your findings to a non-statistician? What caveats would you include?
+5. **Next Steps**: What additional analyses or sensitivity checks would you want to perform before publishing these results?
+
+## 6 Common Pitfalls & Checks
+
+### Critical Assumption Violations
+
+::: {.callout-warning}
+### Positivity Violations
+
+**The Problem**: When some individuals have propensity scores very close to 0 or 1, corresponding weights become extremely large, leading to unstable estimates.
+
+**Detection**:
+- Plot propensity score distributions by treatment group
+- Check for weights > 10 or in the extreme tails
+- Look for empty or nearly empty cells when stratifying on confounders
+
+**Solutions**:
+- Trimming: Remove individuals with extreme weights
+- Truncation: Cap propensity scores at reasonable bounds (e.g., [0.05, 0.95])
+- Model restriction: Limit analysis to region of sufficient overlap
+:::
+
+::: {.callout-warning}
+### Model Misspecification
+
+**The Problem**: Incorrect propensity score model leads to biased estimates even with perfect randomization.
+
+**Detection**:
+- Assess covariate balance after weighting
+- Check model fit diagnostics
+- Compare results across different model specifications
+
+**Prevention**:
+- Include all relevant confounders
+- Consider nonlinear terms and interactions
+- Use flexible modeling approaches (e.g., machine learning methods)
+:::
+
+::: {.callout-warning}
+### Unmeasured Confounding
+
+**The Problem**: IP weighting only controls for measured confounders. Unmeasured confounding leads to biased estimates.
+
+**Assessment**:
+- Conduct sensitivity analyses for unmeasured confounding
+- Compare with instrumental variable or other approaches
+- Evaluate biological plausibility of effect size
+
+**Mitigation**:
+- Negative control analyses
+- Multiple comparison groups
+- Sensitivity analysis frameworks
+:::
+
+### Practical Implementation Checks
+
+::: {.callout-tip}
+### Essential Diagnostic Checks
+
+1. **Weight Distribution**:
+   - Stabilized weights should have mean ≈ 1
+   - Check for extreme outliers (weights > 10)
+   - Compare stabilized vs nonstabilized weight ranges
+
+2. **Covariate Balance**:
+   - Standardized differences < 0.1 after weighting
+   - Visual inspection of covariate distributions
+   - Balance across all relevant confounders
+
+3. **Propensity Score Overlap**:
+   - Sufficient overlap in propensity score distributions
+   - No treatment groups with systematically different scores
+   - Check for common support violations
+
+4. **Model Specification**:
+   - Include squared terms for continuous confounders
+   - Consider interactions between key confounders
+   - Assess goodness of fit for propensity score model
+:::
+
+::: {.callout-important}
+### When NOT to Use IP Weighting
+
+- **Small sample sizes**: Extreme weights more problematic
+- **Many confounders relative to sample size**: Curse of dimensionality
+- **Severe positivity violations**: Structural zeros cannot be overcome
+- **Continuous treatments with complex distributions**: Density estimation challenging
+- **Strong unmeasured confounding suspected**: Alternative methods may be preferred
+:::
+
+### Quality Assurance Checklist
+
+Before reporting IP weighted results, verify:
+
+- [ ] All relevant confounders included in propensity model
+- [ ] Propensity scores show reasonable overlap between groups
+- [ ] Stabilized weights have mean close to 1.0
+- [ ] No weights exceed reasonable thresholds (e.g., > 10)
+- [ ] Covariate balance achieved after weighting
+- [ ] Robust standard errors used for inference
+- [ ] Sensitivity analyses conducted
+- [ ] Results biologically/clinically plausible
+
+## 7 Advanced Teaching Activities & Interactivity
+
+### Flipped Classroom Activities
+
+#### Pre-Class Preparation
+
+**Reading Assignment**: Before class, students should:
+1. Read @hernan2020causalwhatif Chapter 12, sections 12.1-12.4
+2. Complete online quiz on basic IP weighting concepts
+3. Watch 15-minute video on propensity score intuition
+
+**Preparation Questions**:
+- What is the fundamental goal of IP weighting?
+- How do stabilized weights differ from nonstabilized weights?
+- Why might IP weighting fail to provide valid causal estimates?
+
+#### In-Class Problem-Based Learning
+
+::: {.callout-example}
+### Case Study: Hormone Replacement Therapy
+
+**Scenario**: You're analyzing observational data on hormone replacement therapy (HRT) and cardiovascular disease risk. Preliminary analyses show HRT appears protective, but you suspect confounding by indication.
+
+**Group Activity** (20 minutes):
+1. **Teams of 3-4**: Each team gets a different aspect:
+   - Team A: Identify potential confounders
+   - Team B: Discuss positivity concerns
+   - Team C: Consider unmeasured confounding
+   - Team D: Plan sensitivity analyses
+
+2. **Gallery Walk** (10 minutes): Teams post findings, rotate to review others' work
+3. **Class Discussion** (15 minutes): How do findings integrate? What's the analysis plan?
+:::
+
+### Think-Pair-Share Exercises
+
+#### Conceptual Understanding
+
+**Round 1: Individual Reflection** (3 minutes)
+> "A colleague says: 'IP weighting is just a fancy way of doing stratification.' How would you respond? Is this accurate?"
+
+**Round 2: Pair Discussion** (5 minutes)
+> Share and refine your responses. Identify key similarities and differences.
+
+**Round 3: Class Sharing** (7 minutes)
+> Selected pairs share insights. Instructor facilitates discussion of nuances.
+
+#### Application Challenge
+
+**Scenario**: Propensity scores range from 0.003 to 0.997 in your dataset.
+
+**Individual** (2 minutes): What problems might this cause? List 3 potential solutions.
+
+**Pairs** (4 minutes): Compare solutions. Rank by feasibility and validity.
+
+**Class** (6 minutes): Discuss trade-offs between different approaches.
+
+### Spaced Repetition & Interleaving
+
+#### Week 1 Review (during Stratification lecture):
+- Quick comparison: "How would IP weighting handle this scenario differently than stratification?"
+
+#### Week 3 Integration (during IV lecture):
+- "When might instrumental variables be preferred over IP weighting?"
+
+#### Week 5 Synthesis (during Mediation lecture):
+- "Could IP weighting be used for mediation analysis? What would be required?"
+
+### Self-Explanation Tasks
+
+Students complete analysis, then explain their reasoning:
+
+**Task**: "After IP weighting, the standardized difference for age changed from 0.45 to 0.02. Explain what this means and why it occurred."
+
+**Prompts**:
+- What was the original imbalance?
+- How did weighting address it?
+- What does this suggest about age as a confounder?
+- What would happen if this balance wasn't achieved?
+
+### Peer Instruction Questions
+
+Use clickers or polling for these conceptual questions:
+
+**Question 1**: IP weighting creates a pseudo-population where:
+A) Treatment assignment is random
+B) Confounders are balanced across treatment groups
+C) The sample size is larger than the original
+D) All of the above
+E) Only A and B
+
+**Question 2**: Stabilized weights are preferred because they:
+A) Always give different point estimates than nonstabilized weights
+B) Have better statistical properties in complex models
+C) Are easier to compute
+D) Don't require modeling the propensity score
+
+**Question 3**: A propensity score model with poor fit will:
+A) Always lead to biased causal estimates
+B) Only affect efficiency, not bias
+C) Be detectable through covariate balance checks
+D) Not matter if the sample size is large
+
+### Interactive Shiny Applications
+
+*Note: These would be separate Shiny apps for demonstration*
+
+#### App 1: Propensity Score Overlap Explorer
+- Sliders to adjust confounder effects
+- Real-time visualization of propensity score distributions
+- Interactive exploration of positivity violations
+
+#### App 2: Weight Distribution Simulator
+- Choose different propensity score models
+- See resulting weight distributions
+- Observe effects on covariate balance
+
+#### App 3: Bias Vs Variance Trade-off
+- Adjust model complexity vs sample size
+- Visualize MSE decomposition
+- Compare IP weighting to other methods
+
+### Collaborative Analysis Project
+
+**Multi-Week Group Project**: Teams of 4 students conduct complete IP weighting analysis
+
+**Week 1**: Literature review and DAG construction
+**Week 2**: Data exploration and propensity score modeling
+**Week 3**: Weight calculation and diagnostics
+**Week 4**: Effect estimation and sensitivity analysis
+**Week 5**: Presentation and peer review
+
+**Deliverables**:
+- Reproducible R analysis
+- Written report (journal article format)
+- 10-minute presentation
+- Peer evaluations
+
+### Advanced Discussion Seminars
+
+#### Seminar Topics:
+1. **Machine Learning for Propensity Scores**: When and how?
+2. **Continuous Treatments**: Density estimation challenges
+3. **Time-Varying Treatments**: Extension to longitudinal data
+4. **Causal Discovery**: Using IP weighting to test causal relationships
+
+#### Format:
+- Student-led presentations (30 min)
+- Structured discussion with preparation questions
+- Connection to current research papers
+- Practical implementation challenges
+
+## 8 Appendix: Advanced Theory & Derivations
+
+### Theoretical Foundation of IP Weighting
+
+#### Theorem 1: Consistency of IP Weighted Estimators
+
+Under exchangeability $Y^a \indep A|L$, positivity $0 < \prob{A=a|L} < 1$, and consistency $Y = Y^A$ when $A=a$:
+
+$$
+\E{\frac{I(A=a)Y}{f(A|L)}} = \E{Y^a}
+$$
+
+**Proof**:
+
+$$
+\begin{align}
+\E{\frac{I(A=a) Y}{f(A|L)}} &= \E{\E{\frac{I(A=a)Y}{f(A|L)}\bigg|L}} \\
+&= \E{\frac{\E{I(A=a)Y|L}}{f(A|L)}} \\
+&= \E{\frac{E{I(A=a)|L} \cdot \E{Y|A=a,L}}{f(A|L)}} \\
+&= \E{\frac{\prob{A=a|L} \cdot \E{Y|A=a,L}}{\prob{A=a|L}}} \\
+&= \E{\E{Y|A=a,L}} \\
+&= \E{\E{Y^a|A=a,L}} \quad \text{(by consistency)} \\
+&= \E{\E{Y^a|L}} \quad \text{(by exchangeability)} \\
+&= \E{Y^a}
+\end{align}
+$$
+
+#### Corollary: Stabilized Weights Preserve Expectations
+
+For stabilized weights $SW^A = f(A)/f(A|L)$:
+
+$$
+\E{\frac{f(A)I(A=a)Y}{f(A|L)}} = f(a) \cdot \E{Y^a}
+$$
+
+This shows that stabilized weights scale the expectation by the marginal probability, preserving relative comparisons.
+
+### Efficiency Theory for Stabilized Weights
+
+#### Theorem 2: Efficiency of Stabilized Estimators
+
+For the linear MSM $\E{Y^a} = \beta_0 + \beta_1 a$, the stabilized weight estimator $\hat{\beta}_1^{SW}$ has asymptotic variance:
+
+$$
+\text{Var}(\hat{\beta}_1^{SW}) = \frac{\E{\frac{f(A)}{f(A|L)}(Y - E[Y^A])^2}}{\E{\frac{f(A)}{f(A|L)}(A - \E{A})^2}}
+$$
+
+compared to the nonstabilized estimator:
+
+$$
+\text{Var}(\hat{\beta}_1^{W}) = \frac{\E{\frac{1}{f(A|L)}(Y - \E{Y^A})^2}}{\E{\frac{1}{f(A|L)}(A - \E{A|L})^2}}
+$$
+
+The stabilized estimator is more efficient when $\text{Var}(f(A)) < \text{Var}(1)$, which always holds.
+
+### Robustness Properties
+
+#### Double Robustness Connection
+
+While IP weighting is not itself doubly robust, it connects to doubly robust methods. The augmented IP weighted estimator:
+
+$$
+\hat{\tau}_{AIPW} = \frac{1}{n}\sum_{i=1}^n \left[\frac{A_i Y_i}{\hat{\pi}_i} - \frac{(1-A_i)Y_i}{1-\hat{\pi}_i} + \frac{A_i - \hat{\pi}_i}{\hat{\pi}_i(1-\hat{\pi}_i)}(\hat{\mu}_1(L_i) - \hat{\mu}_0(L_i))\right]
+$$
+
+is consistent if either the propensity score model $\hat{\pi}_i$ or outcome models $\hat{\mu}_a(L_i)$ are correct.
+
+### Extensions to Complex Settings
+
+#### Time-Varying Treatments
+
+For treatments $\bar{A}_t = (A_0, A_1, \ldots, A_t)$ and time-varying confounders $\bar{L}_t$:
+
+$$
+SW_i^{\bar{A}_t} = \prod_{j=0}^t \frac{f(A_{ij}|\bar{A}_{i,j-1}, \bar{L}_{i,j-1})}{f(A_{ij}|\bar{A}_{i,j-1}, \bar{L}_{ij})}
+$$
+
+This requires the sequential exchangeability assumption:
+$Y^{\bar{a}_t} \indep A_t | \bar{A}_{t-1}, \bar{L}_t$
+
+#### Continuous Treatments with Flexible Densities
+
+For continuous $A$ with unknown density, consider the kernel density estimator:
+
+$\hat{f}(a|L) = \frac{1}{nh} \sum_{i=1}^n K\left(\frac{a - A_i}{h}\right) \mathbf{1}(L_i \in \mathcal{N}(L))$
+
+where $K$ is a kernel function and $\mathcal{N}(L)$ is a neighborhood of $L$.
+
+**Bandwidth Selection**: Use cross-validation to choose $h$:
+$h^* = \arg\min_h \sum_{i=1}^n \left[\log \hat{f}_{-i}(A_i|L_i)\right]$
+
+where $\hat{f}_{-i}$ is the leave-one-out density estimator.
+
+### Numerical Illustration: Higher-Order Effects
+
+Consider a quadratic MSM: $\E{Y^a} = \beta_0 + \beta_1 a + \beta_2 a^2$
+
+**Simulation Setup**:
+
+- $L \sim \text{Normal}(0, 1)$
+- $A|L \sim \text{Bernoulli}(\text{logit}^{-1}(0.5L))$
+- $Y^a = 1 + 2a - 0.5a^2 + 0.3L + \epsilon$, $\epsilon \sim \text{Normal}(0, 1)$
+
+**True Parameters**: $\beta_0 = 1$, $\beta_1 = 2$, $\beta_2 = -0.5$
+
+```{r}
+#| label: higher-order-simulation
+#| eval: false
+
+# Simulation code for quadratic MSM
+simulate_quadratic_msm <- function(n = 1000) {
+  L <- rnorm(n)
+  A <- rbinom(n, 1, plogis(0.5 * L))
+  Y <- 1 + 2 * A - 0.5 * A^2 + 0.3 * L + rnorm(n)
+
+  # Fit propensity score model
+  ps_model <- glm(A ~ L, family = binomial())
+  ps <- predict(ps_model, type = "response")
+
+  # Calculate stabilized weights
+  marginal_prob <- mean(A)
+  sw <- ifelse(A == 1, marginal_prob / ps, (1 - marginal_prob) / (1 - ps))
+
+  # Fit quadratic MSM
+  msm <- lm(Y ~ A + I(A^2), weights = sw)
+
+  return(coef(msm))
+}
+
+# Run simulation
+set.seed(12345)
+results <- replicate(1000, simulate_quadratic_msm())
+rowMeans(results) # Should be close to [1, 2, -0.5]
+```
+
+**Expected Output**: The simulation should yield estimates close to the true parameters, demonstrating that IP weighting correctly identifies higher-order treatment effects.
+
+### Formal Connection to Causal Graphs
+
+#### Backdoor Criterion and IP Weighting
+
+**Theorem 3**: If $L$ satisfies the backdoor criterion for estimating the causal effect of $A$ on $Y$, then IP weighting with weights $W^A = 1/\prob[A|L]$ yields a consistent estimate of $E[Y^a]$.
+
+**Proof Sketch**: The backdoor criterion ensures that conditioning on $L$ blocks all non-causal paths from $A$ to $Y$. IP weighting creates a pseudo-population where $A \indep L$, effectively "closing" these backdoor paths while preserving the causal path $A \to Y$.
+
+#### Front-Door Formula Connection
+
+When direct confounding is unmeasured but a mediator $M$ is available, the front-door formula provides an alternative:
+
+$$
+\E{Y^a} = \sum_m \E{Y|A=a', M=m} \prob{M=m|A=a}
+$$
+
+This can be implemented using sequential IP weighting:
+
+1. Weight by $1/\prob{M|A, L}$ to estimate $\prob{M^a}$
+2. Weight by $1/\prob{A|M, L}$ to estimate $\E{Y^{a',m}}$
+
+### Sensitivity Analysis Framework
+
+#### Rosenbaum's Sensitivity Analysis for IP Weighting
+
+Assume unmeasured confounder $U$ affects both treatment and outcome:
+
+- $\text{logit } \prob{A=1|L, U} = \alpha^T L + \gamma U$
+- $\E{Y|A, L, U} = \beta_0 + \beta_1 A + \beta_2^T L + \beta_3 U$
+
+The sensitivity parameter $\Gamma = e^{\gamma}$ represents the maximum odds ratio between treatment probabilities for individuals with the same $L$ but different $U$.
+
+**Bounds Calculation**:
+For treatment effect $\tau$, the bounds under sensitivity parameter $\Gamma$ are:
+
+$$
+\tau^-(\Gamma) \leq \tau \leq \tau^+(\Gamma)
+$${#eq-bounds-sensitivity}
+
+where bounds are computed by solving constrained optimization problems.
+
+#### Numerical Example
+
+```{r}
+#| label: sensitivity-analysis-example
+#| eval: false
+
+# Simplified sensitivity analysis
+sensitivity_bound <- function(tau_obs, Gamma) {
+  # Simplified bound calculation (full version requires optimization)
+  variance_inflation <- sqrt(Gamma / (Gamma - 1))
+
+  tau_lower <- tau_obs - 1.96 * se_obs * variance_inflation
+  tau_upper <- tau_obs + 1.96 * se_obs * variance_inflation
+
+  return(c(tau_lower, tau_upper))
+}
+
+# Example: If observed effect is 2.5 kg with SE 0.5
+tau_obs <- 2.5
+se_obs <- 0.5
+
+# Test sensitivity to unmeasured confounding
+Gamma_values <- seq(1, 3, 0.1)
+bounds <- sapply(Gamma_values, function(g) sensitivity_bound(tau_obs, g))
+
+# Plot sensitivity analysis
+plot(
+  Gamma_values,
+  bounds[1, ],
+  type = "l",
+  ylim = range(bounds),
+  ylab = "Effect Bound",
+  xlab = "Gamma"
+)
+lines(Gamma_values, bounds[2, ])
+abline(h = 0, lty = 2, col = "red")
+```
+
+This framework allows researchers to assess how strong unmeasured confounding would need to be to explain away the observed effect.
+
+## References
+
+Hernán, M. A., & Robins, J. M. (2020). *Causal inference: What if*. Chapman & Hall/CRC. <https://miguelhernan.org/whatifbook>
+
+Neal, B. (2020). *Introduction to causal inference from a machine learning perspective*. Course Lecture Notes. <https://www.bradyneal.com/causal-inference-course>
+
+Pearl, J. (2009). *Causality: Models, reasoning, and inference* (2nd ed.). Cambridge University Press.
+
+Cunningham, S. (2021). *Causal Inference: The Mixtape*. Yale University Press. <https://doi.org/10.2307/j.ctv1c29t27>
+
+Rosenbaum, P. R. (2002). *Observational studies* (2nd ed.). Springer-Verlag.
+
+VanderWeele, T. J. (2015). *Explanation in causal inference: Methods for mediation and interaction*. Oxford University Press.
+
+Imbens, G. W., & Rubin, D. B. (2015). *Causal inference for statistics, social, and biomedical sciences: An introduction*. Cambridge University Press.

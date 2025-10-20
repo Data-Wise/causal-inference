@@ -1,0 +1,414 @@
+\documentclass[10.5pt]{article}
+\usepackage[letterpaper, top=1in, left=1in, right=1in, bottom=1in]{geometry}
+%\setlength{\oddsidemargin} {0in}
+%\setlength{\textwidth} {6.75in}
+%\setlength{\headheight} {0.5in}
+%\setlength{\headsep} {0.25in}
+%\setlength{\topmargin} {0.25in}
+%\setlength{\voffset} {-1in}
+%\setlength{\footskip} {0.45in}
+\raggedright %%sets text adjustment to reaggedright
+%\setlength{\baselineskip}{24pt}
+%\setlength\textheight{27\baselineskip}
+%\setlength\parindent{0.5in}                 %%sets paragraph ident to 0.5 inch
+%\setlength{\skip\footins}{0.4in}
+%\setlength\footnotesep{0.6\baselineskip}
+
+\usepackage{fancyhdr,color,xspace,graphicx,xcolor,pgf,parskip}
+\usepackage[small,compact,center]{titlesec}
+\pagestyle{fancy}
+ \rhead{Fall 2025}
+ \chead{}
+%\fancyhead[L]{ 
+%   \includegraphics[height=0.5in]{unmlogo1}
+%}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{enumitem} % For more control over lists
+\usepackage{sectsty} % To style section headings, if desired
+\usepackage{xurl} % For better URL line breaking
+\usepackage{amsfonts} % For math blackboard bold if needed for estimands
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={STAT 579: Applied Causal Inference},
+    pdfpagemode=FullScreen,
+}
+
+\parskip=0.5\baselineskip % Adds a bit of space between paragraphs
+\parindent=0pt % No indent for paragraphs, common in syllabi
+\setcounter{secnumdepth}{0} %%prevents numbering for all sectional units (\section, \subsection, etc.)
+
+\title{STAT 579: Applied Causal Inference \\ \large Tentative Syllabus Syllabus }
+%\author{Davood Tofighi, Ph.D. \\ Department of Mathematics and Statistics \\ University of New Mexico}
+\date{Fall 2025}
+
+% Define math commands for estimands if desired, e.g., \newcommand{\ATE}{\text{ATE}}
+% Or use \text{} within math mode, e.g., $ \text{ATE} $
+
+\begin{document}
+\maketitle
+%\thispagestyle{empty}
+%\clearpage
+%\setcounter{page}{1}
+%\section{Instructor}
+\vspace{3em}
+
+\begin{flushleft}
+\textbf{Course:} STAT 579 Applied Causal Inference \\
+%\textbf{Term:} Fall 2025 \\
+\textbf{Instructor:} Davood Tofighi, Ph.D. \\
+\textbf{Affiliation:} Department of Mathematics and Statistics \\
+%\textbf{Office:} [Your Office Location] \\
+%\textbf{Office Hours:} [Your Office Hours, e.g., Wednesdays 1-3 PM, or by appointment] \\
+%\textbf{Email:} \href{mailto:[Your UNM Email Address]}{[Your UNM Email Address]} \\
+\textbf{Class Meetings:} Tuesdays and Thursdays, 9:30 AM - 10:45 AM\end{flushleft}
+%\vspace{1em}
+
+%\tableofcontents
+%\clearpage
+
+\section{Course Overview}
+
+This graduate-level course provides a comprehensive introduction to the theory and application of causal inference methods, with a strong emphasis on biostatistical applications. Moving beyond mere association, students will learn formal frameworks for defining and estimating causal effects, particularly from observational data common in public health and clinical research. The course will delve into foundational concepts like potential outcomes and causal graphs (DAGs), explore key challenges such as confounding and selection bias, and cover essential methods including propensity scores, instrumental variables, mediation analysis, and techniques for time-varying treatments. Through a blend of theoretical lectures, applied examples, R assignments completed independently, and critical discussion of research papers, students will develop not only the technical skills to apply these methods but also the critical thinking abilities necessary to rigorously evaluate causal claims in scientific literature and public discourse.
+
+\textbf{My Approach to Causal Inference:} This course emphasizes that causal inference is not merely a toolkit of statistical methods, but a way of thinking rigorously about cause and effect. We will constantly return to foundational principles: clearly defining the causal question and estimand, making all assumptions explicit (often with Directed Acyclic Graphs - DAGs), understanding what each method can and cannot do under those assumptions, and critically assessing the robustness of our conclusions. Expect to be challenged to think deeply and defend your reasoning!
+
+\section{Course Goals and Objectives}
+
+\subsection{Course Goals}
+\begin{itemize}
+    \item To equip students with a strong theoretical foundation in the principles of causal inference.
+    \item To enable students to apply a range of modern causal inference methods to real-world biostatistical problems.
+    \item To foster critical thinking skills necessary to identify causal questions, recognize threats to valid causal inference, and evaluate causal evidence.
+    \item To develop practical skills in using statistical software for causal data analysis.
+\end{itemize}
+
+\subsection{Learning Objectives}
+Upon successful completion of this course, students will be able to:
+\begin{itemize}
+    \item Distinguish between association and causation and formally define causal effects using the potential outcomes framework.
+    \item Represent causal structures using Directed Acyclic Graphs (DAGs) and use them to identify confounding, selection bias, and paths to block for identification.
+    \item Identify, articulate, and critically evaluate the assumptions required for causal identification under different scenarios (e.g., conditional exchangeability, positivity, SUTVA, instrumental variable assumptions).
+    \item Apply propensity score methods (matching, stratification, inverse probability weighting) to estimate causal effects in observational studies, including assessing their plausibility and checking diagnostics like balance and overlap.
+    \item Implement g-computation and inverse probability weighting for estimating causal effects of time-varying treatments using Marginal Structural Models, clearly articulating the required sequential assumptions.
+    \item Understand the principles, stringent assumptions, and potential pitfalls of Instrumental Variable analysis and apply relevant methods.
+    \item Formulate and assess causal mediation questions and apply methods to decompose effects into natural direct and indirect effects, understanding the strong no-unmeasured-confounding assumptions required.
+    \item Conduct sensitivity analyses to evaluate the robustness of causal estimates to violations of key assumptions (e.g., unmeasured confounding).
+    \item Critically evaluate causal claims in published biostatistical and public health research.
+    \item Implement causal inference methods using R statistical software, including relevant packages, and interpret the output in a causal context, grounded in the method's assumptions.
+\end{itemize}
+
+\section{Learning Outcomes}
+These outcomes are directly derived from the learning objectives and are stated in measurable terms:
+\begin{itemize}
+    \item Students will be able to draw and interpret DAGs for given causal scenarios, identifying key structural features like confounders, colliders, and mediators.
+    \item Students will be able to state the Stable Unit Treatment Value Assumption (SUTVA) and discuss its implications and potential violations in various study designs.
+    \item Students will be able to apply the backdoor criterion using a DAG to identify sufficient sets of confounders to adjust for, and explain why a given set is or is not sufficient.
+    \item Students will be able to implement and interpret propensity score matching/weighting using R, including assessment of covariate balance and overlap.
+    \item Students will be able to fit and interpret Marginal Structural Models for time-varying treatments using IPW in R, clearly stating the assumptions for identification of the desired causal parameters.
+    \item Students will be able to apply two-stage least squares (2SLS) for instrumental variable estimation in simple cases, articulate the specific causal effect being estimated ($LATE$), and detail the conditions under which it is identified.
+    \item Students will be able to calculate natural direct and indirect effects using appropriate mediation formulas or regression-based approaches, and state the key assumptions for their identification (e.g., cross-world counterfactual independence assumptions).
+    \item Students will be able to perform basic sensitivity analyses for unmeasured confounding using statistical software and explain the implications of the findings for the robustness of the primary causal conclusions.
+    \item Students will be able to critique the causal inference methods used in a peer-reviewed journal article, focusing on the alignment of the research question, data, methods, assumptions, and conclusions.
+    \item Students will be able to write R code to perform causal analyses on provided datasets and interpret the output, distinguishing between associational and causal interpretations based on the methods and assumptions.
+\end{itemize}
+
+\section{Assignments and Assessments}
+Assignments and assessments are designed to reinforce theoretical understanding and develop practical application skills, directly aligning with the learning outcomes.
+\begin{itemize}
+    \item \textbf{Weekly Problem Sets (20\%):} Short problem sets focusing on theoretical concepts, DAG interpretation, and small calculation exercises. These will often require students to articulate assumptions for specific scenarios and justify methodological choices.
+    \item \textbf{Applied R Assignments (25\%):} Students will complete R coding assignments applying methods covered in lectures to synthetic or real datasets. These assignments are designed to reinforce practical implementation skills and will be completed independently. Detailed instructions and R code examples from lectures will be provided, and support will be available through instructor office hours.
+    \begin{itemize}
+        \item \textbf{R Assignment 1 (associated with Week 3-5 concepts, due around Week 6/7):} DAGs, Simulation, Bias, and introduction to G-formula concepts. Using \texttt{dagitty} to represent causal structures. Simulating data (e.g., with confounding, mediation, colliders) to demonstrate the impact of these structures on naive associations versus true causal effects.
+        \item \textbf{R Assignment 2 (associated with Week 6 concepts, due around Week 8/9):} Propensity Score Methods. Implementing propensity score matching (\texttt{MatchIt}) and weighting (\texttt{WeightIt}), including propensity score estimation, checking covariate balance (\texttt{cobalt}), and assessing overlap.
+        \item \textbf{R Assignment 3 (associated with Week 8 concepts, due around Week 10/11):} Instrumental Variable Analysis. Implementing an IV analysis (\texttt{ivreg}), assessing instrument strength, and articulating IV assumptions in the context of the data.
+        \item \textbf{R Assignment 4 (associated with Weeks 9-10 concepts, due around Week 11/12):} Causal Mediation Analysis. Implementing a causal mediation analysis (\texttt{mediation} package) based on the two weeks of material, interpreting direct and indirect effects, and discussing the strong assumptions required.
+        \item \textbf{R Assignment 5 (associated with Week 12 concepts, due around Week 13/Finals Week):} Marginal Structural Models. Implementing a simple MSM using IPW (e.g., with \texttt{WeightIt} for weights and \texttt{geepack} or \texttt{survey} for robust standard errors), clearly stating sequential exchangeability and positivity assumptions.
+    \end{itemize}
+    \item \textbf{Midterm Exam (20\%):} Covers foundational concepts (Potential Outcomes, DAGs, Confounding, Identifiability, Propensity Scores). Mix of conceptual questions, DAG drawing/interpretation, simple calculations, and short explanations of assumptions.
+    \item \textbf{Final Project (35\%):} A capstone project where students apply causal inference methods to a real-world biostatistical dataset (publicly available, from their own research with approval, or provided).
+    \begin{itemize}
+        \item \textbf{Project Proposal (due mid-semester, Week 8, 5\% of final project grade):} Defining a clear causal question, identifying a suitable dataset, constructing an initial DAG based on domain knowledge, and outlining potential methods and estimands.
+        \item \textbf{Final Report \& Presentation (30\% of final project grade):}
+        \begin{itemize}
+            \item Defining a clear causal question and target estimand.
+            \item Constructing a well-justified DAG based on background knowledge, explicitly stating the causal assumptions it represents.
+            \item Choosing and implementing appropriate causal inference methods, justifying the choice based on the DAG, data structure, and research question. This includes verifying assumptions where possible (e.g., positivity, balance).
+            \item Conducting appropriate sensitivity analyses for key assumptions.
+            \item Writing a comprehensive report summarizing methods, findings (with appropriate causal language), and discussing limitations and threats to validity.
+            \item A short (5-7 minute) in-class or recorded presentation of their project.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\section{Recommended Materials}
+
+\subsection{Primary Textbooks:}
+\begin{itemize}
+    \item Hernán MA, Robins JM. \textit{Causal Inference: What If.} Available online: \url{https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/}. \textbf{Our primary reference, providing a comprehensive framework unifying potential outcomes, DAGs, and advanced methods, with rich examples from epidemiology and public health.}
+    \item Pearl J, Glymour M, Jewell NP. \textit{Causal Inference in Statistics: A Primer.} Wiley, 2016. \textbf{An accessible introduction to Pearl's structural causal model framework, focusing heavily on DAGs and do-calculus for identification. Excellent for conceptual understanding of graphical models.}
+    \item Imbens GW, Rubin DB. \textit{Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction.} Cambridge University Press, 2015. \textbf{A deep dive into the potential outcomes framework, with rigorous treatment of randomized experiments and observational study designs, particularly matching methods. Valuable for its statistical formalism and detailed examples.}
+\end{itemize}
+
+\subsection{Supplementary Text/Readings:}
+\begin{itemize}
+    \item VanderWeele TJ. \textit{Explanation in Causal Inference: Methods for Mediation and Interaction.} Oxford University Press, 2015. \textbf{The authoritative text for modern causal mediation analysis and understanding effect modification/interaction on causal scales.}
+    \item Brumback BA. \textit{Fundamentals of Causal Inference with R.} CRC Press, 2021. \textbf{Given that there are no dedicated lab sessions, students are strongly encouraged to utilize the R examples in Brumback (2021) and other provided resources when working on R assignments.}
+    \item Seminal papers by Rubin (e.g., Rubin, D. B. (1974). Estimating causal effects of treatments in randomized and nonrandomized studies. \textit{Journal of Educational Psychology}, 66(5), 688–701), Pearl, Rosenbaum \& Rubin (e.g., Rosenbaum, P. R., \& Rubin, D. B. (1983). The central role of the propensity score in observational studies for causal effects. \textit{Biometrika}, 70(1), 41–55), Hernán \& Robins. Specific papers will be assigned or recommended for relevant weeks.
+    \item Relevant chapters from other biostatistics/epidemiology texts discussing confounding, bias, etc.
+\end{itemize}
+
+\subsection{Datasets:}
+\begin{itemize}
+    \item Simulated datasets to illustrate specific biases or method applications.
+    \item Publicly available health datasets (e.g., NHANES subsets, data accompanying textbooks or papers like those from the Framingham Heart Study or specific trial emulations).
+\end{itemize}
+
+\subsection{Software \& Tools:}
+\begin{itemize}
+    \item \textbf{R:} Primary statistical software. (Students should have R and RStudio installed).
+    \item \textbf{R Packages:} \texttt{dagitty} (or online DAGitty tool: \url{http://dagitty.net} – \textbf{we will use this extensively to visualize causal assumptions and identify adjustment sets}), \texttt{MatchIt}, \texttt{WeightIt}, \texttt{cobalt}, \texttt{marginaleffects} (for obtaining interpretable marginal effects/predictions), \texttt{mediation}, \texttt{ivreg}, \texttt{geepack} (for GEE in MSMs) or \texttt{survey} (for weighted analyses), \texttt{survival} (for survival outcomes in MSMs), potentially \texttt{EValue}, \texttt{SenseMakes}, or \texttt{sensitivitymw} for sensitivity analyses. General utility: \texttt{dplyr} for data manipulation, \texttt{ggplot2} for visualization.
+    \item \textbf{DAGitty:} Web-based tool (\url{http://dagitty.net}) or R package for drawing and analyzing DAGs.
+\end{itemize}
+
+\section{Teaching Methods}
+A blended approach combining theoretical instruction with supported independent application is crucial for this topic.
+\begin{itemize}
+    \item \textbf{Lectures:} Covering theoretical concepts, introducing methods, and walking through examples. Emphasis on assumptions underlying each method.
+    \item \textbf{Flipped Classroom/Pre-recorded Mini-Lectures:} For some foundational topics, assign pre-recorded videos or readings and use class time for Q\&A and problem-solving.
+    \item \textbf{In-Class Activities:} Short exercises like drawing DAGs for a given scenario, interpreting output from a causal analysis, identifying the target estimand, or debating the plausibility of assumptions.
+    \item \textbf{Software Demonstrations:} Live coding sessions in R during lectures to show how to implement methods and, critically, how to check assumptions and interpret outputs. These demonstrations will serve as a primary guide for the Applied R Assignments.
+    \item \textbf{Independent Application and Support:} Students will apply concepts through R assignments completed outside of class. Detailed assignment instructions, code examples from lectures, and instructor office hours will provide support for these practical exercises.
+    \item \textbf{Paper Discussions:} Critical analysis of assigned research papers focusing on: the precise causal question, the assumed DAG (even if not explicitly drawn by authors), the chosen methods, the stated and unstated assumptions, appropriateness of methods for assumptions, potential for unmeasured confounding or other biases, and the justification for the causal conclusions drawn.
+    \item \textbf{Case Studies:} Work through detailed examples of causal inference applications in specific biostatistical contexts.
+\end{itemize}
+
+\section{Prerequisites}
+Students should have a solid foundation in core statistical and biostatistical concepts.
+\begin{itemize}
+    \item \textbf{Statistics:} Graduate-level probability and statistical inference. Familiarity with linear regression, logistic regression, and basic generalized linear models. Understanding of concepts like confounding and interaction in a traditional statistical modeling context.
+%    \item \textbf{Epidemiology (Recommended):} Basic understanding of epidemiological concepts, study designs (cohort, case-control), and measures of association (Risk Ratio, Odds Ratio).
+    \item \textbf{Probability:} Basic probability theory, conditional probability, Bayes' theorem.
+    \item \textbf{Statistical Software:} Intermediate proficiency in R. This includes data manipulation (e.g., using \texttt{dplyr} or base R equivalents), fitting regression models (\texttt{lm}, \texttt{glm}), basic plotting (\texttt{ggplot2} or base R), and writing simple functions or scripts. The course R assignments will primarily use R.
+\end{itemize}
+
+\section{Backward Design Alignment}
+The course structure is explicitly designed to build towards the stated learning outcomes and goals, culminating in the final project where students synthesize their knowledge.
+\begin{itemize}
+    \item \textbf{Outcomes shape Content:} The topics covered in the weekly syllabus (DAGs, Potential Outcomes, Propensity Scores, etc.) are selected specifically to address the learning outcomes.
+    \item \textbf{Outcomes shape Activities:} In-class activities and R assignments are designed to provide hands-on practice with the skills listed in the outcomes (drawing DAGs, implementing methods in R, interpreting results).
+    \item \textbf{Outcomes shape Assessments:} Problem sets test foundational understanding. R assignments test practical implementation. The midterm assesses understanding of core frameworks and methods. The final project requires students to demonstrate mastery of multiple outcomes by applying methods to a real problem and critically evaluating their findings. For example, the ability to ``implement propensity score matching/weighting using R'' (an outcome) is directly assessed in an R assignment and potentially utilized in the final project. The ability to ``critique causal inference methods'' is addressed in paper discussions and assessed in the final project report.
+\end{itemize}
+
+\section{Detailed Week-by-Week Syllabus (13 Weeks + Final Project)}
+This structure provides a logical flow, building from fundamental concepts to more advanced methods and applications. Each week will involve discussion of the assumptions critical to the methods presented. Assignments involving R will be completed independently, supported by in-class demonstrations and office hours.
+
+\subsection*{Week 1: Introduction to Causal Inference}
+\begin{itemize}
+    \item The importance of causal questions in science, especially biostatistics.
+    \item Association vs. Causation: "Correlation does not imply causation" – why and when?
+    \item Examples of causal pitfalls (e.g., Simpson's Paradox, Lord's Paradox).
+    \item Introduction to the two main frameworks: Potential Outcomes and Causal Graphs (DAGs).
+    \item Syllabus review and course expectations.
+    \item \textit{Readings:} Hernán \& Robins (HR) Ch 1; Pearl, Glymour, Jewell (PGJ) Ch 1; Imbens \& Rubin (IR) Ch 1.
+    \item \textit{Activity:} Discuss examples of causal claims in the news or research, sketch initial, informal DAGs representing these claims, and identify the desired intervention and outcome.
+\end{itemize}
+
+\subsection*{Week 2: Foundational Concepts: Probability, Statistics, and the Potential Outcomes Framework}
+\begin{itemize}
+    \item \textbf{Review of Essential Probability:} Conditional probability, Bayes' theorem, expectation, variance, law of total expectation/probability. How these underpin causal concepts.
+    \item \textbf{Review of Essential Statistics:} Measures of association (RR, OR, RD), confounding and interaction in standard regression models (\texttt{lm}, \texttt{glm}), interpretation of regression coefficients. Limitations for causal interpretation.
+    \item \textbf{Transition to Potential Outcomes:} Defining individual and average causal effects ($ATE$, $ATT$, $ATC$). The "causal estimand."
+    \item The Fundamental Problem of Causal Inference.
+    \item Stable Unit Treatment Value Assumption (SUTVA): No interference, well-defined interventions. Consistency assumption.
+    \item Randomized experiments as the gold standard; how they address the fundamental problem. Estimating causal effects in ideal RCTs.
+    \item \textit{Readings:} Relevant sections from prerequisite statistics texts (as refreshers); HR Ch 2, 3; IR Ch 2, 3.
+    \item \textit{Activity:} Linking statistical concepts of confounding to causal confounding. Discuss SUTVA violations.
+\end{itemize}
+
+\subsection*{Week 3: Introduction to Causal Graphs (DAGs)}
+\begin{itemize}
+    \item Nodes, edges (directed, undirected), and paths in DAGs.
+    \item Representing causal assumptions with DAGs; DAGs as non-parametric structural equation models.
+    \item Causal pathways and spurious (non-causal) pathways. D-separation.
+    \item Confounding: Common Causes and the Backdoor Criterion.
+    \item \textit{Readings:} PGJ Ch 2; HR Ch 6, 7.
+    \item \textit{Software:} Introduction to \texttt{dagitty} (web or R package). Practice drawing and interpreting simple DAGs, identifying open and closed paths.
+    \item \textit{Assignment:} Problem Set 1 (Conceptual POs, basic DAG drawing, identifying confounders via backdoor criterion conceptually).
+\end{itemize}
+
+\subsection*{Week 4: DAGs, Bias, and Identification}
+\begin{itemize}
+    \item Colliders and M-Bias: Why conditioning on a collider (or its descendant) induces bias.
+    \item Selection Bias as conditioning on a collider. Examples in study design.
+    \item The Frontdoor Criterion (introduction).
+    \item Using DAGs to identify sufficient adjustment sets for confounding.
+    \item \textit{Readings:} PGJ Ch 3, HR Ch 8.
+    \item \textit{Activity:} Draw DAGs for various scenarios (e.g., from described studies) and identify potential biases (confounding, selection) and propose adjustment sets if appropriate, or state why adjustment is not possible/advisable. Discuss untestable assumptions in DAGs.
+\end{itemize}
+
+\subsection*{Week 5: Identifiability, Exchangeability, and Standardization (G-Formula)}
+\begin{itemize}
+    \item Formalizing identifiability of causal effects.
+    \item Conditional Exchangeability (Ignorability, no unmeasured confounding).
+    \item The link between DAGs (d-separation, backdoor criterion) and Conditional Exchangeability.
+    \item Positivity (Overlap) assumption.
+    \item Introduction to the g-formula (standardization) as a way to achieve conditional exchangeability through outcome modeling. Assumptions for g-formula: conditional exchangeability, positivity, SUTVA, consistency, correct model specification.
+    \item \textit{Readings:} HR Ch 4, 5; PGJ Ch 3.
+    \item \textit{Software:} Simple g-formula calculation examples in R (e.g., using \texttt{predict} after \texttt{glm} and averaging, or using \texttt{marginaleffects}).
+    \item \textit{R Assignment 1 due soon (DAGs, Simulation, Bias, G-formula concepts).}
+\end{itemize}
+
+\subsection*{Week 6: Propensity Score Methods}
+\begin{itemize}
+    \item The concept of propensity scores (PS): The balancing score.
+    \item The balancing property and how PS help achieve conditional exchangeability.
+    \item Methods using PS: Matching, Stratification, Inverse Probability of Treatment Weighting (IPTW).
+    \item Estimating Average Treatment Effect ($ATE$) and Average Treatment Effect on the Treated ($ATT$) – clearly define these estimands and how methods target them.
+    \item Assumptions for propensity score methods: Conditional Exchangeability, Positivity (Overlap), SUTVA, Consistency, No unmeasured confounding of $X-Y$ given covariates, Correct PS model specification.
+    \item \textit{Readings:} HR Ch 12, 13; IR Ch 13-18; PGJ Ch 4 (section on PS).
+    \item \textit{R Assignment 2 assigned (Propensity Score Methods - \texttt{MatchIt}, \texttt{WeightIt}, \texttt{cobalt}).}
+\end{itemize}
+
+\subsection*{Week 7: Midterm Exam}
+\begin{itemize}
+    \item Covers Weeks 1-6 material. Focus on concepts, DAGs, assumptions, and interpretation.
+\end{itemize}
+
+\subsection*{Week 8: Instrumental Variables (IV)}
+\begin{itemize}
+    \item The concept of an instrumental variable: When unmeasured confounding is a major concern.
+    \item Assumptions for valid instruments: (1) Relevance (associated with X), (2) Exclusion Restriction (affects $Y$ only through $X$ – untestable), (3) Exogeneity/Independence (no common causes of $Z$ and $Y$, independent of potential outcomes Y(x)). Discuss the difficulty of finding valid IVs and justifying assumptions.
+    \item Estimating Local Average Treatment Effects ($LATE$) for compliers. Contrast with $ATE$/$ATT$. Monotonicity assumption.
+    \item Two-Stage Least Squares (2SLS) as an estimation method.
+    \item \textit{Readings:} HR Ch 16; IR Ch 23; PGJ Ch 5.
+    \item \textit{R Assignment 3 assigned (Instrumental Variable Analysis - \texttt{ivreg}).}
+    \item \textit{Final Project Proposal due.}
+\end{itemize}
+
+\subsection*{Week 9: Causal Mediation Analysis - Part 1: Concepts and Identification}
+\begin{itemize}
+    \item Defining direct and indirect effects: Decomposing a total effect. Purpose of mediation analysis.
+    \item Traditional approaches (Baron-Kenny) and their limitations for \textit{causal} mediation.
+    \item Counterfactual definitions: Natural Direct Effects ($NDE$), Natural Indirect Effects ($NIE$), Controlled Direct Effects ($CDE$). Total Effect.
+    \item DAGs for mediation: Visualizing paths and confounding.
+    \item Identification of $NDE$ and $NIE$: The four key no-unmeasured-confounding assumptions $(X-Y | M,C; X-M | C; M-Y | X,C$; and no $M-Y$ confounder affected by $X | C$). Discussion of cross-world counterfactuals and their independence.
+    \item \textit{Readings:} VanderWeele Ch 1-2; PGJ Ch 4 (section on mediation); HR Ch 9 (briefly, for contrast with advanced methods if any). Relevant articles on mediation assumptions.
+\end{itemize}
+
+\subsection*{Week 10: Causal Mediation Analysis - Part 2: Estimation, Interpretation, and Advanced Issues}
+\begin{itemize}
+    \item Estimation methods based on regression (for continuous outcomes, binary outcomes).
+    \item Difference method vs. Product method (and their assumptions).
+    \item Using software (e.g., \texttt{mediation} package in R): Implementation and interpretation of output.
+    \item Interaction (effect modification) in mediation: Does the direct or indirect effect vary by baseline covariates?
+    \item Brief discussion of sensitivity analysis for mediation assumptions (conceptual).
+    \item Limitations and common pitfalls in mediation analysis.
+    \item \textit{Readings:} VanderWeele Ch 3, 4; Relevant documentation for R packages.
+    \item \textit{R Assignment 4 assigned (Causal Mediation Analysis - \texttt{mediation} package).}
+\end{itemize}
+
+\subsection*{Week 11: Sensitivity Analysis (General Unmeasured Confounding)}
+\begin{itemize}
+    \item The importance of assessing sensitivity to unmeasured confounding for primary causal effects (e.g., from PS or G-formula methods).
+    \item Methods for sensitivity analysis:
+    \begin{itemize}
+        \item Cornfield conditions / ``Bounding factor'' approach.
+        \item E-values: concept, calculation, and interpretation.
+        \item Rosenbaum bounds for matched studies (if matching is heavily emphasized).
+    \end{itemize}
+    \item Interpreting sensitivity analysis results: How strong would unmeasured confounding need to be to alter conclusions?
+    \item \textit{Readings:} HR Ch 14; IR Ch 21; Ding \& VanderWeele (2016) on E-values; Rosenbaum (2002) \textit{Observational Studies} (relevant chapters).
+    \item \textit{Activity/Discussion:} Calculating and interpreting E-values for published results or hypothetical scenarios.
+\end{itemize}
+
+\subsection*{Week 12: Causal Inference with Time-Varying Treatments \& Marginal Structural Models (MSMs)}
+\begin{itemize}
+    \item Challenges with time-varying exposures/treatments: Time-varying confounding affected by prior treatment (feedback loops). Why standard regression/PS methods fail.
+    \item Introduction to Marginal Structural Models (MSMs). Target estimand: effect of a treatment strategy or regimen.
+    \item Using Inverse Probability of Treatment (and censoring, if relevant) Weighting (IPW) to fit MSMs. Stabilized weights.
+    \item Assumptions for MSMs: Sequential conditional exchangeability (no unmeasured confounders for treatment at each time point, given past covariates and treatment), sequential positivity, SUTVA, consistency, correct model specification for weights and outcome model.
+    \item \textit{Readings:} HR Ch 17, 18, 21 (MSMs).
+    \item \textit{R Assignment 5 assigned (Marginal Structural Models - \texttt{WeightIt}, \texttt{geepack}/\texttt{survey}).}
+\end{itemize}
+
+\subsection*{Week 13: Course Review, Project Work, and Responsible Causal Inference}
+\begin{itemize}
+    \item Review of core concepts, methods, and the unifying role of assumptions in causal inference.
+    \item Ethical considerations in conducting and reporting causal inference studies.
+    \item Responsible communication of causal findings, including uncertainty and limitations.
+    \item Dedicated time for students to work on their final projects and ask questions.
+    \item Discussion of final project report and presentation requirements.
+\end{itemize}
+
+\subsection*{Finals Week:}
+\begin{itemize}
+    \item Final Project Report Due.
+    \item Final Project Presentations.
+\end{itemize}
+
+\section{Interactive Learning Activities}
+\begin{itemize}
+    \item \textbf{DAG Drawing Sessions:} Students work in pairs or small groups to draw DAGs for presented scenarios, debate implied conditional independencies, and identify minimal sufficient adjustment sets.
+    \item \textbf{Assumption Debates:} Present a study design with a clear causal question and a proposed DAG. Have groups debate whether key causal assumptions (e.g., ignorability, SUTVA, exclusion restriction) are likely to hold and why, and what could be done to improve the design or analysis if assumptions are violated.
+    \item \textbf{Instructor-led Code-Along Sessions:} Instructor live codes an example analysis in R during lecture, with students following along and asking questions about interpretation and assumption checking at each step.
+    \item \textbf{"Find the Bias" Exercises:} Provide a description of a study and ask students to identify potential sources of confounding, selection bias, or other threats using causal reasoning and explicitly drawing a DAG.
+    \item \textbf{Critiquing Published Literature:} Assign a research paper using a causal inference method and have students prepare a structured critique focusing on the causal question, assumptions, methods, and conclusions. Discuss critiques in class. Students should attempt to draw the DAG implied by the authors' reasoning.
+    \item \textbf{Dataset Exploration:} Provide a new dataset and ask students to brainstorm potential causal questions, sketch initial DAGs reflecting plausible relationships, and discuss appropriate methods and their assumptions.
+    \item \textbf{``What's the Estimand?'' Exercises:} Given a research question and a method, students identify the precise causal estimand (e.g., $ATE$, $ATT$, $LATE$, $NDE$/$NIE$) being targeted and under what assumptions.
+\end{itemize}
+
+\section{Assessment Strategies}
+A mix of formative and summative assessments is used to provide feedback and evaluate learning comprehensively.
+\begin{itemize}
+    \item \textbf{Formative:}
+    \begin{itemize}
+        \item Weekly Problem Sets: Low stakes, designed for practice and feedback on understanding core concepts, calculations, and assumption articulation.
+        \item In-Class Activities: Informal checks of understanding and engagement.
+        \item Applied R Assignments (initial assignments): Focus on developing practical skills, with feedback on code, interpretation, and assumption checking.
+    \end{itemize}
+    \item \textbf{Summative:}
+    \begin{itemize}
+        \item Midterm Exam: Evaluates understanding of foundational theoretical concepts, basic applications, and the role of assumptions.
+        \item Applied R Assignments (later assignments): Assess proficiency in implementing specific methods and interpreting results.
+        \item Final Project (including proposal and presentation): Comprehensive assessment of the ability to define a causal question, choose and implement appropriate methods, conduct sensitivity analysis, and interpret/communicate findings in a real-world context. This is the primary assessment of the applied learning outcomes.
+    \end{itemize}
+    \item \textbf{Grading Rubrics:} Clear rubrics will be provided for all assignments and the final project to ensure transparency in evaluation criteria, focusing on correct application of methods, clear articulation and justification of assumptions, appropriate interpretation in a causal framework, recognition of limitations, and effective communication.
+\end{itemize}
+
+\section{Software Integration}
+Software is integrated throughout the course as a tool for applying theoretical concepts and performing analyses.
+\begin{itemize}
+    \item \textbf{Early Introduction:} Introduce R and relevant packages (like \texttt{dagitty}) early in the course during lectures.
+    \item \textbf{Applied R Assignments:} Structured R assignments provide hands-on practice with specific methods (propensity scores, IV, mediation, MSMs), completed independently by students.
+    \item \textbf{In-Lecture Demonstrations:} Use live coding demonstrations during lectures to illustrate how methods are implemented and what the output looks like, always linking back to the estimand and assumptions. These demonstrations will serve as a key guide for the R assignments.
+    \item \textbf{Problem Sets:} May include questions that require students to use R to analyze a small dataset or simulate data to understand a concept.
+    \item \textbf{Final Project:} Requires students to independently apply software to a chosen dataset.
+    \item \textbf{Focus on Interpretation and Support:} While coding skills are necessary, emphasis will be placed on correctly interpreting the software output in the context of the causal question, the chosen estimand, and the underlying assumptions. Students will be expected to justify why a particular method and its implementation are appropriate for the causal question and assumed DAG, and to critically assess model diagnostics (e.g., balance, overlap). Support for R-related questions will be available during instructor office hours.
+\end{itemize}
+%
+%\section{Course Policies (Please Adapt to UNM Policies)}
+%
+%\subsection{Academic Integrity}
+%All work submitted in this course must be your own, unless otherwise specified by the instructor (e.g., for group discussions). Adherence to the University of New Mexico's Academic Integrity Policy (see UNM Pathfinder: \url{https://pathfinder.unm.edu/campus-policies/academic-integrity.html} or Student Code of Conduct) is expected. Any suspected violations will be handled according to university procedures.
+%
+%\subsection{Late Work}
+%Late assignments will [Your Late Policy, e.g., "be penalized 10\% per day" or "not be accepted without a documented excuse"]. Please discuss any anticipated difficulties in meeting deadlines with the instructor in advance.
+%
+%\subsection{Communication}
+%The primary method for course announcements will be [Your UNM LMS, e.g., UNM Learn/Canvas, or Email]. Students are responsible for checking these regularly. For questions, please utilize office hours or email. Allow up to [e.g., 24-48 hours during weekdays] for an email response.
+%
+%\subsection{Accessibility Resources}
+%The University of New Mexico is committed to providing equal educational opportunities for students with disabilities. If you have a documented disability and require accommodations in this course, please register with the Accessibility Resource Center (ARC) (\url{https://arc.unm.edu/}) and provide an official letter of accommodation to the instructor as early as possible in the semester to ensure your needs are met in a timely manner.
+%
+%\subsection{Title IX (Sexual Misconduct)}
+%In an effort to meet obligations under Title IX, UNM faculty, Teaching Assistants, and Graduate Assistants are considered “responsible employees” by the Department of Education. This means that any report of gender discrimination which includes sexual harassment, sexual misconduct and sexual violence made to a faculty member, TA, or GA must be reported to the Title IX Coordinator at the Office of Compliance, Ethics \& Equal Opportunity (CEEO). For more information on the campus policy regarding sexual misconduct, see: \url{https://policy.unm.edu/university-policies/2000/2740.html}. If you or someone you know has been harassed or assaulted, you can find the appropriate resources here: \url{https://oeo.unm.edu/resources/sexual-harassment-assault-resources.html}.
+%
+%\subsection{Diversity, Equity, and Inclusion}
+%This course is designed to be an inclusive and welcoming environment for all students, regardless of background, identity, or perspective. All students are expected to contribute to creating a respectful classroom environment. Diverse viewpoints are valued and encouraged in class discussions. If you have any concerns or suggestions for improving the inclusivity of the course, or if you experience any instance of exclusion, harassment, or discrimination, please feel free to speak with the instructor or contact the Office of Compliance, Ethics \& Equal Opportunity.
+
+\end{document}

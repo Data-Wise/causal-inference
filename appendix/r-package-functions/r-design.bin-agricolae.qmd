@@ -1,0 +1,193 @@
+
+---
+title: "Tutorial for design.bib in the agricolae Package"
+date: "3/15/2025"
+date-modified: last-modified
+date-format: long
+---
+# Tutorial for `design.bib` in the `agricolae` Package
+
+## 1. Introduction
+
+### Overview
+
+The `agricolae` package in R is a comprehensive tool designed for statistical procedures in agricultural research. It provides a variety of functions for experimental design, analysis of variance, clustering, and more. Among its offerings, the `agricolae::design.bib()` function stands out for creating Randomized Balanced Incomplete Block Designs (BIBD). A BIBD is an experimental design where the number of treatments exceeds the block size, yet each pair of treatments appears together in the same number of blocks, ensuring balanced comparisons. This tutorial focuses on `agricolae::design.bib()`, with mentions of supporting packages like `AlgDesign`, which is required for its operation.
+
+- **Package:** `agricolae`
+- **Key Function:** `agricolae::design.bib()`
+- **Supporting Package:** `AlgDesign`
+- **Purpose:** Generates a Randomized Balanced Incomplete Block Design for experiments with incomplete blocks.
+
+### Use Cases
+
+The `agricolae::design.bib()` function is particularly useful in scenarios such as:
+
+- Agricultural field trials where plots (blocks) have limited space to test all treatments (e.g., crop varieties or fertilizers).
+- Experiments requiring balanced comparisons despite constraints on block size, such as greenhouse studies with limited bench space.
+- Research settings where resource efficiency is critical, and not all treatments can be applied simultaneously in each block.
+
+### Benefits
+
+Using `agricolae::design.bib()` offers several advantages:
+
+- **Resource Efficiency:** Optimizes the use of limited experimental units.
+- **Balanced Comparisons:** Ensures each treatment pair is compared an equal number of times, enhancing statistical reliability.
+- **Flexibility:** Handles incomplete block designs, making it adaptable to real-world constraints.
+
+When referencing functions from non-base packages, we will use the `package::function()` format, such as `agricolae::design.bib()`, to clearly indicate their origin.
+
+## 2. Getting Started
+
+### Loading the Package
+
+To begin, load the `agricolae` package using `pacman::p_load()`, which simplifies package installation and loading:
+
+```{r}
+pacman::p_load(agricolae)
+```
+
+### Basic Usage
+
+Here's a simple example to create a BIBD with 4 treatments and a block size of 3:
+
+```{r}
+# Define treatments
+trt <- c("A", "B", "C", "D")
+
+# Define block size
+k <- 3
+
+# Generate BIBD
+outdesign <- agricolae::design.bib(
+    trt,
+    k,
+    serie = 2,
+    seed = 41,
+    kinds = "Super-Duper"
+)
+
+# Print design parameters
+outdesign$parameters |> print()
+
+# View the field book
+book <- outdesign$book
+book |> print()
+
+# View the sketch of the design
+outdesign$sketch |> print()
+```
+
+**Annotations:**
+
+- `trt`: A vector of treatment labels (here, "A" to "D").
+- `k`: The number of treatments per block (3).
+- `serie = 2`: Sets plot numbering to a two-digit format (e.g., 101, 102).
+- `seed = 41`: Ensures randomization is reproducible.
+- `kinds = "Super-Duper"`: Specifies the random number generation method.
+- The output includes `parameters` (design details), `book` (field layout), and `sketch` (block-treatment matrix).
+
+## 3. Key Functions and Features
+
+### Description
+
+The `agricolae::design.bib()` function generates a Randomized Balanced Incomplete Block Design. It ensures each treatment appears in a specified number of blocks and each pair of treatments appears together in a consistent number of blocks (denoted as lambda, λ), maintaining balance despite incomplete blocks.
+
+### Syntax
+
+Here's the function structure without execution:
+
+```r
+agricolae::design.bib(trt, k, r = NULL, serie = 2, seed = 0, kinds = "Super-Duper", maxRep = 20, randomization = TRUE)
+```
+
+**Arguments:**
+
+- `trt`: Vector of treatment names or an integer for the number of treatments.
+- `k`: Integer specifying the block size (treatments per block).
+- `r`: Optional; number of replications per treatment. If `NULL`, the smallest feasible `r` is calculated.
+- `serie`: Integer (1, 2, or 3) for plot numbering format (e.g., 1: 11, 12; 2: 101, 102).
+- `seed`: Integer for randomization reproducibility.
+- `kinds`: Character string for the random number generation method (e.g., "Super-Duper", "Mersenne-Twister").
+- `maxRep`: Maximum iterations to find a design.
+- `randomization`: Logical; if `TRUE`, randomizes the design.
+
+### Example
+
+Let's create a BIBD with 5 treatments and a block size of 3:
+
+```{r}
+# Define treatments
+trt <- c("T1", "T2", "T3", "T4", "T5")
+
+# Define block size
+k <- 3
+
+# Generate BIBD with a seed for reproducibility
+outdesign <- agricolae::design.bib(trt, k, seed = 123, serie = 2)
+
+# Print design parameters
+outdesign$parameters |> print()
+
+# Extract and print the field book
+book <- outdesign$book
+book |> print()
+
+# Print the design sketch
+outdesign$sketch |> print()
+```
+
+**Step-by-Step Comments:**
+
+- `trt`: Defines 5 treatments as a character vector.
+- `k = 3`: Sets each block to contain 3 treatments.
+- `seed = 123`: Fixes the randomization for consistency.
+- `outdesign$parameters`: Shows design specifics like number of blocks and lambda.
+- `outdesign$book`: Lists plot assignments with block and treatment details.
+- `outdesign$sketch`: Displays a matrix of blocks (rows) and treatment positions (columns).
+
+## 4. In-Depth Examples
+
+### Example 1: Designing a BIBD for 6 Treatments with Block Size 4
+
+#### Objective
+
+Create a BIBD for 6 treatments, with each block containing 4 treatments, to plan a field experiment with limited plot sizes.
+
+#### Steps
+
+1. **Data Preparation:** Define the treatments.
+2. **Function Application:** Apply `agricolae::design.bib()` with specified parameters.
+3. **Visualization:** Examine the design structure.
+
+```{r}
+#| eval=FALSE
+# Define treatments
+trt <- c("A", "B", "C", "D", "E", "F")
+
+# Define block size
+k <- 4
+
+# Generate BIBD
+outdesign <- agricolae::design.bib(trt, k, seed = 456, serie = 2)
+
+# Print design parameters
+outdesign$parameters |> print()
+
+# Print the field book
+book <- outdesign$book
+book |> print()
+
+# Print the sketch
+outdesign$sketch |> print()
+```
+
+#### Output
+
+- **Parameters:** Lists the number of treatments (6), block size (4), replications (r), blocks (b), and lambda (λ).
+- **Field Book:** Shows plot numbers, block assignments, and treatments (e.g., plot 101 in block 1 with treatment "A").
+- **Sketch:** A matrix where each row is a block, and columns show treatment assignments (e.g., row 1 might be "A", "B", "C", "D").
+
+#### Interpretation
+
+The design ensures each treatment appears in `r` blocks, and each pair appears together `λ` times, balancing comparisons across the experiment.
+

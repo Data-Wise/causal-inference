@@ -1,0 +1,336 @@
+---
+title: "The Gold Standard: Randomized Experiments & Potential Outcomes"
+---
+
+## Introduction
+
+Welcome to STAT 579! This week, we begin our journey by establishing the fundamental principles of causal inference. Our goal is to move beyond mere association ("A is correlated with B") to make credible claims about causation ("A *causes* B"). To do this, we need a precise language and a rigorous framework.
+
+This module introduces the Potential Outcomes framework, which is the bedrock of modern causal inference. We will then explore why the Randomized Controlled Trial (RCT) is considered the "gold standard" design for answering causal questions and how it elegantly solves the most significant challenge in the field.
+
+### Learning Objectives
+
+By the end of this week, you will be able to:
+
+1. Define a causal effect for an individual and a population using the Potential Outcomes framework.
+2. Explain the "Fundamental Problem of Causal Inference" and its implications.
+3. Articulate the two components of the Stable Unit Treatment Value Assumption (SUTVA) and identify potential violations.
+4. Prove why randomization allows the difference-in-means to be an unbiased estimator of the Average Treatment Effect (ATE).
+5. Calculate an estimated ATE from data and connect it to the output of both a t-test and a simple linear regression model in R.
+
+
+## Part 1: The Language of Causality (Tuesday Session)
+
+### The Fundamental Problem of Causal Inference
+
+The central challenge of causal inference can be stated simply: we can never observe an individual's outcome under both treatment and control at the same time. For any person, we see what happened, but we can never see what *would have happened* under a different choice. This unobservable outcome is known as the counterfactual.
+
+Causal inference, therefore, is a scientific approach to dealing with a missing data problem. For every individual, at least one potential outcome is missing.
+
+### 🧠 Clarifying The Concept: The Two Paths Analogy
+
+> Imagine you are a doctor with a patient who has high blood pressure. You stand at a fork in the road for their treatment plan. Path A is to prescribe a new drug. Path B is to prescribe a placebo. You can only choose one path. If you choose the drug (Path A), you will observe their blood pressure in a month. But you will never know what their blood pressure *would have been* had you chosen the placebo (Path B) at that same moment. That un-chosen path represents the counterfactual. The core task of causal inference is to find rigorous ways to compare the destinations of Path A and Path B, even though no single patient can ever travel both.
+
+### The Potential Outcomes Framework
+
+To reason about these two paths, we use the Potential Outcomes framework (also called the Neyman-Rubin Causal Model). Let's establish our notation for a simple scenario with a binary treatment.
+
+  - Unit $i$: An individual in our study (e.g., a patient, a person, a school).
+  - Treatment $Z_i$: A binary variable, where $Z_i=1$ if unit $i$ receives the treatment and $Z_i=0$ if unit $i$ receives the control.
+  - Potential Outcomes $Y_i(1)$ and $Y_i(0)$: These are the pre-existing, latent outcomes for unit $i$ under both possible scenarios.
+      - $Y_i(1)$: The outcome for unit $i$ if they were to receive the treatment ($Z=1$).
+      - $Y_i(0)$: The outcome for unit $i$ if they were to receive the control ($Z=0$).
+
+For any given individual, both $Y_i(1)$ and $Y_i(0)$ are assumed to exist before any treatment is actually assigned.
+
+### The Individual Causal Effect ($\tau_i$)
+
+The individual causal effect ($\tau_i$, or "tau") is the difference between these two potential outcomes for a single unit:
+
+$$
+\tau_i = Y_i(1) - Y_i(0)
+$$
+
+Because of the Fundamental Problem, we can never observe $\tau_i$ for any individual. We can only observe one of the two potential outcomes. The observed outcome, $Y_i$, is linked to the potential outcomes through the treatment assignment $Z_i$:
+
+$$
+Y_i = Z_i \cdot Y_i(1) + (1-Z_i) \cdot Y_i(0)
+$$
+
+This is a compact way to say that if $Z_i=1$, we observe $Y_i(1)$; if $Z_i=0$, we observe $Y_i(0)$.
+
+### ✅ Example: A Hypothetical Drug Trial ("God's-eye View")
+
+Let's test a new blood pressure drug on 6 patients. Imagine we have a "God's-eye view" and can see all potential outcomes (in mmHg).
+
+| Patient ($i$) | $Y_i(1)$ <br> (Outcome if Treated) | $Y_i(0)$ <br> (Outcome if Control) | $\tau_i = Y_i(1) - Y_i(0)$ <br> (Individual Causal Effect) |
+| :------------ | :----------------------------------: | :----------------------------------: | :----------------------------------------------------------: |
+| 1             |                 130                  |                 145                  |                             -15                              |
+| 2             |                 125                  |                 130                  |                              -5                              |
+| 3             |                 140                  |                 150                  |                             -10                              |
+| 4             |                 135                  |                 155                  |                             -20                              |
+| 5             |                 150                  |                 155                  |                              -5                              |
+| 6             |                 140                  |                 145                  |                              -5                              |
+
+From this complete data, we can see the true causal effect for each person. But in reality, we can't see this full table.
+
+### From Individuals to Populations: The Average Treatment Effect (ATE)
+
+Since we cannot access $\tau_i$, we shift our goal to a more feasible target: the Average Treatment Effect (ATE). The ATE is the average of the individual causal effects across our population of interest.
+
+$$
+\text{ATE} = E[\tau_i] = E[Y_i(1) - Y_i(0)]
+$$
+
+By the linearity of expectation, a fundamental rule in probability, we can rewrite this as:
+
+$$
+\text{ATE} = E[Y_i(1)] - E[Y_i(0)]
+$$
+
+Using our "God's-eye view" data, the true ATE is:
+
+  - $E[Y(1)] = (130 + 125 + 140 + 135 + 150 + 140) / 6 = 136.67$
+  - $E[Y(0)] = (145 + 130 + 150 + 155 + 155 + 145) / 6 = 146.67$
+  - True ATE = $136.67 - 146.67 = \mathbf{-10.0}$ mmHg
+
+### 📌 Key Assumption: SUTVA
+
+The entire Potential Outcomes framework rests on the Stable Unit Treatment Value Assumption (SUTVA). This is a crucial assumption we make in almost all causal analyses. SUTVA has two parts:
+
+1. No Interference: The potential outcomes for one unit are unaffected by the treatment assignment of other units.
+
+      - Public Health Example: In a vaccine trial, if vaccinating person A reduces the chance that person B (in the placebo group) gets the flu, then person B's outcome has been "interfered" with by person A's treatment. This violates the no-interference assumption. These are often called "spillover" effects.
+
+2. Consistency (or "One Version of Treatment"): For a unit $i$ who received treatment $Z_i=z$, their observed outcome $Y_i$ is equal to their potential outcome $Y_i(z)$. This implies that there is only one "version" of the treatment.
+
+      - Public Health Example: A therapy program is the "treatment." If some therapists are far more effective than others, then a patient's outcome depends not just on getting therapy ($Z=1$), but on *which therapist* they got. In this case, there are multiple versions of the treatment, and the consistency assumption may be violated.
+
+## Part 2: The Power of Randomization (Thursday Session)
+
+### From "God's-eye View" To Reality
+
+In a real study, we must assign treatments. Suppose we randomly assign patients 1, 3, 5 to the drug ($Z=1$) and patients 2, 4, 6 to the placebo ($Z=0$). The data we actually collect would look like this:
+
+| Patient ($i$) | $Z_i$ (Assigned) | $Y_i$ (Observed) | *What we see: $Y_i(1)$* | *What we see: $Y_i(0)$* | *What is missing* |
+| :------------ | :--------------: | :--------------: | :---------------------: | :---------------------: | :---------------- |
+| 1             |     1 (Drug)     |       130        |           130           |                         | $Y_1(0) = 145$    |
+| 2             |   0 (Placebo)    |       130        |                         |           130           | $Y_2(1) = 125$    |
+| 3             |     1 (Drug)     |       140        |           140           |                         | $Y_3(0) = 150$    |
+| 4             |   0 (Placebo)    |       155        |                         |           155           | $Y_4(1) = 135$    |
+| 5             |     1 (Drug)     |       150        |           150           |                         | $Y_5(0) = 155$    |
+| 6             |   0 (Placebo)    |       145        |                         |           145           | $Y_6(1) = 140$    |
+
+### Selection Bias: The Arch-Nemesis of Causal Inference
+
+The simplest way to estimate the effect is to compare the average outcomes in the two groups. But is this comparison valid? Let's decompose the "naïve" difference in means:
+
+$$
+\underbrace{E[Y | Z=1] - E[Y | Z=0]}_{\text{Naïve Difference}} = \underbrace{E[Y(1) | Z=1] - E[Y(0) | Z=0]}_{\text{What we can calculate}}
+$$
+
+Through a small algebraic trick (see Appendix), we can rewrite this as:
+
+$$
+\text{Naïve Difference} = \underbrace{E[Y(1) - Y(0) | Z=1]}_{\text{ATT}} + \underbrace{\{E[Y(0) | Z=1] - E[Y(0) | Z=0]\}}_{\text{Selection Bias}}
+$$
+
+where ATT is the Average Treatment Effect on the Treated.
+
+::: {.callout-warning}
+
+### Selection Bias
+
+Selection Bias is the systematic difference in baseline potential outcomes ($Y(0)$) between the group that receives treatment and the group that does not. In observational studies, this is almost always present. For example, sicker patients may be more likely to seek out a new treatment, meaning the treated group was less healthy to begin with. This bias will distort our estimate of the causal effect.
+:::
+
+### Randomization To the Rescue
+
+This is where the magic of the Randomized Controlled Trial (RCT) comes in. By randomly assigning the treatment $Z$, we sever any systematic link between the treatment and the potential outcomes. On average, the group that gets the treatment is identical to the group that gets the control on *all* baseline characteristics, both observed and unobserved.
+
+::: {.callout-note}
+
+### Theorem: Independence by Randomization
+
+In an ideal RCT, the treatment assignment $Z$ is statistically independent of the potential outcomes $(Y(1), Y(0))$. We write this as:
+
+$$
+(Y(1), Y(0)) \perp Z
+$$
+
+This implies that the expectation of a potential outcome is the same regardless of which group you look at:
+
+  - $E[Y(0) | Z=1] = E[Y(0) | Z=0] = E[Y(0)]$
+  - $E[Y(1) | Z=1] = E[Y(1) | Z=0] = E[Y(1)]$
+:::
+
+Because of this property, the selection bias term becomes zero:
+
+$$
+\text{Selection Bias} = E[Y(0) | Z=1] - E[Y(0) | Z=0] = 0
+$$
+
+And our decomposition simplifies beautifully:
+
+$$
+E[Y | Z=1] - E[Y | Z=0] = E[Y(1)] - E[Y(0)] = \text{ATE}
+$$
+
+This proves that in an RCT, the simple difference in observed means is an unbiased estimator of the Average Treatment Effect.
+
+### Estimation And Lab Preview
+
+Our estimator for the ATE, denoted $\hat{\tau}_{ATE}$, is the sample difference-in-means:
+
+$$
+\hat{\tau}_{ATE} = \bar{Y}_{Z=1} - \bar{Y}_{Z=0}
+$$
+
+✅ Example: Estimating the ATE from Observed Data
+
+Using our observed data:
+
+  - Treated Group ($Z=1$): {130, 140, 150}. Mean $\bar{Y}_1 = 140.0$.
+  - Control Group ($Z=0$): {130, 155, 145}. Mean $\bar{Y}_0 = 143.33$.
+
+Our estimate is:
+
+$$
+\hat{\tau}_{ATE} = 140.0 - 143.33 = \mathbf{-3.33} \text{ mmHg}
+$$
+
+This estimate (-3.33) differs from the true ATE (-10.0) due to random sampling variability. Because our sample is tiny, this one particular randomization wasn't perfectly balanced. However, the *procedure* is unbiased, meaning if we repeated this experiment many times, the average of our estimates would converge to the true value.
+
+In our lab session, we will perform these calculations in R.
+
+```r
+# Data from our example
+df <- data.frame(
+  sbp = c(130, 140, 150, 130, 155, 145),
+  treatment = c(1, 1, 1, 0, 0, 0)
+)
+
+# 1. Manual difference-in-means
+mean_treated <- mean(df$sbp[df$treatment == 1])
+mean_control <- mean(df$sbp[df$treatment == 0])
+ate_est <- mean_treated - mean_control
+print(ate_est)
+#> [1] -3.333333
+
+# 2. Using a t-test (standard statistical procedure)
+t.test(sbp ~ treatment, data = df, var.equal = TRUE)
+# The output provides the means of both groups and the difference.
+
+# 3. Using a linear model (regression)
+model <- lm(sbp ~ treatment, data = df)
+summary(model)
+# The coefficient for 'treatment' is our ATE estimate!
+```
+
+
+
+### ❓ Check Your Understanding
+
+1. Question: A study on a new tutoring program allows students to sign up voluntarily. Researchers find that tutored students have higher test scores. Why is this likely not a pure causal effect? What is the likely direction of the selection bias?
+    <details>
+    <summary>Answer</summary>
+    This is an observational study, not an RCT. Students who voluntarily sign up for tutoring are likely more motivated or have more parental support than those who do not. This means their baseline potential outcome, $E[Y(0) | Z=1]$ (what their score *would have been* without tutoring), is likely higher than the baseline for the non-tutored group, $E[Y(0) | Z=0]$. This is positive selection bias, which makes the tutoring program appear more effective than it truly is.
+    </details>
+
+<br>
+
+2\. Question: In a study of a new fertilizer on corn fields, some fields are very large and some are small. The "treatment" is a uniform application rate (e.g., 10kg per hectare). Does this scenario potentially violate any part of SUTVA?
+
+<details>
+
+<summary>Answer</summary>
+
+This could violate the Consistency assumption ("one version of the treatment"). While the application *rate* is the same, the actual farming practices, soil quality, and other factors might differ systematically between large and small fields. If the effect of the fertilizer depends on these other factors that are bundled with the unit type, one might argue there are different "versions" of how the treatment is experienced. There is no interference mentioned.
+
+</details>
+
+## 📚 Appendix: Advanced Statistical Derivations and Theory
+
+### 📕 Topic 1: Formal Proof of Unbiasedness of the ATE Estimator
+
+Motivation: Proving that our estimator is "unbiased" is the theoretical guarantee that our estimation procedure, on average, will give us the right answer. It is the foundation for all valid inference in an RCT.
+
+Derivation: We want to show that $E[\hat{\tau}_{ATE}] = \text{ATE}$.
+The estimator is $\hat{\tau}_{ATE} = \bar{Y}_1 - \bar{Y}_0$. By linearity of expectation, $E[\hat{\tau}_{ATE}] = E[\bar{Y}_1] - E[\bar{Y}_0]$.
+Let's analyze $E[\bar{Y}_1] = E[Y_i | Z_i=1]$.
+
+$$
+\begin{aligned}
+E[Y_i | Z_i=1] &= E[Z_i Y_i(1) + (1-Z_i)Y_i(0) | Z_i=1] & & \text{1. Substitute for } Y_i \
+&= E[1 \cdot Y_i(1) + (1-1)Y_i(0) | Z_i=1] & & \text{2. Plug in } Z_i=1 \
+&= E[Y_i(1) | Z_i=1] & & \text{3. Simplify} \
+&= E[Y_i(1)] & & \text{4. By independence from randomization}
+\end{aligned}
+$$
+
+Similarly, $E[\bar{Y}_0] = E[Y_i | Z_i=0] = E[Y_i(0)]$.
+Therefore,
+$$
+E[\hat{\tau}_{ATE}] = E[Y_i(1)] - E[Y_i(0)] = \text{ATE}
+$$
+
+The proof is complete. The key step (4) relies entirely on randomization making treatment assignment independent of potential outcomes.
+
+### 📕 Topic 2: Variance of the ATE Estimator
+
+Motivation: Unbiasedness tells us our aim is correct, but variance tells us about our precision. We need the variance to calculate standard errors and confidence intervals, which communicate the uncertainty in our estimate.
+
+Derivation: The variance of our estimator is $Var(\hat{\tau}_{ATE}) = Var(\bar{Y}_1 - \bar{Y}_0)$.
+Because the treatment and control groups are independent samples, the variance of the difference is the sum of the variances:
+
+$$
+Var(\hat{\tau}_{ATE}) = Var(\bar{Y}_1) + Var(\bar{Y}_0)
+$$
+
+For the sample mean of the treated group, $Var(\bar{Y}_1) = \frac{Var(Y_i | Z_i=1)}{n_1} = \frac{\sigma^2_1}{n_1}$. Similarly, $Var(\bar{Y}_0) = \frac{\sigma^2_0}{n_0}$.
+
+So, the true variance of the estimator is:
+
+$$
+Var(\hat{\tau}_{ATE}) = \frac{\sigma^2_1}{n_1} + \frac{\sigma^2_0}{n_0}
+$$
+
+In practice, we don't know the true population variances $\sigma^2_1$ and $\sigma^2_0$. We estimate them using the sample variances from our data, $S^2_1$ and $S^2_0$. The estimated variance is:
+$$
+\widehat{Var}(\hat{\tau}_{ATE}) = \frac{S^2_1}{n_1} + \frac{S^2_0}{n_0}
+$$
+
+The Standard Error (SE) is the square root of this estimated variance: $SE(\hat{\tau}_{ATE}) = \sqrt{\frac{S^2_1}{n_1} + \frac{S^2_0}{n_0}}$.
+
+✅ Worked Example:
+
+From our observed data:
+
+- Treated Group {130, 140, 150}: $n_1=3$, Sample Variance $S^2_1 = \frac{(130-140)^2 + (140-140)^2 + (150-140)^2}{3-1} = 100$.
+- Control Group {130, 155, 145}: $n_0=3$, Sample Variance $S^2_0 = \frac{(130-143.33)^2 + (155-143.33)^2 + (145-143.33)^2}{3-1} \approx 175$.
+
+$\widehat{Var}(\hat{\tau}_{ATE}) = \frac{100}{3} + \frac{175}{3} \approx 33.33 + 58.33 = 91.66$
+
+$SE(\hat{\tau}_{ATE}) = \sqrt{91.66} \approx \mathbf{9.57}$
+
+### 📕 Topic 3: Equivalence of Difference-in-Means and Simple Regression
+
+Motivation: This proof provides a critical link between the simple, non-parametric approach of comparing means and the more flexible framework of linear regression. It shows that for the simplest case, they are identical, justifying our use of regression to estimate causal effects.
+
+Derivation: Consider the simple linear regression model $Y_i = \beta_0 + \beta_1 Z_i + \epsilon_i$, where $Z_i \in {0, 1}$.
+The OLS estimator for $\beta_1$ is $\hat{\beta}_1 = \frac{Cov(Z, Y)}{Var(Z)}$.
+Let $p = n_1/N$ be the proportion treated.
+
+- Variance of Z: $Var(Z) = E[Z^2] - (E[Z])^2 = p - p^2 = p(1-p)$.
+- Covariance of Z and Y: $Cov(Z, Y) = E[ZY] - E[Z]E[Y]$.
+- $E[ZY] = E[Y|Z=1]P(Z=1) + E[Y|Z=0]P(Z=0) = \bar{Y}_1 \cdot p + \bar{Y}_0 \cdot 0 = p\bar{Y}_1$.
+- $E[Y] = \bar{Y}_1 \cdot p + \bar{Y}_0 \cdot (1-p)$.
+- $Cov(Z, Y) = p\bar{Y}_1 - p(\bar{Y}_1 p + \bar{Y}_0 (1-p)) = p\bar{Y}_1 - p^2\bar{Y}_1 - p(1-p)\bar{Y}_0 = p(1-p)\bar{Y}_1 - p(1-p)\bar{Y}_0 = p(1-p)(\bar{Y}_1 - \bar{Y}_0)$.
+
+Now, we compute the ratio:
+
+$$
+\hat{\beta}_1 = \frac{p(1-p)(\bar{Y}_1 - \bar{Y}_0)}{p(1-p)} = \bar{Y}_1 - \bar{Y}_0
+$$
+
+This shows that the OLS estimate of the slope coefficient for a binary regressor is exactly the difference in the sample means between the group where $Z=1$ and the group where $Z=0$.

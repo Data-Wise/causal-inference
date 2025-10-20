@@ -1,0 +1,201 @@
+---
+title: "Week 5: Identifiability, Exchangeability, and Positivity"
+---
+
+# Motivation and Learning Objectives
+
+In previous weeks, we established a language for talking about causality. The **Potential Outcomes Framework** gave us a mathematical definition of a causal effect (e.g., ATE, ATT), and **DAGs** gave us a visual language to articulate our assumptions.
+
+However, both frameworks deal with quantities that are fundamentally unobservable—counterfactuals. This week, we bridge the gap between the theoretical world of potential outcomes and the practical world of observed data. We ask the question: **Under what conditions can we use the data we have to estimate the causal effect we want?**
+
+The answer lies in the concept of **identifiability**. Identifiability provides the "recipe" that allows us to combine our observable "ingredients" (the data) to create the causal "dish" we care about. This recipe relies on three critical assumptions: **exchangeability, positivity, and consistency**. Mastering these concepts is essential, as they form the logical foundation for every causal method we will study in this course.
+
+By the end of this module, you will be able to:
+
+1. **Define** identifiability and its crucial role in causal inference.
+2. **Articulate** and **intuitively explain** the three core identification conditions: exchangeability, positivity, and consistency.
+3. **Assess** these conditions in practice using graphical tools and statistical diagnostics.
+4. **Understand** the consequences of violating these assumptions.
+5. **Conduct and interpret** a basic sensitivity analysis to probe the robustness of a causal estimate to unmeasured confounding.
+
+# Key Concepts: The Rules of the Causal Inference Game
+
+## 1. Identifiability: The Bridge from Theory to Practice
+
+**Identifiability** is the formal condition that allows us to express a causal parameter (defined using unobservable potential outcomes) in terms of the statistical properties of the observed data.
+
+  - **Causal Estimand**: The quantity we *want* to know, e.g., $ATE = E[Y(1) - Y(0)]$. This is a counterfactual quantity.
+  - **Statistical Estimate**: A quantity we can *calculate* from data, e.g., an adjusted difference in means.
+
+If a causal estimand is identifiable, it means a "recipe" exists to calculate it from a large enough dataset. If it's not identifiable, then no amount of data can give us the answer. Our goal is to establish the conditions under which this recipe is valid.
+
+## 2. The Three Conditions for Identifiability
+
+For a causal effect to be identifiable from observational data, three core conditions must hold.
+
+## 📌 Condition 1: Exchangeability (No Confounding)
+
+This is the most critical and most challenging assumption in observational research.
+
+  - **Formal Definition**: The treated and control groups are exchangeable, conditional on a set of measured covariates `Z`, if the treatment assignment is independent of the potential outcomes.
+
+$$
+(Y(1), Y(0)) \perp D | Z
+$$
+
+  - **Intuition (The "Fair Start" Analogy)**: Imagine two groups of runners, one group receiving special running shoes (the "treated") and the other not. To know the causal effect of the shoes, we need to believe the two groups are comparable in their running ability. If the faster runners are all given the special shoes, the comparison is unfair. This is confounding. **Conditional exchangeability** means that if we compare runners *of the same ability level* (conditioning on `Z` = ability), then *within that level*, it's "as if" the shoes were randomly assigned. The control runners in that ability group are a valid proxy for what would have happened to the treated runners in that same ability group had they not received the shoes.
+  - **Assessment**: Exchangeability is **untestable** because it involves unobserved potential outcomes. We can only build a case for it by:
+
+    1. Using a DAG to argue that we have identified and measured all common causes (`Z`) that create backdoor paths.
+    2. Checking for **covariate balance**: Testing if the distribution of `Z` is similar between the treated and control groups. If it's not, we need statistical adjustment. If it is, it provides some (weak) support for the assumption.
+
+## 📌 Condition 2: Positivity (Overlap or Common Support)
+
+  - **Formal Definition**: For every level of the covariates `Z`, there must be a non-zero probability of being both treated and untreated.
+
+$$
+0 < P(D=1 | Z=z) < 1 \text{ for all } z
+$$
+
+  - **Intuition (The "No Forbidden Territory" Analogy)**: Imagine we want to know the effect of a new surgery on 95-year-old patients. If, in our data, doctors *never* perform the surgery on anyone over 90, we have a positivity violation. We have no data on treated 95-year-olds, so we have no way to estimate the effect for that group. There are "forbidden territories" in our data where either treatment or control is impossible.
+  - **Assessment**: Positivity is **testable** with observed data. We can check for violations by:
+
+    1. Creating strata based on the covariates `Z` and looking for empty cells (e.g., strata with only treated or only control subjects).
+    2. Estimating propensity scores (which we'll cover next week) and looking for regions with no overlap in the score distributions between treated and control groups.
+
+::: {.callout-note}
+
+## ✅ Example: Visualizing a Positivity Violation
+
+Let's simulate data where a treatment is only given to older patients.
+
+```r
+set.seed(42)
+n <- 500
+age <- rnorm(n, 60, 10)
+# Treatment is only given to Patients Older than ~65
+treatment_prob <- plogis(-15 + 0.25 * age)
+treatment <- rbinom(n, 1, treatment_prob)
+
+library(ggplot2)
+ggplot(data.frame(age, treatment = as.factor(treatment)), aes(x = age, fill = treatment)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Positivity Violation: No Overlap",
+       x = "Age", fill = "Treatment Status")
+```
+
+The resulting plot clearly shows two distinct distributions with almost no overlap. For patients younger than \~60, there are virtually no treated individuals. For patients older than \~70, there are virtually no control individuals. We cannot estimate the effect of treatment for these age groups.
+
+:::
+
+## 📌 Condition 3: Consistency
+
+  - **Formal Definition**: An individual's observed outcome under their actual treatment `d` is the same as their potential outcome under that treatment `d`.
+
+$$
+\text{If } D_i = d, \text{ then } Y_i = Y_i(d).
+$$
+
+  - **Intuition (The "Well-Defined Treatment" Analogy)**: This assumption means that the treatment is clearly defined and works the same way for everyone who receives it at a given level. For example, if our "treatment" is "prescription for aspirin," consistency assumes that everyone takes the same dose, adheres in the same way, etc. If "aspirin" means 81mg for some and 325mg for others, we have multiple versions of the treatment, and the causal effect is ill-defined. While often assumed implicitly, it's a strong and important assumption.
+
+## 3. Sensitivity Analysis: What if Exchangeability is False?
+
+Since exchangeability is untestable, our conclusions rest on a "leap of faith." **Sensitivity analysis** is our "safety net." It doesn't tell us if we're right, but it tells us how *fragile* our conclusion is.
+
+**Intuition**: It answers the question: **"How strong would an unmeasured confounder have to be to completely explain away my estimated effect?"**
+
+A common metric is the **E-value**. An E-value of 3.0 means that an unmeasured confounder would need to be associated with both the exposure and the outcome by a risk ratio of at least 3.0 (above and beyond the measured covariates) to make the true causal effect zero.
+
+  - A **large E-value** (e.g., > 3) suggests our result is robust. It would take a very strong unmeasured confounder to negate our finding.
+  - A **small E-value** (e.g., < 1.5) suggests our result is fragile. Even a weak unmeasured confounder could explain it away.
+
+::: {.callout-note}
+
+## ✅ Numerical Example: Calculating and Interpreting an E-Value
+
+Suppose an observational study finds that a certain vitamin supplement (exposure) is associated with a reduced risk of a disease. The estimated Risk Ratio (RR) is **0.75**.
+
+Is this causal, or could it be due to confounding (e.g., people who take vitamins also have healthier lifestyles)?
+
+We can use the `EValue` package in R to perform a sensitivity analysis.
+
+```r
+# install.packages("EValue")
+library(EValue)
+
+# We Observed a risk Ratio of 0.75
+# The evalue() Function Wants the RR on a Scale > 1, so We Use 1/0.75
+evalue(est = 1/0.75)
+#>               point    lower upper
+#> RR         1.333333       NA    NA
+#> E-value    1.966953       NA    NA
+```
+
+**Interpretation**: The E-value is **1.97**. This means that an unmeasured confounder that was not controlled for would need to be associated with *both* vitamin usage and the disease by a risk ratio of at least 1.97 each, conditional on the measured covariates, to explain away the observed protective effect. If we believe that such a strong unmeasured confounder is unlikely, our confidence in a true causal effect increases.
+
+:::
+
+## ❓ Quiz: Check Your Understanding
+
+For each scenario, identify the primary identification assumption that is violated.
+
+1. A study compares the mortality rates of patients who received a heart transplant to those who did not. The "control" group consists of patients who were on the transplant waiting list but died before receiving a heart.
+2. A new, experimental cancer drug is studied. Due to ethical concerns, doctors only give the drug to patients for whom all other treatments have failed (i.e., the sickest patients). The control group consists of patients with the same cancer but at an earlier stage of disease.
+3. A study aims to measure the effect of "attending a support group" on mental health. However, some attendees go once a week, others go once a month, and some join via Zoom while others attend in person.
+
+<details>
+
+<summary><b>Answer</b></summary>
+
+1. **Exchangeability** is severely violated. The groups are not comparable. The treated group was healthy enough to survive until transplant, while the control group was not. They differ profoundly in their potential outcomes.
+2. **Positivity** is violated. For the sickest patients, the probability of being in the control group is zero. For the less sick patients, the probability of being in the treatment group is zero. There is no overlap in severity between the groups.
+3. **Consistency** is violated. The "treatment" is not well-defined. "Attending a support group" means different things for different people, so the causal effect of this vaguely defined exposure is ambiguous.
+</details>
+
+# Appendix: Advanced Statistical Derivations and Theory
+
+## 📕 Motivation: The Formal Proof of Identification
+
+In the main text, we stated that the "master recipe" for identification is the backdoor adjustment formula. Here, we provide a formal proof demonstrating how the three core assumptions (Consistency, Conditional Exchangeability, and Positivity) allow us to write a purely counterfactual quantity (the ATE) in terms of purely observable quantities.
+
+## 📕 Derivation: Proof of the Backdoor Adjustment Formula for the ATE
+
+**Goal**: To prove that if our three assumptions hold, then the causal quantity $E[Y(a)]$ is identifiable by the formula:
+
+$$
+E[Y(a)] = \sum_{z} E[Y | A=a, Z=z] P(Z=z)
+$$
+
+**Step-by-step Derivation**:
+
+1. **Start with the causal quantity of interest.**
+
+$$
+E[Y(a)]
+$$
+
+2. **Apply the Law of Iterated Expectations.** We can express this expectation by averaging over the distribution of the covariates `Z`.
+
+$$
+= \sum_{z} E[Y(a) | Z=z] P(Z=z)
+$$
+
+*Annotation*: This step introduces the observable covariates `Z` into our expression.
+
+3. **Apply Conditional Exchangeability.** The assumption is $(Y(a) \perp A | Z)$. This means that once we know `Z`, the treatment assignment `A` gives us no additional information about the potential outcome $Y(a)$.
+
+$$
+= \sum_{z} E[Y(a) | A=a, Z=z] P(Z=z)
+$$
+
+*Annotation*: This is the crucial "as-if-random" step. Within a stratum of `Z`, the potential outcome is independent of the actual treatment received.
+
+4. **Apply the Consistency assumption.** The assumption states that if an individual's observed treatment is `a`, their observed outcome `Y` is equal to their potential outcome $Y(a)$. Therefore, inside the expectation where we are conditioning on $A=a$, we can replace the potential outcome $Y(a)$ with the observed outcome `Y`.
+
+$$
+= \sum_{z} E[Y | A=a, Z=z] P(Z=z)
+$$
+
+*Annotation*: This step replaces the unobservable counterfactual quantity with an observable statistical quantity.
+
+5. **Conclusion**: We have successfully expressed the purely causal quantity $E[Y(a)]$ in terms of quantities that can be estimated from observed data: the conditional expectation of `Y` given `A` and `Z`, and the marginal probability of `Z`. The **Positivity** assumption is required to ensure that the conditional expectation $E[Y | A=a, Z=z]$ is well-defined for all necessary values of `a` and `z`. This completes the proof of identification.

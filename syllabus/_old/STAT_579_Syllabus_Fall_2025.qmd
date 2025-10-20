@@ -1,0 +1,145 @@
+---
+title: "STAT 579: Applied Causal Inference"
+subtitle: "Syllabus – Fall 2025"
+author: "Dr. Davood Tofighi"
+format:
+  html:
+    toc: true
+    number-sections: false
+    toc-depth: 3
+    toc-expand: true
+    toc-float: true
+  pdf:
+    toc: true
+    number-sections: false
+    toc-depth: 3
+    geometry: margin=1in
+---
+
+## Course Information
+
+- **Instructor:** Dr. Davood Tofighi  
+- **Location:** Science Math Learning Center 120  
+- **Time:** Tuesdays & Thursdays, 9:30 AM – 10:45 AM  
+- **Office Hours:** By appointment  
+- **Course Website:**
+  - [UNM Canvas](https://canvasinfo.unm.edu/)
+  - [https://Data-Wise.github.io/causal/](https://Data-Wise.github.io/causal/)
+
+## Course Description
+
+This graduate-level course introduces the theory and application of causal inference in the context of biostatistics and epidemiology. Students will gain practical skills in using Directed Acyclic Graphs (DAGs), estimating causal effects from observational data, and applying contemporary methods like propensity scores, instrumental variables, mediation analysis, and marginal structural models.
+
+## Learning Objectives
+
+By the end of the course, students will be able to:
+
+1. Formulate causal questions using the potential outcomes framework.
+2. Identify confounding and bias using causal diagrams (DAGs).
+3. Apply causal effect estimation methods: G-formula, propensity scores, IVs.
+4. Perform causal mediation analysis (NDE/NIE) with assumptions.
+5. Implement marginal structural models for time-varying treatments.
+6. Conduct sensitivity analyses for unmeasured confounding.
+7. Reframe observational questions using target trial emulation.
+
+## Prerequisite
+
+A prior course in regression modeling is required. Familiarity with R is expected. If unsure, contact the instructor.
+
+## Primary Texts
+
+- **Hernán & Robins (HR)**: *Causal Inference: What If*  
+  [https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book)  
+- **Neal (2020)**: *Introduction to Causal Inference*  
+  [https://www.bradyneal.com/causal-inference-course](https://www.bradyneal.com/causal-inference-course)
+
+## Supplementary Texts
+
+- Pearl, Glymour, Jewell: *Causal Inference in Statistics: A Primer*  
+- Imbens & Rubin: *Causal Inference for Statistics, Social, and Biomedical Sciences*  
+- VanderWeele: *Explanation in Causal Inference*  
+- Brumback: *Fundamentals of Causal Inference with R*
+
+## Software and Tools
+
+- R, RStudio or VS Code + Quarto
+- Key packages: `dagitty`, `MatchIt`, `WeightIt`, `cobalt`, `ivreg`, `mediation`
+
+## Communication Guidelines
+
+- Use **Canvas** for all course announcements and email communication.
+- Post content-related questions to the **Canvas discussion board**.
+- Personal matters should be communicated via **Canvas messages** only.
+- Review the syllabus before asking questions already addressed in it.
+
+## Assignments and Grading
+
+| Component             | Weight |
+| --------------------- | ------ |
+| Weekly Problem Sets   | 20%    |
+| Applied R Assignments | 25%    |
+| Midterm Exam          | 20%    |
+| Final Project         | 35%    |
+
+### Grading Scale
+
+| Percentage | Letter Grade |
+| ---------- | ------------ |
+| 97–100     | A+           |
+| 93–96.9    | A            |
+| 90–92.9    | A–           |
+| 87–89.9    | B+           |
+| 83–86.9    | B            |
+| 80–82.9    | B–           |
+| 77–79.9    | C+           |
+| 73–76.9    | C            |
+| 70–72.9    | C–           |
+| < 70       | F            |
+
+## Part I: Foundations of Causal Inference
+
+| Week  | Dates      | Core Topic                   | Primary Readings                    | Optional Reading (Cunningham)  | Project Connection                                            |
+| :---- | :--------- | :--------------------------- | :---------------------------------- | :----------------------------- | :------------------------------------------------------------ |
+| **1** | Aug 19, 21 | What is a Causal Effect?     | **HR:** Ch. 1-2 ; **Neal:** Ch. 1-2 | Ch. 2: Potential Outcomes      | Framing your research interest as a precise causal question.  |
+| **2** | Aug 26, 28 | Causal Diagrams (DAGs)       | **Neal:** Ch. 3 ; **HR:** Ch. 6     | Ch. 3: Directed Acyclic Graphs | **Action:** Draw a preliminary DAG for your project idea.     |
+| **3** | Sep 2, 4   | Confounding & Identification | **HR:** Ch. 7 ; **Neal:** Ch. 4     | Ch. 4: Regression              | Refining your project's DAG and identifying key confounders.  |
+| **4** | Sep 9, 11  | Selection & Measurement Bias | **HR:** Ch. 8-9                     | \-                             | Considering potential sources of bias in your chosen dataset. |
+
+## Part II: Methods for Estimating Causal Effects
+
+| Week  | Dates         | Core Topic                  | Primary Readings                                    | Optional Reading (Cunningham)       | Project Connection                                                |
+| :---- | :------------ | :-------------------------- | :-------------------------------------------------- | :---------------------------------- | :---------------------------------------------------------------- |
+| **5** | Sep 16, 18    | Modeling for Adjustment     | **HR:** Ch. 12, 13, 15 ; **Neal:** Ch. 7.2, 7.5-7.6 | Ch. 5: Matching & Subclassification | Deciding on a primary adjustment strategy for your project.       |
+| **6** | Sep 23, 25    | Instrumental Variables (IV) | **HR:** Ch. 16 ; **Neal:** Ch. 9                    | Ch. 8: Instrumental Variables       | Does your research area have any plausible "natural experiments"? |
+| **7** | Sep 30, Oct 2 | Effect Modification         | **HR:** Ch. 4-5                                     | \-                                  | Thinking about important subgroups for your project analysis.     |
+| **8** | Oct 7         | Mediation I: Foundations    | **VanderWeele:** Ch. 1-2 ; **Neal:** Ch. 14         | \-                                  | Refining your DAG to include potential mediators.                 |
+
+*Note:* UNM Fall Break is Oct 9-10. The Thursday class is cancelled this week.
+
+## Part III: Advanced Topics & Synthesis
+
+| Week   | Dates      | Core Topic                | Primary Readings                        | Optional Reading (Cunningham)                              | Project Connection                                                   |
+| :----- | :--------- | :------------------------ | :-------------------------------------- | :--------------------------------------------------------- | :------------------------------------------------------------------- |
+| **9**  | Oct 14, 16 | Mediation II: Application | **VanderWeele:** Ch. 3 ; **HR:** Ch. 23 | \-                                                         | **Milestone:** Project Proposal Due.                                 |
+| **10** | Oct 21, 23 | Time-Varying Treatments   | **HR:** Ch. 19-21                       | Ch. 7: Difference-in-Differences, Ch. 9: Synthetic Control | Does your project involve longitudinal data?                         |
+| **11** | Oct 28, 30 | Sensitivity Analysis      | **Neal:** Ch. 8 ; **HR:** Ch. 14        | \-                                                         | Planning how to assess the robustness of your project's findings.    |
+| **12** | Nov 4, 6   | Target Trial Emulation    | **HR:** Ch. 22                          | \-                                                         | **Action:** Re-frame your analysis plan as a target trial emulation. |
+| **13** | Nov 11, 13 | Project Work & Review     | \-                                      | \-                                                         | In-class workshop and final project Q&A.                             |
+| **14** | Nov 18, 20 | Final Presentations       | \-                                      | \-                                                         | **Milestone:** Present your project to the class.                    |
+
+*Note:* Thanksgiving Break is Nov 27-28. The final instructional week ends before the break.
+
+**Finals Week (Dec 8-12):** Final Project Reports Due.
+
+## Accessibility and Inclusion
+
+Students who may require accommodations should contact the Accessibility Resource Center (ARC) at [https://arc.unm.edu](https://arc.unm.edu) or (505) 277-3506. All discussions are confidential.
+
+## Title IX Compliance
+
+As a "responsible employee," the instructor must report any gender-based discrimination or harassment. For confidential support, contact the LoboRESPECT Advocacy Center or visit [https://oeo.unm.edu](https://oeo.unm.edu).
+
+## Land Acknowledgement
+
+UNM is located on the traditional homelands of the Pueblo of Sandia. We acknowledge the original peoples of New Mexico and honor their legacy and contributions.
+

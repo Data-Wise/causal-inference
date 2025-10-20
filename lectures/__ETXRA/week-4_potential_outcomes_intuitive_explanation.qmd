@@ -1,0 +1,108 @@
+---
+title: "Week 4: The Potential Outcomes Framework"
+---
+
+# Notations
+
+The most widely accepted and clearest method is to use simple uppercase letters for observed variables and the same letters with parentheses for potential variables.
+
+## Standard Convention (Neyman-Rubin Framework)
+
+This is the most common and intuitive notation used in econometrics, epidemiology, and social sciences.
+
+### Observed Variables
+
+These represent the single reality that we see in our data for each individual. Use a simple, unadorned uppercase letter.
+
+- $Y$: The observed outcome.
+- $A$: The observed treatment status.
+- $Z$: The observed instrument status.
+
+For example, if we are studying a patient, $Y$ is their actual measured health, and $A$ is whether they actually took the drug.
+
+### Potential Variables
+
+These represent the hypothetical outcomes or states under different scenarios. Use the same uppercase letter followed by parentheses containing the specific condition.
+
+- $Y(1)$: The potential outcome if the individual *were to* receive the treatment ($A=1$).
+- $Y(0)$: The potential outcome if the individual *were to not* receive the treatment ($A=0$).
+- $A(1)$: The potential treatment an individual *would choose* if exposed to the instrument ($Z=1$).
+
+The power of this notation is that it makes the fundamental causal question explicit: we want to compare $Y(1)$ and $Y(0)$, but we can only ever observe one of them for any given person.
+
+## Alternative Convention (Pearl's `do`-calculus)
+
+Another powerful framework, primarily from computer science and statistics, uses the `do`-operator to distinguish causation from association.
+
+- Association: The standard conditional expectation, $E[Y|A=a]$, describes the average outcome among the subgroup of people who *were observed* to have treatment status $a$. This is a simple statistical association.
+- Causation: The intervention-based expectation, $E[Y|\text{do}(A=a)]$, describes the average outcome if we *intervened* and forced everyone in the population to take treatment $a$.
+
+These two systems are conceptually linked:
+
+$$
+E[Y(a)] = E[Y|\text{do}(A=a)]
+$$
+
+They represent the same causal quantity, just expressed in different notational languages.
+
+## Recommendation 👍
+
+For most applied work, the standard convention ($Y$ vs. $Y(a)$) is recommended.
+
+1. Clarity: It physically separates the observed world ($Y$) from the hypothetical world of potential outcomes ($Y(a)$) in a very intuitive way.
+2. Explicitness: It makes the definition of causal effects, like the average treatment effect ($E[Y(1) - Y(0)]$), straightforward to write and understand.
+3. Widespread Use: It's the dominant notation in many fields, making your work more easily understood by a broader audience.
+
+The key is consistency. Whichever system you choose, apply it consistently throughout your work to avoid ambiguity.
+
+# Intuitive Understanding
+
+Yes, your intuition is exactly right. Potential outcomes are unobservable hypotheticals. They represent what would have happened to an individual under different scenarios, and we only ever get to see the outcome for the scenario they actually experienced.
+
+Think of it like the movie "Sliding Doors." A woman either catches or misses a train, and her life unfolds in two completely different, parallel timelines.
+
+- Potential Outcomes: Before she gets to the station, she has two *potential* life paths: $Y(\text{catches train})$ and $Y(\text{misses train})$.
+- Observed Outcome: Once the event happens, she lives out only one path. The other path becomes an unobservable "what if," also known as a counterfactual.
+
+This is the fundamental problem of causal inference: we can never observe an individual's causal effect because we can't see both potential outcomes at the same time.
+
+## From Individuals to Populations
+
+You're also right that these concepts are like population values. While we can't see a single person's two potential outcomes, we can use statistical methods to estimate the average of these outcomes across a large group of people.
+
+- Individual Causal Effect (Unobservable): $Y_i(1) - Y_i(0)$
+- Average Causal Effect (Estimable): $E[Y(1) - Y(0)]$
+
+We treat the potential outcomes as the true, underlying parameters we want to learn about for a population.
+
+## Comparison with `do`-calculus
+
+Both potential outcomes and `do`-calculus are formal ways to talk about causation, but they use different metaphors.
+
+### Potential Outcomes (The "Two Worlds" Metaphor)
+
+This framework, developed by Jerzy Neyman and Donald Rubin, asks you to imagine two parallel worlds:
+
+1. A world where everyone receives the treatment ($A=1$). The average outcome here is $E[Y(1)]$.
+2. A world where no one receives the treatment ($A=0$). The average outcome here is $E[Y(0)]$.
+
+The causal effect is the difference in outcomes between these two hypothetical worlds.
+
+### `do`-calculus (The "Surgical Intervention" Metaphor)
+
+This framework, developed by Judea Pearl, distinguishes between seeing and doing.
+
+- Seeing (Association): $E[Y|A=1]$ is a passive observation. We look at the data and find the average outcome among people who *happened to have* received the treatment. This is just a correlation.
+    - *Example:* Noticing that people who carry lighters have higher rates of cancer.
+- Doing (Causation): $E[Y|\text{do}(A=1)]$ is an active intervention. We imagine performing "surgery" on the system, forcing everyone to receive the treatment and breaking any other factors that might have led them to choose it. This reveals the true causal effect.
+    - *Example:* Estimating what would happen to cancer rates if we *gave everyone a lighter*. The rate wouldn't change, revealing no causal link.
+
+### How They Relate
+
+The two frameworks are logically equivalent. An intervention in the `do`-framework is the same as looking at the average outcome in one of the "potential outcome" worlds.
+
+$$
+E[Y(1)] = E[Y|\text{do}(A=1)]
+$$
+
+In short: Both systems provide a strict, mathematical language to ensure we're estimating a real causal effect, not just a spurious correlation. The potential outcomes framework is often more intuitive for defining a causal question, while the `do`-calculus is especially powerful for determining if that question can be answered from a given dataset.

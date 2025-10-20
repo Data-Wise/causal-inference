@@ -1,0 +1,80 @@
+---
+title: "How to Write a Great Critique"
+---
+
+## ✍️ How to Write a Great Critique for STAT 579
+
+Welcome to the central guide for your weekly paper critiques. The goal of this assignment is to train you not just to understand a paper, but to deconstruct its argument, question its assumptions, and situate it within the broader field of causal inference.
+
+Our course uses a unique mix of readings: foundational methodological papers, applied case studies, and modern textbook chapters. Your critique assignment asks you to focus on the **foundational paper** for each week, but the key to an excellent critique is to skillfully synthesize insights from all three sources.
+
+### The Two Modes of Causal Critique
+
+Depending on the paper, you will need to wear one of two hats: the **theoretician's hat** for methodological papers or the **peer reviewer's hat** for case studies.
+
+#### **1. How to Critique a Foundational (Methodological) Paper 🧭**
+*(Applies to papers like Rubin 1974, Pearl 1995, Rosenbaum & Rubin 1983)*
+
+When a paper proposes a *method*, your critique should focus on the validity, logic, and impact of that method. Since there is no data analysis, you must analyze the abstract argument.
+
+Use this four-step process to structure your thinking:
+
+1.  **Deconstruct the Problem & Proposed Solution:**
+    * **The Problem:** What specific challenge in causal inference is the paper trying to solve? (e.g., *How can we control for many confounders at once? How do we define a causal effect?*)
+    * **The Solution:** What is the paper's core contribution? Explain the new concept (e.g., potential outcomes, propensity scores, DAGs) in your own words.
+
+2.  **Analyze the Logic & Identification Strategy:**
+    * **The "Why":** What is the central logical argument for why their solution works? Explain the intuition behind any theorems or proofs. (e.g., *The authors prove the propensity score is a balancing score, meaning...*)
+    * **The Assumptions:** What are the precise assumptions needed for this logic to hold? (e.g., *This entire framework rests on the untestable assumption of strong ignorability...*)
+
+3.  **Scrutinize the Assumptions & Plausibility:**
+    * **Real-World Plausibility:** In what kinds of real-world studies would these assumptions be plausible? Where would they likely fail? Use examples from the case study or your own knowledge.
+    * **Failure Modes:** What are the practical limitations of the method? (e.g., *The method offers no protection against unmeasured confounding and is sensitive to violations of the positivity assumption.*)
+
+4.  **Evaluate the Impact & Legacy:**
+    * **The Impact:** How did this paper change the field? What did it make possible?
+    * **The Legacy:** What subsequent research or methods did it inspire? What is its biggest remaining limitation?
+
+#### **2. How to Critique a Case Study (Applied) Paper ⛰️**
+*(Applies to papers like Yusuf et al. 1991, Snowden et al. 2011, and all of the "Expedition" readings)*
+
+When a paper makes a causal claim about the world using data, your critique should focus on the credibility of that claim. Your job is to act as a rigorous, skeptical peer reviewer.
+
+1.  **Scrutinize the Causal Question & Design:**
+    * **The Question:** Is the causal question well-defined (PICO)? Is the target trial clear?
+    * **The Data:** Is the data source appropriate? Are there risks of major measurement error?
+
+2.  **Interrogate the Identification Strategy:**
+    * **The DAG:** Draw a DAG for *this specific study*, reflecting its variables and context.
+    * **Attack the Key Assumption:** This is the core of your critique. Is the central assumption (e.g., unconfoundedness, parallel trends, exclusion restriction) plausible *in this specific context*? What unmeasured confounder or alternative explanation did the authors likely miss?
+
+3.  **Audit the Diagnostics & Analysis:**
+    * **The Diagnostics:** Did the authors perform and show the essential diagnostic checks for their method? (e.g., balance plots for propensity scores; first-stage F-statistic for IV).
+    * **The Model:** Was the statistical model appropriate for the outcome and data structure?
+
+4.  **Challenge the Interpretation & Conclusion:**
+    * **The Interpretation:** Do the authors overstate their claims? Do they acknowledge their key limitations?
+    * **The Sensitivity Analysis:** Did they quantify how robust their finding is to unmeasured confounding (e.g., with an E-value)? If not, it is a major weakness.
+    * **The Generalizability:** Do they correctly interpret the scope of their finding (e.g., acknowledging a LATE is not an ATE)?
+
+### **Synthesizing for Your Weekly Assignment: A Walkthrough for Week 5**
+
+Your assignment is to critique the **foundational paper**. You will use the other readings to become a smarter critic.
+
+**Your Task:** Critique Rosenbaum & Rubin (1983), "The central role of the propensity score..."
+
+1.  **Start with the Map (Textbook):** You read Hernán & Robins, Chapter 12. You now have a modern understanding of propensity scores, the ATE, and balancing diagnostics.
+
+2.  **Critique the Journal (Foundational Paper):** You apply the "How to Critique a Foundational Paper" framework to Rosenbaum & Rubin (1983).
+    * **Problem:** The paper addresses the problem of controlling for many confounders in observational studies.
+    * **Solution:** It introduces the propensity score as a single-number summary for balancing covariates.
+    * **Logic:** It proves the balancing property of the score.
+    * **Assumption:** The entire method relies on the assumption of strong ignorability (unconfoundedness).
+
+3.  **Enrich with the Expedition (Case Study):** Now, you use Dehejia & Wahba (1999) to add depth to your critique.
+
+    * In your section on **Assumption Plausibility**, you write: *"Rosenbaum & Rubin's framework is entirely dependent on the unconfoundedness assumption. The Dehejia & Wahba (1999) case study provides an ideal scenario where this assumption is arguably plausible. By using a rich administrative dataset with detailed pre-treatment earnings and employment histories, they were able to control for the most likely determinants of both entering the training program and future earnings."*
+
+    * In your section on **Impact & Legacy**, you write: *"A key limitation of the original paper is its focus on theory, with little guidance on diagnostics. The profound impact of this work is demonstrated in applications like Dehejia & Wahba, which established the now-standard practice of reporting standardized mean differences in a balance plot to empirically verify that the propensity score did, in fact, balance the observed covariates."*
+
+By following this process, you are not critiquing the case study; you are using it as **evidence** to make your critique of the foundational paper more concrete, critical, and insightful.

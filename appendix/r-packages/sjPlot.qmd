@@ -1,0 +1,209 @@
+---
+title: "sjPlot: Visualizing Regression Models in R"
+---
+
+## Introduction
+
+### Overview
+
+The `sjPlot` package provides tools for creating publication-ready visualizations and tables for statistical models, survey data, and cross-tabulations. Key functions include:
+
+- `sjPlot::plot_model()`: Visualizes regression model effects
+- `sjPlot::tab_model()`: Creates HTML/Markdown tables for model summaries
+- `sjPlot::tab_xtab()`: Generates contingency tables with statistics
+
+### Use Cases
+
+- Visualizing interactions in mixed-effects models
+- Reporting odds ratios from logistic regression
+- Creating APA-style frequency tables
+
+### Benefits
+
+- Unified syntax for diverse model types (lm, glm, lme4)
+- Automatic effect size calculations
+- Seamless integration with `ggplot2` for customization
+
+## Getting Started
+
+### Loading the Package
+
+```{r}
+pacman::p_load(sjPlot, lme4, ggplot2, ggpubr, effects)
+theme_set(theme_pubr())
+```
+
+### Basic Usage
+
+```{r}
+# Fit a linear model
+model <- lm(mpg ~ wt + cyl + gear, data = mtcars)
+
+# Create effect plot
+plot_model(model, type = "eff", terms = "wt") |>
+  ggplot2::ggtitle("Effect of Weight on MPG")
+```
+
+## Key Functions and Features
+
+### plot_model()
+
+**Description:** Visualizes regression coefficients or marginal effects
+**Syntax:**
+
+```r
+sjPlot::plot_model(
+  model, 
+  type = c("est", "eff", "pred"), 
+  terms = NULL,
+  show.values = TRUE
+)
+```
+
+**Example:**
+
+```{r}
+# Fit mixed-effects model
+mixed_model <- lme4::lmer(Reaction ~ Days + (1 | Subject), data = sleepstudy)
+
+# Plot coefficients
+plot_model(mixed_model, type = "est", title = "Sleep Study Coefficients") +
+  ggplot2::theme_minimal()
+```
+
+### tab_model()
+
+**Description:** Creates formatted model summary tables
+**Syntax:**
+
+```r
+sjPlot::tab_model(
+  ...,
+  show.ci = TRUE,
+  show.aic = TRUE,
+  string.pred = "Predictor"
+)
+```
+
+**Example:**
+
+```{r}
+glm_model <- glm(vs ~ wt + mpg, data = mtcars, family = binomial)
+
+tab_model(
+  glm_model,
+  show.r2 = TRUE,
+  pred.labels = c("Intercept", "Weight", "MPG")
+)
+```
+
+## In-Depth Examples
+
+### Example 1: Prediction plot for Interaction Effects Visualization
+
+**Objective:** Demonstrate temperature × insulation interaction in housing data
+
+```{r}
+
+data(housing, package = "MASS")
+model_interaction <- glm(
+  Freq ~ Type * Cont + Sat + Infl,
+  family = poisson,
+  data = housing
+)
+
+anova(model_interaction)
+```
+
+```{r}
+#| label: fig-interaction-plot
+#| fig-cap: "Prediction Plot of Interaction Effects"
+plot_model(
+  model_interaction,
+  type = "pred",
+  terms = c("Type", "Cont"),
+  axis.title = "Type of rental accommodation"
+) +
+  ggplot2::scale_color_viridis_d()
+```
+
+## Advanced Features
+
+### Customization
+
+Modify table appearances using built-in themes:
+
+```{r}
+tab_model(
+  glm_model,
+  CSS = list(css.table = "color: blue;"),
+  title = "Customized Model Table"
+)
+```
+
+### Integration with Ggplot2
+
+```{r}
+plot_model(mixed_model, type = "re") +
+  ggplot2::scale_y_discrete(labels = c("Subject 1", "Subject 2")) +
+  ggplot2::labs(caption = "Random Effects Plot")
+```
+
+## Troubleshooting and FAQs
+
+### Common Issues
+
+**Problem:** "Model class not supported" error
+**Solution:** Convert models using `sjPlot::convert_to_sjmodel()`
+
+**Problem:** Missing confidence intervals
+**Solution:** Specify `ci.lvl` in plot_model:
+
+```{r}
+plot_model(model, ci.lvl = 0.99)
+```
+
+### FAQs
+
+**Q:** How to export tables to Word?
+**A:** Use `flextable::save_as_docx()`:
+
+```{r}
+tab_model(model) |> flextable::save_as_docx(path = "table.docx")
+```
+
+## Best Practices
+
+1. Use model wrappers for complex objects:
+
+```r
+sjPlot::tab_model(lme4::lmer(...))
+```
+
+2. Maintain consistent theming:
+
+```{r}
+sjPlot::set_theme(
+  theme = "539",
+  axis.title.size = .9,
+  geom.label.size = 3
+)
+```
+
+## Conclusion
+
+### Summary
+
+- `sjPlot` streamlines statistical reporting through unified visualization syntax
+- Key functions support >30 model types from common R packages
+
+### Next Steps
+
+- Explore `plot_stackfrq()` for Likert scale visualization
+- Experiment with `tab_mixed()` for mixed-model comparisons
+
+## References and Resources
+
+- [Official Documentation](https://strengejacke.github.io/sjPlot/)
+- [CRAN Vignettes](https://CRAN.R-project.org/package=sjPlot)
+- [GitHub Issues](https://github.com/strengejacke/sjPlot/issues)

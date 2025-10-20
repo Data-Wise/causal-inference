@@ -1,0 +1,164 @@
+---
+title: "Forest Plots"
+---
+
+## What is a Forest Plot and How Does It Show Effect Modification?
+
+A **forest plot** is a graph that visually summarizes the results of multiple analyses, all estimating the same effect. In the context of effect modification, it's used to display the causal effect of a treatment within different subgroups of a population. Its power comes from showing both the **point estimate** of the effect and its **confidence interval** for each subgroup, side-by-side.
+
+You can spot effect modification on a forest plot when the point estimates for different subgroups are noticeably different, and their confidence intervals show little or no overlap.
+
+Think of it as telling a **"tale of two (or more) cities."** Instead of reporting the average weather for an entire country (the average treatment effect), a forest plot gives you the specific weather forecast for each individual city (the subgroup-specific effects). If the weather is drastically different in each city, you have effect modification.
+
+## Anatomy of a Forest Plot
+
+A forest plot has several key components that work together to tell the story of your analysis:
+
+1. **Y-Axis (The Subgroups):** The left side of the plot lists the different subgroups being compared. These are the strata of your potential effect modifier (e.g., Male vs. Female, Old vs. Young, Low Risk vs. High Risk). An "Overall" category is often included at the bottom to show the average effect.
+2. **X-Axis (The Effect Scale):** The horizontal axis is scaled to the effect measure you are using. This could be a risk ratio, odds ratio, risk difference, or mean difference.
+3. **Points/Squares (The Point Estimates):** For each subgroup, a square or dot is placed at the location of its point estimate for the treatment effect. The **size** of the square is often proportional to the precision of the estimate (which is related to the subgroup's sample size). Larger subgroups get larger squares and have more "weight" in the overall analysis.
+4. **Horizontal Lines (The Confidence Intervals):** The lines extending from either side of the square represent the 95% confidence interval for the effect estimate in that subgroup. A longer line means more uncertainty; a shorter line means a more precise estimate.
+5. **The Vertical Line of No Effect:** A solid or dashed vertical line is drawn at the point of "no effect."
+      - For **ratios** (Risk Ratio, Odds Ratio), this line is at **1.0**.
+      - For **differences** (Risk Difference, Mean Difference), this line is at **0.0**.
+
+## How to Interpret a Forest Plot for Effect Modification
+
+Follow these steps to read the story the plot is telling:
+
+1. **Check for Heterogeneity:** Look at the **point estimates** (the squares). Are they in very different locations along the x-axis? If the effect for one group is far from the effect for another, it's a visual clue that effect modification might be present.
+2. **Assess Statistical Significance of the Difference:** Look at the **confidence intervals** (the horizontal lines).
+      - If the confidence intervals for two subgroups **do not overlap**, you have strong statistical evidence that the effect is truly different between those groups (i.e., statistically significant effect modification).
+      - If they **do overlap**, the difference between the subgroups may be due to random chance.
+3. **Evaluate the Effect in Each Subgroup:** For each subgroup's row, look at its confidence interval in relation to the **line of no effect**.
+      - If a subgroup's CI **does not cross** the line of no effect, the treatment has a statistically significant effect in that subgroup.
+      - If a subgroup's CI **does cross** the line of no effect, you cannot conclude there is a significant effect of the treatment in that subgroup.
+
+A classic sign of strong effect modification is when the treatment has a significant, beneficial effect in one subgroup (its CI is entirely to one side of the null line) but has no significant effect in another subgroup (its CI crosses the null line).
+
+## R Code Example: Visualizing the Sepsis Trial Results
+
+Let's create a forest plot for the sepsis trial data from our previous lab. We found evidence of effect modification on the **additive scale** (Risk Difference). Our goal is to create a plot that visually represents the results from our stratified analysis.
+
+### Step 1: Calculate Stratified Effects and Confidence Intervals
+
+First, we need to calculate not only the point estimates but also the 95% confidence intervals for the risk difference in each age group. To do this, we need to get the raw counts in each of the four cells.
+
+```{r}
+#| label: calc-cis-for-plot
+# Use the sepsis_df from the previous lab
+pacman::p_load(dplyr, tidyr, ggplot2, forcats)
+set.seed(42)
+n_lab <- 4000
+age_group <- rbinom(n_lab, 1, 0.4)
+drug <- rbinom(n_lab, 1, 0.5)
+p_mortality <- case_when(
+  age_group == 0 & drug == 0 ~ 0.10,
+  age_group == 0 & drug == 1 ~ 0.05,
+  age_group == 1 & drug == 0 ~ 0.30,
+  age_group == 1 & drug == 1 ~ 0.15
+)
+mortality <- rbinom(n_lab, 1, p_mortality)
+sepsis_df <- tibble(
+  mortality,
+  drug = factor(drug),
+  age_group = factor(age_group, labels = c("<=65", ">65"))
+)
+
+# Calculate counts, risks, and CIs for the risk difference
+forest_plot_data <- sepsis_df |>
+  group_by(age_group, drug) |>
+  summarise(
+    n = n(),
+    events = sum(mortality),
+    .groups = "drop"
+  ) |>
+  mutate(risk = events / n) |>
+  # Pivot to get treated and control stats on the same row
+  pivot_wider(
+    names_from = drug,
+    values_from = c(n, events, risk)
+  ) |>
+  # Calculate Risk Difference and its standard error and CI
+  mutate(
+    rd = risk_1 - risk_0,
+    se_rd = sqrt((risk_1 * (1 - risk_1) / n_1) + (risk_0 * (1 - risk_0) / n_0)),
+    lower_ci = rd - 1.96 * se_rd,
+    upper_ci = rd + 1.96 * se_rd
+  ) |>
+  # Add an overall "Average" effect
+  bind_rows(
+    # This recalculates everything on the whole dataset
+    sepsis_df |>
+      group_by(drug) |>
+      summarise(n = n(), events = sum(mortality), .groups = "drop") |>
+      mutate(risk = events / n) |>
+      pivot_wider(names_from = drug, values_from = c(n, events, risk)) |>
+      mutate(
+        rd = risk_1 - risk_0,
+        se_rd = sqrt(
+          (risk_1 * (1 - risk_1) / n_1) + (risk_0 * (1 - risk_0) / n_0)
+        ),
+        lower_ci = rd - 1.96 * se_rd,
+        upper_ci = rd + 1.96 * se_rd,
+        age_group = "Overall"
+      )
+  ) |>
+  # Add a "weight" column for plotting, based on inverse of the variance
+  mutate(weight = 1 / (se_rd^2)) |>
+  # Reorder for the plot
+  mutate(age_group = fct_relevel(age_group, "Overall", after = Inf))
+
+knitr::kable(
+  forest_plot_data |> select(age_group, rd, lower_ci, upper_ci),
+  digits = 3
+)
+```
+
+### Step 2: Create the Forest Plot with `ggplot2`
+
+Now we use this summary data frame to build the plot.
+
+```{r}
+#| label: fig-forest-plot
+#| fig-cap: "Forest plot of the effect of a new sepsis drug on 30-day mortality, stratified by age group."
+#| column: margin
+
+ggplot(data = forest_plot_data, aes(x = rd, y = age_group)) +
+  # Add the vertical line of no effect at x=0
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  # Add the confidence interval lines
+  geom_errorbarh(aes(xmin = lower_ci, xmax = upper_ci), height = 0.2) +
+  # Add the point estimates, with size proportional to weight/precision
+  geom_point(aes(size = weight), shape = 15) +
+  # Formatting
+  scale_x_continuous(
+    name = "Risk Difference (Drug - Placebo)",
+    breaks = seq(-0.25, 0.05, 0.05)
+  ) +
+  labs(
+    y = "Patient Subgroup",
+    title = "Effect of Sepsis Drug on Mortality",
+    subtitle = "Stratified by Age Group"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "none",
+    panel.grid.major.y = element_blank()
+  )
+```
+
+## Interpretation of the Example Plot
+
+This forest plot visually confirms what we found in our numerical analysis:
+
+1. **Heterogeneity:** The point estimate (square) for the `>65` group is much farther to the left (a more negative, i.e., more beneficial, risk difference) than the point estimate for the `<=65` group.
+2. **Statistical Significance:** The confidence intervals for the two age groups **do not overlap**, providing strong evidence that the effect of the drug is statistically different between older and younger patients. This is significant effect modification.
+3. **Subgroup Effects:** Both confidence intervals are entirely to the left of the vertical line at 0. This means the drug has a statistically significant beneficial effect in **both** age groups. However, the *magnitude* of this benefit is substantially larger in the older group. The "Overall" effect falls somewhere in between, but reporting only this average would obscure the important clinical finding that the drug's benefit is much greater for older patients.
+
+::: {.callout-warning}
+
+### Common Pitfall: The "Subgroup Analysis Gone Wrong"
+
+A common error is to declare that a treatment "only works" in one subgroup just because its effect is significant in that group but not in another. For example, if the CI for the `<=65` group had slightly crossed the null line (e.g., [-0.11, 0.01]), it would be wrong to conclude the drug is ineffective for young people. The correct approach is to perform a **formal test for interaction**, which is equivalent to checking if the confidence intervals for the stratum-specific effects overlap. The question is not "Is the effect significant in group A and not group B?" but rather "**Is the effect in group A significantly different from the effect in group B?**"
+:::

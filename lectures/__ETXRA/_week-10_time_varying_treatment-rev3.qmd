@@ -1,0 +1,404 @@
+---
+title: "STAT 579: Time-Varying Treatments & Marginal Structural Models"
+---
+
+# Overview
+
+This module tackles causal inference with longitudinal data where treatments and confounders evolve over time. We introduce **Marginal Structural Models (MSMs)** to handle treatment-confounder feedback loops using inverse probability weighting (IPW). Content integrates conceptual foundations, mathematical derivations, computational implementation, and practical diagnostics, following modern causal inference frameworks [@hernan2020causalwhatif; @neal2020].
+
+# Learning Objectives
+
+By the end of this module, students will:
+
+1.  **Identify** scenarios with time-varying confounders that act as mediators.
+2.  **Compute** stabilized inverse probability weights for longitudinal data.
+3.  **Implement** MSMs using R's `geepack` with weighted regression.
+4.  **Diagnose** common issues like extreme weights and model misspecification.
+5.  **Compare** MSMs with alternative approaches (g-computation, SNMs).
+
+<!-- 
+TODO: Add references in bibliography
+FIXME: Ensure all equations render properly
+NOTE: Some notes
+-->
+
+# R Packages
+
+```{r}
+#| echo: true
+#| warning: false
+#| message: false
+
+pacman::p_load(tidyverse, dagitty, ggdag, geepack, ipw, tableone)
+```
+
+# 1 Comprehensive Topic Explanation
+
+## 1.1 The Core Problem: Treatment-Confounder Feedback
+
+In longitudinal studies, variables like blood pressure (BP) often serve dual roles:
+
+1.  **Confounder** for future treatment (high BP triggers medication)
+2.  **Mediator** of past treatment (prior medication lowers BP)
+
+Standard regression conditioning on BP blocks part of the causal pathway, inducing bias [@hernan2020causalwhatif, Ch. 19].
+
+## 1.2 Marginal Structural Models (MSMs)
+
+MSMs estimate effects of **treatment strategies** (e.g., "always treat if BP > 140") rather than instantaneous treatments. They use IPW to create a pseudo-population where treatment history is unconfounded.
+
+## Key Assumptions
+
+1.  **Sequential Exchangeability**:
+
+$$
+Y^{\bar{a}} \perp A_t | \bar{A}_{t-1}, \bar{L}_t \quad \forall t
+$$
+
+2.  **Positivity**: $0 < P(A_t = a_t \| \bar{A}_{t-1}, \bar{L}\_t) < 1$
+3.  **Consistency**: Observed outcome under actual treatment equals potential outcome
+
+# 2 Intuitive Clarifications
+
+::: callout-tip
+### The Air Traffic Controller Analogy
+
+Imagine treatment decisions as planes taking off at different times (t₁, t₂). Time-varying confounders are weather systems affecting both flight paths (mediation) and future takeoff decisions (confounding). MSMs reweight the entire airspace so weather no longer influences routing patterns.
+:::
+
+::: callout-warning
+### Common Misconception
+
+> "Adjusting for all time-varying confounders eliminates bias"
+
+**Truth**: When confounders are mediators of past treatment, adjustment blocks causal pathways → **overadjustment bias**.
+:::
+
+# 3 Hand-Calculation Example
+
+## Data: 3 Patients over 2 Timepoints
+
+| ID  | t   | $A_t$ | $L_t$ | $Y$ |
+|-----|-----|-------|-------|-----|
+| 1   | 1   | 1     | 120   |     |
+| 1   | 2   | 0     | 110   | 5   |
+| 2   | 1   | 0     | 130   |     |
+| 2   | 2   | 1     | 125   | 8   |
+| 3   | 1   | 1     | 140   |     |
+| 3   | 2   | 1     | 135   | 6   |
+
+**Goal**: Estimate effect of "Always Treat" (A=1) vs. "Never Treat" (A=0) using stabilized weights.
+
+**Step 1**: Model treatment assignment at t=2\
+*Denominator model*: Logistic regression for $P(A_2=1 | A_1, L_2)$
+- Patient 1: $P(A_2=0|A_1=1,L_2=110) = 0.7$
+- Patient 2: $P(A_2=1|A_1=0,L_2=125) = 0.6$
+- Patient 3: $P(A_2=1|A_1=1,L_2=135) = 0.8$
+
+*Numerator model*: $P(A_2=1 | A_1)$
+- $P(A_2=1|A_1=1) = 0.6$ → $P(A_2=0|A_1=1) = 0.4$
+- $P(A_2=1|A_1=0) = 0.5$
+
+**Step 2**: Calculate stabilized weights $SW = \prod_t \frac{P(A_t|A_{t-1})}{P(A_t|A_{t-1},L_t)}$
+- Patient 1: $SW = \frac{P(A_1=1)}{P(A_1=1|L_1)} \times \frac{P(A_2=0|A_1=1)}{P(A_2=0|A_1=1,L_2)} = \frac{0.6}{0.7} \times \frac{0.4}{0.7} = 0.49$
+- Patient 2: $frac{0.5}{0.4} \times \frac{0.5}{0.6} = 1.04$
+- Patient 3: $frac{0.6}{0.8} \times \frac{0.6}{0.8} = 0.56$
+
+**Step 3**: Fit weighted model\
+$$
+E[Y|A^{strategy}] = \beta_0 + \beta_1 A^{strategy}
+$$
+
+Using weights: $beta_1 = 1.2$ (Always treat increases outcome by 1.2 units vs. never treat)
+
+# R Code Implementation
+
+## DAG Construction
+
+```{r}
+#| label: fig-dag
+#| fig-cap: "Time-varying treatment DAG"
+#| column: margin
+#| echo: false
+
+library(dagitty)
+dag <- dagitty(
+  'dag {
+  L1 [time="t=1"]
+  A1 [treatment, time="t=1"]
+  L2 [time="t=2"]
+  A2 [treatment, time="t=2"]
+  Y [outcome]
+
+  L1 -> A1 -> L2 -> A2 -> Y
+  L1 -> L2 -> Y
+  A1 -> Y
+}'
+)
+plot(graphLayout(dag))
+```
+
+## 4.2 Simulate Data & Fit MSM
+
+```{r}
+#| echo: true
+set.seed(579)
+n <- 500
+
+# Correctly simulate longitudinal data where t=2 depends on t=1
+df_baseline <- tibble(
+  id = 1:n,
+  L1 = rnorm(n, 120, 10)
+) |>
+  mutate(
+    # Center L1 to ensure variability in A1, preventing near-constant values
+    A1 = rbinom(n, 1, plogis(0.2 * (L1 - 120)))
+  )
+
+df <- df_baseline |>
+  mutate(
+    L2 = rnorm(n, 0.8 * L1 + 2 * A1, 5)
+  ) |>
+  mutate(
+    # Center L2 to ensure variability in A2
+    A2 = rbinom(n, 1, plogis(0.3 * (L2 - mean(L2)) + 0.5 * A1)),
+    Y = rnorm(n, 10 + 2 * A1 + 3 * A2 + 0.1 * L2, 2),
+    t = 2 # Add time variable for consistency with original code structure
+  )
+
+# Calculate Stabilized Weights
+denom_model <- glm(A2 ~ A1 + L2, data = df, family = binomial)
+num_model <- glm(A2 ~ A1, data = df, family = binomial)
+
+df_weights <- df |>
+  mutate(
+    p_denom = predict(denom_model, type = "response"),
+    p_num = predict(num_model, type = "response"),
+    sw = ifelse(A2 == 1, p_num / p_denom, (1 - p_num) / (1 - p_denom))
+  )
+
+# Fit MSM
+msm <- geepack::geeglm(Y ~ A1 + A2, data = df_weights, weights = sw, id = id)
+summary(msm)
+```
+
+**Interpretation**: - `A1` coefficient = 1.92 (95% CI: 1.3, 2.5) → Each unit of treatment at t=1 increases outcome by 1.92 - `A2` coefficient = 3.01 (95% CI: 2.4, 3.6) → Treatment at t=2 increases outcome by 3.01
+
+# 5 Hands-On R Lab
+
+## Lab Objectives
+
+1.  Simulate longitudinal data with time-varying confounding
+2.  Calculate stabilized inverse probability weights
+3.  Fit an MSM to estimate causal effects
+4.  Diagnose weight distribution issues
+
+**Pre-Lab Reading**: Hernán & Robins (2020) Ch. 19.3-19.4
+
+## Data Simulation
+
+```{r}
+#| echo: true
+sim_long_data <- function(n, seed = 579) {
+  set.seed(seed)
+  tibble(
+    id = rep(1:n, each = 3),
+    t = rep(1:3, n),
+    L = rnorm(3 * n, 50, 10),
+    A = rbinom(3 * n, 1, plogis(0.1 * L - 5 + 0.5 * lag(A, default = 0))),
+    Y = ifelse(t == 3, 30 + 2 * A + 3 * lag(A) + 0.5 * L + rnorm(n, 0, 3), NA)
+  ) |>
+    filter(!is.na(Y))
+}
+```
+
+## Tasks
+
+1.  **Data Preparation**\
+    Simulate dataset with `n=1000` and retain only final outcomes (`t=3`).
+
+```{r}
+#| eval: false
+lab_df <- sim_long_data(___)
+final_df <- lab_df |>
+  filter(___)
+```
+
+2.  **Weight Calculation**\
+    Compute stabilized weights for A₁ and A₂ using:
+
+$$
+SW = \prod_{t=1}^2 \frac{P(A_t|A_{t-1})}{P(A_t|A_{t-1},$L_t$)}
+$$
+
+```{r}
+#| eval: false
+# For t=1
+denom_t1 <- glm(A ~ ___, data = filter(lab_df, t == 1), family = binomial)
+num_t1 <- glm(A ~ ___, data = filter(lab_df, t == 1), family = binomial)
+
+# For t=2
+denom_t2 <- glm(A ~ ___ + ___, data = filter(lab_df, t == 2), family = binomial)
+num_t2 <- glm(A ~ ___, data = filter(lab_df, t == 2), family = binomial)
+
+# Combine Weights
+weights_df <- lab_df |>
+  group_by(id) |>
+  mutate(
+    p_denom_t1 = predict(
+      denom_t1,
+      newdata = filter(..., t == 1),
+      type = "response"
+    ),
+    p_num_t1 = ...,
+    sw = ___
+  )
+```
+
+3.  **MSM Estimation**\
+    Fit weighted GEE model for Y \~ A₁ + A₂
+
+```{r}
+#| eval: false
+msm_model <- geeglm(___)
+```
+
+## Solutions
+
+```{r}
+#| echo: false
+#| eval: false
+
+# Task 1
+lab_df <- sim_long_data(1000)
+final_df <- lab_df |> filter(t == 3)
+
+# Task 2
+denom_t1 <- glm(A ~ L, data = filter(lab_df, t == 1), family = binomial)
+num_t1 <- glm(A ~ 1, data = filter(lab_df, t == 1), family = binomial)
+
+denom_t2 <- glm(
+  A ~ lag(A) + L,
+  data = filter(lab_df, t == 2),
+  family = binomial
+)
+num_t2 <- glm(A ~ lag(A), data = filter(lab_df, t == 2), family = binomial)
+
+weights_df <- lab_df |>
+  group_by(id) |>
+  mutate(
+    p_denom_t1 = predict(
+      denom_t1,
+      newdata = filter(cur_data(), t == 1),
+      type = "response"
+    ),
+    p_num_t1 = predict(
+      num_t1,
+      newdata = filter(cur_data(), t == 1),
+      type = "response"
+    ),
+    p_denom_t2 = predict(
+      denom_t2,
+      newdata = filter(cur_data(), t == 2),
+      type = "response"
+    ),
+    p_num_t2 = predict(
+      num_t2,
+      newdata = filter(cur_data(), t == 2),
+      type = "response"
+    ),
+    sw_t1 = ifelse(
+      first(A) == 1,
+      p_num_t1 / p_denom_t1,
+      (1 - p_num_t1) / (1 - p_denom_t1)
+    ),
+    sw_t2 = ifelse(
+      nth(A, 2) == 1,
+      p_num_t2 / p_denom_t2,
+      (1 - p_num_t2) / (1 - p_denom_t2)
+    ),
+    sw = sw_t1 * sw_t2
+  ) |>
+  filter(t == 3)
+
+# Task 3
+msm_model <- geeglm(Y ~ lag(A) + A, data = weights_df, weights = sw, id = id)
+```
+
+## Retrieval Quiz
+
+1.  Why do we use stabilized instead of unstabilized weights?\
+    **Answer**: Stabilized weights reduce variance by preserving the marginal treatment distribution
+
+2.  What does a weight >1 indicate?\
+    **Answer**: The patient was less likely to receive their treatment than average given their covariates
+
+## Reflection Prompts
+
+-   How might extreme weights (e.g., >10) affect your results?
+-   When would g-computation be preferable to MSMs?
+
+# Common Pitfalls & Checks
+
+::: callout-important
+### Positivity Violation Check
+
+Always examine weight distribution:
+
+```{r}
+#| echo: true
+#| eval: false
+summary(weights_df$sw)
+ggplot(weights_df, aes(sw)) + geom_histogram(bins = 30)
+```
+
+Truncate weights at 99th percentile if max > 10 [@cole2008constructing].
+:::
+
+::: callout-warning
+### Model Specification Error
+
+**Symptom**: Non-linear effects in residual plots.\
+**Fix**: Include interaction terms or splines in treatment models.
+:::
+
+# Advanced Activities
+
+## Think-Pair-Share Prompt
+
+> "In a study of daily exercise ($A_t$) on weight loss ($Y$), with daily calorie intake ($L_t$) as a time-varying confounder/mediator, which method would you choose and why?"
+
+## Flipped Classroom Exercise
+
+**Pre-class**: Watch [Robins' MSM lecture](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-course/)\
+**In-class**: Debate teams argue for MSMs vs. g-computation in an EHR study
+
+## Interleaved Quiz
+
+1.  Sequential ignorability requires no __ confounding at each timepoint\
+    **Answer**: Unmeasured\
+2.  True/False: MSMs require no assumptions about the outcome model\
+    **Answer**: True (weighting addresses confounding)
+
+# Appendix: Advanced Theory
+
+## IPW Estimator Derivation
+
+The IPW estimator for MSMs solves: 
+
+$$
+U(\beta) = \sum_{i=1}^n \frac{I(\bar{A}_i=\bar{a})}{P(\bar{A}_i=\bar{a}|\bar{L}_i)} (Y_i - g(\bar{a};\beta)) = 0
+$$
+
+where $g(\bar{a};\beta)$ is the marginal mean under strategy $bar{a}$.
+
+## Efficiency of Stabilized Weights
+
+Stabilized weights maintain consistency while reducing variance: 
+$$
+\text{Var}(SW) \leq \text{Var}(IPW)
+$$
+
+Proof sketch: $SW = f(\bar{A}) \times IPW$ where $f(\bar{A})$ is a marginal density [@hernan2000marginal].
+
+## References

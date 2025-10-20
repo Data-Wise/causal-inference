@@ -1,0 +1,23 @@
+format:
+  html: default
+  pdf:
+    pdf-engine: xelatex
+    documentclass: scrartcl
+    toc: false
+    mainfont: "TeX Gyre Pagella"
+    monofont: "Fira Code"
+    mathfont: "TeX Gyre Pagella Math"
+    fontsize: 10pt
+    linestretch: 1.25
+    keep-tex: false
+    colorlinks: true
+    linkcolor: blue
+    fig-width: 6
+    fig-height: 4
+    fig-align: center
+    include-in-header:
+    - file: ../tex/macros.tex
+#    - file: ../tex/header-fancy-logo.tex
+    - file: ../tex/title-page.tex
+execute:
+  cache: false

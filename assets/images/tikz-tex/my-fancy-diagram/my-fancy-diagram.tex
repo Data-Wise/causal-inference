@@ -1,0 +1,49 @@
+\documentclass[tikz]{standalone}
+% \usepackage{tikz} % already loaded by the documentclass
+\usepackage{adjustbox}
+
+\begin{document}
+%%| filename: my-fancy-diagram
+%%| fig-attr:
+%%|   id: fig-my-fancy-diagram
+%%|   class: my-class
+%%| additionalPackages: \usepackage{adjustbox}
+
+\usetikzlibrary{arrows, arrows.meta}
+\tikzset{
+  int/.style={
+    draw,
+    fill=blue!20,
+    minimum size=2em,
+    line width=0.5pt
+  },
+  init/.style={
+    pin edge={to-, black, line width=1pt}
+  },
+  % Define a global path style
+  every path/.style={
+    line width=1pt,
+    >=Latex
+  }
+}
+\begin{tikzpicture}[
+    scale=2,
+    transform shape,
+    node distance=2.5cm,
+    auto,
+    >=latex', % Arrowhead style
+    line width=0.5pt % Base line width
+  ]
+  \node [int, pin={[init]above:$v_0$}] (a) {$\frac{1}{s}$};
+  \node (b) [left of=a, node distance=2cm, coordinate] {a};
+  \node [int, pin={[init]above:$p_0$}] at (0,0) (c)
+    [right of=a] {$\frac{1}{s}$};
+  \node [coordinate] (end) [right of=c, node distance=2cm]{};
+
+  % Draw paths with arrows
+  \path[->] (b) edge node {$a$} (a);
+  \path[->] (a) edge node {$v$} (c);
+  \draw[->] (c) edge node {$p$} (end);
+\end{tikzpicture}
+\end{document}
+      

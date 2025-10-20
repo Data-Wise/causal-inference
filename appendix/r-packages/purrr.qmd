@@ -1,0 +1,285 @@
+---
+title: "Tutorial for the purrr Package"
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+
+# Tutorial for the `purrr` Package
+
+## Introduction
+
+### Overview
+
+The `purrr` package, part of the `tidyverse`, provides a set of tools for functional programming in R. It simplifies iteration, mapping, and manipulation of lists, vectors, and other data structures. The functions in `purrr` are designed to replace and enhance base R functions like `lapply()` and `sapply()` with more readable and consistent alternatives.
+
+Key components:
+
+- **Core Functions**: `map()`, `map2()`, `pmap()`, `reduce()`, `pluck()`, and others.
+- **Helpers**: `safely()`, `possibly()`, `transpose()`, etc.
+
+### Use Cases
+
+- Applying a function to each element of a list or vector.
+- Handling nested data structures like lists of data frames.
+- Aggregating results using custom operations.
+- Safely working with functions that might return errors.
+
+### Benefits
+
+- Consistent syntax and predictable outputs.
+- Seamless integration with other tidyverse packages.
+- Tools for error handling and debugging.
+
+---
+
+## Getting Started
+
+### Loading the Package
+
+Use the `pacman` package to ensure `purrr` is loaded:
+
+```{r}
+pacman::p_load(purrr)
+```
+
+### Basic Usage
+
+A simple example of applying a function to a list using `map()`:
+
+```{r}
+# Define a list
+numbers <- list(1, 2, 3, 4, 5)
+
+# Apply a square function to each element
+squared <- numbers |> map(~ .x^2)
+
+# Print results
+squared
+```
+
+Here, `~ .x^2` defines an anonymous function that squares each number.
+
+## Key Functions and Features
+
+### `map()`
+
+#### Description
+
+The `map()` family applies a function to each element of a list or vector and returns a list, vector, or another type based on the specific `map_*` function used.
+
+#### Syntax
+
+```r
+map(.x, .f, ...)
+```
+
+- `.x`: Input list or vector.
+- `.f`: Function to apply.
+- `…`: Additional arguments passed to `.f`.
+
+#### Example
+
+```{r}
+# Apply `sqrt()` to each element
+roots <- list(4, 9, 16) |> map(sqrt)
+
+# Print results
+roots
+```
+
+### `map2()`
+
+#### Description
+
+Applies a function to two inputs simultaneously, element by element.
+
+#### Syntax
+
+```r
+map2(.x, .y, .f, ...)
+```
+
+#### Example
+
+```{r}
+# Combine two vectors by addition
+vector1 <- c(1, 2, 3)
+vector2 <- c(4, 5, 6)
+
+result <- map2(vector1, vector2, ~ .x + .y)
+
+result
+```
+
+### `pmap()`
+
+#### Description
+
+Applies a function to multiple inputs, where inputs are supplied as a list of named arguments.
+
+#### Syntax
+
+```r
+pmap(.l, .f, ...)
+```
+
+- `.l`: A list of arguments.
+- `.f`: Function to apply.
+
+#### Example
+
+```{r}
+# Define inputs
+inputs <- list(a = c(1, 2, 3), b = c(4, 5, 6), c = c(7, 8, 9))
+
+# Apply a custom function
+result <- pmap(inputs, \(a, b, c) a + b + c)
+
+result
+```
+
+## In-Depth Examples
+
+### Title: Aggregating Results Using `reduce()`
+
+#### Objective
+
+Sum a list of numbers iteratively using `reduce()`.
+
+#### Steps
+
+1. **Define the data**:
+
+```{r}
+numbers <- list(1, 2, 3, 4, 5)
+```
+
+2. **Apply `reduce()`**:
+
+```{r}
+total <- reduce(numbers, \(x, y) x + y)
+total
+```
+
+3. **Interpret the result**: The sum of the numbers is computed iteratively.
+
+### Title: Handling Errors with `safely()`
+
+#### Objective
+
+Use `safely()` to apply a function that might fail.
+
+#### Steps
+
+1. **Define the data**:
+
+```{r}
+inputs <- list(10, "a", 20)
+```
+
+2. **Use `safely()`**:
+
+```{r}
+safe_sqrt <- safely(sqrt)
+results <- map(inputs, safe_sqrt)
+```
+
+3. **Inspect results**:
+
+```{r}
+results
+```
+
+The output includes successful results and captured errors.
+
+### Title: Extracting Nested Elements with `pluck()`
+
+#### Objective
+
+Retrieve nested elements from a list.
+
+#### Steps
+
+1. **Define a nested list**:
+
+```{r}
+nested_list <- list(a = list(b = list(c = 42)))
+```
+
+2. **Use `pluck()`**:
+
+```{r}
+value <- pluck(nested_list, "a", "b", "c")
+value
+```
+
+## Advanced Features
+
+### Customization
+
+Customize outputs with `map_*` variants:
+
+```{r}
+# Return a vector instead of a list
+numbers <- list(1, 2, 3)
+squared <- map_dbl(numbers, ~ .x^2)
+squared
+```
+
+### Integration
+
+Combine `purrr` with `dplyr` for tidy workflows:
+
+```{r}
+library(dplyr)
+data <- tibble(x = list(1:5, 6:10, 11:15))
+
+# Apply a function to each list element
+data |> mutate(mean_x = map_dbl(x, mean))
+```
+
+## Troubleshooting and FAQs
+
+### Common Issues
+
+1. **Error: "Object not found"**: Ensure all variables are correctly defined and scoped.
+2. **Unexpected list outputs**: Use `map_*` variants (`map_dbl`, `map_chr`) for specific return types.
+
+### FAQs
+
+- **Can I use custom functions with `purrr`?** Yes, pass any custom or anonymous function to `map()`.
+
+## Best Practices
+
+- Use `map_*` variants for predictable output types.
+- Combine `purrr` with other tidyverse packages for efficient workflows.
+- Leverage error-handling tools like `safely()` for robust code.
+
+## Conclusion
+
+### Summary
+
+The `purrr` package simplifies iteration, functional programming, and working with nested data. Its consistent syntax and integration with the tidyverse make it an essential tool for R users.
+
+### Next Steps
+
+- Explore `purrr`'s advanced tools like `transpose()` and `possibly()`.
+- Integrate with visualization packages like `ggplot2` for applied analyses.
+
+## References and Resources
+
+- [Official Documentation](https://purrr.tidyverse.org/)
+- [Tidyverse Website](https://www.tidyverse.org/)
+- [R for Data Science](https://r4ds.had.co.nz/)
+
+```{mermaid}
+%%| label: fig-mermaid
+%%| fig-cap: "Data Transformation Workflow"
+%%| echo: false
+graph TD
+    A["Data Input"] --> B["Apply map()"]
+    B --> C["Iterate over elements"]
+    C --> D["Transform Results"]
+    D --> E["Output List/Vector"]
+```

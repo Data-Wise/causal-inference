@@ -1,0 +1,41 @@
+project:
+  type: website
+  render:
+  - "lectures/*.qmd"
+  - "syllabus/"
+  - "!slides"
+  - "!index.qmd"
+  - "!contents.qmd"
+  - "!home*.qmd"
+  - "!r_help.qmd"
+  - "!appendix/"
+  - "!assignments/"
+  - "!resources/"
+  - "!blog/"
+  - "!exams/"
+  - "!macros/"
+  - "!code/"
+format:
+  html: default
+  tufte-typst:
+    fontsize: 9.5pt
+    mainfont: "TeX Gyre Pagella"
+    monofont: "Fira Code"
+    mathfont: "TeX Gyre Pagella Math"
+    papersize: us-letter
+    # margin:
+    #   left: .75in
+    #   right: .75in
+    #   top: 1in
+    #   bottom: 1in
+    # css: "assets/styles/css/lectureNotes.css"
+    # fig-width: 5
+    # fig-height: 5
+    # toc: false
+    # linestretch: 1
+    # number-sections: false
+    citeproc: true
+    csl: https://www.zotero.org/styles/apa
+filters:
+- diagram
+- assets/filters/ci-math-macros.lua

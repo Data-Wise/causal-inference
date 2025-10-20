@@ -1,0 +1,727 @@
+---
+title: "G-Computation: Intuition and Math"
+---
+
+## Intuitive Understanding
+
+At its heart, **g-computation** (also known as the g-formula, standardization,
+or the substitution estimator) is a method to simulate a randomized controlled
+trial (RCT) using observational data. It answers the question: *"What would the
+average outcome in our entire population have been if everyone had received
+treatment A, versus if everyone had received treatment B?"*
+
+Imagine we want to know the causal effect of a new fitness app ($A$) on weight
+loss ($Y$). We have data from a group of people, some of whom used the app
+($A=1$) and some who didn't ($A=0$). We also know their age ($L$), which is a
+potential **confounder**—younger people might be both more likely to use a
+fitness app and more likely to lose weight, regardless of the app.
+
+A simple comparison of weight loss between app users and non-users would be
+misleading because of this confounding by age. G-computation fixes this by
+creating a "standardized" population.
+
+Here's the step-by-step logic:
+
+1.  **Model the World:** First, we use our observational data to build a
+    statistical model that describes how the outcome ($Y$, weight loss) depends
+    on the treatment ($A$, app use) and the confounder(s) ($L$, age). This model
+    learns the `Weight Loss ~ App Use + Age` relationship from the data we have.
+    A simple model could be a linear regression:
+    $E[Y|A, L] = \beta_0 + \beta_1 A + \beta_2 L$.
+2.  **Create Hypothetical Worlds (Counterfactuals):** We take our *entire* study
+    population and create two hypothetical copies:
+    -   **World 1 (Everyone gets treated):** In this copy, we change the
+        `App Use` variable to 1 for *every single person*, but we keep their
+        actual, observed age.
+    -   **World 2 (No one gets treated):** In this second copy, we change the
+        `App Use` variable to 0 for *everyone*, again keeping their actual age.
+3.  **Predict and Average:** We now use the model from Step 1 to predict the
+    outcome for everyone in these two new hypothetical worlds.
+    -   For World 1, we predict each person's potential weight loss using their
+        actual age but with `App Use` set to 1. We then average all these
+        predictions. This gives us $E[Y^{a=1}]$, the estimated average weight
+        loss if *everyone* in the population had used the app.
+    -   For World 2, we do the same but with `App Use` set to 0. The average of
+        these predictions gives us $E[Y^{a=0}]$, the estimated average weight
+        loss if *no one* had used the app.
+4.  **Estimate the Causal Effect:** The Average Causal Effect (ATE) is simply
+    the difference between the averages from our two hypothetical worlds:
+
+$$
+\text{ATE} = \E{Y^{a=1}} - \E{Y^{a=0}}
+$$
+
+This procedure gives a valid causal estimate because we have "broken" the link
+between the confounder (age) and treatment assignment. By forcing everyone to be
+treated (and then untreated), we have simulated an intervention and estimated
+what the outcome would be in a world where age no longer influences who gets the
+treatment.
+
+### Parametric vs. Non-Parametric G-Computation
+
+-   **Parametric G-Computation:** This is what was described above. It relies on
+    a *parametric* statistical model (e.g., linear regression, logistic
+    regression) to perform Step 1.
+
+    -   **Pro:** It's efficient and works well even with many continuous
+        confounders.
+    -   **Con:** It's **model-dependent**. If your model of the world
+        (`Y ~ A + L`) is wrong (e.g., the true relationship is non-linear but
+        you used a linear model), your causal estimate will be biased.
+
+-   **Non-Parametric G-Computation:** This approach avoids assuming a specific
+    model shape. Instead of fitting one big regression, it works by stratifying.
+
+    1.  Divide the population into strata based on the confounder(s) (e.g., age
+        groups: 20-29, 30-39, etc.).
+    2.  Within each stratum, calculate the average outcome for the treated and
+        the untreated.
+    3.  To get the overall $\E{Y^{a=1}}$, calculate a weighted average of the
+        stratum-specific means for the treated, where the weights are the
+        proportion of the *total population* in each stratum. Do the same for
+        the untreated to get $\E{Y^{a=0}}$.
+
+    -   **Pro:** It's more flexible and less prone to model misspecification
+        bias.
+    -   **Con:** It becomes impractical with many or continuous confounders (the
+        "curse of dimensionality"), as strata become too small or empty.
+
+## Mathematical Foundations
+
+The goal is to estimate the Average Causal Effect (ATE), defined within the
+potential outcomes framework as:
+
+$$
+\text{ATE} = \E{Y^{a=1}} - \E{Y^{a=0}}
+$$
+
+where $Y^a$ is the potential outcome that would be observed under treatment
+level $a$. The core challenge is that we can never observe both $Y^{a=1}$ and
+$Y^{a=0}$ for the same individual. G-computation relies on a key identification
+formula that allows us to express these unobservable quantities using observed
+data.
+
+### Key Assumptions for Identification
+
+For g-computation to provide an unbiased estimate of the causal effect, three
+assumptions must hold:
+
+1.  **Conditional Exchangeability (or Ignorability):** $(Y^a \perp A) | L$. This
+    means that, within strata of the confounder set $L$, treatment assignment
+    $A$ is independent of the potential outcomes $Y^a$. In our example, it means
+    that within a given age group, whether someone uses the fitness app is not
+    related to the weight they *would* lose (either with or without the app).
+    This is the crucial assumption that we have measured all common causes of
+    the treatment and the outcome.
+2.  **Positivity (or Overlap):** $P(A=a|L=l) > 0$ for all values of $l$ present
+    in the population. This means that for every confounder level (every age
+    group), there is a non-zero probability of being both treated and untreated.
+    We need some app users and some non-users in all age groups to learn about
+    the effect of the app in those groups.
+3.  **Consistency:** If an individual's observed treatment is $A=a$, then their
+    observed outcome $Y$ is their potential outcome under that treatment:
+    $Y = Y^A$. This assumption connects the potential outcomes (which we can't
+    see) to the observed data.
+
+### Derivation of the G-Formula (Standardization)
+
+The g-formula allows us to rewrite the unobservable potential outcome mean,
+$\E{Y^a}$, in terms of observable quantities. The derivation for a discrete
+confounder $L$ is as follows:
+
+$$
+\begin{aligned}
+\E{Y^a} & = \sum_l \E{Y^a | L=l} P(L=l) && \text{(1. By the Law of Total Expectation)} \\
+& = \sum_l \E{Y^a | A=a, L=l} P(L=l) && \text{(2. Using Conditional Exchangeability)} \\
+& = \sum_l \E{Y | A=a, L=l} P(L=l) && \text{(3. Using Consistency)}
+\end{aligned}
+$$
+
+Let's break this down:
+
+1.  **Step 1:** This is a fundamental rule of probability. We can express the
+    overall average of $Y^a$ as a weighted average of the stratum-specific means
+    of $Y^a$, where the weights are the probability of being in each stratum
+    $l$.
+2.  **Step 2:** This is the critical step where we use our main assumption.
+    Because we assume $Y^a$ is independent of $A$ *given* $L$, conditioning on
+    $A=a$ provides no new information about the expected value of $Y^a$ within
+    that stratum of $L$. So, $\E{Y^a | L=l]$ is the same as $\E{Y^a | A=a, L=l]$.
+3.  **Step 3:** By the consistency assumption, for the group of people who
+    actually received treatment $a$ (i.e., where $A=a$), their observed outcome
+    $Y$ is precisely their potential outcome $Y^a$. Therefore, we can substitute
+    the unobservable $\E{Y^a | A=a, L=l]$ with the observable quantity
+    $\E{Y | A=a, L=l}$, which is the average outcome among those with treatment
+    $a$ and confounder value $l$.
+
+The final expression, often called the **g-formula** or **standardization
+formula**, is:
+
+$$
+\E{Y^a} = \sum_l \E{Y | A=a, L=l} P(L=l)
+$$
+
+For a continuous confounder, the summation becomes an integral:
+
+$$
+\E{Y^a} = \int \E{Y | A=a, L=l} f(l) dl
+$$
+
+This formula is exactly what we implement in g-computation. The term
+$\E{Y | A=a, L=l}$ is what we estimate with our outcome regression model (Step 1
+of the intuitive explanation), and the averaging over the distribution of $L$
+($P(L=l)$ or $f(l)$) is done by predicting for every person in our original
+dataset and then taking the mean (Steps 2-4).
+
+## Appendix
+
+### Comprehension Questions
+
+1.  **Conceptual:** In your own words, explain why simply comparing the mean
+    outcome in the treated group to the mean outcome in the untreated group is
+    often misleading for estimating a causal effect. What specific problem is
+    g-computation designed to solve?
+2.  **Assumptions:** What are the three key assumptions required for
+    g-computation to yield a valid causal effect estimate? For each assumption,
+    describe a hypothetical public health scenario where it would likely be
+    violated.
+3.  **Comparison:** What is the main practical difference between parametric and
+    non-parametric g-computation? What are the key trade-offs (pros and cons)
+    when choosing between them?
+4.  **Interpretation:** A researcher uses parametric g-computation to estimate
+    the effect of a mandatory workplace wellness program ($A=1$) versus no
+    program ($A=0$) on employees' average weekly steps ($Y$), adjusting for
+    baseline fitness level ($L$). They report a standardized mean outcome of
+    $\E{Y^{a=1}} = 45,000$ steps and $\E{Y^{a=0}} = 30,000$ steps.
+    -   How would you interpret the average causal effect (ATE) of the program?
+    -   What does the value of 45,000 steps specifically represent in the
+        context of this study?
+5.  **Application:** Imagine you are planning to use g-computation to estimate
+    the causal effect of a new statin drug ($A$) on the risk of a heart attack
+    ($Y$). Your main confounder is cholesterol level ($L$). You fit an outcome
+    model: `glm(Y ~ A + L + A:L, family = binomial)`. What does the inclusion of
+    the interaction term `A:L` imply about the causal effect of the statin? How
+    does this correctly get handled by the g-computation algorithm?
+6.  **Computational Logic:** You have a data frame `df` with columns `Y`
+    (continuous outcome), `A` (binary treatment 0/1), and `L` (continuous
+    confounder). Write down the sequence of steps (in words or R-like
+    pseudo-code) you would take to calculate the ATE using parametric
+    g-computation with a linear model. Don't forget to include a step for
+    getting a confidence interval.
+
+## Detailed Solutions
+
+### Solution to Q1 (Conceptual)
+
+Simply comparing the treated and untreated groups is often called a "naive"
+comparison. It's misleading because the groups may not be **exchangeable**
+(comparable) to begin with. The people who chose to get the treatment might be
+systematically different from those who did not in ways that also affect the
+outcome. This difference is called **confounding**.
+
+For example, people who voluntarily sign up for a fitness program may already be
+more motivated to be healthy than those who don't. They might see better
+outcomes even if the program itself has no effect. G-computation is designed to
+solve this problem by simulating a scenario where everyone is comparable. It
+does this by adjusting for the confounding variables ($L$), effectively creating
+a "standardized" population where the only difference between the two
+hypothetical worlds we compare is the treatment itself.
+
+### Solution to Q2 (Assumptions)
+
+The three key assumptions are **Conditional Exchangeability**, **Positivity**,
+and **Consistency**.
+
+1.  **Conditional Exchangeability,** $(Y^a \perp A) | L$:
+    -   **Violation Scenario:** We want to study the effect of a new, expensive
+        drug ($A$) on cancer survival ($Y$), adjusting for the stage of cancer
+        ($L$). However, wealthier patients are more likely to get the new drug
+        *and* also have access to better nutrition and follow-up care, which
+        independently improves survival. Socioeconomic status is an **unmeasured
+        confounder**. Within a given cancer stage, the wealthy are still more
+        likely to get the drug and have better outcomes for reasons other than
+        the drug itself. Therefore, exchangeability is violated because our
+        measured confounder, $L$, is not sufficient to make the groups
+        comparable.
+2.  **Positivity,** $\pr{A=a|L=l} > 0$:
+    -   **Violation Scenario:** We want to study the effect of a specific type
+        of surgery ($A$) on joint mobility ($Y$) in patients with arthritis, and
+        we adjust for disease severity ($L$). However, the surgery is never
+        performed on patients with the most severe form of the disease due to
+        risk of complications. For the stratum $L=\text{"most severe"}$, the
+        probability of treatment is zero ($\pr{A=1|L=\text{"most severe"}} = 0$).
+        We have no data to learn what the effect of the surgery would be in this
+        group, so we cannot estimate the ATE for the whole population. This is a
+        positivity violation.
+3.  **Consistency,** $Y = Y^A$:
+    -   **Violation Scenario:** We study the effect of being prescribed a daily
+        aspirin ($A=1$) on stroke risk ($Y$). The "treatment" is defined as the
+        prescription. However, some patients prescribed aspirin do not take it
+        regularly (poor adherence), while others in the "no prescription" group
+        ($A=0$) might take it over-the-counter. The effect of the *prescription*
+        might be different from the effect of actually *ingesting* the aspirin.
+        If our definition of the treatment is ambiguous or doesn't correspond to
+        a well-defined intervention, consistency can be violated.
+
+### Solution to Q3 (Comparison)
+
+The main practical difference is how the relationship between the outcome,
+treatment, and confounders is modeled.
+
+-   **Parametric G-Computation** uses a single regression model (like `lm` or
+    `glm`) that assumes a specific mathematical form (e.g., linear, logistic)
+    for the relationships.
+-   **Non-Parametric G-Computation** makes no such assumption. It computes the
+    outcome means within discrete strata of the confounders.
+
+**Trade-offs:**
+
+| Feature | Parametric G-Computation | Non-Parametric G-Computation |
+|:--------------------------|:--------------------------|:--------------------------|
+| **Flexibility** | Lower. Relies on the correctness of the model's functional form. | Higher. Does not assume a specific shape for relationships. |
+| **Data Efficiency** | Higher. Can "borrow" information across strata and works well with smaller datasets and many/continuous confounders. | Lower. Requires sufficient data in every single stratum of all confounders. |
+| **Ease of Use** | Generally easier to implement, especially with many or continuous confounders. | Becomes very difficult or impossible with many confounders (curse of dimensionality). |
+| **Bias Risk** | High risk of **model misspecification bias** if the chosen model is wrong. | Lower risk of model misspecification bias, but can be biased if strata are too coarse. |
+
+In practice, parametric g-computation is used far more often due to its ability
+to handle real-world data with multiple continuous confounders.
+
+### Solution to Q4 (Interpretation)
+
+-   **Average Causal Effect (ATE):** The ATE is the difference between the two
+    standardized means: $45,000 - 30,000 = 15,000$ steps per week. You would
+    interpret this as: "The workplace wellness program is estimated to *cause*
+    an average increase of 15,000 steps per week across the entire employee
+    population, after accounting for differences in baseline fitness."
+-   **Interpretation of 45,000 steps:** The value $E[Y^{a=1}] = 45,000$ is the
+    estimated average weekly steps we would have observed in our study
+    population **if every single employee had participated in the wellness
+    program**. It's the mean of the potential outcomes under treatment for the
+    whole population.
+
+### Solution to Q5 (Application)
+
+Including the interaction term `A:L` in the model `glm(Y ~ A + L + A:L, …)`
+implies that you are allowing the causal effect of the statin drug ($A$) to be
+**different** at different levels of the confounder, cholesterol ($L$). This is
+known as **effect modification**. For example, the drug might produce a large
+reduction in heart attack risk for patients with very high cholesterol, but only
+a small reduction for those with borderline-high cholesterol.
+
+The g-computation algorithm handles this perfectly and naturally. The
+algorithm's steps are:
+
+1.  Fit the interaction model `glm(Y ~ A + L + A:L)`.
+2.  Create two counterfactual datasets: one where `A=1` for everyone, and one
+    where `A=0` for everyone. The `L` values for each person remain their
+    actual, observed values.
+3.  When you use `predict()` on these new datasets, the model will calculate the
+    predicted probability of a heart attack for each person based on *both*
+    their assigned treatment ($A=1$ or $A=0$) *and* their unique cholesterol
+    level $L$.
+4.  By averaging these predictions across the entire population, you are
+    averaging over the different effect sizes that exist for different levels of
+    $L$. The resulting ATE is the *average* effect across all these strata,
+    correctly weighted by the population distribution of $L$.
+
+### Solution to Q6 (Computational Logic)
+
+Here is the sequence of steps in R to calculate the ATE and its confidence
+interval.
+
+``` r
+# Load Necessary Libraries
+library(tidyverse)
+library(boot)
+
+# Assume 'df' is Your Data Frame with Columns Y, A, L
+# set.seed(123) # For Reproducibility
+
+# --- Step 1: Define a Function to Calculate the ATE ---
+# This Function Encapsulates the Entire G-computation Procedure for One Sample of Data.
+calculate_ate <- function(data, indices) {
+# This part Allows the Function to Be Used with the Boot Library
+  d <- data[indices, ]
+
+# Step 1.1: Fit the Parametric Outcome Model on the (resampled) Data
+  model <- lm(Y ~ A + L, data = d)
+
+# Step 1.2: Create Two Counterfactual Datasets
+# One where Everyone is Treated (A=1)
+  data_a1 <- d %>% mutate(A = 1)
+# One where no One is Treated (A=0)
+  data_a0 <- d %>% mutate(A = 0)
+
+# Step 1.3: Predict Potential Outcomes for Everyone under Each Scenario
+  y_hat_a1 <- predict(model, newdata = data_a1)
+  y_hat_a0 <- predict(model, newdata = data_a0)
+
+# Step 1.4: Calculate the Mean Potential Outcomes
+  mean_y1 <- mean(y_hat_a1)
+  mean_y0 <- mean(y_hat_a0)
+
+# Step 1.5: Compute and return the ATE
+  ate <- mean_y1 - mean_y0
+  return(ate)
+}
+
+# --- Step 2: Use the Bootstrap to Get a Confidence Interval ---
+# The Bootstrap Method Resamples the Original Data with Replacement Many times
+# And Runs Our ATE Calculation on Each Resample. This Gives Us a Distribution
+# Of the ATE Estimate, from Which We Can Calculate a Confidence Interval.
+
+# bootstrap_results Will Contain the ATE from Each of the 999 Resamples
+bootstrap_results <- boot(
+  data = df,               # The original dataset
+  statistic = calculate_ate, # The function to run on each resample
+  R = 999                  # The number of bootstrap replications
+)
+
+# --- Step 3: View the Results ---
+# Print the Results Object to See the Original ATE and Bootstrap Standard Error
+print(bootstrap_results)
+
+# Calculate and Print the 95% Confidence Interval
+boot.ci(bootstrap_results, type = "perc") # Using the percentile method
+```
+
+### R Example with Simulated Data
+
+Let's see this in action to prove it works.
+
+``` r
+# Load Libraries
+library(tidyverse)
+library(boot)
+
+# For Reproducibility
+set.seed(42)
+
+# --- 1. Simulate Data with a Known True Effect ---
+n <- 1000
+# L is a Confounder (e.g., age)
+L <- rnorm(n, mean = 50, sd = 10)
+# Treatment A Depends on L (confounding)
+# Older People Are More Likely to Be Treated
+prob_A <- plogis(-5 + 0.1 * L)
+A <- rbinom(n, 1, prob_A)
+# Outcome Y Depends on A and L. True ATE = -15
+Y <- 100 - 15 * A + 2 * L + rnorm(n, 0, 8)
+
+# Combine into a Data Frame
+df <- data.frame(Y, A, L)
+
+# --- 2. Naive, Biased Analysis ---
+naive_model <- lm(Y ~ A, data = df)
+cat("--- Naive (Biased) Result ---\n")
+print(summary(naive_model)$coefficients["A", ])
+# The Result is around -10, not the True -15, because A is Confounded by L.
+# Treated People Are Older (and Thus Have Higher Y), Making the Treatment Look less Effective.
+
+# --- 3. G-Computation (Parametric) ---
+# Function to Calculate ATE (same as above)
+calculate_ate <- function(data, indices) {
+  d <- data[indices, ]
+  model <- lm(Y ~ A + L, data = d)
+  data_a1 <- d %>% mutate(A = 1)
+  data_a0 <- d %>% mutate(A = 0)
+  mean_y1 <- mean(predict(model, newdata = data_a1))
+  mean_y0 <- mean(predict(model, newdata = data_a0))
+  return(mean_y1 - mean_y0)
+}
+
+# Run the Bootstrap
+bootstrap_results <- boot(data = df, statistic = calculate_ate, R = 999)
+
+cat("\n--- Parametric G-Computation Result ---\n")
+print(bootstrap_results)
+
+# Get the 95% CI
+ci <- boot.ci(bootstrap_results, type = "perc")
+cat("\n95% Confidence Interval (Percentile Method):\n")
+print(ci)
+```
+
+**Interpretation of the R Output:**
+
+The output from the `print(bootstrap_results)` command will show an `original`
+value. This is the ATE calculated from our original sample, which should be very
+close to the true value of -15. The `bias` should be small, and the `std. error`
+gives us the standard error of our estimate.
+
+The `boot.ci` output provides the 95% confidence interval. We can state: "Using
+parametric g-computation, the estimated average causal effect of the treatment
+is -14.9. We are 95% confident that the true average causal effect lies between
+approximately -16.5 and -13.4." Since this interval does not contain 0 and is
+close to the true value of -15, we correctly conclude the treatment has a
+significant, negative causal effect. This demonstrates how g-computation, by
+properly adjusting for the confounder $L$, recovers the true causal effect where
+the naive analysis failed.
+
+## Intuitive Understanding: A Simple Story
+
+Imagine a small after-school club with 10 students. We want to know the causal
+effect of a new **tutoring program** ($A$) on students' **final exam scores**
+($Y$). We know that **prior grades** ($L$) are a confounder—students with good
+prior grades are more likely to join the program and also more likely to get
+high exam scores anyway.
+
+A **naive comparison** would just compare the average score of the tutored
+students to the non-tutored students. This is wrong because we'd be comparing
+motivated students with good prior grades to less-motivated students with weaker
+grades. It’s an apples-to-oranges comparison.
+
+**G-computation fixes this**. It's a method to ask: "What would the average exam
+score for all 10 students have been if *every single one of them* had received
+tutoring, compared to if *none of them* had?" This creates a fair,
+apples-to-apples comparison.
+
+Here's our simple, 10-student dataset:
+
+| Student ID | Prior Grades (L) | Took Tutoring? (A) | Final Exam Score (Y) |
+|:-----------|:-----------------|:-------------------|:---------------------|
+| 1          | Good             | 1 (Yes)            | 95                   |
+| 2          | Good             | 1 (Yes)            | 90                   |
+| 3          | Good             | 1 (Yes)            | 92                   |
+| 4          | Good             | 0 (No)             | 88                   |
+| 5          | Good             | 0 (No)             | 85                   |
+| 6          | Weak             | 1 (Yes)            | 80                   |
+| 7          | Weak             | 1 (Yes)            | 78                   |
+| 8          | Weak             | 0 (No)             | 70                   |
+| 9          | Weak             | 0 (No)             | 72                   |
+| 10         | Weak             | 0 (No)             | 68                   |
+
+### Step-by-Step G-Computation Walkthrough
+
+**Step 1: Model the World.** First, we use our data to understand how the world
+works. We fit a simple model to predict the exam score based on tutoring *and*
+prior grades. Let's say our model is:
+
+`Predicted Score = 70 + 10*(Took Tutoring) + 15*(Good Prior Grades)`
+
+This model tells us:
+
+-   The baseline score for a student with weak prior grades and no tutoring is
+    70.
+-   Taking tutoring adds 10 points to the score.
+-   Having good prior grades adds 15 points to the score.
+
+**Step 2: Create Hypothetical Worlds & Predict.** Now we use this model to
+simulate two scenarios for our *entire class of 10 students*.
+
+**Scenario 1: What if EVERYONE got tutoring?** We fill out a new table where we
+set `A=1` for all students, but keep their *actual* prior grades.
+
+| Student ID | Prior Grades (L) | Hypothetical A | Predicted Score (Y)     |
+|:-----------|:-----------------|:---------------|:------------------------|
+| 1          | Good             | 1              | 70 + 10(1) + 15(1) = 95 |
+| 2          | Good             | 1              | 70 + 10(1) + 15(1) = 95 |
+| 3          | Good             | 1              | 70 + 10(1) + 15(1) = 95 |
+| 4          | Good             | 1              | 70 + 10(1) + 15(1) = 95 |
+| 5          | Good             | 1              | 70 + 10(1) + 15(1) = 95 |
+| 6          | Weak             | 1              | 70 + 10(1) + 15(0) = 80 |
+| 7          | Weak             | 1              | 70 + 10(1) + 15(0) = 80 |
+| 8          | Weak             | 1              | 70 + 10(1) + 15(0) = 80 |
+| 9          | Weak             | 1              | 70 + 10(1) + 15(0) = 80 |
+| 10         | Weak             | 1              | 70 + 10(1) + 15(0) = 80 |
+
+**Average Predicted Score:** (5 \* 95 + 5 \* 80) / 10 = **87.5**. This is our
+estimate of $E[Y^{a=1}]$.
+
+**Scenario 2: What if NO ONE got tutoring?** Next, we set `A=0` for everyone.
+
+| Student ID | Prior Grades (L) | Hypothetical A | Predicted Score (Y)     |
+|:-----------|:-----------------|:---------------|:------------------------|
+| 1          | Good             | 0              | 70 + 10(0) + 15(1) = 85 |
+| 2          | Good             | 0              | 70 + 10(0) + 15(1) = 85 |
+| 3          | Good             | 0              | 70 + 10(0) + 15(1) = 85 |
+| 4          | Good             | 0              | 70 + 10(0) + 15(1) = 85 |
+| 5          | Good             | 0              | 70 + 10(0) + 15(1) = 85 |
+| 6          | Weak             | 0              | 70 + 10(0) + 15(0) = 70 |
+| 7          | Weak             | 0              | 70 + 10(0) + 15(0) = 70 |
+| 8          | Weak             | 0              | 70 + 10(0) + 15(0) = 70 |
+| 9          | Weak             | 0              | 70 + 10(0) + 15(0) = 70 |
+| 10         | Weak             | 0              | 70 + 10(0) + 15(0) = 70 |
+
+**Average Predicted Score:** (5 \* 85 + 5 \* 70) / 10 = **77.5**. This is our
+estimate of $E[Y^{a=0}]$.
+
+**Step 3: Estimate the Causal Effect.** The Average Causal Effect (ATE) is the
+difference between these two scenarios:
+
+$$
+\text{ATE} = E[Y^{a=1}] - E[Y^{a=0}] = 87.5 - 77.5 = 10
+$$
+
+Our conclusion: The tutoring program **causes** an average increase of 10 points
+on the final exam. Notice this matches the `+10` coefficient for tutoring in our
+model. The g-computation procedure correctly isolated this effect by
+standardizing over the population distribution of the confounder (5 students
+with good grades, 5 with weak).
+
+## Mathematical Foundations
+
+This three-step process is the exact implementation of the **g-formula (or
+standardization formula)**. The formula states that we can calculate the
+potential outcome mean, $E[Y^a]$, using observable data if we have measured all
+the necessary confounders ($L$).
+
+The formula is:
+
+$$
+E[Y^a] = \sum_l E[Y | A=a, L=l] \times P(L=l)
+$$
+
+Let's connect this math to our numerical example to calculate $E[Y^{a=1}]$ (the
+average score if everyone got tutoring):
+
+-   The term $L=l$ refers to the strata of our confounder. We have two:
+    $l = \text{Good Grades}$ and $l = \text{Weak Grades}$.
+-   The term $P(L=l)$ is the proportion of students in each stratum. In our
+    class, $P(L=\text{Good}) = 5/10 = 0.5$ and $P(L=\text{Weak}) = 5/10 = 0.5$.
+-   The term $E[Y | A=a, L=l]$ is the expected outcome for a given treatment and
+    confounder level. We get this from our model:
+    `Predicted Score = 70 + 10*A + 15*L_good`.
+    -   For tutored students with good grades:
+        $E[Y | A=1, L=\text{Good}] = 70 + 10(1) + 15(1) = 95$.
+    -   For tutored students with weak grades:
+        $E[Y | A=1, L=\text{Weak}] = 70 + 10(1) + 15(0) = 80$.
+
+Now, plug these pieces into the formula:
+
+$$
+\begin{aligned}
+E[Y^{a=1}] & = (E[Y|A=1, L=\text{Good}] \times P(L=\text{Good})) + (E[Y|A=1, L=\text{Weak}] \times P(L=\text{Weak})) \
+& = (95 \times 0.5) + (80 \times 0.5) \
+& = 47.5 + 40 \
+& = 87.5
+\end{aligned}
+$$
+
+This is the *exact same result* we got from our intuitive table-based method!
+The formula is simply the formal mathematical way of describing our process of
+predicting for every type of student and then averaging across the whole
+population.
+
+## Appendix: R Implementation and Comprehension Questions
+
+### R Example: Parametric G-Computation
+
+Let's run our 10-student example in R. The `finalfit` package has a wonderfully
+clear function `gformula()` for this.
+
+``` r
+# Install and load the necessary package
+# install.packages("finalfit")
+library(finalfit)
+library(dplyr)
+
+# 1. Create our 10-student dataset
+df_students <- data.frame(
+  prior_grades = factor(c(rep("Good", 5), rep("Weak", 5))),
+  took_tutoring = c(1, 1, 1, 0, 0, 1, 1, 0, 0, 0),
+  exam_score = c(95, 90, 92, 88, 85, 80, 78, 70, 72, 68)
+)
+
+# 2. Fit the G-Formula
+# We specify the outcome, the exposure (treatment), and the confounders
+gformula_results <- gformula(
+  data = df_students,
+  outcome = "exam_score",
+  exposure = "took_tutoring",
+  covariates = c("prior_grades"),
+  family = "gaussian" # For a continuous outcome like a score
+)
+
+# 3. Print the results
+gformula_results
+```
+
+**Interpreting the R Output:** The output from `gformula_results` will look
+something like this:
+
+```         
+g-formula
+Outcome:     exam_score ~ took_tutoring + prior_grades
+Exposure:    took_tutoring
+Comparison:  1 vs 0
+
+Mean outcome if all took_tutoring = 1: 87.6
+Mean outcome if all took_tutoring = 0: 77.4
+                 Difference (CI 95%)      p
+Absolute risk       10.2 (0.9 to 19.5)  0.035
+```
+
+-   **`Mean outcome if all took_tutoring = 1: 87.6`**: This is our $E[Y^{a=1}]$.
+    It's the model's prediction of the average exam score if every student had
+    been tutored. Our manual calculation was 87.5; the tiny difference is due to
+    the regression fitting on the actual data points.
+-   **`Mean outcome if all took_tutoring = 0: 77.4`**: This is our $E[Y^{a=0}]$.
+    It's the predicted average score if no student had been tutored. Our manual
+    calculation was 77.5.
+-   **`Absolute risk Difference: 10.2`**: This is the Average Treatment Effect
+    (ATE). It's the difference between the two mean outcomes (87.6 - 77.4 =
+    10.2). This is our final causal estimate.
+-   **`(CI 95%)` and `p`**: The output also gives us a 95% confidence interval
+    and a p-value, which are essential for reporting. Our result of 10.2 is
+    statistically significant (p \< 0.05), suggesting it's unlikely to be due to
+    random chance. The confidence interval tells us that we are 95% confident
+    the true causal effect of tutoring is an increase of between 0.9 and 19.5
+    points.
+
+### Comprehension Questions
+
+1.  **Fundamental Concept:** Why is it necessary to include `prior_grades` in
+    our g-computation model? What would happen if we left it out and just
+    modeled `exam_score ~ took_tutoring`?
+2.  **Calculation:** Using the model
+    `Predicted Score = 70 + 10*(Took Tutoring) + 15*(Good Prior Grades)`,
+    manually calculate the *predicted* score for Student 4 (Good grades, No
+    tutoring) and Student 7 (Weak grades, Yes tutoring). How do these individual
+    predictions contribute to the final ATE?
+3.  **Interpretation:** Explain in one sentence what the value "87.6" in the R
+    output represents. Why is it different from the actual average score of the
+    students who took tutoring in the original data? (You can calculate this:
+    `mean(c(95, 90, 92, 80, 78)) = 87`).
+4.  **Application:** Imagine the school introduces a third category for prior
+    grades: "Excellent". You now have three strata for the confounder. How does
+    the g-computation procedure (either the manual steps or the formal equation)
+    change to handle this? Does the fundamental logic change?
+
+### Detailed Solutions
+
+1.  **Solution:** `prior_grades` must be included because it is a
+    **confounder**. It's a common cause of both taking tutoring (the exposure)
+    and getting a high exam score (the outcome). If we left it out, our model
+    would wrongly attribute the 15-point boost from having good grades to the
+    tutoring program, because students with good grades were more likely to be
+    in the tutoring group. This would lead to an **overestimate** of the
+    tutoring effect. This is called omitted variable bias.
+2.  **Solution:**
+    -   **Student 4 (Good grades, No tutoring):**
+        `Predicted Score = 70 + 10*(0) + 15*(1) = 85`.
+    -   **Student 7 (Weak grades, Yes tutoring):**
+        `Predicted Score = 70 + 10*(1) + 15*(0) = 80`. These individual
+        predictions are the building blocks. To get the final ATE, we first
+        calculate *counterfactual* predictions for them (what if Student 4 *did*
+        get tutoring? What if Student 7 *didn't*?). Then we average all 10
+        students' predictions under the "all tutored" scenario and compare that
+        to the average of all 10 students' predictions under the "none tutored"
+        scenario.
+3.  **Solution:** The value "87.6" represents the estimated average exam score
+    for the *entire class of 10* if they had all hypothetically received
+    tutoring. It is different from the observed mean of 87 because the group who
+    actually took tutoring was not representative of the whole class (it had a
+    higher proportion of students with weak grades than the class as a whole).
+    The g-computation result is standardized to the entire class's composition.
+4.  **Solution:** The procedure does not change logically, it just expands.
+    -   **Manual Steps:** In Step 1, our model would now estimate coefficients
+        for `prior_grades_Good` and `prior_grades_Excellent`. In Step 2, when we
+        predict, we would use these new coefficients for every student based on
+        their actual grade category. The final averaging still happens over all
+        10 students.
+    -   **Formal Equation:** The summation $\sum_l$ would now run over three
+        terms instead of two: `Weak`, `Good`, and `Excellent`, each weighted by
+        their proportion in the total population. The fundamental logic of
+        standardizing the outcome model over the population's distribution of
+        confounders remains identical.

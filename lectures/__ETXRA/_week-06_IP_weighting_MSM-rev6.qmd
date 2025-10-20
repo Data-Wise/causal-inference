@@ -1,0 +1,383 @@
+---
+title: "Inverse Probability Weighting and Marginal Structural Models"
+nocite: "@cunningham2021causal, @pearl2009causality, @imbens2015causal, @vanderweele2015book"
+---
+
+# STAT 579 — Applied Causal Inference: Inverse Probability Weighting and Marginal Structural Models
+
+## Overview
+
+This module explores inverse probability weighting (IPW) and marginal structural models (MSMs) as powerful tools for estimating causal effects in observational data, particularly when dealing with time-fixed or time-varying treatments and confounders. Drawing from the example of smoking cessation's impact on body weight gain, we examine how IPW creates a pseudo-population to mimic randomization, allowing unbiased estimation of causal parameters. MSMs extend this by modeling counterfactual outcomes directly. The content integrates foundational concepts from causal inference literature, emphasizing practical application while addressing challenges like stabilization of weights, continuous treatments, effect modification, and selection bias due to censoring or missing data [@hernan2020causalwhatif; @neal2020].
+
+## Learning Objectives
+
+By the end of this module, students will be able to:
+
+- **Specific**: Explain the mechanics of IPW and MSMs, including how weights adjust for confounding to estimate causal effects.
+- **Measurable**: Compute IP weights by hand for a small dataset and interpret the resulting causal estimates.
+- **Achievable**: Implement IPW and fit MSMs in R using packages like `MatchIt` and `survey`, including DAG visualization with `dagitty` and `ggdag`.
+- **Relevant**: Apply these methods to real-world scenarios, such as evaluating the effect of smoking cessation on weight gain, while identifying potential biases.
+- **Time-bound**: Complete a hands-on lab simulating data, estimating effects, and reflecting on assumptions within a 2-hour session.
+
+## R Packages
+
+We will use the following R packages for this module. Install and load them using `pacman`:
+
+```{r}
+#| label: load-packages
+#| message: false
+#| warning: false
+
+if (!require(pacman)) {
+  install.packages("pacman")
+}
+pacman::p_load(dagitty, ggdag, MatchIt, ggplot2, dplyr, survey, WeightIt, tidyr)
+```
+
+## 1 Comprehensive Topic Explanation
+
+### Inverse Probability Weighting (IPW)
+
+IPW is a method to estimate causal effects from observational data by reweighting observations to create a pseudo-population where treatment assignment is independent of confounders. In the pseudo-population, the distribution of covariates is balanced between treated and untreated groups, mimicking a randomized trial. This allows fitting standard regression models to estimate the average treatment effect (ATE) without bias from measured confounders [@hernan2020causalwhatif].
+
+Formally, for a binary treatment $A$ (e.g., $A=1$ for quitting smoking, $A=0$ otherwise), outcome $Y$ (e.g., weight gain), and confounders $L$, the propensity score is $e(L) = P(A=1 \mid L)$. Nonstabilized IP weights are $w = \frac{A}{e(L)} + \frac{1-A}{1-e(L)}$. In the weighted population, the causal effect is estimated via a weighted mean or regression.
+
+This links to broader causal ideas like the potential outcomes framework, where IPW targets the marginal expectation $E[Y^a]$ for intervention $a$. See @hernan2020causalwhatif for extensions to time-varying treatments.
+
+### Stabilized vs. Nonstabilized Weights
+
+Nonstabilized weights can lead to extreme values if $e(L)$ is close to 0 or 1, inflating variance. Stabilized weights address this by multiplying by the marginal probability: $sw = A \frac{P(A=1)}{e(L)} + (1-A) \frac{P(A=0)}{1-e(L)}$. These have mean approximately 1, reducing variance and yielding narrower confidence intervals while preserving unbiasedness under no unmeasured confounding [@hernan2020causalwhatif; @neal2020].
+
+### Marginal Structural Models (MSMs)
+
+MSMs model the marginal distribution of counterfactual outcomes directly: $E[Y^{\bar{a}}] = \beta_0 + \beta_1 \sum_{k=0}^{K} a_k$ for time-varying treatment $\bar{a} = (a_0, \dots, a_K)$. Parameters are estimated using IPW, where weights account for time-varying confounding. This assumes constant effects per dose and focuses on cumulative exposure [@hernan2020causalwhatif].
+
+For the smoking example, the MSM might estimate weight gain under always-quitting vs. never-quitting regimes. Complications include continuous treatments (requiring density-based weights), effect modification (interactions in the MSM), and selection bias from censoring (addressed via IPCW) [@hernan2020causalwhatif; @cunningham2021causal].
+
+### Connections to Other Methods
+
+IPW relates to propensity score matching but avoids discarding data. MSMs generalize to longitudinal settings, contrasting with g-computation [@pearl2009causality; @vanderweele2015book].
+
+## 2 Intuitive Clarifications of Challenging Ideas
+
+### Pseudo-Population Analogy
+
+Imagine a biased coin flip assigning treatment: IPW "flips" it fairly by overweighting rare combinations (e.g., high-risk individuals not treated). This creates a "cloned" population where confounders don't predict treatment, like balancing a seesaw [@neal2020].
+
+::: {.callout-tip}
+Visual metaphor: Think of IPW as resizing groups in a scatterplot so treated and untreated overlap perfectly on confounders.
+:::
+
+### Misconceptions on Ignorability and Backdoor Criterion
+
+A common misconception is that IPW requires no unmeasured confounding (ignorability: $Y^a \perp A \mid L$), but it also assumes positivity ($0 < P(A=1 \mid L) < 1$) and correct model specification. Backdoor paths are blocked via weighting on $L$ [@pearl2009causality].
+
+::: {.callout-warning}
+## Common Pitfall
+Assuming stabilization always improves estimates— it reduces variance but can introduce bias if the numerator is misspecified.
+:::
+
+For selection bias, visualize censoring as "leaky" data: IPCW weights survivors to represent the full population.
+
+## 3 Simple, Hand-Calculation Numerical Example(s)
+
+Consider a tiny dataset on smoking cessation ($A=1$ quit, $A=0$ not) and weight gain $Y$ (kg), with confounder $L$ (baseline BMI, binary: 0 low, 1 high). Data:
+
+| ID | L | A | Y |
+|----|---|---|---|
+| 1  | 0 | 0 | 1 |
+| 2  | 0 | 1 | 3 |
+| 3  | 1 | 0 | 2 |
+| 4  | 1 | 0 | 2 |
+| 5  | 1 | 1 | 4 |
+| 6  | 1 | 1 | 5 |
+
+Step 1: Estimate propensity scores. Logistic regression: logit(P(A=1|L)) = -1 + 2L. Thus, e(L=0) = 0.27, e(L=1) = 0.73.
+
+Step 2: Nonstabilized weights: For A=1, w=1/e(L); A=0, w=1/(1-e(L)).
+
+- ID1: L=0,A=0 → w=1/(1-0.27)=1.37
+- ID2: L=0,A=1 → w=1/0.27=3.70
+- ID3: L=1,A=0 → w=1/(1-0.73)=3.70
+- ID4: L=1,A=0 → w=3.70
+- ID5: L=1,A=1 → w=1/0.73=1.37
+- ID6: L=1,A=1 → w=1.37
+
+Step 3: Weighted means. Treated (A=1): $(3*3.70 + 4*1.37 + 5*1.37) / (3.70+1.37+1.37) ≈ 3.8$
+
+Untreated (A=0): $(1*1.37 + 2*3.70 + 2*3.70) / (1.37+3.70+3.70) ≈ 1.9$
+
+$$
+ATE ≈ 3.8 - 1.9 = 1.9 kg.
+$$
+
+Step 4: Stabilized weights. $P(A=1)=0.5. sw_A1 = 0.5/e(L), sw_A0=0.5/(1-e(L))$.
+
+Recalculate: Similar process yields narrower variance in practice.
+
+Interpretation: Causal effect of quitting is ~1.9 kg gain, adjusting for BMI.
+
+::: {.callout-example}
+### Worked Example
+The unweighted naive difference is $(3+4+5)/3 - (1+2+2)/3 = 4 - 1.67 = 2.33$, biased upward due to confounding.
+:::
+
+## 4 R Code Examples & Interpretation
+
+First, draw a DAG using `dagitty` and `ggdag`.
+
+```{r}
+#| label: fig-dag-smoke
+#| fig-cap: "DAG for smoking cessation example"
+#| column: margin
+
+dag <- dagitty("dag { L -> A; L -> Y; A -> Y }")
+ggdag(dag) + theme_dag()
+```
+
+The DAG shows $L$ confounds $A \to Y$, requiring adjustment via backdoor.
+
+For LaTeX tikz DAG:
+
+```{.tikz}
+
+\begin{tikzpicture}[node distance=2.5cm and 2.5cm, main/.style={draw, circle, minimum size=1.2cm}, text style/.style={text width=2.5cm, align=center}]
+\node (L) {L};
+\node[right=of L] (A) {A};
+\node[right=of A] (Y) {Y};
+\draw[->] (L) -- (A);
+\draw[->] (L) -- (Y);
+\draw[->] (A) -- (Y);
+\end{tikzpicture}
+```
+
+Now, simulate data and compute IPW using `WeightIt`.
+
+```{r}
+#| label: tbl-sim-data-ipw
+
+set.seed(123)
+n <- 1000
+L <- rbinom(n, 1, 0.5) # Confounder
+A <- rbinom(n, 1, plogis(-1 + 2 * L)) # Treatment
+Y <- 2 + 1 * A + 1 * L + rnorm(n) # Outcome
+
+data <- data.frame(L, A, Y)
+
+# Estimate weights
+wgt <- weightit(
+  A ~ L,
+  data = data,
+  method = "ps",
+  estimand = "ATE",
+  stabilize = TRUE
+)
+summary(wgt)
+```
+
+Interpretation: Stabilized weights have mean ~1, min/max reasonable.
+
+Fit MSM using weighted regression.
+
+```{r}
+#| label: tbl-fit-msm
+
+design <- svydesign(
+  ids = ~1,
+  weights = ~weights,
+  data = cbind(data, weights = wgt$weights)
+)
+msm <- svyglm(Y ~ A, design = design)
+summary(msm)
+```
+
+Coefficient for A ≈1, the true causal effect. Confidence intervals are narrower with stabilization.
+
+## 5 Hands-On R Lab
+
+### Lab Objectives & Reading Warm-Up
+
+**Objectives**: Practice simulating data, computing IP weights, fitting MSMs, and diagnosing issues. By the end, estimate causal effects and reflect on assumptions.
+
+**Warm-Up (Flipped Design)**: Read Chapter 12 of @hernan2020causalwhatif. Answer: What is the key assumption for IPW validity?
+
+### Data Simulation/Import
+
+Simulate smoking data:
+
+```{r}
+#| label: tbl-lab-sim-data
+#| eval: true
+
+set.seed(42)
+n <- 500
+L <- rnorm(n) # Continuous confounder
+A <- rbinom(n, 1, plogis(0.5 + L))
+Y <- 3 + 2 * A + 1.5 * L + rnorm(n)
+lab_data <- data.frame(L, A, Y)
+head(lab_data)
+```
+
+### Numbered Tasks
+
+1. Draw the DAG using `ggdag` and identify confounders.
+
+```{r}
+#| label: lab-task1
+#| eval: false
+
+# Your code here
+
+```
+
+**Solution**:
+
+```{r}
+#| label: lab-task1-sol
+#| echo: false
+#| eval: false
+
+dag_lab <- dagitty("dag { L -> A; L -> Y; A -> Y }")
+ggdag(dag_lab) + theme_dag()
+```
+
+Confounder: L.
+
+2. Compute stabilized IP weights using `WeightIt`. Check summary.
+
+```{r}
+#| label: lab-task2
+#| eval: false
+
+# Your code here
+
+```
+
+**Solution**:
+
+```{r}
+#| label: lab-task2-sol
+#| echo: false
+#| eval: false
+
+wgt_lab <- weightit(
+  A ~ L,
+  data = lab_data,
+  method = "ps",
+  estimand = "ATE",
+  stabilize = TRUE
+)
+summary(wgt_lab)
+```
+
+Weights stable.
+
+3. Fit MSM with `svyglm` and interpret.
+
+```{r}
+#| label: lab-task3
+#| eval: false
+
+# Your code here
+
+```
+
+**Solution**:
+
+```{r}
+#| label: lab-task3-sol
+#| echo: false
+#| eval: false
+
+design_lab <- svydesign(
+  ids = ~1,
+  weights = ~weights,
+  data = cbind(lab_data, weights = wgt_lab$weights)
+)
+msm_lab <- svyglm(Y ~ A, design = design_lab)
+summary(msm_lab)
+```
+
+Effect ≈2.
+
+4. Plot weighted vs. unweighted covariate balance.
+
+```{r}
+#| label: lab-task4
+#| eval: false
+
+# Use love.plot from cobalt or similar
+
+```
+
+**Solution**: (Omit code for brevity; balance improves post-weighting.)
+
+### Retrieval Quiz & Reflection Prompts
+
+**Quiz**:
+
+::: {.callout-question}
+### Check Your Understanding
+1. What does positivity assume? (A: Treatment probability between 0 and 1 for all L.)
+2. Why stabilize weights? (A: Reduce variance.)
+:::
+
+**Reflection**: How might violation of ignorability bias results? Discuss with a peer (think-pair-share).
+
+## 6 Common Pitfalls & Checks
+
+::: {.callout-important}
+### Key Assumption
+No unmeasured confounding (exchangeability).
+:::
+
+::: {.callout-warning}
+### Common Pitfall
+Extreme weights indicate positivity violation—trim them (e.g., at 1st/99th percentile).
+:::
+
+::: {.callout-tip}
+Diagnostics: Check effective sample size (ESS) post-weighting.
+:::
+
+::: {.callout-question}
+### Check Your Understanding
+Q: If weights >10, what to do? A: Investigate overlap, consider truncation.
+:::
+
+## 7 Advanced Teaching Activities & Interactivity
+
+**Flipped Prompts**: Pre-class: Simulate data with violation of positivity; discuss in class.
+
+**Problem-Based Cases**: Analyze a dataset with censoring; apply IPCW.
+
+**Think-Pair-Share**: Pair to debate stabilized vs. nonstabilized; share pros/cons.
+
+**Spaced/Interleaved Quizzes**: Quiz on IPW now, interleave with matching next week.
+
+**Self-Explanation Tasks**: Explain pseudo-population in your own words.
+
+**Optional Shiny Widget**: Build app to vary confounder strength and see weight changes.
+
+## 8 Appendix: Advanced Theory & Derivations
+
+### Derivation of IPW Estimator
+
+Under ignorability and positivity, the IPW estimator for ATE is $\hat{\tau} = \frac{1}{n} \sum \frac{A Y}{e(L)} - \frac{1}{n} \sum \frac{(1-A) Y}{1-e(L)}$. This is unbiased for $E[Y^1 - Y^0]$ [@imbens2015causal].
+
+Numeric Illustration: Using Section 3 data, derive variance reduction with stabilization.
+
+### MSM for Time-Varying Treatments
+
+For $\bar{A}$, weights are product over time: $w = \prod_{k=0}^K \frac{1}{P(A_k \mid \bar{A}_{k-1}, \bar{L}_k)}$. Fit MSM via weighted regression [@hernan2020causalwhatif].
+
+Numeric: Extend Section 3 to two time points.
+
+## References
+
+- @hernan2020causalwhatif: Hernán, M. A., & Robins, J. M. (2020). *Causal inference: What if*. Chapman & Hall/CRC.
+- @neal2020: Neal, B. (2020). *Introduction to Causal Inference*.
+- @cunningham2021causal: Cunningham, S. (2021). *Causal Inference: The Mixtape*. Yale University Press.
+- @pearl2009causality: Pearl, J. (2009). *Causality: Models, reasoning, and inference* (2nd ed.). Cambridge University Press.
+- @vanderweele2015explanation: VanderWeele, T. J. (2015). *Explanation in Causal Inference*. Oxford University Press.
+- @imbens2015causal: Imbens, G. W., & Rubin, D. B. (2015). *Causal Inference for Statistics, Social, and Biomedical Sciences*. Cambridge University Press.

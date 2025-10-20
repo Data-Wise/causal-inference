@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.24">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Davood Tofighi, Ph.D.">
+
+<title>Inverse Probability Weighting and Marginal Structural Models – Introduction to Causal Inference</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../assets/images/icon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-da61f9a05e9cefe097d79e8430a73dd4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-da61f9a05e9cefe097d79e8430a73dd4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-da61f9a05e9cefe097d79e8430a73dd4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script>
+    MathJax = {
+        tex: {
+            macros: {
+                RR: "{\\mathbb{R}}",
+                NN: "{\\mathbb{N}}",
+                QQ: "{\\mathbb{Q}}",
+                ZZ: "{\\mathbb{Z}}",
+                PP: "{\\mathbb{P}}",
+                // expectation & probability
+                E: ["{\\EE\\left[ #1 \\right]}", 1],
+                Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
+                EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
+                EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
+                EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
+                Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
+                ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
+                Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
+                ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
+                ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
+                ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
+                ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
+                // operators (both lower & upper case)
+                var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
+                Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
+                cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
+                Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
+                cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
+                Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
+                logit: "{\\operatorname{logit}}",
+                expit: "{\\operatorname{expit}}", // inverse logit
+                sgn: "{\\operatorname{sgn}}",
+                EE: "{\\operatorname{\\mathbb{E}}}",
+                pr: "{\\operatorname{\\mathbb{P}}}",
+
+
+                // vector & basic constructs
+                vect: ["{\\mathbf{#1}}", 1],
+                abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
+                norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
+                ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
+
+                // indicator variants
+                indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
+                ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+
+                // independence & non-independence (bare + braced forms via separate names)
+                indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
+                nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+
+                // do-operator & d-separation
+                doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
+                dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+
+                // potential outcomes & notational conveniences
+                Y: ["{Y^{#1}}", 1],
+                Ya: "{Y^a}",
+                Yone: "{Y^1}",
+                Yzero: "{Y^0}",
+
+                // estimands
+                ATE: "{\\tau_{\\text{ATE}}}",
+                ATT: "{\\tau_{\\text{ATT}}}",
+                ATC: "{\\tau_{\\text{ATC}}}",
+                CATE: "{\\tau_{\\text{CATE}}}",
+
+                DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
+                DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
+                DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
+                DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
+
+                // identification blocks
+                gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
+                ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
+
+                // risk measures
+                RD: "{\\operatorname{RD}}",
+                OR: "{\\operatorname{OR}}",
+
+                // optimization operators
+                argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
+                argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
+            }
+        }
+    };
+</script>
+<link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="Inverse Probability Weighting and Marginal Structural Models – Introduction to Causal Inference">
+<meta property="og:description" content="Introduction to Causal Inference">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:site_name" content="Introduction to Causal Inference">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo light-content">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Introduction to Causal Inference</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Syllabus</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.pdf">
+ <span class="dropdown-text">PDF</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.html">
+ <span class="dropdown-text">HTML</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../syllabus/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_lectures.html"> 
+<span class="menu-text">Lecture Notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_project.html"> 
+<span class="menu-text">Project</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_readings.html"> 
+<span class="menu-text">Readings</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_assignments.html"> 
+<span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../r_help.html"> 
+<span class="menu-text">R Help</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Inverse Probability Weighting and Marginal Structural Models</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Inverse Probability Weighting and Marginal Structural Models</h1>
+                      </div>
+  </div>
+    
+  <div class="quarto-title-meta-author">
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Affiliation</div>
+    
+      <div class="quarto-title-meta-contents">
+      <p class="author"><a href="https://Data-Wise.github.io/regression">Davood Tofighi, Ph.D.</a> <a href="mailto:dtofighi@unm.edu" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-8523-7776" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              Department of Mathematics and Statistics, University of New Mexico
+            </p>
+        </div>
+    </div>
+
+  <div class="quarto-title-meta">
+
+        
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Sep-23-2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Overview</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Syllabus</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PDF</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HTML</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schedule</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Materials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lecture Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_assignments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignments</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_project.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_readings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">R Code and Datasets</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../r_help.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R Help</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#r-packages" id="toc-r-packages" class="nav-link active" data-scroll-target="#r-packages">R Packages</a></li>
+  <li><a href="#the-scenario-managing-high-blood-pressure" id="toc-the-scenario-managing-high-blood-pressure" class="nav-link" data-scroll-target="#the-scenario-managing-high-blood-pressure">The Scenario: Managing High Blood Pressure</a></li>
+  <li><a href="#the-feedback-loop" id="toc-the-feedback-loop" class="nav-link" data-scroll-target="#the-feedback-loop">The Feedback Loop 🔄</a></li>
+  <li><a href="#why-standard-statistical-methods-fail" id="toc-why-standard-statistical-methods-fail" class="nav-link" data-scroll-target="#why-standard-statistical-methods-fail">Why Standard Statistical Methods Fail</a></li>
+  <li><a href="#this-is-the-wrong-question-to-ask-and-heres-why" id="toc-this-is-the-wrong-question-to-ask-and-heres-why" class="nav-link" data-scroll-target="#this-is-the-wrong-question-to-ask-and-heres-why">This is the Wrong Question to Ask, and here’s why</a></li>
+  <li><a href="#how-it-works" id="toc-how-it-works" class="nav-link" data-scroll-target="#how-it-works">How it Works</a></li>
+  <li><a href="#creating-a-fair-comparison-with-weights" id="toc-creating-a-fair-comparison-with-weights" class="nav-link" data-scroll-target="#creating-a-fair-comparison-with-weights">Creating a “Fair” Comparison with Weights</a></li>
+  <li><a href="#the-magic-of-the-pseudo-population" id="toc-the-magic-of-the-pseudo-population" class="nav-link" data-scroll-target="#the-magic-of-the-pseudo-population">The Magic of the “Pseudo-Population”</a></li>
+  <li><a href="#the-final-simple-step" id="toc-the-final-simple-step" class="nav-link" data-scroll-target="#the-final-simple-step">The Final, Simple Step</a></li>
+  <li><a href="#from-a-biased-sample-to-a-fair-representation" id="toc-from-a-biased-sample-to-a-fair-representation" class="nav-link" data-scroll-target="#from-a-biased-sample-to-a-fair-representation">From a Biased Sample to a Fair Representation</a></li>
+  <li><a href="#what-does-statistically-erased-mean" id="toc-what-does-statistically-erased-mean" class="nav-link" data-scroll-target="#what-does-statistically-erased-mean">What Does “Statistically Erased” Mean?</a></li>
+  <li><a href="#scaffolding-the-core-idea-probability-and-its-inverse" id="toc-scaffolding-the-core-idea-probability-and-its-inverse" class="nav-link" data-scroll-target="#scaffolding-the-core-idea-probability-and-its-inverse">Scaffolding the Core Idea: Probability and Its Inverse</a></li>
+  <li><a href="#building-the-math-step-by-step" id="toc-building-the-math-step-by-step" class="nav-link" data-scroll-target="#building-the-math-step-by-step">Building the Math, Step by Step</a></li>
+  <li><a href="#the-unstabilized-weight-w_i" id="toc-the-unstabilized-weight-w_i" class="nav-link" data-scroll-target="#the-unstabilized-weight-w_i">The Unstabilized Weight (<span class="math inline">\(W_i\)</span>)</a></li>
+  <li><a href="#the-stabilized-weight-sw_i" id="toc-the-stabilized-weight-sw_i" class="nav-link" data-scroll-target="#the-stabilized-weight-sw_i">The Stabilized Weight (<span class="math inline">\(SW_i\)</span>)</a></li>
+  <li><a href="#a-simple-numerical-example-by-hand" id="toc-a-simple-numerical-example-by-hand" class="nav-link" data-scroll-target="#a-simple-numerical-example-by-hand">A Simple Numerical Example by Hand</a>
+  <ul class="collapse">
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">❓ Check Your Understanding</a></li>
+  </ul></li>
+  <li><a href="#assumptions" id="toc-assumptions" class="nav-link" data-scroll-target="#assumptions">Assumptions</a></li>
+  <li><a href="#sequential-exchangeability-no-unmeasured-confounding-over-time" id="toc-sequential-exchangeability-no-unmeasured-confounding-over-time" class="nav-link" data-scroll-target="#sequential-exchangeability-no-unmeasured-confounding-over-time">1. Sequential Exchangeability (No Unmeasured Confounding Over Time)</a></li>
+  <li><a href="#positivity-anything-can-happen" id="toc-positivity-anything-can-happen" class="nav-link" data-scroll-target="#positivity-anything-can-happen">2. Positivity (Anything Can Happen)</a></li>
+  <li><a href="#consistency-what-you-see-is-what-you-get" id="toc-consistency-what-you-see-is-what-you-get" class="nav-link" data-scroll-target="#consistency-what-you-see-is-what-you-get">3. Consistency (What You See Is What You Get)</a></li>
+  <li><a href="#violation-of-assumptions" id="toc-violation-of-assumptions" class="nav-link" data-scroll-target="#violation-of-assumptions">Violation of Assumptions</a>
+  <ul class="collapse">
+  <li><a href="#when-sequential-exchangeability-fails-unmeasured-confounding" id="toc-when-sequential-exchangeability-fails-unmeasured-confounding" class="nav-link" data-scroll-target="#when-sequential-exchangeability-fails-unmeasured-confounding">When Sequential Exchangeability Fails (Unmeasured Confounding)</a></li>
+  <li><a href="#when-positivity-fails-deterministic-treatment" id="toc-when-positivity-fails-deterministic-treatment" class="nav-link" data-scroll-target="#when-positivity-fails-deterministic-treatment">When Positivity Fails (Deterministic Treatment)</a></li>
+  <li><a href="#when-consistency-fails-ambiguous-treatment" id="toc-when-consistency-fails-ambiguous-treatment" class="nav-link" data-scroll-target="#when-consistency-fails-ambiguous-treatment">When Consistency Fails (Ambiguous Treatment)</a></li>
+  </ul></li>
+  <li><a href="#r-lab-diagnosing-and-handling-assumption-violations" id="toc-r-lab-diagnosing-and-handling-assumption-violations" class="nav-link" data-scroll-target="#r-lab-diagnosing-and-handling-assumption-violations">R Lab: Diagnosing and Handling Assumption Violations</a>
+  <ul class="collapse">
+  <li><a href="#checking-sequential-exchangeability-no-unmeasured-confounding" id="toc-checking-sequential-exchangeability-no-unmeasured-confounding" class="nav-link" data-scroll-target="#checking-sequential-exchangeability-no-unmeasured-confounding">1. Checking Sequential Exchangeability (No Unmeasured Confounding)</a></li>
+  <li><a href="#checking-positivity-anything-can-happen" id="toc-checking-positivity-anything-can-happen" class="nav-link" data-scroll-target="#checking-positivity-anything-can-happen">2. Checking Positivity (Anything Can Happen)</a></li>
+  <li><a href="#checking-consistency-unambiguous-treatment" id="toc-checking-consistency-unambiguous-treatment" class="nav-link" data-scroll-target="#checking-consistency-unambiguous-treatment">3. Checking Consistency (Unambiguous Treatment)</a></li>
+  </ul></li>
+  <li><a href="#appendix" id="toc-appendix" class="nav-link" data-scroll-target="#appendix">Appendix</a>
+  <ul class="collapse">
+  <li><a href="#the-rationale-why-stabilize-in-the-first-place" id="toc-the-rationale-why-stabilize-in-the-first-place" class="nav-link" data-scroll-target="#the-rationale-why-stabilize-in-the-first-place">The Rationale: Why “Stabilize” in the First Place?</a></li>
+  <li><a href="#the-intuition-how-the-numerator-fixes-the-problem" id="toc-the-intuition-how-the-numerator-fixes-the-problem" class="nav-link" data-scroll-target="#the-intuition-how-the-numerator-fixes-the-problem">The Intuition: How the Numerator Fixes the Problem</a></li>
+  <li><a href="#simple-numerical-example-unstabilized-vs.-stabilized" id="toc-simple-numerical-example-unstabilized-vs.-stabilized" class="nav-link" data-scroll-target="#simple-numerical-example-unstabilized-vs.-stabilized">Simple Numerical Example: Unstabilized vs.&nbsp;Stabilized</a>
+  <ul class="collapse">
+  <li><a href="#step-1-calculate-the-unstabilized-weight-w_i" id="toc-step-1-calculate-the-unstabilized-weight-w_i" class="nav-link" data-scroll-target="#step-1-calculate-the-unstabilized-weight-w_i">Step 1: Calculate the Unstabilized Weight (<span class="math inline">\(W_i\)</span>)</a></li>
+  <li><a href="#step-2-calculate-the-stabilized-weight-sw_i" id="toc-step-2-calculate-the-stabilized-weight-sw_i" class="nav-link" data-scroll-target="#step-2-calculate-the-stabilized-weight-sw_i">Step 2: Calculate the Stabilized Weight (<span class="math inline">\(SW_i\)</span>)</a></li>
+  <li><a href="#the-comparison" id="toc-the-comparison" class="nav-link" data-scroll-target="#the-comparison">The Comparison</a></li>
+  </ul></li>
+  <li><a href="#more-insight" id="toc-more-insight" class="nav-link" data-scroll-target="#more-insight">More Insight</a></li>
+  <li><a href="#intuition-what-the-numerator-is-doing-and-why-it-helps" id="toc-intuition-what-the-numerator-is-doing-and-why-it-helps" class="nav-link" data-scroll-target="#intuition-what-the-numerator-is-doing-and-why-it-helps">Intuition: what the Numerator is Doing (and why it helps)</a></li>
+  <li><a href="#definitions-one-time-point-first-then-many" id="toc-definitions-one-time-point-first-then-many" class="nav-link" data-scroll-target="#definitions-one-time-point-first-then-many">Definitions (one time point First, then many)</a>
+  <ul class="collapse">
+  <li><a href="#one-time-point-for-clarity" id="toc-one-time-point-for-clarity" class="nav-link" data-scroll-target="#one-time-point-for-clarity">One time point (for clarity)</a></li>
+  <li><a href="#multiple-time-points-k0dotsk" id="toc-multiple-time-points-k0dotsk" class="nav-link" data-scroll-target="#multiple-time-points-k0dotsk">Multiple time Points <span class="math inline">\(k=0,\dots,K\)</span></a></li>
+  </ul></li>
+  <li><a href="#why-stabilized-weights-keep-the-target-and-reduce-variance-a-clean-factorization" id="toc-why-stabilized-weights-keep-the-target-and-reduce-variance-a-clean-factorization" class="nav-link" data-scroll-target="#why-stabilized-weights-keep-the-target-and-reduce-variance-a-clean-factorization">3 Why Stabilized Weights Keep the Target and Reduce variance (a Clean factorization)</a></li>
+  <li><a href="#a-napkin-size-numeric-example-one-time-point" id="toc-a-napkin-size-numeric-example-one-time-point" class="nav-link" data-scroll-target="#a-napkin-size-numeric-example-one-time-point">4 A Napkin-size Numeric Example (one time point)</a>
+  <ul class="collapse">
+  <li><a href="#unstabilized-weights" id="toc-unstabilized-weights" class="nav-link" data-scroll-target="#unstabilized-weights">Unstabilized Weights</a></li>
+  <li><a href="#stabilized-weights" id="toc-stabilized-weights" class="nav-link" data-scroll-target="#stabilized-weights">Stabilized Weights</a></li>
+  </ul></li>
+  <li><a href="#what-to-remember-in-practice" id="toc-what-to-remember-in-practice" class="nav-link" data-scroll-target="#what-to-remember-in-practice">5 What to Remember in Practice</a></li>
+  <li><a href="#two-time-extension-quick-peek" id="toc-two-time-extension-quick-peek" class="nav-link" data-scroll-target="#two-time-extension-quick-peek">6 Two-time Extension (quick peek)</a></li>
+  <li><a href="#one-line-recap" id="toc-one-line-recap" class="nav-link" data-scroll-target="#one-line-recap">One-line Recap</a></li>
+  </ul></li>
+  <li><a href="#link-to-horvitzthompson-and-hájek-estimators" id="toc-link-to-horvitzthompson-and-hájek-estimators" class="nav-link" data-scroll-target="#link-to-horvitzthompson-and-hájek-estimators">Link to Horvitz–Thompson and Hájek Estimators</a>
+  <ul class="collapse">
+  <li><a href="#big-idea" id="toc-big-idea" class="nav-link" data-scroll-target="#big-idea">Big Idea</a></li>
+  </ul></li>
+  <li><a href="#one-time-point-setup-to-anchor-intuition" id="toc-one-time-point-setup-to-anchor-intuition" class="nav-link" data-scroll-target="#one-time-point-setup-to-anchor-intuition">One-time-point Setup (to Anchor intuition)</a>
+  <ul class="collapse">
+  <li><a href="#unstabilized-iptw-horvitzthompson" id="toc-unstabilized-iptw-horvitzthompson" class="nav-link" data-scroll-target="#unstabilized-iptw-horvitzthompson">Unstabilized IPTW (Horvitz–Thompson)</a></li>
+  <li><a href="#hájek-ratio-form" id="toc-hájek-ratio-form" class="nav-link" data-scroll-target="#hájek-ratio-form">Hájek (ratio) Form</a></li>
+  <li><a href="#stabilized-weights-viewpoint" id="toc-stabilized-weights-viewpoint" class="nav-link" data-scroll-target="#stabilized-weights-viewpoint">“Stabilized” Weights Viewpoint</a></li>
+  </ul></li>
+  <li><a href="#tiny-numeric-example-you-can-do-by-hand" id="toc-tiny-numeric-example-you-can-do-by-hand" class="nav-link" data-scroll-target="#tiny-numeric-example-you-can-do-by-hand">Tiny Numeric Example (you Can Do by hand)</a>
+  <ul class="collapse">
+  <li><a href="#why-variance-shrinks-plain-english" id="toc-why-variance-shrinks-plain-english" class="nav-link" data-scroll-target="#why-variance-shrinks-plain-english">Why variance Shrinks (plain English)</a></li>
+  <li><a href="#many-time-points-longitudinal" id="toc-many-time-points-longitudinal" class="nav-link" data-scroll-target="#many-time-points-longitudinal">Many time Points (longitudinal)</a></li>
+  </ul></li>
+  <li><a href="#practical-tips" id="toc-practical-tips" class="nav-link" data-scroll-target="#practical-tips">Practical Tips</a>
+  <ul class="collapse">
+  <li><a href="#the-bridge-from-logistic-regression-log-odds-to-ipw-probabilities" id="toc-the-bridge-from-logistic-regression-log-odds-to-ipw-probabilities" class="nav-link" data-scroll-target="#the-bridge-from-logistic-regression-log-odds-to-ipw-probabilities">The Bridge: From Logistic Regression (Log-Odds) to IPW (Probabilities)</a>
+  <ul class="collapse">
+  <li><a href="#step-1-the-logistic-model-and-its-native-language-log-odds" id="toc-step-1-the-logistic-model-and-its-native-language-log-odds" class="nav-link" data-scroll-target="#step-1-the-logistic-model-and-its-native-language-log-odds">Step 1: The Logistic Model and Its Native Language (Log-Odds)</a></li>
+  <li><a href="#step-2-translating-from-log-odds-to-the-probability-we-need" id="toc-step-2-translating-from-log-odds-to-the-probability-we-need" class="nav-link" data-scroll-target="#step-2-translating-from-log-odds-to-the-probability-we-need">Step 2: Translating from Log-Odds to the Probability We Need</a></li>
+  <li><a href="#step-3-putting-it-together-in-r" id="toc-step-3-putting-it-together-in-r" class="nav-link" data-scroll-target="#step-3-putting-it-together-in-r">Step 3: Putting It Together in R</a></li>
+  </ul></li>
+  <li><a href="#g-computation-vs.-msms-ipw-a-tale-of-two-models" id="toc-g-computation-vs.-msms-ipw-a-tale-of-two-models" class="nav-link" data-scroll-target="#g-computation-vs.-msms-ipw-a-tale-of-two-models">G-Computation vs.&nbsp;MSMs (IPW): A Tale of Two Models</a></li>
+  <li><a href="#the-g-computation-recipe" id="toc-the-g-computation-recipe" class="nav-link" data-scroll-target="#the-g-computation-recipe">The G-Computation Recipe 🍳</a>
+  <ul class="collapse">
+  <li><a href="#step-1-fit-a-model-for-the-outcome" id="toc-step-1-fit-a-model-for-the-outcome" class="nav-link" data-scroll-target="#step-1-fit-a-model-for-the-outcome">Step 1: Fit a Model for the Outcome</a></li>
+  <li><a href="#step-2-simulate-potential-outcomes-under-intervention" id="toc-step-2-simulate-potential-outcomes-under-intervention" class="nav-link" data-scroll-target="#step-2-simulate-potential-outcomes-under-intervention">Step 2: Simulate Potential Outcomes under Intervention</a></li>
+  <li><a href="#step-3-average-and-compare" id="toc-step-3-average-and-compare" class="nav-link" data-scroll-target="#step-3-average-and-compare">Step 3: Average and Compare</a></li>
+  </ul></li>
+  <li><a href="#g-computation-in-r" id="toc-g-computation-in-r" class="nav-link" data-scroll-target="#g-computation-in-r">G-Computation in R</a>
+  <ul class="collapse">
+  <li><a href="#step-1-fit-the-outcome-model-the-q-model" id="toc-step-1-fit-the-outcome-model-the-q-model" class="nav-link" data-scroll-target="#step-1-fit-the-outcome-model-the-q-model">Step 1: Fit the Outcome Model (the “Q-model”)</a></li>
+  <li><a href="#step-2-create-intervened-upon-datasets-and-predict" id="toc-step-2-create-intervened-upon-datasets-and-predict" class="nav-link" data-scroll-target="#step-2-create-intervened-upon-datasets-and-predict">Step 2: Create Intervened-Upon Datasets and Predict</a></li>
+  <li><a href="#step-3-average-and-compare-1" id="toc-step-3-average-and-compare-1" class="nav-link" data-scroll-target="#step-3-average-and-compare-1">Step 3: Average and Compare</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-06_IP_weighting_MSM-rev3.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-06_IP_weighting_MSM-rev3.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+
+<section id="r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="r-packages">R Packages</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Core data manipulation and visualization</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  tidyverse, <span class="co"># ggplot2, dplyr, tidyr, purrr, etc.</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  data.table, <span class="co"># Efficient large data handling</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  here, <span class="co"># File path management</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Causal inference specialized packages</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  dagitty, <span class="co"># DAG creation and analysis</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  ggdag, <span class="co"># DAG visualization</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  survey, <span class="co"># For weighted analyses and complex surveys</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  MatchIt, <span class="co"># Propensity score matching</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  WeightIt, <span class="co"># Advanced weighting methods</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  tableone, <span class="co"># Balance tables</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  cobalt, <span class="co"># Balance assessment and visualization</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  marginaleffects, <span class="co"># Counterfactual predictions and contrasts</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  tmle, <span class="co"># Targeted maximum likelihood estimation</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Statistical modeling</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  sandwich, <span class="co"># Robust variance estimation</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  lmtest, <span class="co"># Hypothesis testing for linear models</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  boot, <span class="co"># Bootstrap methods</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Visualization extras</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  patchwork, <span class="co"># Combining ggplot2 plots</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  ggridges, <span class="co"># Ridge plots for distribution visualization</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  scales <span class="co"># Better scale formatting</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="the-scenario-managing-high-blood-pressure" class="level2">
+<h2 class="anchored" data-anchor-id="the-scenario-managing-high-blood-pressure">The Scenario: Managing High Blood Pressure</h2>
+<p>Imagine a doctor treating a patient for high blood pressure over several months.</p>
+<ul>
+<li><strong>Time-Varying Treatment:</strong> The doctor can change the <strong>dosage of blood pressure medication</strong> at each visit. This is a “time-varying treatment” because it’s not a one-time decision.</li>
+<li><strong>Time-Varying Confounder:</strong> The patient’s <strong>blood pressure reading</strong> itself. It changes from visit to visit.</li>
+<li><strong>Outcome:</strong> The ultimate goal is to prevent a <strong>heart attack</strong>.</li>
+</ul>
+<p>Here’s where the problem, known as <strong>treatment-confounder feedback</strong>, comes in.</p>
+</section>
+<section id="the-feedback-loop" class="level2">
+<h2 class="anchored" data-anchor-id="the-feedback-loop">The Feedback Loop 🔄</h2>
+<p>This situation creates a tricky chicken-and-egg loop that makes it very difficult to figure out if the medication is truly working.</p>
+<ol type="1">
+<li><strong>Treatment Affects the Confounder:</strong> The medication you take today directly impacts your blood pressure reading at your next visit. If you take a high dose, your blood pressure will likely be lower next month.
+<ul>
+<li>Medication Dose (Today) <span class="math inline">\(\rightarrow\)</span> Blood Pressure (Next Month)</li>
+</ul></li>
+<li><strong>Confounder Affects the Treatment:</strong> When the doctor sees your lower blood pressure next month, they will use that information to decide on your next dose. Seeing a good reading, they might keep the dose the same or even lower it.
+<ul>
+<li>Blood Pressure (Next Month) <span class="math inline">\(\rightarrow\)</span> Medication Dose (Next Month)</li>
+</ul></li>
+</ol>
+<p>This loop is problematic because the variable we need to “control for” (blood pressure) is also something we are trying to change with our treatment. The blood pressure reading is both a <strong>confounder</strong> for the <em>next</em> treatment decision and a <strong>mediator</strong> of the <em>last</em> treatment’s effect.</p>
+</section>
+<section id="why-standard-statistical-methods-fail" class="level2">
+<h2 class="anchored" data-anchor-id="why-standard-statistical-methods-fail">Why Standard Statistical Methods Fail</h2>
+<p>Normally, to isolate a treatment’s effect, a statistician would try to “adjust for” or “control for” the confounder. In this case, that would mean trying to answer the question: “Holding blood pressure constant, what is the effect of the medication?”</p>
+</section>
+<section id="this-is-the-wrong-question-to-ask-and-heres-why" class="level2">
+<h2 class="anchored" data-anchor-id="this-is-the-wrong-question-to-ask-and-heres-why">This is the Wrong Question to Ask, and here’s why</h2>
+<p>Imagine you’re trying to figure out if a new fertilizer makes plants grow taller. The fertilizer works by helping the plant build a stronger stem, which then allows it to grow. The stem’s strength is part of the causal pathway.</p>
+<p>If you try to “control for” the stem’s strength, you are essentially asking: “For plants with the <em>exact same</em> stem strength, which one grew taller?” This question is nonsensical. You’ve just eliminated the very mechanism through which the fertilizer works! You’ve blocked the causal path.</p>
+<p>It’s the same with the blood pressure medication. The medication works <em>by lowering blood pressure</em>. If we statistically “hold blood pressure constant,” we block the main pathway of the drug’s effect. Doing so makes the medication look ineffective, even if it’s saving lives.</p>
+<p><strong>This is the fundamental challenge</strong>: the confounder isn’t just a nuisance variable to be adjusted away; it is a key piece of the causal story that is directly influenced by what we did in the past. Standard methods can’t untangle this feedback loop, which is why specialized techniques like Marginal Structural Models (MSMs) were invented.</p>
+</section>
+<section id="how-it-works" class="level2">
+<h2 class="anchored" data-anchor-id="how-it-works">How it Works</h2>
+<p>We left off with our doctor, who is stuck in a feedback loop: the medication dose affects the patient’s blood pressure, and the blood pressure then affects the next medication dose. We can’t just “control for” blood pressure because that would block the very effect we want to measure.</p>
+<p>So, how do Marginal Structural Models (MSMs) solve this puzzle?</p>
+<p>The big idea is this: <strong>Instead of trying to statistically adjust for blood pressure, we create a new, imaginary version of our dataset where the feedback loop never existed in the first place.</strong></p>
+<p>We do this using a powerful technique called <strong>Inverse Probability Weighting (IPW)</strong>. Here’s the intuition.</p>
+</section>
+<section id="creating-a-fair-comparison-with-weights" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-fair-comparison-with-weights">Creating a “Fair” Comparison with Weights</h2>
+<p>Imagine in our study, we have two patients with dangerously high blood pressure.</p>
+<ul>
+<li><strong>Patient A</strong> is given a high dose of medication. This is the <strong>expected</strong> decision. The doctor saw the high blood pressure and acted accordingly.</li>
+<li><strong>Patient B</strong>, for some unusual reason, is given a <strong>low</strong> dose of medication. This is a <strong>surprising</strong> decision. It goes against what the doctor would normally do.</li>
+</ul>
+<p>Patient B is incredibly valuable to us. They are a rare example of someone who breaks the feedback loop. They show us what happens when a high-risk person gets a low dose. Because they are so rare and informative, we want to give their outcome <strong>more weight</strong> in our analysis.</p>
+<p>Conversely, Patient A’s outcome is less informative. They are just one of many high-risk patients who got the expected high dose. So, we give their outcome <strong>less weight</strong>.</p>
+<p>MSMs do this systematically for every patient at every visit. Each person is given a statistical “weight” based on the treatment they received.</p>
+<ul>
+<li>If the treatment was <strong>surprising</strong> (like getting a low dose despite high blood pressure), the patient gets a <strong>large weight</strong>.</li>
+<li>If the treatment was <strong>expected</strong> (like getting a high dose for high blood pressure), the patient gets a <strong>small weight</strong>.</li>
+</ul>
+</section>
+<section id="the-magic-of-the-pseudo-population" class="level2">
+<h2 class="anchored" data-anchor-id="the-magic-of-the-pseudo-population">The Magic of the “Pseudo-Population”</h2>
+<p>After calculating these weights for everyone, we have essentially created a new, weighted dataset. We call this a <strong>pseudo-population</strong>.</p>
+<p>In this new, imaginary population, something amazing has happened: the link between blood pressure and the medication dose has been statistically erased. It’s as if we’ve created a parallel universe where the doctor made treatment decisions <strong>at random</strong>, without ever looking at the patient’s blood pressure readings.</p>
+<p>Because the confounding from the feedback loop is now gone, we have simulated a <strong>perfect randomized controlled trial</strong>.</p>
+</section>
+<section id="the-final-simple-step" class="level2">
+<h2 class="anchored" data-anchor-id="the-final-simple-step">The Final, Simple Step</h2>
+<p>Once we have this “fair” pseudo-population, the final analysis is incredibly simple. We no longer need to worry about adjusting for blood pressure. We can now directly and fairly compare the long-term outcomes (like heart attacks) of patients who followed a strategy of “always take a high dose” versus those who followed a strategy of “always take a low dose.”</p>
+<p>In short, MSMs solve the feedback problem not by trying to adjust for the time-varying confounder, but by <strong>re-weighting the entire study population to create a new dataset where the confounding doesn’t exist.</strong> It’s a clever way to simulate the ideal experiment that we couldn’t run in real life.</p>
+</section>
+<section id="from-a-biased-sample-to-a-fair-representation" class="level2">
+<h2 class="anchored" data-anchor-id="from-a-biased-sample-to-a-fair-representation">From a Biased Sample to a Fair Representation</h2>
+<p>Think about a national political poll. If a pollster only calls people from one state, say California, their results won’t represent the entire country. The sample is biased. To fix this, pollsters use weights. If they have too few respondents from Texas, they give each Texan’s answer a little more weight. If they have too many from California, they give each Californian’s answer a little less weight. By doing this, they create a weighted sample that statistically mirrors the entire country.</p>
+<p>The pseudo-population in an MSM works on the exact same principle.</p>
+<ul>
+<li><strong>Our Real-World Data (The Biased Sample)</strong>: Our observational study is like the biased poll. It’s biased because the doctor’s decisions weren’t random. Patients with high blood pressure were far more likely to get high-dose medication. The “surprising” patients (high blood pressure, low dose) are like the under-sampled Texans—they are rare but crucial.</li>
+<li><strong>The Weights (The Correction Factor)</strong>: The Inverse Probability Weights are the correction factors. We give a large weight to the “surprising” patients and a small weight to the “expected” patients.</li>
+<li><strong>The Pseudo-Population (The Fair Representation)</strong>: When we apply these weights, we generate our pseudo-population. This new, imaginary dataset is no longer biased. It now represents a world where the treatment decisions were fair and unbiased.</li>
+</ul>
+</section>
+<section id="what-does-statistically-erased-mean" class="level2">
+<h2 class="anchored" data-anchor-id="what-does-statistically-erased-mean">What Does “Statistically Erased” Mean?</h2>
+<p>Let’s make this concrete. Imagine we look at just the patients in our study who had high blood pressure at their second visit.</p>
+<ul>
+<li>In the REAL data, the table might look like this:</li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Patient’s Blood Pressure</th>
+<th style="text-align: left;">Medication Dose</th>
+<th style="text-align: left;">Number of Patients</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">High Dose</td>
+<td style="text-align: left;">90</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Low Dose</td>
+<td style="text-align: left;">10</td>
+</tr>
+</tbody>
+</table>
+<p>You can see the bias immediately. For high-risk patients, there’s a 90% chance they get a high dose. The link between blood pressure and treatment is strong.</p>
+<ul>
+<li>In the PSEUDO-POPULATION, after weighting, it looks like this:</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 36%">
+<col style="width: 22%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Patient’s Blood Pressure</th>
+<th style="text-align: left;">Medication Dose</th>
+<th style="text-align: left;">Weighted Number of Patients</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">High Dose</td>
+<td style="text-align: left;">50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Low Dose</td>
+<td style="text-align: left;">50</td>
+</tr>
+</tbody>
+</table>
+<p>The magic is that the total number of patients is still the same, but their influence has been redistributed. The 10 “surprising” patients who got a low dose now have such a large weight that they count for as much as the 90 “expected” patients.</p>
+<p>Within the group of high-risk patients, the treatment is now perfectly balanced—50/50. The arrow from “Blood Pressure” to “Medication Dose” has been statistically erased. We’ve created a dataset where it appears the doctor just flipped a coin to decide the dose, which is exactly what happens in a randomized controlled trial.</p>
+<p>That’s the essence of the pseudo-population: it’s a carefully re-weighted version of our real data that mathematically undoes the biases of real-world decision-making, allowing us to ask our causal question fairly.</p>
+</section>
+<section id="scaffolding-the-core-idea-probability-and-its-inverse" class="level2">
+<h2 class="anchored" data-anchor-id="scaffolding-the-core-idea-probability-and-its-inverse">Scaffolding the Core Idea: Probability and Its Inverse</h2>
+<p>At its heart, the weight is just the number one divided by a probability.</p>
+<p><span id="eq-weight-basic"><span class="math display">\[
+W = \frac{1}{\text{Probability}}
+\tag{1}\]</span></span></p>
+<p>The whole point is to give more influence to things that were unlikely to happen, and less influence to things that were likely.</p>
+<ul>
+<li>If an event had a low probability (it was surprising), its inverse is a big number.
+<ul>
+<li>Example: Probability = 10% or 0.10. The weight is 1 / 0.10 = 10.</li>
+</ul></li>
+<li>If an event had a high probability (it was expected), its inverse is a small number.
+<ul>
+<li>Example: Probability = 80% or 0.80. The weight is 1 / 0.80 = 1.25.</li>
+</ul></li>
+</ul>
+<p>Think of it like this: if you find a rare Pokémon card (a low probability event), it’s worth a lot. If you find a common one (a high probability event), it’s worth very little. The weight represents the “value” or “informativeness” of an observation.</p>
+</section>
+<section id="building-the-math-step-by-step" class="level2">
+<h2 class="anchored" data-anchor-id="building-the-math-step-by-step">Building the Math, Step by Step</h2>
+<p>Let’s get specific. Our goal is to calculate a weight for each person in our study. This weight will depend on the entire sequence of treatments they received over time.</p>
+</section>
+<section id="the-unstabilized-weight-w_i" class="level2">
+<h2 class="anchored" data-anchor-id="the-unstabilized-weight-w_i">The Unstabilized Weight (<span class="math inline">\(W_i\)</span>)</h2>
+<p>First, let’s look at the basic, “unstabilized” weight for a single person, whom we’ll call person i.</p>
+<p>The formula for the unstabilized weight is:</p>
+<p><span id="eq-unstabilized-weight"><span class="math display">\[
+W_i = \frac{1}{\prod_{k=0}^{K} \Prob{A_k=A_{i,k} \mid \bar{A}_{i,k-1}, \bar{L}_{i,k}}}
+\tag{2}\]</span></span></p>
+<p>Let’s decode that:</p>
+<ul>
+<li><span class="math inline">\(A_{i,k}\)</span>: The actual treatment person i received at time <span class="math inline">\(k\)</span>.</li>
+<li><span class="math inline">\(\bar{A}_{i,k-1}\)</span>: The person’s entire history of treatment before time <span class="math inline">\(k\)</span>.</li>
+<li><span class="math inline">\(\bar{L}_{i,k}\)</span>: The person’s entire history of confounders up to and including time <span class="math inline">\(k\)</span>.</li>
+<li><span class="math inline">\(\Prob{\cdot}\)</span>: This is the probability of receiving their actual treatment, given their specific history. We get this from a statistical model (like logistic regression).</li>
+<li><span class="math inline">\(\prod_{k=0}^{K}\)</span>: This is the “product” symbol. It means we multiply the probabilities from each time point together (from the start of the study, <span class="math inline">\(k=0\)</span>, to the end, <span class="math inline">\(k=K\)</span>).</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In plain English: For each person, we calculate the probability of them getting the treatment they got at each visit, given their past. Then we multiply all those probabilities together. The final weight is just 1 divided by that result.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>The Denominator is “The Story of What Happened”
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Think of the denominator as telling the story of why the doctor made the decisions they did. It’s the probability of the observed treatment sequence, fully explained by the patient’s entire medical history.</p>
+</div>
+</div>
+</section>
+<section id="the-stabilized-weight-sw_i" class="level2">
+<h2 class="anchored" data-anchor-id="the-stabilized-weight-sw_i">The Stabilized Weight (<span class="math inline">\(SW_i\)</span>)</h2>
+<p>Unstabilized weights work, but they can sometimes become huge, making our results unstable. To fix this, we use “stabilized” weights, which are much better behaved.</p>
+<p>The formula for the stabilized weight is:</p>
+<p><span id="eq-stabilized-weight"><span class="math display">\[
+SW_i = \prod_{k=0}^{K} \frac{\Prob{A_k=A_{i,k} \mid \bar{A}_{i, k-1}}}{\Prob{A_k=A_{i,k} \mid \bar{A}_{i, k-1}, \bar{L}_{i,k}}}
+\tag{3}\]</span></span></p>
+<p>This looks more complex, but it’s a simple, brilliant tweak.</p>
+<ul>
+<li>The denominator is the same as before. It’s the probability of the treatment given the full history (treatments and confounders).</li>
+<li>The numerator is new. It’s the probability of receiving the treatment given only the past treatment history, ignoring the confounders (<span class="math inline">\(\bar{L}\)</span>).</li>
+</ul>
+<p>In plain English: The stabilized weight is a ratio. For each time point, we ask:</p>
+<ul>
+<li>What was the chance of this treatment, given only past treatments? (Numerator)</li>
+<li>What was the chance of this treatment, given the full medical history? (Denominator)</li>
+</ul>
+<p>We calculate this fraction for every time point and multiply them all together. This process “stabilizes” the weights by preventing them from getting too large.</p>
+</section>
+<section id="a-simple-numerical-example-by-hand" class="level2">
+<h2 class="anchored" data-anchor-id="a-simple-numerical-example-by-hand">A Simple Numerical Example by Hand</h2>
+<p>Let’s use our tiny 5-patient dataset from the lecture. We will calculate the stabilized weight for Patient.</p>
+<p>Patient 4’s History:</p>
+<ul>
+<li>Time 0: Was Treated (<span class="math inline">\(A_0 = 1\)</span>)</li>
+<li>Time 1: Had a good biomarker result (<span class="math inline">\(L_1=0\)</span>) and was Treated (<span class="math inline">\(A_1=1\)</span>). The formula for their weight is:</li>
+</ul>
+<p><span class="math display">\[
+SW_4 = \left( \frac{\Prob{A_0=1}}{\Prob{A_0=1}} \right) \times \left( \frac{\Prob{A_1=1 \mid A_0=1}}{\Prob{A_1=1 \mid A_0=1, L_1=0}} \right)
+\]</span></p>
+<p><strong>Step 1</strong>: Calculate the needed probabilities from the data.</p>
+<p>(These are the same probabilities we calculated in the lecture.)</p>
+<ul>
+<li>For the Numerator:
+<ul>
+<li><span class="math inline">\(\Prob{A_0=1}\)</span>: 3 out of 5 patients were treated at Time 0. So, the probability is 0.6.</li>
+<li><span class="math inline">\(\Prob{A_1=1 \mid A_0=1}\)</span>: Of the 3 patients who got treated at Time 0 (IDs 3, 4, 5), 2 of them were treated at Time 1 (IDs 4, 5). So, the probability is 2/3.</li>
+</ul></li>
+<li>For the Denominator:
+<ul>
+<li><span class="math inline">\(\Prob{A_0=1}\)</span>: Same as above, 0.6. (There are no past confounders L_0 to worry about).</li>
+<li><span class="math inline">\(\Prob{A_1=1 \mid A_0=1, L_1=0}\)</span>: We look only at patients who had <span class="math inline">\(A_0=1\)</span> and <span class="math inline">\(L_1=0\)</span> (IDs 3, 4). Of these 2 patients, 1 was treated at Time 1 (ID 4). So, the probability is 1/2 or 0.5. <strong>Step 2</strong>: Plug the numbers into the formula.</li>
+</ul></li>
+<li>For Time 0: The fraction is <span class="math inline">\(\frac{0.6}{0.6} = 1\)</span>.</li>
+<li>For Time 1: The fraction is <span class="math inline">\(\frac{2/3}{1/2} = \frac{0.667}{0.5} \approx 1.33\)</span>. <strong>Step 3</strong>: Multiply the results together.</li>
+</ul>
+<p><span class="math display">\[
+SW_4 = 1 \times 1.33 = \mathbf{1.33}
+\]</span></p>
+<p>This is the stabilized weight for Patient 4. We are giving them slightly more weight in our pseudo-population. Why? Because getting treated at Time 1 was only a 50/50 chance for people with their specific history (<span class="math inline">\(A_0=1\)</span>, <span class="math inline">\(L_1=0\)</span>). It wasn’t a “sure thing,” so their outcome is more informative than someone whose treatment was 100% predictable.</p>
+<section id="check-your-understanding" class="level3 callout-question">
+<h3 class="anchored" data-anchor-id="check-your-understanding">❓ Check Your Understanding</h3>
+<p>Now, try it yourself! Using the same logic and the probabilities from our example, calculate the stabilized weight for Patient.</p>
+<ul>
+<li>Patient’s History: Was Untreated (<span class="math inline">\(A_0=0\)</span>), had a bad biomarker (<span class="math inline">\(L_1=1\)</span>), and was then Treated (<span class="math inline">\(A_1=1\)</span>).</li>
+</ul>
+<details>
+<summary>
+Click for a step-by-step solution.
+</summary>
+<ol type="1">
+<li><p>Set up the formula for Patient #2: <span class="math display">\[
+SW_2 = \left( \frac{\Prob{A_0=0}}{\Prob{A_0=0}} \right) \times \left( \frac{\Prob{A_1=1 \mid A_0=0}}{\Prob{A_1=1 \mid A_0=0, L_1=1}} \right)
+\]</span></p></li>
+<li><p>Find the probabilities:</p></li>
+</ol>
+<ul>
+<li>Numerator:
+<ul>
+<li><span class="math inline">\(\Prob{A_0=0} = 2/5 = 0.4\)</span></li>
+<li><span class="math inline">\(\Prob{A_1=1 \mid A_0=0}\)</span>: Look at patients with <span class="math inline">\(A_0=0\)</span> (IDs 1, 2). One of them got$ A_1=1$ (ID 2). So, probability = 1/2 or 0.5.</li>
+</ul></li>
+<li>Denominator: *<span class="math inline">\(\Prob{A_0=0} = 0.4\)</span>
+<ul>
+<li><span class="math inline">\(\Prob{A_1=1 \mid A_0=0, L_1=1}\)</span>: Look at patients with <span class="math inline">\(A_0=0\)</span> and <span class="math inline">\(L_1=1\)</span> (only ID 2). That one patient got <span class="math inline">\(A_1=1\)</span>. So, probability = 1/1 or 1.0.</li>
+</ul></li>
+</ul>
+<ol type="1">
+<li>Plug and solve: <span class="math display">\[
+SW_2 = \left( \frac{0.4}{0.4} \right) \times \left( \frac{0.5}{1.0} \right) = 1 \times 0.5 = \mathbf{0.5}
+\]</span></li>
+</ol>
+Meaning: We give Patient #2 less weight. Why? Because their treatment at Time 1 was completely predictable. For every patient with their history, the doctor gave them the treatment. Their outcome is less surprising and thus less informative for breaking the feedback loop.
+</details>
+</section>
+<p>This mathematical process of weighting is how we build the pseudo-population. By carefully adjusting the “influence” of each person, we create a new, balanced dataset where the link between confounders and treatments is broken, allowing for a fair causal comparison.</p>
+</section>
+<section id="assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="assumptions">Assumptions</h2>
+<p>The mathematical “magic” of creating a pseudo-population is powerful, but it’s not infallible. It rests on a few critical assumptions about our data and the world. If these assumptions are violated, our weights will be incorrect and our causal conclusions will be biased.</p>
+<p>Let’s go through the three most important assumptions: <em>sequential exchangeability</em>, <em>positivity</em>, and <em>consistency</em>.</p>
+</section>
+<section id="sequential-exchangeability-no-unmeasured-confounding-over-time" class="level2">
+<h2 class="anchored" data-anchor-id="sequential-exchangeability-no-unmeasured-confounding-over-time">1. Sequential Exchangeability (No Unmeasured Confounding Over Time)</h2>
+<p>This is the most important and untestable assumption. It’s the longitudinal version of the standard “exchangeability” or “ignorability” assumption we’ve seen before.</p>
+<p><strong>The Core Idea</strong>: At every point in time, the reason a person gets a particular treatment must be fully explained by their <em>observed past history</em>—that is, the data we have in our spreadsheet. There can be no hidden or unmeasured factors that influence the treatment decision.</p>
+<p><strong>Analogy: The All-Knowing Researcher</strong> Imagine you are the researcher, and you are watching our doctor treat the patient with high blood pressure. - <strong>Assumption Holds</strong>: At each visit, the doctor looks at the patient’s chart—past blood pressure readings, past medication doses, age, etc.—and makes a decision. As long as you have that same chart (all the same data), you can build an accurate model of the doctor’s decision-making. The reason for the treatment is known. - <strong>Assumption Violated</strong>: What if the doctor also bases their decision on something you <em>can’t</em> see? For example, the doctor might notice “the patient looks especially pale today” or “the patient mentioned feeling dizzy.” If these factors influence the treatment dose but are not recorded in your dataset, you have an <strong>unmeasured confounder</strong>.</p>
+<p>When this happens, your model for the probability of treatment will be wrong because it’s missing a key predictor. The weights you calculate will be incorrect, and the pseudo-population will still be biased.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>📌 Sequential Exchangeability
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Formally, this means that at any time <span class="math inline">\(k\)</span>, the potential outcome <span class="math inline">\(Y^{\bar{a}}\)</span> is independent of the actual treatment received <span class="math inline">\(A_k\)</span>, conditional on the observed past treatment (<span class="math inline">\(\bar{A}_{k-1}\)</span>) and confounder (<span class="math inline">\(\bar{L}_k\)</span>) histories.</p>
+<p><span class="math display">\[
+Y^{\bar{a}} \indep A_k \mid \bar{A}_{k-1}, \bar{L}_k
+\]</span></p>
+<p>This must hold for all time points <span class="math inline">\(k\)</span>. It is a strong assumption that requires deep subject-matter expertise to justify.</p>
+</div>
+</div>
+</section>
+<section id="positivity-anything-can-happen" class="level2">
+<h2 class="anchored" data-anchor-id="positivity-anything-can-happen">2. Positivity (Anything Can Happen)</h2>
+<p>This is a more practical, and in principle, testable assumption.</p>
+<p><strong>The Core Idea</strong>: For any given patient history, there must be a non-zero probability of receiving <em>either</em> treatment. Treatment decisions cannot be deterministic.</p>
+<p><strong>Analogy: The Doctor With No “Never” or “Always” Rules</strong> Positivity is violated if our doctor has a strict, unbreakable rule.</p>
+<ul>
+<li><strong>Assumption Holds</strong>: For every combination of patient history (age, past blood pressure, past medication doses), there is always at least some chance (even if small) that the doctor might choose either a high dose or a low dose. Anything can happen.</li>
+<li><strong>Violation Example</strong>: Imagine the hospital has a rigid policy: “Any patient whose blood pressure is above 180 mmHg <strong>must</strong> be given the high dose, no exceptions.”</li>
+<li><strong>The Problem</strong>: For this group of very sick patients, the probability of receiving the <em>low dose</em> is exactly zero.</li>
+</ul>
+<p><strong>Why This Breaks the Math</strong>: The weight calculation involves dividing by this probability (<span class="math inline">\(\text{weight} \approx 1/\text{probability}\)</span>). If the probability is zero, we are trying to divide by zero, which is impossible. The weight becomes infinite, and our analysis fails.</p>
+<p><strong>The Practical Meaning</strong>: We can’t learn about the effect of a treatment in a certain type of person if no one in that group ever receives it. To learn what happens to very sick patients under a low-dose regimen, we need at least <em>some</em> very sick patients to have actually received the low dose in our study.</p>
+</section>
+<section id="consistency-what-you-see-is-what-you-get" class="level2">
+<h2 class="anchored" data-anchor-id="consistency-what-you-see-is-what-you-get">3. Consistency (What You See Is What You Get)</h2>
+<p>This assumption connects the data we observe to the causal effects we want to estimate.</p>
+<p><strong>The Core Idea</strong>: The treatment value in our dataset (e.g., <span class="math inline">\(A=1\)</span> for “high dose”) must correspond to a clearly defined, real-world intervention. And the outcome we observe for a person who got that intervention must be the same as their potential outcome under that intervention.</p>
+<p><strong>Analogy: A Standardized Recipe</strong> Imagine “high dose” is our treatment.</p>
+<ul>
+<li><strong>Assumption Holds</strong>: “High dose” means exactly “50mg of Drug X, taken once daily” for every patient, every time. The intervention is well-defined.</li>
+<li><strong>Assumption Violated</strong>: What if for some patients, “high dose” meant “50mg of Drug X,” but for others, it meant “50mg of Drug X <em>plus</em> a recommendation to follow a low-salt diet”? In this case, <span class="math inline">\(A=1\)</span> refers to two different versions of the treatment. If we get a causal effect estimate, we won’t know if it’s due to the drug, the diet, or the combination.</li>
+</ul>
+<p>The consistency assumption ensures that we are estimating the effect of a specific, non-ambiguous intervention.</p>
+<p>These three assumptions are the theoretical foundation upon which Marginal Structural Models are built. Justifying them is the most important step in any such analysis.</p>
+</section>
+<section id="violation-of-assumptions" class="level1">
+<h1>Violation of Assumptions</h1>
+<section id="when-sequential-exchangeability-fails-unmeasured-confounding" class="level2">
+<h2 class="anchored" data-anchor-id="when-sequential-exchangeability-fails-unmeasured-confounding">When Sequential Exchangeability Fails (Unmeasured Confounding)</h2>
+<p>This is the most difficult violation to handle because you can’t definitively prove it with data. It relies on subject-matter knowledge.</p>
+<p><strong>The Problem</strong>: You suspect there are important, unmeasured confounders that influenced both treatment and outcome. Your weights are wrong because the model for the denominator is missing key variables.</p>
+<p><strong>What to Do</strong>:</p>
+<ol type="1">
+<li><strong>Think Harder (A Priori)</strong>: The best “solution” is prevention. Before the study, consult with domain experts to identify and measure <em>all</em> potential confounders. If you are using existing data, try to find proxy variables that might capture some of the unmeasured confounding.</li>
+<li><strong>Conduct a Sensitivity Analysis (Post Hoc)</strong>: Since you can’t measure the unmeasured confounder, the next best thing is to quantify how much it could affect your results.
+<ul>
+<li><strong>The Core Idea</strong>: A sensitivity analysis asks, “How strong would an unmeasured confounder have to be to change my conclusion?”</li>
+<li><strong>Analogy: Stress-Testing a Bridge</strong>: Imagine you’ve built a bridge and concluded it’s safe. A sensitivity analysis is like putting it in a wind tunnel. You increase the wind speed until the bridge breaks. This tells you its limits. Similarly, we can calculate how strong the associations between an unmeasured confounder, the treatment, and the outcome would need to be to, for example, make our estimated effect of zero.</li>
+<li><strong>The Result</strong>: You can then make a statement like, “Our finding that the drug is effective would be overturned only if there were an unmeasured confounder that was three times more prevalent in the treated group and increased the risk of the outcome by 300%—a confounder far stronger than any known risk factor.” This provides a quantitative measure of how robust your conclusion is.</li>
+</ul></li>
+</ol>
+</section>
+<section id="when-positivity-fails-deterministic-treatment" class="level2">
+<h2 class="anchored" data-anchor-id="when-positivity-fails-deterministic-treatment">When Positivity Fails (Deterministic Treatment)</h2>
+<p>This violation is often detectable in your data and is a common issue in practice.</p>
+<p><strong>The Problem</strong>: You have subgroups of people who, given their history, had a 0% or 100% chance of getting the treatment. This results in infinite or near-infinite weights.</p>
+<p><strong>How to Diagnose It</strong>: - <strong>Examine strata</strong>: Look for combinations of covariates where everyone or no one gets the treatment. - <strong>Look at your weights</strong>: This is the most common method. Plot a histogram of your calculated stabilized weights (<span class="math inline">\(SW_i\)</span>). If you see a few weights that are dramatically larger than the rest (e.g., weights of 50, 100, or 1000), you have a practical positivity problem.</p>
+<p><strong>What to Do</strong>:</p>
+<ol type="1">
+<li><strong>Redefine the Target Population</strong>: If the positivity violation is confined to a specific, often extreme group (e.g., only the healthiest people always refuse treatment), you can restrict your analysis to the population where positivity holds. The cost is that your conclusion is no longer generalizable to the excluded group. You would state, “Among patients with characteristics X, Y, and Z, the treatment has a causal effect of…”</li>
+<li><strong>Weight Truncation (or Trimming)</strong>: This is a common pragmatic solution. You set an artificial ceiling on the weights. For example, you might decide to cap all weights at the 99th percentile. Any weight that is calculated to be higher than, say, 20, is manually set to 20. This introduces a small amount of bias (because you are altering the weights) but can drastically reduce variance and make your final estimate more stable. It’s a classic bias-variance trade-off.</li>
+</ol>
+</section>
+<section id="when-consistency-fails-ambiguous-treatment" class="level2">
+<h2 class="anchored" data-anchor-id="when-consistency-fails-ambiguous-treatment">When Consistency Fails (Ambiguous Treatment)</h2>
+<p>This is a conceptual problem that requires you to go back to the study design and data dictionary.</p>
+<p><strong>The Problem</strong>: The treatment variable in your dataset (<span class="math inline">\(A=1\)</span>) does not correspond to a single, well-defined intervention.</p>
+<p><strong>What to Do</strong>:</p>
+<ol type="1">
+<li><strong>Specify the Intervention</strong>: The best solution is to be more precise. The causal question should be refined. Instead of asking about the effect of “physical therapy,” which could mean many things, you might have to limit your analysis to the effect of “one weekly 60-minute session with a licensed physical therapist following Protocol X.”</li>
+<li><strong>Acknowledge Ambiguity</strong>: If the different versions of the treatment cannot be disentangled in the data, you must be transparent about this in your interpretation. You are not estimating the effect of one specific intervention, but rather the effect of a <em>policy</em> or <em>strategy</em> where different interventions are grouped under one label. Your conclusion becomes, “We estimated the effect of a policy of prescribing ‘high dose’ therapy, which may have included different specific treatments across individuals.”</li>
+</ol>
+<p>Addressing these violations is what makes causal inference a thoughtful blend of statistical modeling and scientific reasoning.</p>
+</section>
+</section>
+<section id="r-lab-diagnosing-and-handling-assumption-violations" class="level1">
+<h1>R Lab: Diagnosing and Handling Assumption Violations</h1>
+<section id="checking-sequential-exchangeability-no-unmeasured-confounding" class="level2">
+<h2 class="anchored" data-anchor-id="checking-sequential-exchangeability-no-unmeasured-confounding">1. Checking Sequential Exchangeability (No Unmeasured Confounding)</h2>
+<p>This first assumption is not checked with code, but with your brain and subject-matter expertise.</p>
+<ul>
+<li><strong>The Question You Must Ask</strong>: “What are the key factors a doctor would consider when deciding to start a patient on AZT at each visit?”</li>
+<li><strong>Our Simulated World</strong>: In our <code>hiv_data</code> simulation, the decision to start AZT (<code>A0_azt</code>, <code>A1_azt</code>) depended only on the patient’s past AZT use and their CD4 counts (<code>L0_cd4</code>, <code>L1_cd4</code>).</li>
+<li><strong>The Check</strong>: As long as we have measured past AZT use and CD4 count, the assumption holds <em>in our simulated world</em>. In a real project, you would need to consult with clinicians to ensure you’ve measured all the important factors (e.g., viral load, opportunistic infections, patient-reported symptoms) that guide this decision. This check happens <em>before</em> you run the models.</li>
+</ul>
+</section>
+<section id="checking-positivity-anything-can-happen" class="level2">
+<h2 class="anchored" data-anchor-id="checking-positivity-anything-can-happen">2. Checking Positivity (Anything Can Happen)</h2>
+<p>This is a practical check we perform <em>after</em> calculating the weights. The main tool is to inspect the distribution of the stabilized weights. Extreme weights are a tell-tale sign of a positivity problem.</p>
+<p><strong>Step 1: Visualize the Weight Distribution</strong></p>
+<p>A simple histogram is the best place to start.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data and code from the previous lab if you haven't already</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (Code to generate hiv_wide and the 'sw' column)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>n_lab <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>id <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>n_lab</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>cd4_0 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_lab, <span class="dv">500</span>, <span class="dv">50</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>azt_0_prob <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">8</span> <span class="sc">+</span> (cd4_0 <span class="sc">/</span> <span class="dv">50</span>))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>azt_0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, azt_0_prob)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>cd4_1 <span class="ot">&lt;-</span> <span class="fl">0.8</span> <span class="sc">*</span> cd4_0 <span class="sc">+</span> <span class="dv">20</span> <span class="sc">*</span> azt_0 <span class="sc">+</span> <span class="fu">rnorm</span>(n_lab, <span class="dv">50</span>, <span class="dv">10</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>azt_1_prob <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">8</span> <span class="sc">+</span> (cd4_1 <span class="sc">/</span> <span class="dv">50</span>) <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> azt_0)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>azt_1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, azt_1_prob)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>cd4_final <span class="ot">&lt;-</span> <span class="fl">0.7</span> <span class="sc">*</span> cd4_1 <span class="sc">+</span> <span class="dv">40</span> <span class="sc">*</span> azt_1 <span class="sc">+</span> <span class="dv">30</span> <span class="sc">*</span> azt_0 <span class="sc">+</span> <span class="fu">rnorm</span>(n_lab, <span class="dv">100</span>, <span class="dv">20</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>hiv_wide <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  id,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">L0_cd4 =</span> cd4_0,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">A0_azt =</span> azt_0,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">L1_cd4 =</span> cd4_1,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">A1_azt =</span> azt_1,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y_cd4 =</span> cd4_final</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>den_mod_A0_lab <span class="ot">&lt;-</span> <span class="fu">glm</span>(A0_azt <span class="sc">~</span> L0_cd4, <span class="at">data =</span> hiv_wide, <span class="at">family =</span> binomial)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>den_mod_A1_lab <span class="ot">&lt;-</span> <span class="fu">glm</span>(</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  A1_azt <span class="sc">~</span> A0_azt <span class="sc">+</span> L0_cd4 <span class="sc">+</span> L1_cd4,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> hiv_wide,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> binomial</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>num_mod_A0_lab <span class="ot">&lt;-</span> <span class="fu">glm</span>(A0_azt <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> hiv_wide, <span class="at">family =</span> binomial)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>num_mod_A1_lab <span class="ot">&lt;-</span> <span class="fu">glm</span>(A1_azt <span class="sc">~</span> A0_azt, <span class="at">data =</span> hiv_wide, <span class="at">family =</span> binomial)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>hiv_wide<span class="sc">$</span>pd0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(den_mod_A0_lab, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>hiv_wide<span class="sc">$</span>pd1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(den_mod_A1_lab, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>hiv_wide<span class="sc">$</span>pn0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(num_mod_A0_lab, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>hiv_wide<span class="sc">$</span>pn1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(num_mod_A1_lab, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>hiv_wide<span class="sc">$</span>sw0 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  hiv_wide<span class="sc">$</span>A0_azt <span class="sc">==</span> <span class="dv">1</span>,</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  hiv_wide<span class="sc">$</span>pn0 <span class="sc">/</span> hiv_wide<span class="sc">$</span>pd0,</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  (<span class="dv">1</span> <span class="sc">-</span> hiv_wide<span class="sc">$</span>pn0) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> hiv_wide<span class="sc">$</span>pd0)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>hiv_wide<span class="sc">$</span>sw1 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  hiv_wide<span class="sc">$</span>A1_azt <span class="sc">==</span> <span class="dv">1</span>,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  hiv_wide<span class="sc">$</span>pn1 <span class="sc">/</span> hiv_wide<span class="sc">$</span>pd1,</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  (<span class="dv">1</span> <span class="sc">-</span> hiv_wide<span class="sc">$</span>pn1) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> hiv_wide<span class="sc">$</span>pd1)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>hiv_wide<span class="sc">$</span>sw <span class="ot">&lt;-</span> hiv_wide<span class="sc">$</span>sw0 <span class="sc">*</span> hiv_wide<span class="sc">$</span>sw1</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, let's do the check</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  hiv_wide<span class="sc">$</span>sw,</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="dv">50</span>,</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"Distribution of Stabilized Weights"</span>,</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Weight Value"</span>,</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="st">"skyblue"</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="week-06_IP_weighting_MSM-rev3_files/figure-html/lab-check-positivity-hist-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Distribution of stabilized weights. Note the long right tail indicating some very large weights."><img src="week-06_IP_weighting_MSM-rev3_files/figure-html/lab-check-positivity-hist-1.png" class="img-fluid figure-img" width="672" alt="Distribution of stabilized weights. Note the long right tail indicating some very large weights."></a></p>
+<figcaption>Distribution of stabilized weights. Note the long right tail indicating some very large weights.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation</strong>: The histogram shows that most weights are clustered between 0 and 5, which is good. However, there’s a long “tail” to the right, with a few weights stretching out to 20 or more. These extreme values can give a handful of individuals undue influence over our final result. This is a classic sign of a <strong>practical positivity violation</strong>.</p>
+<p><strong>Step 2: Investigate the Extreme Weights</strong></p>
+<p>Let’s look at the patients with the largest weights to understand why they are so “surprising.”</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get a summary of the weights</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hiv_wide<span class="sc">$</span>sw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.1090  0.8186  0.9046  1.0010  1.0455  7.5413 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at the top 5 highest weights</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>hiv_wide <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(sw)) <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, sw, A0_azt, L0_cd4, A1_azt, L1_cd4) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["sw"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["A0_azt"],"name":[3],"type":["int"],"align":["right"]},{"label":["L0_cd4"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["A1_azt"],"name":[5],"type":["int"],"align":["right"]},{"label":["L1_cd4"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"461","2":"7.541282","3":"0","4":"543.5982","5":"0","6":"486.8970","_rn_":"1"},{"1":"97","2":"5.830924","3":"0","4":"609.3666","5":"1","6":"531.0576","_rn_":"2"},{"1":"196","2":"4.478538","3":"1","4":"599.8607","5":"0","6":"550.9249","_rn_":"3"},{"1":"456","2":"3.164712","3":"1","4":"366.9539","5":"1","6":"374.5297","_rn_":"4"},{"1":"493","2":"2.609303","3":"0","4":"564.7042","5":"1","6":"516.0066","_rn_":"5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p><strong>Interpretation</strong>: Look at patient 419. Their weight is 7.54! This person had a very low CD4 count at baseline (<code>L0_cd4</code>), yet they were <em>not</em> treated with AZT (<code>A0_azt = 0</code>). This was a very unlikely event. The model for treatment probability assigned them a very small probability in the denominator, which, when inverted, created a massive weight.</p>
+<p><strong>Step 3: Address the Violation with Weight Truncation</strong></p>
+<p>The most common solution is to “truncate” or “trim” the weights. We set a ceiling, and any weight that exceeds this ceiling is brought down to the maximum allowed value. A common practice is to truncate at the 1st and 99th percentiles.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the 99th percentile of the weights</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>percentile_99 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(hiv_wide<span class="sc">$</span>sw, <span class="fl">0.99</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"99th percentile for truncation is:"</span>, <span class="fu">round</span>(percentile_99, <span class="dv">2</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "99th percentile for truncation is: 2.61"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new, truncated weight variable</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>hiv_wide<span class="sc">$</span>sw_trunc <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  hiv_wide<span class="sc">$</span>sw <span class="sc">&gt;</span> percentile_99,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  percentile_99,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  hiv_wide<span class="sc">$</span>sw</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the new distribution</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  hiv_wide<span class="sc">$</span>sw_trunc,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="dv">50</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"Distribution of Truncated Stabilized Weights"</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Truncated Weight Value"</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="st">"lightgreen"</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="week-06_IP_weighting_MSM-rev3_files/figure-html/lab-check-positivity-truncate-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="week-06_IP_weighting_MSM-rev3_files/figure-html/lab-check-positivity-truncate-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation</strong>: Notice how the new histogram has no extreme tail. We have removed the influence of those few highly unusual individuals. This will make our final model more stable.</p>
+<p><strong>Step 4: Rerun the MSM with the Truncated Weights</strong></p>
+<p>Now we refit our final model, but we use the new <code>sw_trunc</code> variable in the <code>weights</code> argument.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geepack) <span class="co"># Make sure geeglm is available</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>msm_lab_fit_truncated <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  Y_cd4 <span class="sc">~</span> A0_azt <span class="sc">+</span> A1_azt,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> hiv_wide,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> id,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> sw_trunc, <span class="co"># Using the truncated weights</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">corstr =</span> <span class="st">"independence"</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(msm_lab_fit_truncated)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+geeglm(formula = Y_cd4 ~ A0_azt + A1_azt, data = hiv_wide, weights = sw_trunc, 
+    id = id, corstr = "independence")
+
+ Coefficients:
+            Estimate Std.err    Wald Pr(&gt;|W|)    
+(Intercept)  409.957   5.427 5706.10   &lt;2e-16 ***
+A0_azt        46.617   5.601   69.28   &lt;2e-16 ***
+A1_azt        45.194   4.657   94.16   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation structure = independence 
+Estimated Scale Parameters:
+
+            Estimate Std.err
+(Intercept)     1135   82.51
+Number of clusters:   500  Maximum cluster size: 1 </code></pre>
+</div>
+</div>
+<p><strong>The Takeaway</strong>: Compare these results to the ones from the original model. The coefficient estimates may change slightly—this is the bias we introduce by trimming—but the standard errors will often be smaller, reflecting a more stable and precise estimate. This is the <strong>bias-variance trade-off</strong> in action.</p>
+</section>
+<section id="checking-consistency-unambiguous-treatment" class="level2">
+<h2 class="anchored" data-anchor-id="checking-consistency-unambiguous-treatment">3. Checking Consistency (Unambiguous Treatment)</h2>
+<p>Like exchangeability, this is a conceptual check.</p>
+<ul>
+<li><strong>The Question You Must Ask</strong>: “Does <code>A0_azt = 1</code> mean the same thing for everyone?”</li>
+<li><strong>The Check</strong>: This requires you to understand the study protocol. If <code>A0_azt = 1</code> could mean a 50mg dose for some patients and a 100mg dose for others, or if some also received adherence counseling, then the consistency assumption is violated. Your analysis should be limited to the specific, well-defined treatment that you are interested in.</li>
+</ul>
+<p>By systematically walking through these checks, you can build confidence in the validity of your Marginal Structural Model and produce more robust and defensible causal estimates.</p>
+</section>
+</section>
+<section id="appendix" class="level1">
+<h1>Appendix</h1>
+<p>Let’s break down the rationale and math behind stabilized weights in detail. The core idea is to fix a major practical problem with the simpler, unstabilized weights: their potential for extreme instability.</p>
+<section id="the-rationale-why-stabilize-in-the-first-place" class="level2">
+<h2 class="anchored" data-anchor-id="the-rationale-why-stabilize-in-the-first-place">The Rationale: Why “Stabilize” in the First Place?</h2>
+<p>The simpler, “unstabilized” weight for a person is calculated as <span class="math inline">\(W_i = 1 / \Prob{\text{treatment} | \text{full history}}\)</span>. This weight does its job of creating a pseudo-population where confounding is removed. However, it can suffer from a serious statistical problem: <strong>high variance</strong>.</p>
+<p><strong>The Problem of Extreme Weights</strong></p>
+<p>Imagine a patient who is very healthy, and for healthy patients, the probability of receiving a risky experimental drug is extremely low, say 1 in 1000 (<span class="math inline">\(\Prob{A=1 | \text{history}} = 0.001\)</span>). If this patient, against all odds, <em>does</em> receive the drug, their unstabilized weight would be: <span class="math inline">\(W_i = 1 / 0.001 = 1000\)</span></p>
+<p>This means that in our analysis, this single individual has the same influence as 1000 other people. If their outcome is unusual, they alone could dramatically swing the entire study’s conclusion. This makes our results highly <strong>unstable</strong> and sensitive to a few rare individuals. Our estimate might be unbiased on average, but its variance would be huge, leading to very wide and unreliable confidence intervals.</p>
+<p><strong>The Goal of Stabilization</strong>: The goal is to create a new set of weights that still correctly adjusts for confounding but doesn’t have this extreme variance. We want to rein in these massive weights without losing the crucial adjustment they provide.</p>
+</section>
+<section id="the-intuition-how-the-numerator-fixes-the-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-intuition-how-the-numerator-fixes-the-problem">The Intuition: How the Numerator Fixes the Problem</h2>
+<p>The stabilized weight formula accomplishes this with a clever tweak:</p>
+<p><span class="math display">\[
+SW_i = \prod_{k=0}^{K} \frac{\Prob{A_k=A_{i,k} \mid \bar{A}_{i, k-1}} \text{ (The Numerator)}}{\Prob{A_k=A_{i,k} \mid \bar{A}_{i, k-1}, \bar{L}_{i,k}} \text{ (The Denominator)}}
+\]</span></p>
+<p>Let’s focus on the role of the new numerator.</p>
+<ul>
+<li><strong>The Denominator</strong> is the probability of treatment for someone with a <em>specific</em> history (e.g., a 62-year-old male with low blood pressure). This can be very small.</li>
+<li><strong>The Numerator</strong> is the probability of treatment based <em>only</em> on past treatments, averaged over all possible confounder values. It represents the overall proportion of people who received that treatment at that time. This probability is generally not extreme.</li>
+</ul>
+<p>The stabilized weight, therefore, compares the <strong>patient-specific probability</strong> (denominator) to the <strong>overall average probability</strong> (numerator).</p>
+<p>The numerator acts as a <strong>moderating factor</strong>. Instead of just inverting the denominator (which can lead to an explosion), we are scaling it relative to a more stable, average probability. This keeps the weights in a much more reasonable range, reducing their variance and making our final estimate more stable and precise.</p>
+</section>
+<section id="simple-numerical-example-unstabilized-vs.-stabilized" class="level2">
+<h2 class="anchored" data-anchor-id="simple-numerical-example-unstabilized-vs.-stabilized">Simple Numerical Example: Unstabilized vs.&nbsp;Stabilized</h2>
+<p>Let’s make this concrete with a simple, one-time treatment study.</p>
+<p><strong>Scenario</strong>: We’re testing a new drug (<span class="math inline">\(A=1\)</span>) against a placebo (<span class="math inline">\(A=0\)</span>). The key confounder (<span class="math inline">\(L\)</span>) is the severity of the disease: <code>Mild</code> (<span class="math inline">\(L=0\)</span>) or <code>Severe</code> (<span class="math inline">\(L=1\)</span>). Doctors are more likely to give the drug to severe patients.</p>
+<p><strong>Our Observed Data (200 Patients Total):</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Severity (L)</th>
+<th style="text-align: left;">Treatment (A)</th>
+<th style="text-align: left;">Number of Patients</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mild (<span class="math inline">\(L=0\)</span>)</td>
+<td style="text-align: left;">Placebo (<span class="math inline">\(A=0\)</span>)</td>
+<td style="text-align: left;">90</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mild (<span class="math inline">\(L=0\)</span>)</td>
+<td style="text-align: left;">Drug (<span class="math inline">\(A=1\)</span>)</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Severe (<span class="math inline">\(L=1\)</span>)</td>
+<td style="text-align: left;">Placebo (<span class="math inline">\(A=0\)</span>)</td>
+<td style="text-align: left;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Severe (<span class="math inline">\(L=1\)</span>)</td>
+<td style="text-align: left;">Drug (<span class="math inline">\(A=1\)</span>)</td>
+<td style="text-align: left;">80</td>
+</tr>
+</tbody>
+</table>
+<p>Let’s focus on one specific person: <strong>A mild patient who received the drug.</strong> This is a “surprising” event.</p>
+<section id="step-1-calculate-the-unstabilized-weight-w_i" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-calculate-the-unstabilized-weight-w_i">Step 1: Calculate the Unstabilized Weight (<span class="math inline">\(W_i\)</span>)</h3>
+<p>The formula is <span class="math inline">\(W_i = 1 / \Prob{A=1 \mid L=0}\)</span>.</p>
+<ul>
+<li><span class="math inline">\(\Prob{A=1 \mid L=0} = \frac{\text{Mild patients who got Drug}}{\text{All Mild patients}} = \frac{10}{90 + 10} = 0.10\)</span></li>
+<li><span class="math inline">\(W_i = 1 / 0.10 = \mathbf{10}\)</span></li>
+</ul>
+<p>This person has the weight of 10 people in the analysis.</p>
+</section>
+<section id="step-2-calculate-the-stabilized-weight-sw_i" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-calculate-the-stabilized-weight-sw_i">Step 2: Calculate the Stabilized Weight (<span class="math inline">\(SW_i\)</span>)</h3>
+<p>The formula is <span class="math inline">\(SW_i = \Prob{A=1} / \Prob{A=1 \mid L=0}\)</span>.</p>
+<ul>
+<li><strong>Denominator</strong>: We already have this: <span class="math inline">\(\Prob{A=1 \mid L=0} = \mathbf{0.10}\)</span>.</li>
+<li><strong>Numerator</strong>: We need the overall probability of getting the drug, regardless of severity.
+<ul>
+<li><span class="math inline">\(\Prob{A=1} = \frac{\text{Total patients who got Drug}}{\text{All patients}} = \frac{10 + 80}{90 + 10 + 20 + 80} = \frac{90}{200} = \mathbf{0.45}\)</span></li>
+</ul></li>
+<li><strong>Calculate the weight</strong>:
+<ul>
+<li><span class="math inline">\(SW_i = \frac{\text{Numerator}}{\text{Denominator}} = \frac{0.45}{0.10} = \mathbf{4.5}\)</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="the-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="the-comparison">The Comparison</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Weight Type</th>
+<th style="text-align: left;">Calculation</th>
+<th style="text-align: left;">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Unstabilized</td>
+<td style="text-align: left;"><span class="math inline">\(1 / 0.10\)</span></td>
+<td style="text-align: left;"><strong>10</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Stabilized</td>
+<td style="text-align: left;"><span class="math inline">\(0.45 / 0.10\)</span></td>
+<td style="text-align: left;"><strong>4.5</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Both weights correctly identify this person as being “surprising” and give them more influence. But the stabilized weight is much less extreme. It has been moderated by the fact that getting the drug wasn’t <em>that</em> rare overall (45% of all patients got it). The weight is pulled back from 10 to a more stable 4.5.</p>
+<p>By applying this logic to every person, we get a full set of stabilized weights that successfully adjust for confounding while having much lower variance, leading to more precise and reliable causal effect estimates.</p>
+</section>
+</section>
+<section id="more-insight" class="level2">
+<h2 class="anchored" data-anchor-id="more-insight">More Insight</h2>
+</section>
+<section id="intuition-what-the-numerator-is-doing-and-why-it-helps" class="level2">
+<h2 class="anchored" data-anchor-id="intuition-what-the-numerator-is-doing-and-why-it-helps">Intuition: what the Numerator is Doing (and why it helps)</h2>
+<ul>
+<li><strong>Unstabilized weights</strong> upweight people who received a treatment that was <strong>unlikely given their full history</strong> (past treatments + covariates). That breaks the dependence between covariates and treatment, but the weights can explode when those probabilities are tiny.</li>
+<li><strong>Stabilized weights</strong> add a numerator that is the <strong>simpler</strong> probability of the observed treatment given <strong>only past treatment</strong>. This:
+<ul>
+<li><strong>Cancels the worst denominators</strong> just enough to shrink extreme weights.</li>
+<li><strong>Preserves</strong> the <strong>marginal</strong> (over covariates) distribution of treatment <em>given past treatment</em>, which keeps the weighted sample looking like the original sample in terms of how often each treatment was used.</li>
+<li><strong>Keeps the same causal target.</strong> The numerator does <strong>not</strong> reintroduce confounding; it’s “harmless” for identification but <strong>helpful</strong> for variance.</li>
+</ul></li>
+</ul>
+<p>Rule of thumb: the numerator reintroduces the right amount of randomness we had in treatment <strong>before</strong> we looked at covariates, so weights stay near 1 instead of going wild.</p>
+</section>
+<section id="definitions-one-time-point-first-then-many" class="level2">
+<h2 class="anchored" data-anchor-id="definitions-one-time-point-first-then-many">Definitions (one time point First, then many)</h2>
+<section id="one-time-point-for-clarity" class="level3">
+<h3 class="anchored" data-anchor-id="one-time-point-for-clarity">One time point (for clarity)</h3>
+<ul>
+<li><strong>Unstabilized weight</strong> for person <span class="math inline">\(i\)</span>:</li>
+</ul>
+<p><span class="math display">\[
+W_i \;=\; \frac{1}{\Pr(A_i=a_i \mid L_i)}
+\]</span></p>
+<ul>
+<li><strong>Stabilized weight</strong> for person <span class="math inline">\(i\)</span>:</li>
+</ul>
+<p><span class="math display">\[
+SW_i \;=\; \frac{\Pr(A_i=a_i)}{\Pr(A_i=a_i \mid L_i)}
+\]</span></p>
+<p>Here <span class="math inline">\(A\)</span> is treatment, <span class="math inline">\(L\)</span> are confounders.</p>
+</section>
+<section id="multiple-time-points-k0dotsk" class="level3">
+<h3 class="anchored" data-anchor-id="multiple-time-points-k0dotsk">Multiple time Points <span class="math inline">\(k=0,\dots,K\)</span></h3>
+<ul>
+<li><strong>Unstabilized</strong>:</li>
+</ul>
+<p><span class="math display">\[
+W_i \;=\; \prod_{k=0}^{K} \frac{1}{\Pr(A_{ik}=a_{ik}\mid \bar A_{i,k-1}, \bar L_{ik})}
+\]</span></p>
+<ul>
+<li><strong>Stabilized</strong> (your formula):</li>
+</ul>
+<p><span class="math display">\[
+SW_i \;=\; \prod_{k=0}^{K}
+  \frac{ \Pr(A_{ik}=a_{ik} \mid \bar A_{i,k-1}) }
+       { \Pr(A_{ik}=a_{ik} \mid \bar A_{i,k-1}, \bar L_{ik}) }
+\]</span></p>
+<p>The <strong>denominator</strong> is the same as before (the “hard” assignment model that depends on confounders). The <strong>numerator</strong> is a “reduced” model (ignores <span class="math inline">\(L\)</span>).</p>
+</section>
+</section>
+<section id="why-stabilized-weights-keep-the-target-and-reduce-variance-a-clean-factorization" class="level2">
+<h2 class="anchored" data-anchor-id="why-stabilized-weights-keep-the-target-and-reduce-variance-a-clean-factorization">3 Why Stabilized Weights Keep the Target and Reduce variance (a Clean factorization)</h2>
+<p>Let the observed data density factorize by time as usual:</p>
+<p><span class="math display">\[
+f(\text{data}) \;=\; f(L_0)\;
+\prod_{k=0}^{K} f(A_k \mid \bar A_{k-1}, \bar L_k)\, f(L_{k+1}\mid \bar A_k, \bar L_k).
+\]</span></p>
+<p>If we <strong>reweight</strong> each record by</p>
+<p><span class="math display">\[
+SW \;=\; \prod_{k=0}^{K} \frac{ f(A_k \mid \bar A_{k-1}) }{ f(A_k \mid \bar A_{k-1}, \bar L_k) },
+\]</span></p>
+<p>the <strong>weighted</strong> (pseudo-)density is proportional to</p>
+<p><span class="math display">\[
+SW \cdot f(\text{data}) \;\propto\; f(L_0)\; \prod_{k=0}^{K}
+\underbrace{f(A_k \mid \bar A_{k-1})}_{\text{depends on past }A\text{ only}} \; f(L_{k+1}\mid \bar A_k, \bar L_k).
+\]</span></p>
+<p><strong>Two key consequences:</strong></p>
+<ol type="1">
+<li>In the pseudo-population, <strong>treatment no longer depends on <span class="math inline">\(\bar L_k\)</span></strong> at time <span class="math inline">\(k\)</span> given <span class="math inline">\(\bar A_{k-1}\)</span>. That’s exactly the “as-if randomized given past <span class="math inline">\(A\)</span>” property we need.</li>
+<li>The <strong>marginal distribution of treatment given past treatment</strong> is preserved (because those <span class="math inline">\(f(A_k\mid \bar A_{k-1})\)</span> are now the treatment factors in the pseudo-density). This stabilization is what keeps weights moderate and the sample “familiar.”</li>
+</ol>
+<p>By contrast, <strong>unstabilized</strong> weights replace the treatment factor with a constant (intuitively, “flat” assignment), which can make the weighted sample look very unlike the original and push weights to extremes.</p>
+<p>A related perspective: <strong>unstabilized</strong> IPTW is a Horvitz–Thompson–type estimator (unbiased but high variance); <strong>stabilized</strong> IPTW acts like a Hájek normalization (same target, usually <strong>smaller variance</strong>, and weights closer to 1).</p>
+</section>
+<section id="a-napkin-size-numeric-example-one-time-point" class="level2">
+<h2 class="anchored" data-anchor-id="a-napkin-size-numeric-example-one-time-point">4 A Napkin-size Numeric Example (one time point)</h2>
+<p>Suppose 1,000 patients:</p>
+<ul>
+<li>800 have <strong>low BP</strong> (<span class="math inline">\(L=0\)</span>), 200 have <strong>high BP</strong> (<span class="math inline">\(L=1\)</span>).</li>
+<li>Doctors treat <strong>20%</strong> of low-BP, <strong>80%</strong> of high-BP.</li>
+</ul>
+<p>So:</p>
+<ul>
+<li><span class="math inline">\(\Pr(A=1\mid L=0)=0.20\)</span>, <span class="math inline">\(\Pr(A=1\mid L=1)=0.80\)</span>.</li>
+<li>Overall <span class="math inline">\(\Pr(A=1)= (160+160)/1000 = 0.32\)</span>, <span class="math inline">\(\Pr(A=0)=0.68\)</span>.</li>
+</ul>
+<section id="unstabilized-weights" class="level3">
+<h3 class="anchored" data-anchor-id="unstabilized-weights">Unstabilized Weights</h3>
+<ul>
+<li>Treated low-BP: weight <span class="math inline">\(=1/0.20=5\)</span> (big)</li>
+<li>Treated high-BP: weight <span class="math inline">\(=1/0.80=1.25\)</span></li>
+<li>Untreated low-BP: weight <span class="math inline">\(=1/0.80=1.25\)</span></li>
+<li>Untreated high-BP: weight <span class="math inline">\(=1/0.20=5\)</span> (big)</li>
+</ul>
+<p><strong>Problem:</strong> Those 5’s are heavy. Any analysis becomes noisy and sensitive to a few people.</p>
+</section>
+<section id="stabilized-weights" class="level3">
+<h3 class="anchored" data-anchor-id="stabilized-weights">Stabilized Weights</h3>
+<ul>
+<li>Treated low-BP: <span class="math inline">\(SW = 0.32/0.20 = 1.60\)</span></li>
+<li>Treated high-BP: <span class="math inline">\(SW = 0.32/0.80 = 0.40\)</span></li>
+<li>Untreated low-BP: <span class="math inline">\(SW = 0.68/0.80 = 0.85\)</span></li>
+<li>Untreated high-BP: <span class="math inline">\(SW = 0.68/0.20 = 3.40\)</span></li>
+</ul>
+<p><strong>Now the largest weight is 3.4, not 5</strong>, and most weights are near 1. You still erase the BP→Treatment link in the weighted data, but with <strong>less variance</strong>.</p>
+<p>(You can check: after weighting, the treated fraction in low-BP and high-BP groups both become 0.32—i.e., treatment is independent of BP in the pseudo-population.)</p>
+</section>
+</section>
+<section id="what-to-remember-in-practice" class="level2">
+<h2 class="anchored" data-anchor-id="what-to-remember-in-practice">5 What to Remember in Practice</h2>
+<ul>
+<li><strong>Same target, better stability.</strong> Stabilized weights identify the same MSM parameters but usually with smaller variance.</li>
+<li><strong>Mean near 1.</strong> With correctly specified models, <span class="math inline">\(\mathbb{E}(SW)\approx 1\)</span>. Analysts often also <strong>normalize</strong> weights to have mean 1 in the sample (a separate, harmless step).</li>
+<li><strong>Numerator model is simple by design.</strong> It conditions only on <strong>past treatments</strong>; do <strong>not</strong> include covariates affected by prior treatment there.</li>
+<li><strong>Still need overlap.</strong> If some histories virtually never get a particular treatment (positivity violation), even stabilized weights can be large—consider truncation, coarsening, or redefining the estimand/support.</li>
+</ul>
+</section>
+<section id="two-time-extension-quick-peek" class="level2">
+<h2 class="anchored" data-anchor-id="two-time-extension-quick-peek">6 Two-time Extension (quick peek)</h2>
+<p>At <span class="math inline">\(k=0,1\)</span>,</p>
+<p><span class="math display">\[
+SW_i \;=\;
+\frac{\Pr(A_{i0}\mid \emptyset)}{\Pr(A_{i0}\mid L_{i0})}
+\;\times\;
+\frac{\Pr(A_{i1}\mid A_{i0})}{\Pr(A_{i1}\mid A_{i0}, L_{i0}, L_{i1})}.
+\]</span></p>
+<ul>
+<li>The first factor stabilizes baseline treatment.</li>
+<li>The second factor stabilizes the follow-up decision.</li>
+</ul>
+<p>In the weighted world, <strong>each</strong> decision behaves as if randomized <strong>given past treatment</strong>, so you can fit a <strong>marginal</strong> model of the outcome on the treatment history (your MSM) without conditioning on the time-varying confounders that are also mediators.</p>
+</section>
+<section id="one-line-recap" class="level2">
+<h2 class="anchored" data-anchor-id="one-line-recap">One-line Recap</h2>
+<p>Stabilized weights keep the <strong>identification</strong> benefits of IPTW but <strong>temper</strong> extreme weights by reintroducing the right marginal treatment probabilities—so your pseudo-population looks randomized <strong>and</strong> your estimates are more stable.</p>
+</section>
+</section>
+<section id="link-to-horvitzthompson-and-hájek-estimators" class="level1">
+<h1>Link to Horvitz–Thompson and Hájek Estimators</h1>
+<section id="big-idea" class="level2">
+<h2 class="anchored" data-anchor-id="big-idea">Big Idea</h2>
+<ul>
+<li><strong>Unstabilized IPTW</strong> estimates a (counterfactual) mean by <strong>adding up outcomes with inverse probabilities</strong> and then dividing by <strong>N</strong>. That’s the <strong>Horvitz–Thompson (HT)</strong> style: unbiased if the treatment model is correct, but can be <strong>high variance</strong> when some probabilities are small (huge weights).</li>
+<li><strong>Stabilized IPTW</strong> (or <strong>Hájek</strong> style) estimates the same mean by <strong>ratio</strong>: add up “weighted outcomes” and <strong>divide by the sum of weights</strong> (not by N). This <strong>self-normalizes</strong> the weights, yielding <strong>smaller variance</strong> (typically) with at most tiny finite-sample bias; it’s consistent for the same target.</li>
+</ul>
+<p>Think of <strong>HT</strong> as “plain importance sampling” and <strong>Hájek</strong> (or stabilized) as “self-normalized importance sampling.”</p>
+</section>
+</section>
+<section id="one-time-point-setup-to-anchor-intuition" class="level1">
+<h1>One-time-point Setup (to Anchor intuition)</h1>
+<p>We want the mean outcome <strong>if everyone were treated</strong>, <span class="math inline">\(\mu(1)=\mathbb{E}[Y^{1}]\)</span>.</p>
+<p>Let <span class="math inline">\(A\in\{0,1\}\)</span> be treatment, <span class="math inline">\(e(X)=\Pr(A=1\mid X)\)</span> the (true) propensity, and we only observe <span class="math inline">\(Y\)</span> when <span class="math inline">\(A=1\)</span>.</p>
+<section id="unstabilized-iptw-horvitzthompson" class="level2">
+<h2 class="anchored" data-anchor-id="unstabilized-iptw-horvitzthompson">Unstabilized IPTW (Horvitz–Thompson)</h2>
+<p><span class="math display">\[
+\widehat{\mu}_{\text{HT}}(1)=\frac{1}{N}\sum_{i=1}^N \frac{\mathbb{I}(A_i=1)\,Y_i}{e(X_i)}.
+\]</span></p>
+<ul>
+<li><strong>Unbiased</strong> (if <span class="math inline">\(e(\cdot)\)</span> is correct).</li>
+<li>But if some <span class="math inline">\(e(X_i)\)</span> are small, terms <span class="math inline">\(1/e(X_i)\)</span> are huge → <strong>high variance</strong>.</li>
+</ul>
+</section>
+<section id="hájek-ratio-form" class="level2">
+<h2 class="anchored" data-anchor-id="hájek-ratio-form">Hájek (ratio) Form</h2>
+<p><span class="math display">\[
+\widehat{\mu}_{\text{H}}(1)=
+\frac{\sum_{i=1}^N \frac{\mathbb{I}(A_i=1)\,Y_i}{e(X_i)}}
+     {\sum_{i=1}^N \frac{\mathbb{I}(A_i=1)}{e(X_i)}}.
+\]</span></p>
+<ul>
+<li>Same target; <strong>weights are self-normalized</strong> by <span class="math inline">\(\sum 1/e\)</span>.</li>
+<li>Typically <strong>smaller variance</strong>; slight finite-sample bias that vanishes as <span class="math inline">\(N\to\infty\)</span>.</li>
+</ul>
+</section>
+<section id="stabilized-weights-viewpoint" class="level2">
+<h2 class="anchored" data-anchor-id="stabilized-weights-viewpoint">“Stabilized” Weights Viewpoint</h2>
+<p>Define <strong>stabilized weights</strong> for treated units as</p>
+<p><span class="math display">\[
+SW_i=\frac{\Pr(A=1)}{e(X_i)} \quad \text{if } A_i=1,\quad (0 \text{ otherwise}).
+\]</span></p>
+<p>Then the <strong>ratio estimator with stabilized weights</strong> is</p>
+<p><span class="math display">\[
+\frac{\sum SW_i Y_i}{\sum SW_i}
+=\frac{\Pr(A=1)\sum \tfrac{\mathbb{I}(A_i=1)Y_i}{e(X_i)}}
+       {\Pr(A=1)\sum \tfrac{\mathbb{I}(A_i=1)}{e(X_i)}}
+=\widehat{\mu}_{\text{H}}(1).
+\]</span></p>
+<p>So, <strong>stabilized IPTW + divide by sum of weights = Hájek</strong>.</p>
+<p>(Using unstabilized weights but dividing by their sum gives the same ratio.)</p>
+</section>
+</section>
+<section id="tiny-numeric-example-you-can-do-by-hand" class="level1">
+<h1>Tiny Numeric Example (you Can Do by hand)</h1>
+<p>Suppose <span class="math inline">\(N=6\)</span>. Three treated, three untreated.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">i</th>
+<th style="text-align: center;"><span class="math inline">\(A_i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(Y_i\)</span> (only if <span class="math inline">\(A_i=1\)</span>)</th>
+<th style="text-align: center;"><span class="math inline">\(e(X_i)=\Pr(A=1\mid X_i)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0.90</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0.80</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">0.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0.90</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0.10</td>
+</tr>
+</tbody>
+</table>
+<p>Overall treated fraction <span class="math inline">\(\Pr(A=1)=3/6=0.5\)</span>.</p>
+<p><strong>HT (unstabilized)</strong></p>
+<p><span class="math display">\[
+\widehat{\mu}_{\text{HT}}(1)=\frac{1}{6}\Big(\frac{2}{0.9}+\frac{1}{0.8}+\frac{3}{0.2}\Big)
+=\frac{1}{6}(2.2222+1.25+15)=3.0787.
+\]</span></p>
+<p>Note the huge impact of the rare treated with <span class="math inline">\(e=0.2\)</span> (weight <span class="math inline">\(=5\)</span>).</p>
+<p><strong>Hájek (ratio)</strong></p>
+<p><span class="math display">\[
+\widehat{\mu}_{\text{H}}(1)=
+\frac{2/0.9+1/0.8+3/0.2}{1/0.9+1/0.8+1/0.2}
+=\frac{18.4722}{7.3611}=2.509.
+\]</span></p>
+<p>Same target, much <strong>more stable</strong> (the large weight is tempered by the denominator).</p>
+<p><strong>Stabilized IPTW (same as Hájek)</strong> Use <span class="math inline">\(SW_i=0.5/e(X_i)\)</span> for treated:</p>
+<ul>
+<li>Numerator: <span class="math inline">\(0.5\,(2/0.9+1/0.8+3/0.2)=9.2361\)</span></li>
+<li>Denominator: <span class="math inline">\(0.5\,(1/0.9+1/0.8+1/0.2)=3.6806\)</span></li>
+<li>Ratio <span class="math inline">\(=9.2361/3.6806=2.509\)</span> (identical to Hájek).</li>
+</ul>
+<p><strong>Takeaway:</strong> HT is “unbiased but jumpy”; Hájek/stabilized is “same target, usually smaller variance.”</p>
+<section id="why-variance-shrinks-plain-english" class="level2">
+<h2 class="anchored" data-anchor-id="why-variance-shrinks-plain-english">Why variance Shrinks (plain English)</h2>
+<ul>
+<li>HT’s total weight <span class="math inline">\(\sum w_i\)</span> can fluctuate wildly sample-to-sample (especially when some <span class="math inline">\(e(X)\)</span> are tiny), amplifying noise.</li>
+<li>Hájek (or stabilized) <strong>pins down the total weight</strong> (by dividing by <span class="math inline">\(\sum w_i\)</span>), removing one big source of randomness. That’s the same benefit you get from self-normalized importance sampling.</li>
+</ul>
+</section>
+<section id="many-time-points-longitudinal" class="level2">
+<h2 class="anchored" data-anchor-id="many-time-points-longitudinal">Many time Points (longitudinal)</h2>
+<p>At visits <span class="math inline">\(k=0,\dots,K\)</span>:</p>
+<ul>
+<li><strong>Unstabilized IPTW (HT-like):</strong></li>
+</ul>
+<p><span class="math display">\[
+W_i=\prod_{k=0}^K \frac{1}{\Pr(A_{ik}=a_{ik}\mid \bar A_{i,k-1},\bar L_{ik})}.
+\]</span></p>
+<ul>
+<li><strong>Stabilized IPTW (Hájek-like):</strong></li>
+</ul>
+<p><span class="math display">\[
+SW_{i}= \prod_{k=0}^{K} \frac{\Pr(A_{ik} = a_{ik}\mid \bar A_{i,k-1})}{\Pr(A_{ik} = a_{ik}\mid \bar A_{i,k-1},\bar{L}_{ik})}.
+\]</span></p>
+<p>You then estimate means or fit an MSM via <strong>weighted regression</strong>. The numerator factors preserve the <strong>marginal</strong> treatment process (given past <span class="math inline">\(A\)</span>) and act like a built-in normalization → <strong>weights closer to 1</strong> and <strong>smaller variance</strong>.</p>
+<hr>
+</section>
+</section>
+<section id="practical-tips" class="level1">
+<h1>Practical Tips</h1>
+<ul>
+<li>When estimating <strong>means</strong>: prefer the <strong>ratio form</strong> (divide by <span class="math inline">\(\sum w_i\)</span>); with stabilized weights this happens automatically.</li>
+<li>When fitting <strong>MSMs</strong>: use stabilized weights, robust (sandwich) SEs, and check the <strong>weight distribution</strong> (truncate extremes if needed).</li>
+<li>Always assess <strong>overlap (positivity)</strong>—no weighting trick can recover information the data don’t contain.</li>
+</ul>
+<p><strong>Rule of thumb:</strong> HT = “pure IPW, unbiased but noisy.” Hájek/stabilized = “self-normalized IPW, same target, usually tighter.”</p>
+<section id="the-bridge-from-logistic-regression-log-odds-to-ipw-probabilities" class="level2">
+<h2 class="anchored" data-anchor-id="the-bridge-from-logistic-regression-log-odds-to-ipw-probabilities">The Bridge: From Logistic Regression (Log-Odds) to IPW (Probabilities)</h2>
+<p>Our goal is to calculate the stabilized weight, which requires the probability of treatment, <span class="math inline">\(\Prob{A=1 \mid \text{History}}\)</span>. But how do we get a number for that probability for each person? We need to model it.</p>
+<p>The most common tool for modeling a binary outcome (like treatment vs.&nbsp;no treatment) is <strong>logistic regression</strong>.</p>
+<section id="step-1-the-logistic-model-and-its-native-language-log-odds" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-the-logistic-model-and-its-native-language-log-odds">Step 1: The Logistic Model and Its Native Language (Log-Odds)</h3>
+<p>A logistic regression model does not predict probability directly. Instead, it models the <strong>logarithm of the odds</strong> (the “logit”) as a linear function of the predictors.</p>
+<p>When we fit a model for our treatment <span class="math inline">\(A\)</span> based on confounders <span class="math inline">\(L\)</span>:</p>
+<p><code>glm(A ~ L1 + L2, family = binomial)</code></p>
+<p>The underlying equation R is solving is:</p>
+<p><span class="math inline">\(\ln\left(\frac{\Prob{A=1 \mid L}}{1 - \Prob{A=1 \mid L}}\right) = \beta_0 + \beta_1 L_1 + \beta_2 L_2\)</span></p>
+<p>Notice the left side is the <strong>log-odds</strong>. This is the native language of a logistic model.</p>
+</section>
+<section id="step-2-translating-from-log-odds-to-the-probability-we-need" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-translating-from-log-odds-to-the-probability-we-need">Step 2: Translating from Log-Odds to the Probability We Need</h3>
+<p>For our IPW formula, we don’t want log-odds or odds; we need the clean probability, <span class="math inline">\(p\)</span>. So, we must translate the model’s output back into the language of probability. This is a two-step algebraic conversion:</p>
+<ol type="1">
+<li><p><strong>From Log-Odds to Odds</strong>: We exponentiate both sides to undo the natural log (<span class="math inline">\(\ln\)</span>). <span class="math inline">\(\text{Odds} = e^{(\beta_0 + \beta_1 L_1 + \beta_2 L_2)}\)</span></p></li>
+<li><p><strong>From Odds to Probability</strong>: We use the standard conversion formula. <span class="math inline">\(\text{Probability (p)} = \frac{\text{Odds}}{1 + \text{Odds}}\)</span></p></li>
+</ol>
+<p>This final probability is exactly what we plug into our weight formula.</p>
+</section>
+<section id="step-3-putting-it-together-in-r" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-putting-it-together-in-r">Step 3: Putting It Together in R</h3>
+<p>Fortunately, R’s <code>predict()</code> function handles this translation for us automatically. When you use <code>predict()</code> on a <code>glm</code> object, you can specify the <code>type</code> of output you want.</p>
+<p>Let’s use our <code>den_mod_A0_lab</code> model from the lab, which predicted AZT at time 0 based on the baseline CD4 count (<code>L0_cd4</code>).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We need to run the code from the previous lab to have the model object</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>n_lab <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>id <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>n_lab</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>cd4_0 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_lab, <span class="dv">500</span>, <span class="dv">50</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>azt_0_prob <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">8</span> <span class="sc">+</span> (cd4_0 <span class="sc">/</span> <span class="dv">50</span>))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>azt_0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_lab, <span class="dv">1</span>, azt_0_prob)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>hiv_wide_demo <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(id, <span class="at">L0_cd4 =</span> cd4_0, <span class="at">A0_azt =</span> azt_0)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>den_mod_A0_lab <span class="ot">&lt;-</span> <span class="fu">glm</span>(A0_azt <span class="sc">~</span> L0_cd4, <span class="at">data =</span> hiv_wide_demo, <span class="at">family =</span> binomial)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the LOG-ODDS (the model's native output)</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>log_odds <span class="ot">&lt;-</span> <span class="fu">predict</span>(den_mod_A0_lab, <span class="at">type =</span> <span class="st">"link"</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the PROBABILITY (what we need for IPW)</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>probability <span class="ot">&lt;-</span> <span class="fu">predict</span>(den_mod_A0_lab, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's look at the first 5 predictions</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">Log_Odds =</span> <span class="fu">head</span>(log_odds),</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">Probability =</span> <span class="fu">head</span>(probability)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Log_Odds"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Probability"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"1.663","2":"0.8406","_rn_":"1"},{"1":"1.966","2":"0.8772","_rn_":"2"},{"1":"3.609","2":"0.9736","_rn_":"3"},{"1":"2.242","2":"0.9040","_rn_":"4"},{"1":"2.296","2":"0.9086","_rn_":"5"},{"1":"3.752","2":"0.9771","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># You can prove they are the same by converting the log-odds manually</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>manual_probability <span class="ot">&lt;-</span> <span class="fu">exp</span>(log_odds) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(log_odds))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(probability, manual_probability)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p><strong>The Workflow in Practice:</strong></p>
+<ol type="1">
+<li>You build a logistic model for the denominator (<code>glm(A ~ L, …)</code>).</li>
+<li>You build another logistic model for the numerator (<code>glm(A ~ …)</code>).</li>
+<li>You use <code>predict(…, type = "response")</code> on both models to get the estimated probabilities for every person.</li>
+<li>You plug these predicted probabilities directly into the stabilized weight formula: <code>sw = (p_numerator) / (p_denominator)</code>.</li>
+</ol>
+<p>So, your intuition about odds was spot-on—they are working under the hood inside the <code>glm</code> function. But for the IPW calculation itself, we use the final translated probability.</p>
+</section>
+</section>
+<section id="g-computation-vs.-msms-ipw-a-tale-of-two-models" class="level2">
+<h2 class="anchored" data-anchor-id="g-computation-vs.-msms-ipw-a-tale-of-two-models">G-Computation vs.&nbsp;MSMs (IPW): A Tale of Two Models</h2>
+<p>Instead of re-weighting the population, G-computation works by <strong>simulating</strong> the outcomes for the entire population under different, specific treatment strategies.</p>
+<p>The most fundamental difference between these two methods is the model they rely on.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 41%">
+<col style="width: 48%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;"><strong>MSM (via IPW)</strong></th>
+<th style="text-align: left;"><strong>G-Computation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Core Idea</strong></td>
+<td style="text-align: left;"><strong>Weighting:</strong> Create a pseudo-population where confounding is broken.</td>
+<td style="text-align: left;"><strong>Simulation:</strong> Predict the outcome for everyone under different treatment rules.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Required Model</strong></td>
+<td style="text-align: left;">A model for the <strong>treatment</strong> assignment: <span class="math inline">\(\Prob{A \mid L}\)</span></td>
+<td style="text-align: left;">A model for the <strong>outcome</strong>: <span class="math inline">\(\E{Y \mid A, L}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Key Strength</strong></td>
+<td style="text-align: left;">Doesn’t require correctly modeling complex interactions in the outcome model.</td>
+<td style="text-align: left;">More stable when you have positivity problems (i.e., near-zero probabilities of treatment).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Key Weakness</strong></td>
+<td style="text-align: left;">Very sensitive to positivity violations (can result in extreme weights).</td>
+<td style="text-align: left;">Very sensitive to getting the outcome model wrong, especially with many confounders.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="the-g-computation-recipe" class="level2">
+<h2 class="anchored" data-anchor-id="the-g-computation-recipe">The G-Computation Recipe 🍳</h2>
+<p>G-computation follows a simple and intuitive three-step process to directly estimate the mean potential outcome, <span class="math inline">\(\E{Y^a}\)</span>.</p>
+<section id="step-1-fit-a-model-for-the-outcome" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-fit-a-model-for-the-outcome">Step 1: Fit a Model for the Outcome</h3>
+<p>First, we ignore the weights entirely. We fit one, rich regression model that predicts the final outcome using both the treatments and the full confounder history as predictors. This is often called the “Q-model”.</p>
+<p><code>Outcome ~ Treatment_Time_0 + Treatment_Time_1 + Confounder_Time_0 + Confounder_Time_1 …</code></p>
+<p>It’s crucial that this model is specified correctly. Any important interactions between the treatments and confounders must be included.</p>
+</section>
+<section id="step-2-simulate-potential-outcomes-under-intervention" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-simulate-potential-outcomes-under-intervention">Step 2: Simulate Potential Outcomes under Intervention</h3>
+<p>This is the “simulation” or “g-formula” step. We use our model to play God with the dataset.</p>
+<ol type="1">
+<li><strong>Copy your dataset twice.</strong></li>
+<li>In <strong>Copy A</strong>, you manually set the treatment variables for <em>every single person</em> to the first strategy. For example, to find the outcome if everyone had been treated at both time points, you would set <code>A0 = 1</code> and <code>A1 = 1</code> for all rows.</li>
+<li>In <strong>Copy B</strong>, you set the treatment variables for <em>every single person</em> to the comparison strategy (e.g., <code>A0 = 0</code> and <code>A1 = 0</code>).</li>
+<li>Use the model from Step 1 to <strong>predict the outcome</strong> for all rows in both of these modified datasets. The predictions from Copy A are the estimated potential outcomes <span class="math inline">\(\hat{Y}^{\bar{a}=(1,1)}\)</span>, and the predictions from Copy B are <span class="math inline">\(\hat{Y}^{\bar{a}=(0,0)}\)</span>.</li>
+</ol>
+</section>
+<section id="step-3-average-and-compare" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-average-and-compare">Step 3: Average and Compare</h3>
+<p>The final step is straightforward:</p>
+<ol type="1">
+<li>Calculate the <strong>average</strong> of all the predicted outcomes in Copy A. This is your estimate of the mean outcome if everyone had followed the “always treat” strategy, <span class="math inline">\(\Ehat{Y^{\bar{a}=(1,1)}}\)</span>.</li>
+<li>Calculate the <strong>average</strong> of all the predicted outcomes in Copy B. This is your estimate of the mean outcome if everyone had followed the “never treat” strategy, <span class="math inline">\(\Ehat{Y^{\bar{a}=(0,0)}}\)</span>.</li>
+<li>The causal effect is the difference between these two averages.</li>
+</ol>
+</section>
+</section>
+<section id="g-computation-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="g-computation-in-r">G-Computation in R</h2>
+<p>Let’s implement this recipe using our <code>hiv_wide</code> dataset. Our goal is to estimate the effect of the strategy “always take AZT” (<code>A0_azt=1</code>, <code>A1_azt=1</code>) versus “never take AZT” (<code>A0_azt=0</code>, <code>A1_azt=0</code>).</p>
+<section id="step-1-fit-the-outcome-model-the-q-model" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-fit-the-outcome-model-the-q-model">Step 1: Fit the Outcome Model (the “Q-model”)</h3>
+<p>We regress the final CD4 count on the full treatment and confounder history.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We are using the hiv_wide data from the previous examples</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>q_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y_cd4 <span class="sc">~</span> A0_azt <span class="sc">+</span> A1_azt <span class="sc">+</span> L0_cd4 <span class="sc">+</span> L1_cd4, <span class="at">data =</span> hiv_wide)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(q_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Y_cd4 ~ A0_azt + A1_azt + L0_cd4 + L1_cd4, data = hiv_wide)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-63.01 -13.27  -0.55  15.93  62.73 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 107.9458    10.6071   10.18   &lt;2e-16 ***
+A0_azt       30.4781     3.3586    9.07   &lt;2e-16 ***
+A1_azt       39.1182     2.5901   15.10   &lt;2e-16 ***
+L0_cd4       -0.1361     0.0753   -1.81    0.071 .  
+L1_cd4        0.8318     0.0913    9.11   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 20.5 on 495 degrees of freedom
+Multiple R-squared:  0.806, Adjusted R-squared:  0.805 
+F-statistic:  515 on 4 and 495 DF,  p-value: &lt;2e-16</code></pre>
+</div>
+</div>
+</section>
+<section id="step-2-create-intervened-upon-datasets-and-predict" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-create-intervened-upon-datasets-and-predict">Step 2: Create Intervened-Upon Datasets and Predict</h3>
+<p>We create two copies and manually set the treatment variables.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy the dataset for the "Always Treat" scenario</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>d_always_treat <span class="ot">&lt;-</span> hiv_wide</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>d_always_treat<span class="sc">$</span>A0_azt <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>d_always_treat<span class="sc">$</span>A1_azt <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy the dataset for the "Never Treat" scenario</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>d_never_treat <span class="ot">&lt;-</span> hiv_wide</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>d_never_treat<span class="sc">$</span>A0_azt <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>d_never_treat<span class="sc">$</span>A1_azt <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict potential outcomes for everyone under both scenarios</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>hiv_wide<span class="sc">$</span>y_potential_always <span class="ot">&lt;-</span> <span class="fu">predict</span>(q_model, <span class="at">newdata =</span> d_always_treat)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>hiv_wide<span class="sc">$</span>y_potential_never <span class="ot">&lt;-</span> <span class="fu">predict</span>(q_model, <span class="at">newdata =</span> d_never_treat)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at the results for a few patients</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>hiv_wide <span class="sc">|&gt;</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, Y_cd4, y_potential_always, y_potential_never) <span class="sc">|&gt;</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["Y_cd4"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["y_potential_always"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["y_potential_never"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"437.7","3":"498.4","4":"428.8","_rn_":"1"},{"1":"2","2":"485.6","3":"493.4","4":"423.8","_rn_":"2"},{"1":"3","2":"528.2","3":"545.9","4":"476.4","_rn_":"3"},{"1":"4","2":"515.0","3":"504.1","4":"434.5","_rn_":"4"},{"1":"5","2":"523.7","3":"502.3","4":"432.7","_rn_":"5"},{"1":"6","2":"588.7","3":"544.8","4":"475.2","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section>
+<section id="step-3-average-and-compare-1" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-average-and-compare-1">Step 3: Average and Compare</h3>
+<p>Now we just take the mean of those two new potential outcome columns.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the mean potential outcome under "Always Treat"</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>mean_y_always <span class="ot">&lt;-</span> <span class="fu">mean</span>(hiv_wide<span class="sc">$</span>y_potential_always)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"E[Y | Always Treat] ="</span>, <span class="fu">round</span>(mean_y_always, <span class="dv">2</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "E[Y | Always Treat] = 499.45"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the mean potential outcome under "Never Treat"</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>mean_y_never <span class="ot">&lt;-</span> <span class="fu">mean</span>(hiv_wide<span class="sc">$</span>y_potential_never)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"E[Y | Never Treat] ="</span>, <span class="fu">round</span>(mean_y_never, <span class="dv">2</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "E[Y | Never Treat] = 429.85"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the Average Causal Effect (ACE)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>ace_gcomp <span class="ot">&lt;-</span> mean_y_always <span class="sc">-</span> mean_y_never</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Average Causal Effect (ACE) ="</span>, <span class="fu">round</span>(ace_gcomp, <span class="dv">2</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Average Causal Effect (ACE) = 69.6"</code></pre>
+</div>
+</div>
+<p>The estimated average causal effect of this treatment strategy is an increase of 69.6 CD4 points, which is very close to the answer we got with the MSM/IPW approach.</p>
+
+
+
+</section>
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-cunningham2021causal" class="csl-entry" role="listitem">
+Cunningham, S. (2021). <em>Causal <span>Inference</span>: <span>The Mixtape</span></em>. Yale University Press. <a href="https://doi.org/10.2307/j.ctv1c29t27">https://doi.org/10.2307/j.ctv1c29t27</a>
+</div>
+<div id="ref-imbens2015causal" class="csl-entry" role="listitem">
+Imbens, G., &amp; Rubin, D. B. (2015). <em>Causal inference for statistics, social, and biomedical sciences: <span>An</span> introduction</em>. Cambridge University Press.
+</div>
+<div id="ref-pearl2009causality" class="csl-entry" role="listitem">
+Pearl, J. (2009). <em>Causality: <span>Models</span>, reasoning, and inference</em> (2nd ed.). Cambridge University Press.
+</div>
+<div id="ref-vanderweele2015book" class="csl-entry" role="listitem">
+VanderWeele, T. J. (2015). <em>Explanation in causal inference: <span>Methods</span> for mediation and interaction</em>. Oxford University Press.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/Data-Wise\.github\.io\/causal-inference\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-06_IP_weighting_MSM-rev3.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

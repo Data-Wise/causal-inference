@@ -1,0 +1,312 @@
+---
+title: "ggplot2: A Comprehensive Guide"
+date: "1/6/2025"
+date-modified: last-modified
+date-format: long
+---
+
+# Introduction
+
+Overview
+The ggplot2 package (part of the Tidyverse) provides a powerful system for creating graphics in R by implementing the Grammar of Graphics. It uses layers to gradually build complex visualizations from simple components.
+Packages and Key Functions:
+
+- `ggplot2` (key functions include `ggplot()`, `aes()`, `geom_point()`, `geom_bar()`, `geom_line()`, `geom_histogram()`, `facet_wrap()`, `theme()`, etc.)
+
+Use Cases
+
+- Exploratory data analysis: Quick visualization of relationships in data.
+- Publication-ready plots: Highly customizable appearance and layout.
+- Interactive or iterative workflows: Build complex visuals step-by-step.
+
+Benefits
+
+- Layered approach allows modular building of plots.
+- Consistent grammar for different plot types.
+- Powerful customizations (labels, scales, themes, etc.).
+
+```r
+ggplot2::ggplot(data, aes(x, y)) + geom_*()
+```
+
+(The skeleton structure above demonstrates how layers are added; it is not meant to run by itself.)
+
+Below is a schematic (using Mermaid) illustrating the layered approach in ggplot2:
+
+```{mermaid}
+graph LR
+    A["Begin with ggplot()"] --> B["Add aes() layer"]
+    B --> C["Add geom_*() layer"]
+    C --> D["Optional: Add facet or theme layers"]
+```
+
+# Getting Started
+
+Loading the Package
+You can load ggplot2 with pacman::p_load():
+
+```{r}
+pacman::p_load(ggplot2)
+```
+
+Basic Usage
+Below is a simple example to illustrate the core functionality of ggplot2. We will use the built-in mtcars dataset to create a scatter plot of `mpg` (miles per gallon) vs. `hp` (horsepower).
+
+```{r}
+# Scatter plot of mpg vs. hp
+mtcars |>
+    ggplot2::ggplot(ggplot2::aes(x = hp, y = mpg)) +
+    ggplot2::geom_point() +
+    ggplot2::labs(
+        title = "Basic Scatter Plot",
+        x = "Horsepower",
+        y = "Miles Per Gallon"
+    )
+```
+
+In this code:
+
+- mtcars is piped into ggplot2::ggplot().
+- ggplot2::aes() maps hp to the x-axis and mpg to the y-axis.
+- ggplot2::geom_point() adds the point geometry to create a scatter plot.
+- ggplot2::labs() customizes labels.
+
+# Key Functions and Features
+
+ggplot2::ggplot()
+Description
+
+- The main function to initialize a ggplot object, where you specify the dataset and general aesthetic mappings.
+
+Syntax
+
+```r
+ggplot2::ggplot(data, ggplot2::aes(...))
+```
+
+- data: A data frame.
+- ggplot2::aes(…): Aesthetic mappings for x, y, color, size, etc.
+
+Example
+
+```{r}
+# Basic template (with mpg dataset from ggplot2)
+ggplot2::ggplot(data = ggplot2::mpg, ggplot2::aes(x = displ, y = hwy)) +
+    ggplot2::geom_point()
+```
+
+ggplot2::aes()
+Description
+
+- Defines the mapping of variables to visual properties (aesthetics) such as x, y, color, fill, size, shape, and more.
+
+Syntax
+
+```r
+ggplot2::aes(x, y, color = ..., fill = ..., shape = ...)
+```
+
+Example
+
+```{r}
+ggplot2::ggplot(ggplot2::mpg, ggplot2::aes(x = cyl, y = hwy, color = drv)) +
+    ggplot2::geom_point()
+```
+
+- Here, drv is mapped to color, creating different point colors by drive type.
+
+ggplot2::geom_*()
+Description
+
+- A family of geometric functions to specify how data points are represented (points, lines, bars, etc.).
+
+Syntax
+
+```r
+ggplot2::geom_point(...)
+ggplot2::geom_line(...)
+ggplot2::geom_bar(...)
+ggplot2::geom_histogram(...)
+```
+
+Arguments often include statistical transformations, bin widths, position adjustments, etc.
+
+Example: Bar Plot
+
+```{r}
+ggplot2::ggplot(ggplot2::mpg, ggplot2::aes(x = class)) +
+    ggplot2::geom_bar()
+```
+
+- Displays the count of each vehicle class in the mpg dataset.
+
+ggplot2::facet_wrap()
+Description
+
+- Splits data into subplots (facets) based on one or more categorical variables.
+
+Syntax
+
+```r
+ggplot2::facet_wrap(~ variable, ncol = ...)
+```
+
+Example
+
+```{r}
+ggplot2::ggplot(ggplot2::mpg, ggplot2::aes(x = displ, y = hwy)) +
+    ggplot2::geom_point() +
+    ggplot2::facet_wrap(~drv)
+```
+
+- Creates separate panels for each drive type (drv).
+
+ggplot2::theme()
+Description
+
+- Adjusts non-data components (text size, legend placement, background, etc.).
+
+Syntax
+
+```r
+ggplot2::theme(
+  panel.background = element_rect(...),
+  axis.text.x = element_text(...),
+  ...
+)
+```
+
+Example
+
+```{r}
+ggplot2::ggplot(ggplot2::mpg, ggplot2::aes(x = displ, y = hwy)) +
+    ggplot2::geom_point() +
+    ggplot2::theme_minimal()
+```
+
+- Applies a minimal theme to reduce chart ink and highlight data.
+
+# In-Depth Examples
+
+Title: Comparing Engine Displacement and Fuel Efficiency
+Objective
+
+- Visualize relationships between engine displacement (displ) and highway fuel efficiency (hwy) for different car classes.
+
+Steps
+
+1. Data Preparation
+   We will use the built-in mpg dataset and select relevant columns: displ, hwy, class.
+
+2. Function Application
+   - Initialize the plot with ggplot2::ggplot().
+   - Map displ and hwy using ggplot2::aes().
+   - Add geom_point().
+   - Facet the plot by car class using ggplot2::facet_wrap().
+   - Add a custom theme.
+
+3. Visualization
+
+```{r}
+# Step-by-step example
+filtered_mpg <- ggplot2::mpg
+
+filtered_mpg |>
+    ggplot2::ggplot(ggplot2::aes(x = displ, y = hwy, color = class)) +
+    ggplot2::geom_point(size = 3) +
+    ggplot2::facet_wrap(~class) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        title = "Engine Displacement vs. Highway MPG by Class",
+        subtitle = "Faceted by Vehicle Class",
+        x = "Engine Displacement (Liters)",
+        y = "Highway Miles per Gallon",
+        color = "Vehicle Class"
+    )
+```
+
+Output
+
+- You will see a facetted scatter plot showing how different classes compare in the displ-hwy relationship. The color indicates each class, and each facet displays data for one class.
+
+# Advanced Features
+
+Customization
+
+- Modify legends, labels, and scales with functions like ggplot2::labs(), ggplot2::scale_color_manual(), or ggplot2::theme().
+- Adjust axis transformations (e.g., log scale) with ggplot2::scale_x_log10() or ggplot2::scale_y_log10().
+
+Integration
+
+- Combine ggplot2 with dplyr for data wrangling:
+
+```{r}
+library(dplyr)
+
+ggplot2::mpg |>
+    dplyr::filter(displ < 5) |>
+    ggplot2::ggplot(ggplot2::aes(x = displ, y = cty)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_smooth(method = "lm") +
+    ggplot2::theme_minimal()
+```
+
+- This uses dplyr::filter() to remove rows with displacement >= 5, then plots with ggplot2.
+
+Optimization
+
+- For large datasets, consider sampling or binning (geom_bin2d, geom_hex from other packages).
+- Use efficient data handling (data.table or arrow) before feeding data to ggplot2 for plotting.
+- Limit layering of overly detailed geoms when performance is a concern.
+
+# Troubleshooting and FAQs
+
+Common Issues
+
+- "Error in ggplot(…): object not found": Ensure the dataset or column name matches correctly and is in scope.
+- "Discrete value supplied to continuous scale": A variable mapped to x or y might be character instead of numeric; convert if necessary.
+- Missing + sign between layers: Each layer is added with the + operator; forgetting it can break the chain of commands.
+
+FAQs
+
+1. How do I rotate x-axis labels?
+   - Use ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)).
+2. Can I save my plots?
+   - Yes, with ggplot2::ggsave("plot.png", width = …, height = …).
+3. How do I create interactive plots?
+   - Use packages like plotly or ggiraph that build on ggplot2.
+
+# Best Practices
+
+- Keep code modular: Prepare and clean data first, then pipe into ggplot2 functions.
+- Use meaningful variable and aesthetic mappings for readability.
+- Write reproducible scripts by incorporating set.seed() for sampling or random processes.
+- When presenting results (including power analysis in broader data workflows), ensure the data, code, and figure output are clearly documented.
+
+# Conclusion
+
+Summary
+We have explored the ggplot2 package's layered approach to building plots, introduced key functions, and provided examples for customizing, faceting, and integrating with other data pipelines.
+
+Next Steps
+
+- Experiment with specialized geoms (e.g., boxplots, violin plots).
+- Explore advanced theming options (e.g., ggthemes package).
+- Investigate extension packages like gganimate for animated graphics or patchwork for arranging multiple ggplots.
+
+# References and Resources
+
+Documentation
+
+- [ggplot2 Official Documentation](https://ggplot2.tidyverse.org)
+
+Learning Materials
+
+- [R for Data Science](https://r4ds.had.co.nz) by Hadley Wickham and Garrett Grolemund
+- Online tutorials on the [RStudio Community](https://community.rstudio.com)
+
+Support Channels
+
+- [GitHub Issues for ggplot2](https://github.com/tidyverse/ggplot2/issues)
+- [Stack Overflow (r + ggplot2 tag)](https://stackoverflow.com/questions/tagged/r+ggplot2)
+- Local R User Groups or R-Ladies meetups for community support

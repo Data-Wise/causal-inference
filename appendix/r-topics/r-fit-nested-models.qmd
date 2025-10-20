@@ -1,0 +1,136 @@
+Great! Let’s walk through a **real data example** of **fixed-effects nested ANOVA** in R, step-by-step. I'll explain the design, show the R syntax, how to interpret it, and—most importantly—**how to choose the correct denominator** for your F-tests.
+
+---
+
+## 🔷 Scenario: A Study on Machine Parts
+
+Suppose you're testing **3 machines** (factor A), and within each machine, **3 operators** (factor B) are nested. You measure **output precision** (continuous variable) from **2 trials per operator**.
+
+### 🧱 Hierarchical design:
+
+- **Machine**: Fixed effect (Factor A)
+- **Operator(Machine)**: Fixed effect nested in machine (Factor B nested in A)
+- **Trial (replicates)**: Observational units
+
+| Machine | Operator | Trial 1 | Trial 2 |
+|---------|----------|---------|---------|
+| A1      | O1       | 94      | 95      |
+| A1      | O2       | 89      | 91      |
+| A1      | O3       | 90      | 88      |
+| A2      | O4       | 86      | 87      |
+| A2      | O5       | 85      | 84      |
+| A2      | O6       | 83      | 82      |
+| A3      | O7       | 80      | 81      |
+| A3      | O8       | 79      | 78      |
+| A3      | O9       | 77      | 76      |
+
+Let’s turn this into an R data frame and perform the analysis.
+
+---
+
+## 🔷 R Code: Creating the Data
+
+```{r}
+# Create the data frame
+machine <- factor(rep(c("A1", "A2", "A3"), each = 6))
+operator <- factor(rep(
+    c("O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9"),
+    each = 2
+))
+response <- c(
+    94,
+    95,
+    89,
+    91,
+    90,
+    88,
+    86,
+    87,
+    85,
+    84,
+    83,
+    82,
+    80,
+    81,
+    79,
+    78,
+    77,
+    76
+)
+
+data <- data.frame(machine, operator, response)
+```
+
+---
+
+## 🔷 R Code: Fixed-Effect Nested ANOVA
+
+To do **nested ANOVA with fixed effects**, you must:
+
+- Treat both factors as **fixed**.
+- Use the nesting structure explicitly.
+
+```{r}
+# Nested ANOVA model: fixed-effects, operator nested in machine
+model <- aov(response ~ machine + Error(operator), data = data)
+summary(model)
+```
+
+BUT — if you want to **test Machine using Operator(Machine) as the denominator**, you **must specify nesting explicitly** using:
+
+```{r}
+model_nested <- aov(response ~ machine + machine:operator)
+summary(model_nested)
+```
+
+---
+
+## 🔶 Understanding the Output
+
+From this model:
+
+- `machine` is the main effect (A)
+- `machine:operator` represents Operator nested in Machine (B nested in A)
+- Residuals represent trial-to-trial variation (replicates)
+
+The ANOVA table will look like:
+
+| Source           | Df | Sum Sq | Mean Sq | F-value | Pr(>F) |
+|------------------|----|--------|---------|---------|--------|
+| machine          | 2  | ...    | ...     | F = MS_machine / MS_machine:operator | ... |
+| machine:operator | 6  | ...    | ...     | F = MS_machine:operator / MS_residual | ... |
+| Residuals        | 9  | ...    | ...     |         |        |
+
+---
+
+## ✅ Ensuring Correct Denominator (Key Step)
+
+In R:
+- The model `aov(response ~ machine + machine:operator)` assumes **all effects are fixed**.
+- `machine:operator` provides the **correct denominator** for testing the `machine` effect.
+- The **residual** is used for testing the `operator nested in machine`.
+
+If instead you use:
+
+```{r}
+summary(aov(response ~ machine + operator))
+```
+
+Then R **won't** treat operator as nested, and you’ll get **wrong F-tests** because it’ll assume **crossed design**.
+
+To emphasize nesting, always do:
+
+```{r}
+aov(response ~ machine + Error(operator)) # For mixed-model view
+aov(response ~ machine + machine:operator) # For fixed effect ANOVA
+```
+
+---
+
+
+## ✅ Summary: How to Get the Correct Denominator
+
+| Effect Tested             | Numerator Term       | Denominator Term         | Syntax in R |
+|--------------------------|----------------------|--------------------------|-------------|
+| Machine (A)              | `machine`            | `machine:operator`       | `machine + machine:operator` |
+| Operator nested in Machine (B(A)) | `machine:operator` | Residuals (trial-to-trial) | Implicit in `aov(...)` |
