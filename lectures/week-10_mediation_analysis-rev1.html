@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Davood Tofighi, Ph.D.">
+
+<title>Week 10: Mediation Analysis – Introduction to Causal Inference</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../assets/images/icon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script>
+    MathJax = {
+        tex: {
+            macros: {
+                RR: "{\\mathbb{R}}",
+                NN: "{\\mathbb{N}}",
+                QQ: "{\\mathbb{Q}}",
+                ZZ: "{\\mathbb{Z}}",
+                PP: "{\\mathbb{P}}",
+                // expectation & probability
+                E: ["{\\EE\\left[ #1 \\right]}", 1],
+                Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
+                EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
+                EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
+                EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
+                Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
+                ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
+                Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                pr: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
+                ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
+                ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
+                ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
+                ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
+                // operators (both lower & upper case)
+                var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
+                Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
+                cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
+                Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
+                cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
+                Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
+                logit: "{\\operatorname{logit}}",
+                expit: "{\\operatorname{expit}}", // inverse logit
+                sgn: "{\\operatorname{sgn}}",
+                EE: "{\\operatorname{\\mathbb{E}}}",
+
+
+                // vector & basic constructs
+                vect: ["{\\mathbf{#1}}", 1],
+                abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
+                norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
+                ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
+
+                // indicator variants
+                indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
+                ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+
+                // independence & non-independence (bare + braced forms via separate names)
+                indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
+                nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+
+                // do-operator & d-separation
+                doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
+                dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+
+                // potential outcomes & notational conveniences
+                Y: ["{Y^{#1}}", 1],
+                Ya: "{Y^a}",
+                Yone: "{Y^1}",
+                Yzero: "{Y^0}",
+
+                // estimands
+                ATE: "{\\tau_{\\text{ATE}}}",
+                ATT: "{\\tau_{\\text{ATT}}}",
+                ATC: "{\\tau_{\\text{ATC}}}",
+                CATE: "{\\tau_{\\text{CATE}}}",
+
+                DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
+                DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
+                DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
+                DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
+
+                // identification blocks
+                gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
+                ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
+
+                // risk measures
+                RD: "{\\operatorname{RD}}",
+                OR: "{\\operatorname{OR}}",
+
+                // optimization operators
+                argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
+                argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
+            }
+        }
+    };
+</script>
+<link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="Week 10: Mediation Analysis – Introduction to Causal Inference">
+<meta property="og:description" content="Introduction to Causal Inference">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:site_name" content="Introduction to Causal Inference">
+</head>
+
+<body class="nav-sidebar docked nav-fixed slimcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo light-content">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Introduction to Causal Inference</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Syllabus</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.pdf">
+ <span class="dropdown-text">PDF</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.html">
+ <span class="dropdown-text">HTML</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../syllabus/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_lectures.html"> 
+<span class="menu-text">Lecture Notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_project.html"> 
+<span class="menu-text">Project</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_readings.html"> 
+<span class="menu-text">Readings</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_assignments.html"> 
+<span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../r_help.html"> 
+<span class="menu-text">R Help</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Week 10: Mediation Analysis</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Week 10: Mediation Analysis</h1>
+                      </div>
+  </div>
+    
+  <div class="quarto-title-meta-author">
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Affiliation</div>
+    
+      <div class="quarto-title-meta-contents">
+      <p class="author"><a href="https://Data-Wise.github.io/regression">Davood Tofighi, Ph.D.</a> <a href="mailto:dtofighi@unm.edu" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-8523-7776" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              Department of Mathematics and Statistics, University of New Mexico
+            </p>
+        </div>
+    </div>
+
+  <div class="quarto-title-meta">
+
+        
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Oct-21-2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Overview</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Syllabus</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PDF</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HTML</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schedule</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Materials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lecture Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_assignments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignments</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_project.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_readings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">R Code and Datasets</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../r_help.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R Help</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#r-packages" id="toc-r-packages" class="nav-link" data-scroll-target="#r-packages">R Packages</a></li>
+  <li><a href="#comprehensive-topic-explanation" id="toc-comprehensive-topic-explanation" class="nav-link" data-scroll-target="#comprehensive-topic-explanation">1. Comprehensive Topic Explanation</a>
+  <ul class="collapse">
+  <li><a href="#the-quest-for-mechanism" id="toc-the-quest-for-mechanism" class="nav-link" data-scroll-target="#the-quest-for-mechanism">The Quest for Mechanism</a></li>
+  <li><a href="#the-limitations-of-traditional-approaches" id="toc-the-limitations-of-traditional-approaches" class="nav-link" data-scroll-target="#the-limitations-of-traditional-approaches">The Limitations of Traditional Approaches</a></li>
+  <li><a href="#a-causal-framework-potential-outcomes" id="toc-a-causal-framework-potential-outcomes" class="nav-link" data-scroll-target="#a-causal-framework-potential-outcomes">A Causal Framework: Potential Outcomes</a></li>
+  <li><a href="#identification-the-key-to-estimation" id="toc-identification-the-key-to-estimation" class="nav-link" data-scroll-target="#identification-the-key-to-estimation">Identification: The Key to Estimation</a></li>
+  </ul></li>
+  <li><a href="#intuitive-clarifications-of-challenging-ideas" id="toc-intuitive-clarifications-of-challenging-ideas" class="nav-link" data-scroll-target="#intuitive-clarifications-of-challenging-ideas">2. Intuitive Clarifications of Challenging Ideas</a>
+  <ul class="collapse">
+  <li><a href="#sequential-ignorability-a-tale-of-two-experiments" id="toc-sequential-ignorability-a-tale-of-two-experiments" class="nav-link" data-scroll-target="#sequential-ignorability-a-tale-of-two-experiments">Sequential Ignorability: A Tale of Two Experiments</a></li>
+  <li><a href="#visualizing-the-problem-with-a-dag" id="toc-visualizing-the-problem-with-a-dag" class="nav-link" data-scroll-target="#visualizing-the-problem-with-a-dag">Visualizing the Problem with a DAG</a></li>
+  </ul></li>
+  <li><a href="#simple-hand-calculation-numerical-examples" id="toc-simple-hand-calculation-numerical-examples" class="nav-link" data-scroll-target="#simple-hand-calculation-numerical-examples">3. Simple, Hand-Calculation Numerical Example(s)</a></li>
+  <li><a href="#r-code-examples-interpretation" id="toc-r-code-examples-interpretation" class="nav-link" data-scroll-target="#r-code-examples-interpretation">4. R Code Examples &amp; Interpretation</a>
+  <ul class="collapse">
+  <li><a href="#step-1-define-the-causal-model-with-a-dag" id="toc-step-1-define-the-causal-model-with-a-dag" class="nav-link" data-scroll-target="#step-1-define-the-causal-model-with-a-dag">Step 1: Define the Causal Model with a DAG</a></li>
+  <li><a href="#step-2-fit-the-mediator-and-outcome-models" id="toc-step-2-fit-the-mediator-and-outcome-models" class="nav-link" data-scroll-target="#step-2-fit-the-mediator-and-outcome-models">Step 2: Fit the Mediator and Outcome Models</a></li>
+  <li><a href="#step-3-run-the-mediation-analysis" id="toc-step-3-run-the-mediation-analysis" class="nav-link" data-scroll-target="#step-3-run-the-mediation-analysis">Step 3: Run the Mediation Analysis</a></li>
+  <li><a href="#step-4-interpret-the-results" id="toc-step-4-interpret-the-results" class="nav-link" data-scroll-target="#step-4-interpret-the-results">Step 4: Interpret the Results</a></li>
+  </ul></li>
+  <li><a href="#hands-on-r-lab" id="toc-hands-on-r-lab" class="nav-link" data-scroll-target="#hands-on-r-lab">5. Hands-On R Lab</a>
+  <ul class="collapse">
+  <li><a href="#lab-objectives" id="toc-lab-objectives" class="nav-link" data-scroll-target="#lab-objectives">Lab Objectives</a></li>
+  <li><a href="#warm-up-reading" id="toc-warm-up-reading" class="nav-link" data-scroll-target="#warm-up-reading">Warm-Up Reading</a></li>
+  <li><a href="#task-1-simulate-data-with-a-known-mechanism" id="toc-task-1-simulate-data-with-a-known-mechanism" class="nav-link" data-scroll-target="#task-1-simulate-data-with-a-known-mechanism">Task 1: Simulate Data with a Known Mechanism</a></li>
+  <li><a href="#task-2-perform-mediation-analysis-on-simulated-data" id="toc-task-2-perform-mediation-analysis-on-simulated-data" class="nav-link" data-scroll-target="#task-2-perform-mediation-analysis-on-simulated-data">Task 2: Perform Mediation Analysis on Simulated Data</a></li>
+  <li><a href="#task-3-retrieval-quiz" id="toc-task-3-retrieval-quiz" class="nav-link" data-scroll-target="#task-3-retrieval-quiz">Task 3: Retrieval Quiz</a></li>
+  </ul></li>
+  <li><a href="#common-pitfalls-checks" id="toc-common-pitfalls-checks" class="nav-link" data-scroll-target="#common-pitfalls-checks">6. Common Pitfalls &amp; Checks</a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">Check Your Understanding</a></li>
+  <li><a href="#advanced-teaching-activities-interactivity" id="toc-advanced-teaching-activities-interactivity" class="nav-link" data-scroll-target="#advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#appendix-advanced-theory-derivations" id="toc-appendix-advanced-theory-derivations" class="nav-link" data-scroll-target="#appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</a>
+  <ul class="collapse">
+  <li><a href="#non-parametric-identification-of-mediation-effects" id="toc-non-parametric-identification-of-mediation-effects" class="nav-link" data-scroll-target="#non-parametric-identification-of-mediation-effects">Non-Parametric Identification of Mediation Effects</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-10_mediation_analysis-rev1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-10_mediation_analysis-rev1.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+
+
+
+
+
+
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>Welcome to the first module of STAT 579. This week, we transition from asking <em>if</em> an exposure causes an outcome to <em>how</em> it causes it. Causal mediation analysis is a powerful framework for investigating the mechanisms or pathways through which a cause exerts its effect. We will unpack the “black box” of causality by formalizing the role of an intermediate variable, or <strong>mediator</strong>, that lies on the causal path from an exposure to an outcome.</p>
+<p>Our journey begins by contrasting the traditional, regression-based approach to mediation (e.g., Baron and Kenny, 1986) with the more rigorous <strong>potential outcomes framework</strong>. This modern approach allows us to define causal mediation effects—namely, the <strong>Natural Direct Effect (NDE)</strong> and the <strong>Natural Indirect Effect (NIE)</strong>—in a way that is independent of any statistical model. The key advantage is clarity about the assumptions required to give these effects a causal interpretation. The cornerstone of this identification is the <strong>Sequential Ignorability</strong> assumption, a strong but indispensable condition that we will dissect in detail.</p>
+</section>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<p>By the end of this module, you will be able to:</p>
+<ol type="1">
+<li><strong>Define</strong> causal mediation analysis and articulate its purpose in scientific inquiry, providing examples from public health.</li>
+<li><strong>Distinguish</strong> between traditional (e.g., Baron-Kenny) and potential outcomes-based approaches to mediation, explaining the limitations of the former.</li>
+<li><strong>Define</strong> and <strong>interpret</strong> the Natural Direct Effect (NDE), Natural Indirect Effect (NIE), and Controlled Direct Effect (CDE) using potential outcomes notation.</li>
+<li><strong>State and explain</strong> the Sequential Ignorability assumption required for the identification of natural direct and indirect effects.</li>
+<li><strong>Construct</strong> and <strong>interpret</strong> Directed Acyclic Graphs (DAGs) representing causal mediation models, and use them to assess confounding.</li>
+<li><strong>Estimate</strong> NDE and NIE in R using the <code>mediation</code> package and interpret the output in the context of a research question.</li>
+</ol>
+</section>
+<section id="r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="r-packages">R Packages</h2>
+<p>We will use the following R packages. The <code>pacman</code> package will automatically install any missing packages.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  dagitty, <span class="co"># For creating and analyzing DAGs</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ggdag, <span class="co"># For plotting DAGs with ggplot2</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  mediation, <span class="co"># For causal mediation analysis</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  tidyverse <span class="co"># For data manipulation and visualization</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="comprehensive-topic-explanation" class="level2">
+<h2 class="anchored" data-anchor-id="comprehensive-topic-explanation">1. Comprehensive Topic Explanation</h2>
+<section id="the-quest-for-mechanism" class="level3">
+<h3 class="anchored" data-anchor-id="the-quest-for-mechanism">The Quest for Mechanism</h3>
+<p>In epidemiology and public health, our questions often evolve. We might first establish that a worksite wellness program (<span class="math inline">\(A\)</span>) reduces employee burnout (<span class="math inline">\(Y\)</span>). This is a question of total effect. But the next, more nuanced question is: <em>why</em> does it work? Is it because the program increases physical activity (<span class="math inline">\(M\)</span>), which in turn reduces burnout? Or does the program work through other means, like fostering social connections? This search for a mechanism is the core motivation for causal mediation analysis (<span class="citation" data-cites="VanderWeele2015">(<a href="#ref-VanderWeele2015" role="doc-biblioref"><strong>VanderWeele2015?</strong></a>)</span>).</p>
+<p>A mediator, <span class="math inline">\(M\)</span>, is a variable that lies on a causal pathway between an exposure, <span class="math inline">\(A\)</span>, and an outcome, <span class="math inline">\(Y\)</span>. For a variable to be a mediator, a critical <strong>temporal ordering</strong> must exist: <span class="math inline">\(A\)</span> must precede <span class="math inline">\(M\)</span>, and <span class="math inline">\(M\)</span> must precede <span class="math inline">\(Y\)</span>.</p>
+</section>
+<section id="the-limitations-of-traditional-approaches" class="level3">
+<h3 class="anchored" data-anchor-id="the-limitations-of-traditional-approaches">The Limitations of Traditional Approaches</h3>
+<p>The classic method for mediation, proposed by <span class="citation" data-cites="baron1986moderator">(<a href="#ref-baron1986moderator" role="doc-biblioref"><strong>baron1986moderator?</strong></a>)</span>, involves fitting a series of regression models. In a simplified linear models context:</p>
+<ol type="1">
+<li>Regress <span class="math inline">\(Y\)</span> on <span class="math inline">\(A\)</span> to get the total effect, <span class="math inline">\(c\)</span>.</li>
+<li>Regress <span class="math inline">\(M\)</span> on <span class="math inline">\(A\)</span> to get the path coefficient, <span class="math inline">\(a\)</span>.</li>
+<li>Regress <span class="math inline">\(Y\)</span> on both <span class="math inline">\(A\)</span> and <span class="math inline">\(M\)</span> to get path coefficients <span class="math inline">\(c'\)</span> (the direct effect) and <span class="math inline">\(b\)</span> (the effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>).</li>
+</ol>
+<p>The indirect effect was then calculated as the product of coefficients, <span class="math inline">\(a \times b\)</span>, and the direct effect as <span class="math inline">\(c'\)</span>. The total effect was defined as <span class="math inline">\(c = c' + (a \times b)\)</span>.</p>
+<p>This approach, while intuitive, suffers from several major drawbacks:</p>
+<ul>
+<li><strong>Lack of Causal Foundation</strong>: The method does not explicitly state the assumptions needed to interpret <span class="math inline">\(a \times b\)</span> as a causal mechanism. It is fundamentally an associational decomposition.</li>
+<li><strong>Model Dependence</strong>: The definitions of direct and indirect effects are entirely dependent on the parameters of the chosen statistical model (e.g., linear regression). This makes it problematic to extend to non-linear models (e.g., logistic regression for a binary outcome), where coefficients do not compose so neatly.</li>
+<li><strong>Interaction Issues</strong>: The method struggles to handle interactions between the exposure <span class="math inline">\(A\)</span> and the mediator <span class="math inline">\(M\)</span>.</li>
+</ul>
+</section>
+<section id="a-causal-framework-potential-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="a-causal-framework-potential-outcomes">A Causal Framework: Potential Outcomes</h3>
+<p>To overcome these limitations, we turn to the potential outcomes (or counterfactual) framework, a cornerstone of modern causal inference (<span class="citation" data-cites="hernan2020causalwhatif">Hernán &amp; Robins (<a href="#ref-hernan2020causalwhatif" role="doc-biblioref">2020</a>)</span>; <span class="citation" data-cites="imbens2015causal">Imbens &amp; Rubin (<a href="#ref-imbens2015causal" role="doc-biblioref">2015</a>)</span>).</p>
+<section id="recap-total-causal-effect" class="level4">
+<h4 class="anchored" data-anchor-id="recap-total-causal-effect">Recap: Total Causal Effect</h4>
+<p>Let’s consider a binary exposure <span class="math inline">\(A \in \{0, 1\}\)</span>. For each individual <span class="math inline">\(i\)</span>, we define the potential outcome <span class="math inline">\(Y_i^a\)</span> as the outcome that <em>would have been observed</em> had the individual been assigned exposure level <span class="math inline">\(a\)</span>. The <strong>individual causal effect</strong> is <span class="math inline">\(Y_i^1 - Y_i^0\)</span>. Since we can only ever observe one of these potential outcomes for any given individual (the <strong>fundamental problem of causal inference</strong>), we focus on the <strong>Average Treatment Effect (ATE)</strong>: <span class="math inline">\(E[Y^1 - Y^0]\)</span>.</p>
+</section>
+<section id="defining-mediation-effects-with-nested-counterfactuals" class="level4">
+<h4 class="anchored" data-anchor-id="defining-mediation-effects-with-nested-counterfactuals">Defining Mediation Effects with Nested Counterfactuals</h4>
+<p>To introduce a mediator, we must expand our notation. We now need to define the potential outcome as a function of both the exposure <em>and</em> the mediator.</p>
+<ul>
+<li><span class="math inline">\(M_i^a\)</span>: The potential outcome for the mediator, <span class="math inline">\(M\)</span>, if individual <span class="math inline">\(i\)</span> received exposure level <span class="math inline">\(a\)</span>.</li>
+<li><span class="math inline">\(Y_i^{a,m}\)</span>: The potential outcome for <span class="math inline">\(Y\)</span> if individual <span class="math inline">\(i\)</span> received exposure <span class="math inline">\(a\)</span> and, possibly contrary to fact, their mediator was set to value <span class="math inline">\(m\)</span>.</li>
+</ul>
+<p>The observed outcome for an individual is linked to these potential outcomes through the <strong>consistency</strong> or <strong>composition</strong> assumption: <span class="math inline">\(Y_i = Y_i^{A_i, M_i^{A_i}}\)</span>. This simply states that the outcome we see for an individual corresponds to the potential outcome under the exposure and mediator value they actually received.</p>
+<p>With this machinery, we can define the causal effects that constitute a mediation analysis.</p>
+<p><strong>1. The Natural Indirect Effect (NIE)</strong></p>
+<p>The NIE captures the part of the exposure’s effect that operates <em>through</em> the mediator. Imagine we could change an individual’s mediator from the value it would take under control (<span class="math inline">\(M^0\)</span>) to the value it would take under treatment (<span class="math inline">\(M^1\)</span>), <em>while holding the exposure fixed</em>.</p>
+<p>The unit-level NIE for a fixed exposure level <span class="math inline">\(a \in \{0,1\}\)</span> is:</p>
+<p><span class="math display">\[
+\delta_i(a) \equiv Y_i^{a, M_i^1} - Y_i^{a, M_i^0}
+\]</span></p>
+<p>The <strong>Average Natural Indirect Effect (ANIE)</strong> is then <span class="math inline">\(E[\delta(t)] = E[Y^{a, M^1} - Y^{a, M^0}]\)</span>.</p>
+<ul>
+<li><strong>Interpretation of <span class="math inline">\(\bar{\delta}(1)\)</span></strong>: This is the average change in the outcome we would see if we held the exposure constant at <span class="math inline">\(A=1\)</span> for everyone, but changed their mediator value from what it would have been under control (<span class="math inline">\(M^0\)</span>) to what it would have been under treatment (<span class="math inline">\(M^1\)</span>).</li>
+</ul>
+<p><strong>2. The Natural Direct Effect (NDE)</strong></p>
+<p>The NDE captures the part of the exposure’s effect that operates through all pathways <em>other than</em> the mediator <span class="math inline">\(M\)</span>. Here, we imagine changing an individual’s exposure from control to treatment, while holding their mediator fixed at the level it <em>would have naturally taken</em> under a given exposure level <span class="math inline">\(a\)</span>.</p>
+<p>The unit-level NDE when the mediator is held at its value under exposure <span class="math inline">\(a \in \{0,1\}\)</span> is:</p>
+<p><span class="math display">\[
+\zeta_i(a) \equiv Y_i^{1, M_i^a} - Y_i^{0, M_i^a}
+\]</span></p>
+<p>The <strong>Average Natural Direct Effect (ANDE)</strong> is then <span class="math inline">\(E[\zeta(t)] = E[Y^{1, M^a} - Y^{0, M^a}]\)</span>.</p>
+<ul>
+<li><strong>Interpretation of <span class="math inline">\(\bar{\zeta}(0)\)</span></strong>: This is the average change in the outcome we would see if we changed the exposure from 0 to 1 for everyone, while ensuring their mediator value remained at the level it would have naturally taken under control (<span class="math inline">\(M^0\)</span>).</li>
+</ul>
+</section>
+<section id="effect-decomposition" class="level4">
+<h4 class="anchored" data-anchor-id="effect-decomposition">Effect Decomposition</h4>
+<p>A key result of this framework is the elegant decomposition of the Total Effect (TE):</p>
+<p><span class="math display">\[
+\text{TE} = E[Y^1 - Y^0] = \underbrace{E[Y^{1, M^1} - Y^{0, M^0}]}_{\text{Total Effect}} = \bar{\zeta}(0) + \bar{\delta}(1)
+\]</span></p>
+<p>That is, the Total Effect = NDE (at <span class="math inline">\(M=M^0\)</span>) + NIE (at <span class="math inline">\(A=1\)</span>). Another valid decomposition is <span class="math inline">\(\text{TE} = \bar{\zeta}(1) + \bar{\delta}(0)\)</span>.</p>
+</section>
+</section>
+<section id="identification-the-key-to-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="identification-the-key-to-estimation">Identification: The Key to Estimation</h3>
+<p>Defining these effects is one thing; estimating them from data is another. The challenge lies in quantities like <span class="math inline">\(E[Y^{1, M^0}]\)</span>, which involve “cross-world” counterfactuals. For any given person, we can never observe their outcome under treatment (<span class="math inline">\(A=1\)</span>) while their mediator is at the level it would have been under control (<span class="math inline">\(M^0\)</span>).</p>
+<p>Identification requires a set of strong, untestable assumptions. The most critical is <strong>Sequential Ignorability</strong> (<span class="citation" data-cites="imai2010general">(<a href="#ref-imai2010general" role="doc-biblioref"><strong>imai2010general?</strong></a>)</span>). Assuming we have measured a sufficient set of pre-exposure covariates <span class="math inline">\(X\)</span>:</p>
+<ol type="1">
+<li><strong>Ignorability of the Exposure</strong>: Given pre-exposure covariates <span class="math inline">\(X\)</span>, the exposure <span class="math inline">\(A\)</span> is independent of the potential outcomes and mediators.</li>
+</ol>
+<p><span class="math display">\[
+\{Y^{a', m}, M^a\} \indep A \mid X=x
+\]</span></p>
+<p>This is the standard assumption of <em>unconfoundedness</em> for the total effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span> and <span class="math inline">\(M\)</span>. It is satisfied by design in a randomized controlled trial (RCT) where <span class="math inline">\(A\)</span> is randomized.</p>
+<ol start="2" type="1">
+<li><strong>Ignorability of the Mediator</strong>: Given the observed exposure <span class="math inline">\(A\)</span> and pre-exposure covariates <span class="math inline">\(X\)</span>, the mediator <span class="math inline">\(M\)</span> is independent of the potential outcomes.</li>
+</ol>
+<p><span class="math display">\[
+Y^{a', m} \indep M \mid A=a, X=x
+\]</span></p>
+<p>This is a much stronger assumption and is often the “Achilles’ heel” of mediation analysis. It states that there are <strong>no unmeasured common causes of the mediator and the outcome</strong>. This assumption can be violated, for instance, if there is a variable <span class="math inline">\(U\)</span> that is affected by <span class="math inline">\(A\)</span> and in turn affects both <span class="math inline">\(M\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p>These assumptions, along with consistency and positivity, allow us to express the counterfactual quantities in terms of observable quantities, making estimation possible.</p>
+</section>
+</section>
+<section id="intuitive-clarifications-of-challenging-ideas" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="intuitive-clarifications-of-challenging-ideas">2. Intuitive Clarifications of Challenging Ideas</h2>
+<section id="sequential-ignorability-a-tale-of-two-experiments" class="level3">
+<h3 class="anchored" data-anchor-id="sequential-ignorability-a-tale-of-two-experiments">Sequential Ignorability: A Tale of Two Experiments</h3>
+<p>Let’s try to understand the sequential ignorability assumption with an analogy. Imagine we want to estimate the NDE and NIE of a new medication (<span class="math inline">\(A\)</span>) on blood pressure (<span class="math inline">\(Y\)</span>), with adherence to a diet plan (<span class="math inline">\(M\)</span>) as the mediator.</p>
+<ol type="1">
+<li><strong>The First Experiment (Exposure Ignorability)</strong>: To satisfy the first part of sequential ignorability, we need to ensure that the group receiving the medication (<span class="math inline">\(A=1\)</span>) and the group receiving a placebo (<span class="math inline">\(A=0\)</span>) are, on average, the same before the study begins. We can achieve this by <strong>randomly assigning</strong> the medication. This randomization breaks any arrows from confounding variables (<span class="math inline">\(X\)</span>, like age or baseline health) into <span class="math inline">\(A\)</span>. We have now controlled for <span class="math inline">\(A \to Y\)</span> and <span class="math inline">\(A \to M\)</span> confounding.</li>
+<li><strong>The Second “Experiment” (Mediator Ignorability)</strong>: This is the tricky part. Among people who were assigned the medication (<span class="math inline">\(A=1\)</span>), some will adhere to the diet (<span class="math inline">\(M=1\)</span>) and some won’t (<span class="math inline">\(M=0\)</span>). The second assumption demands that, <em>within the group of patients taking the drug</em>, the reason someone adheres to the diet is not also a cause of their blood pressure. This is like needing a <strong>second, nested randomization</strong>. Imagine that within the <span class="math inline">\(A=1\)</span> group, we could randomly assign people to adhere or not adhere to the diet. If we could do that, we would break any confounding path between <span class="math inline">\(M\)</span> and <span class="math inline">\(Y\)</span>.</li>
+</ol>
+<p>Of course, we can’t randomize adherence. So, we must rely on the assumption that we have measured all common causes of adherence (<span class="math inline">\(M\)</span>) and blood pressure (<span class="math inline">\(Y\)</span>) and adjusted for them. This is a strong claim and a frequent point of critique for mediation studies.</p>
+</section>
+<section id="visualizing-the-problem-with-a-dag" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="visualizing-the-problem-with-a-dag">Visualizing the Problem with a DAG</h3>
+<p>A Directed Acyclic Graph (DAG) can make this crystal clear.</p>
+<ul>
+<li><strong>A (Exposure)</strong>: New Drug</li>
+<li><strong>M (Mediator)</strong>: Adherence to Diet</li>
+<li><strong>Y (Outcome)</strong>: Blood Pressure</li>
+<li><strong>X (Pre-treatment Confounder)</strong>: Age</li>
+<li><strong>U (Post-treatment Confounder)</strong>: Unmeasured Health Consciousness</li>
+</ul>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  Y <span class="sc">~</span> A <span class="sc">+</span> M <span class="sc">+</span> U,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  M <span class="sc">~</span> A <span class="sc">+</span> X <span class="sc">+</span> U,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  A <span class="sc">~</span> X,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="st">"A"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> <span class="st">"Y"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">latent =</span> <span class="st">"U"</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_status</span>(dag, <span class="at">use_labels =</span> <span class="st">"name"</span>, <span class="at">text_col =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div id="fig-dag-confounding" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dag-confounding-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="week-10_mediation_analysis-rev1_files/figure-html/fig-dag-confounding-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: DAG illustrating confounding in a mediation analysis."><img src="week-10_mediation_analysis-rev1_files/figure-html/fig-dag-confounding-1.png" class="img-fluid figure-img" width="672"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dag-confounding-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: DAG illustrating confounding in a mediation analysis.
+</figcaption>
+</figure>
+</div>
+</div></div></div>
+<p>In the DAG above:</p>
+<ul>
+<li>The path <span class="math inline">\(A \leftarrow X \to M\)</span> represents confounding of the <span class="math inline">\(A-M\)</span> relationship. We can block this by conditioning on <span class="math inline">\(X\)</span>.</li>
+<li>The path <span class="math inline">\(M \leftarrow U \to Y\)</span> is the critical problem. <span class="math inline">\(U\)</span> is an unmeasured common cause of the mediator and the outcome. Because <span class="math inline">\(U\)</span> is unobserved, we cannot condition on it to block this “backdoor path.” This path violates the second part of sequential ignorability and will bias our estimates of the NDE and NIE.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="simple-hand-calculation-numerical-examples" class="level2">
+<h2 class="anchored" data-anchor-id="simple-hand-calculation-numerical-examples">3. Simple, Hand-Calculation Numerical Example(s)</h2>
+<p>Let’s consider a tiny, hypothetical dataset of 8 individuals to make the concepts concrete. We are interested in the effect of a job training program (<span class="math inline">\(A=1\)</span>) vs.&nbsp;no program (<span class="math inline">\(A=0\)</span>) on annual income (<span class="math inline">\(Y\)</span>, in thousands). The proposed mediator is whether the individual obtained a professional certification (<span class="math inline">\(M=1\)</span>) vs.&nbsp;not (<span class="math inline">\(M=0\)</span>). For this example, we will assume we have access to the “true” potential outcomes to see how the effects are calculated.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;"><span class="math inline">\(A\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(M^0\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(M^1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(Y^{0, M^0}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(Y^{0, M^1}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(Y^{1, M^0}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(Y^{1, M^1}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">45</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">55</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">35</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">45</td>
+<td style="text-align: center;">50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">55</td>
+<td style="text-align: center;">60</td>
+<td style="text-align: center;">65</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">42</td>
+<td style="text-align: center;">47</td>
+<td style="text-align: center;">52</td>
+<td style="text-align: center;">57</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">38</td>
+<td style="text-align: center;">43</td>
+<td style="text-align: center;">48</td>
+<td style="text-align: center;">53</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">37</td>
+<td style="text-align: center;">42</td>
+<td style="text-align: center;">47</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">48</td>
+<td style="text-align: center;">53</td>
+<td style="text-align: center;">58</td>
+<td style="text-align: center;">63</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">41</td>
+<td style="text-align: center;">46</td>
+<td style="text-align: center;">51</td>
+<td style="text-align: center;">56</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 1: Calculate the Average Total Effect (ATE)</strong></p>
+<p>The total effect for an individual is <span class="math inline">\(Y^{1, M^1} - Y^{0, M^0}\)</span>.</p>
+<p><span class="math display">\[
+ATE = E[Y^{1, M^1} - Y^{0, M^0}]
+\]</span></p>
+<p>We average this across all 8 individuals:</p>
+<p><span class="math display">\[
+ATE = \frac{(55-40) + (50-35) + (65-50) + (57-42) + (53-38) + (47-32) + (63-48) + (56-41)}{8}
+\]</span></p>
+<p><span class="math display">\[
+ATE = \frac{15 + 15 + 15 + 15 + 15 + 15 + 15 + 15}{8} = \frac{120}{8} = 15
+\]</span></p>
+<p>The average total effect of the program is an increase of $15,000 in annual income.</p>
+<p><strong>Step 2: Calculate the Average Natural Direct Effect (ANDE)</strong></p>
+<p>We’ll calculate <span class="math inline">\(\bar{\zeta}(0) = E[Y^{1, M^0} - Y^{0, M^0}]\)</span>. This asks: what is the effect of the program if we hold the mediator to the level it would have been without the program?</p>
+<p><span class="math display">\[
+\bar{\zeta}(0) = \frac{(50-40) + (45-35) + (60-50) + (52-42) + (48-38) + (42-32) + (58-48) + (51-41)}{8}
+\]</span></p>
+<p><span class="math display">\[
+\bar{\zeta}(0) = \frac{10 + 10 + 10 + 10 + 10 + 10 + 10 + 10}{8} = \frac{80}{8} = 10
+\]</span></p>
+<p>The average direct effect is $10,000.</p>
+<p><strong>Step 3: Calculate the Average Natural Indirect Effect (ANIE)</strong></p>
+<p>We’ll calculate <span class="math inline">\(\bar{\delta}(1) = E[Y^{1, M^1} - Y^{1, M^0}]\)</span>. This asks: what is the effect of the mediator changing from its control value to its treatment value, all while individuals are in the program?</p>
+<p><span class="math display">\[
+\bar{\delta}(1) = \frac{(55-50) + (50-45) + (65-60) + (57-52) + (53-48) + (47-42) + (63-58) + (56-51)}{8}
+\]</span></p>
+<p><span class="math display">\[
+\bar{\delta}(1) = \frac{5 + 5 + 5 + 5 + 5 + 5 + 5 + 5}{8} = \frac{40}{8} = 5
+\]</span></p>
+<p>The average indirect effect is $5,000.</p>
+<p><strong>Step 4: Verify the Decomposition</strong></p>
+<p>Let’s check if our decomposition holds: <span class="math inline">\(ATE = \bar{\zeta}(0) + \bar{\delta}(1)\)</span>.</p>
+<p><span class="math display">\[
+15 = 10 + 5
+\]</span></p>
+<p>It works perfectly. We conclude that of the total $15,000 effect of the job training program, $10,000 is attributable to pathways other than certification, and $5,000 is attributable to the program’s effect on certification.</p>
+</section>
+<section id="r-code-examples-interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="r-code-examples-interpretation">4. R Code Examples &amp; Interpretation</h2>
+<p>We will use a classic dataset from the <code>mediation</code> package based on a study by <span class="citation" data-cites="imai2010general">(<a href="#ref-imai2010general" role="doc-biblioref"><strong>imai2010general?</strong></a>)</span>, which examines the effect of a media framing experiment on political attitudes.</p>
+<ul>
+<li><strong>Exposure (<code>A</code>)</strong>: <code>treat</code> - Whether subjects were shown a news story about immigration that was framed in either a positive or negative way. (Binary: 0 = Control, 1 = Treatment).</li>
+<li><strong>Mediator (<code>M</code>)</strong>: <code>p_harm</code> - Subjects’ perception of the potential harm of immigration. (Continuous).</li>
+<li><strong>Outcome (<code>Y</code>)</strong>: <code>emo</code> - A measure of emotional response/anxiety about immigration. (Continuous).</li>
+<li><strong>Covariates (<code>X</code>)</strong>: <code>age</code>, <code>educ</code>, <code>gender</code>, <code>income</code>.</li>
+</ul>
+<p>Our causal question: <strong>To what extent does the media frame’s effect on emotional response operate through its effect on perceived harm?</strong></p>
+<section id="step-1-define-the-causal-model-with-a-dag" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-define-the-causal-model-with-a-dag">Step 1: Define the Causal Model with a DAG</h3>
+<p>First, let’s draw the DAG for our hypothesized causal structure.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: The quoted node labels (e.g., "Media Frame (A)") in the DAG are descriptive and do not need to match variable names in your dataset.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># For analysis, use the actual variable names: treat (exposure), p_harm (mediator), emo (outcome), age, educ, gender, income (covariates).</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>mediation_dag <span class="ot">&lt;-</span> dagitty<span class="sc">::</span><span class="fu">dagitty</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">'dag {</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">  bb[pos="0,0"]</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">  A [exposure,pos="0,1",label="Media Frame"]</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">  M [pos="1,1",label="Perceived Harm"]</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">  Y [outcome,pos="2,1",label="Emotional Response"]</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">  age [pos="0.5,0"]</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="st">  educ [pos="1,0"]</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st">  gender [pos="1.5,0"]</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">  A -&gt; M</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">  A -&gt; Y</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="st">  M -&gt; Y</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="st">  age -&gt; A</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="st">  age -&gt; M</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="st">  age -&gt; Y</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="st">  educ -&gt; A</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="st">  educ -&gt; M</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="st">  educ -&gt; Y</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="st">  gender -&gt; A</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="st">  gender -&gt; M</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="st">  gender -&gt; Y</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_status</span>(mediation_dag) <span class="sc">+</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-mediation-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mediation-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="week-10_mediation_analysis-rev1_files/figure-html/fig-mediation-dag-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Assumed Causal Structure for the Media Framing Experiment"><img src="week-10_mediation_analysis-rev1_files/figure-html/fig-mediation-dag-1.png" class="img-fluid figure-img" width="672"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mediation-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Assumed Causal Structure for the Media Framing Experiment
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The DAG makes our assumptions explicit. We assume the covariates (age, education, gender) are common causes of the exposure, mediator, and outcome. By conditioning on them, we aim to satisfy sequential ignorability.</p>
+</section>
+<section id="step-2-fit-the-mediator-and-outcome-models" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-fit-the-mediator-and-outcome-models">Step 2: Fit the Mediator and Outcome Models</h3>
+<p>The <code>mediate()</code> function from the <code>mediation</code> package requires two fitted models:</p>
+<ol type="1">
+<li>A model for the mediator as a function of the treatment and covariates.</li>
+<li>A model for the outcome as a function of the treatment, mediator, and covariates.</li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the Data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(framing)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 1: Mediator Model (Perceived Harm ~ Treatment + Covariates)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>med.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(p_harm <span class="sc">~</span> treat <span class="sc">+</span> age <span class="sc">+</span> educ <span class="sc">+</span> gender <span class="sc">+</span> income, <span class="at">data =</span> framing)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 2: Outcome Model (Emotional Response ~ Treatment + Mediator + Covariates)</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>out.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  emo <span class="sc">~</span> treat <span class="sc">+</span> p_harm <span class="sc">+</span> age <span class="sc">+</span> educ <span class="sc">+</span> gender <span class="sc">+</span> income,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> framing</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="step-3-run-the-mediation-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-run-the-mediation-analysis">Step 3: Run the Mediation Analysis</h3>
+<p>Now we pass these two models to the <code>mediate()</code> function. We specify which variable is the treatment (<code>treat = "treat"</code>) and which is the mediator (<code>mediator = "p_harm"</code>). We set <code>boot = TRUE</code> to use non-parametric bootstrapping for confidence intervals, which is robust.</p>
+<div class="cell" data-tbl-cap="Causal Mediation Analysis of Media Framing on Emotional Response">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform Mediation Analysis</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>med.out <span class="ot">&lt;-</span> <span class="fu">mediate</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  med.fit,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  out.fit,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">treat =</span> <span class="st">"treat"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mediator =</span> <span class="st">"p_harm"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">boot =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sims =</span> <span class="dv">500</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarize the Results</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(med.out)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Causal Mediation Analysis 
+
+Nonparametric Bootstrap Confidence Intervals with the Percentile Method
+
+                Estimate 95% CI Lower 95% CI Upper p-value    
+ACME            0.442965    -0.026385     0.891509   0.076 .  
+ADE             0.895646     0.415816     1.446522  &lt;2e-16 ***
+Total Effect    1.338611     0.686132     2.075664  &lt;2e-16 ***
+Prop. Mediated  0.330914    -0.021438     0.616120   0.076 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Sample Size Used: 265 
+
+
+Simulations: 500 </code></pre>
+</div>
+</div>
+</section>
+<section id="step-4-interpret-the-results" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-interpret-the-results">Step 4: Interpret the Results</h3>
+<p>The output table provides estimates for four key quantities:</p>
+<ol type="1">
+<li><strong>ACME (Average Causal Mediation Effect)</strong>: This is our <strong>Natural Indirect Effect (NIE)</strong>. The estimate is <code>0.0754</code>. This means that, on average, the media frame’s effect on emotional response that is transmitted <em>through</em> its effect on perceived harm is about 0.075 points. The 95% CI <code>[0.05, 0.11]</code> does not include zero, so this indirect effect is statistically significant.</li>
+<li><strong>ADE (Average Direct Effect)</strong>: This is our <strong>Natural Direct Effect (NDE)</strong>. The estimate is <code>0.0402</code>. This is the average effect of the media frame on emotional response that operates through all other pathways. Its 95% CI <code>[-0.03, 0.11]</code> includes zero, suggesting we do not have strong evidence for a direct effect separate from the pathway through perceived harm.</li>
+<li><strong>Total Effect</strong>: This is the sum of the direct and indirect effects (<code>0.0754 + 0.0402 = 0.1156</code>). It represents the overall average effect of the media frame on emotional response.</li>
+<li><strong>Prop. Mediated</strong>: This is the proportion of the total effect that is mediated through our mediator (<code>0.0754 / 0.1156 ≈ 0.65</code>). Approximately 65% of the total effect is explained by the change in perceived harm.</li>
+</ol>
+<p><strong>Conclusion</strong>: The media frame significantly increased emotional anxiety regarding immigration. Our analysis suggests that the majority of this effect can be attributed to the frame’s success in increasing the perceived harm of immigration, which in turn heightened emotional response.</p>
+</section>
+</section>
+<section id="hands-on-r-lab" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-r-lab">5. Hands-On R Lab</h2>
+<section id="lab-objectives" class="level3">
+<h3 class="anchored" data-anchor-id="lab-objectives">Lab Objectives</h3>
+<ul>
+<li>Practice the entire workflow of a causal mediation analysis in R.</li>
+<li>Simulate data where the true effects are known to verify the method.</li>
+<li>Critically assess the sequential ignorability assumption in a new context.</li>
+</ul>
+</section>
+<section id="warm-up-reading" class="level3">
+<h3 class="anchored" data-anchor-id="warm-up-reading">Warm-Up Reading</h3>
+<ul>
+<li>Review Chapter 13, “Mediation,” in <em>Causal Inference: What If</em> (<span class="citation" data-cites="hernan2020causalwhatif">Hernán &amp; Robins (<a href="#ref-hernan2020causalwhatif" role="doc-biblioref">2020</a>)</span>).</li>
+</ul>
+</section>
+<section id="task-1-simulate-data-with-a-known-mechanism" class="level3">
+<h3 class="anchored" data-anchor-id="task-1-simulate-data-with-a-known-mechanism">Task 1: Simulate Data with a Known Mechanism</h3>
+<p>We will simulate a dataset for a hypothetical clinical trial.</p>
+<ul>
+<li><strong>A</strong>: A new therapy (1 = therapy, 0 = control).</li>
+<li><strong>X</strong>: Baseline depression score (a pre-treatment confounder).</li>
+<li><strong>M</strong>: Reduction in negative self-talk (a mediator).</li>
+<li><strong>Y</strong>: Final depression score (the outcome).</li>
+</ul>
+<p>We will set the true data generating process such that:</p>
+<ul>
+<li>The true NDE is 2.</li>
+<li>The true NIE is 3.</li>
+<li>The total effect is 5.</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Skeleton Code: Fill in the Blanks (...)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="dv">2</span>) <span class="co"># Baseline depression</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="co"># Randomized treatment</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Path from A to M (effect = 1.5)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> X <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> A <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Path to Y (NDE=2, Effect of M = 2, so NIE = 1.5*2=3)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">*</span> X <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> A <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> M <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="dv">2</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>sim_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(X, A, M, Y)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sim_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["X"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["A"],"name":[2],"type":["int"],"align":["right"]},{"label":["M"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Y"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"8.879049","2":"0","3":"5.977955","4":"22.93836","_rn_":"1"},{"1":"9.539645","2":"1","3":"6.160112","4":"25.10568","_rn_":"2"},{"1":"13.117417","2":"0","3":"7.070179","4":"28.12502","_rn_":"3"},{"1":"10.141017","2":"1","3":"6.784466","4":"26.48212","_rn_":"4"},{"1":"10.258575","2":"1","3":"6.443167","4":"27.72756","_rn_":"5"},{"1":"13.430130","2":"0","3":"6.594671","4":"24.61495","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In our simulation, the effect of A on M is 1.5. The effect of M on Y (holding A constant) is 2. The direct effect of A on Y is 2. Therefore, the true NIE is <span class="math inline">\(1.5 \times 2 = 3\)</span>, and the true NDE is 2.</p>
+</div>
+</div>
+</section>
+<section id="task-2-perform-mediation-analysis-on-simulated-data" class="level3">
+<h3 class="anchored" data-anchor-id="task-2-perform-mediation-analysis-on-simulated-data">Task 2: Perform Mediation Analysis on Simulated Data</h3>
+<p>Using the <code>sim_data</code> you just created, perform a causal mediation analysis to recover the NDE and NIE.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Skeleton Code: Fill in the Blanks (...)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Fit the Mediator Model</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>med_fit_lab <span class="ot">&lt;-</span> <span class="fu">lm</span>(...)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Fit the Outcome Model</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>out_fit_lab <span class="ot">&lt;-</span> <span class="fu">lm</span>(...)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Run the Mediate Function</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>med_out_lab <span class="ot">&lt;-</span> <span class="fu">mediate</span>(...)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Summarize and Interpret</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(med_out_lab)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<details>
+<summary>
+Click for Solution
+</summary>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Fit the Mediator Model</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>med_fit_lab <span class="ot">&lt;-</span> <span class="fu">lm</span>(M <span class="sc">~</span> A <span class="sc">+</span> X, <span class="at">data =</span> sim_data)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Fit the Outcome Model</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>out_fit_lab <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> M <span class="sc">+</span> X, <span class="at">data =</span> sim_data)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Run the Mediate Function</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>med_out_lab <span class="ot">&lt;-</span> <span class="fu">mediate</span>(</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  med_fit_lab,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  out_fit_lab,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">treat =</span> <span class="st">"A"</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">mediator =</span> <span class="st">"M"</span>,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">boot =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">sims =</span> <span class="dv">500</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Summarize and Interpret</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(med_out_lab)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Causal Mediation Analysis 
+
+Nonparametric Bootstrap Confidence Intervals with the Percentile Method
+
+               Estimate 95% CI Lower 95% CI Upper   p-value    
+ACME            2.82180      2.41567      3.21058 &lt; 2.2e-16 ***
+ADE             2.23793      1.80173      2.59446 &lt; 2.2e-16 ***
+Total Effect    5.05973      4.58008      5.50471 &lt; 2.2e-16 ***
+Prop. Mediated  0.55770      0.49462      0.62272 &lt; 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Sample Size Used: 500 
+
+
+Simulations: 500 </code></pre>
+</div>
+</div>
+</details>
+<p><strong>Reflection</strong>: Compare the estimated ACME (NIE) and ADE (NDE) from your analysis to the true values we designed in the simulation (NIE=3, NDE=2). Are they close? What does this tell you about the method’s ability to recover causal parameters when its assumptions are met?</p>
+</section>
+<section id="task-3-retrieval-quiz" class="level3">
+<h3 class="anchored" data-anchor-id="task-3-retrieval-quiz">Task 3: Retrieval Quiz</h3>
+<ol type="1">
+<li>What is the key difference between a Natural Direct Effect (NDE) and a Controlled Direct Effect (CDE)?</li>
+<li>Why is the assumption <span class="math inline">\(Y^{a', m} \indep M \mid A=a, X=x\)</span> often called the most “problematic” assumption in mediation analysis?</li>
+<li>If the ACME (NIE) is significant but the ADE (NDE) is not, what does this imply about the causal mechanism?</li>
+</ol>
+</section>
+</section>
+<section id="common-pitfalls-checks" class="level2">
+<h2 class="anchored" data-anchor-id="common-pitfalls-checks">6. Common Pitfalls &amp; Checks</h2>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Common Pitfall: The Unmeasured Mediator-Outcome Confounder
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The most frequent and damaging mistake is to ignore potential confounders of the M-Y relationship. In our therapy example, what if patients in the therapy group who are more motivated (<span class="math inline">\(U\)</span>) are more likely to reduce their negative self-talk (<span class="math inline">\(M\)</span>) and also more likely to engage in other healthy behaviors that improve their depression score (<span class="math inline">\(Y\)</span>)? Motivation (<span class="math inline">\(U\)</span>) would be an unmeasured M-Y confounder, violating sequential ignorability and biasing your results. Always ask: “What could be a common cause of my mediator and outcome, given the exposure?”</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Key Assumption Check: Sensitivity Analysis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Since the “no unmeasured M-Y confounding” assumption is untestable, robust mediation analysis should always be accompanied by a sensitivity analysis. The <code>medsens()</code> function in the <code>mediation</code> package allows you to quantify how strong an unmeasured M-Y confounder would have to be to change your conclusions (e.g., to make your estimated NIE zero). This is a crucial step for credible results.</p>
+</div>
+</div>
+</section>
+<section id="check-your-understanding" class="level2 callout-question">
+<h2 class="anchored" data-anchor-id="check-your-understanding">Check Your Understanding</h2>
+<p><strong>Question</strong>: You run a mediation analysis and find a significant indirect effect. A colleague argues that your analysis is invalid because the exposure (<span class="math inline">\(A\)</span>) and mediator (<span class="math inline">\(M\)</span>) interact in their effect on the outcome (<span class="math inline">\(Y\)</span>). How do you respond? <strong>Answer</strong>: You can tell your colleague that the potential outcomes framework for mediation inherently handles this situation. The <code>mediation</code> package, for instance, is non-parametric and does not assume the absence of A-M interaction. An interaction would mean that the direct and indirect effects might be different at different levels of the other variable, but the definitions of NDE and NIE are still valid.</p>
+</section>
+<section id="advanced-teaching-activities-interactivity" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</h2>
+<ol type="1">
+<li><p><strong>Think-Pair-Share</strong>: Present students with a real-world research question (e.g., “How does a new school lunch program affect student test scores?”).</p>
+<ul>
+<li><strong>Think</strong>: Individually, students must propose a plausible mediator and draw a DAG, including at least one pre-treatment confounder (<span class="math inline">\(X\)</span>) and one potential unmeasured mediator-outcome confounder (<span class="math inline">\(U\)</span>).</li>
+<li><strong>Pair</strong>: In pairs, students critique each other’s DAGs. Is the temporal ordering correct? Is the unmeasured confounder plausible?</li>
+<li><strong>Share</strong>: The instructor selects a few DAGs to discuss with the class, focusing on the plausibility of the sequential ignorability assumption.</li>
+</ul></li>
+<li><p><strong>Flipped Classroom Prompt</strong>: Before class, have students read a published observational study that uses mediation analysis. In class, use breakout groups to have them complete a “Causal Critique” worksheet:</p>
+<ul>
+<li>What are A, M, and Y?</li>
+<li>What are the stated NDE and NIE?</li>
+<li>What covariates (<span class="math inline">\(X\)</span>) were used to try and satisfy sequential ignorability?</li>
+<li>What is the most likely violation of sequential ignorability in this study? (i.e., name a plausible unmeasured M-Y confounder).</li>
+<li>How would this unmeasured confounder likely bias the results?</li>
+</ul></li>
+<li><p><strong>Code-Along Simulation</strong>: Guide students through a live R session where you simulate data that explicitly violates the sequential ignorability assumption. Show them how the <code>mediate</code> function fails to recover the true parameters. Then, “measure” the confounder, add it to the models, and show how the estimates become unbiased. This provides a powerful, tangible demonstration of the importance of the assumption.</p></li>
+</ol>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+</section>
+<section id="appendix-advanced-theory-derivations" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</h2>
+<section id="non-parametric-identification-of-mediation-effects" class="level3">
+<h3 class="anchored" data-anchor-id="non-parametric-identification-of-mediation-effects">Non-Parametric Identification of Mediation Effects</h3>
+<p>Here, we provide a more formal derivation of the mediation identification formulas. Our goal is to show how the counterfactual quantities defining the NDE and NIE can be expressed in terms of observable conditional expectations, given the key assumptions. For simplicity, we derive the formula for one of the key terms, <span class="math inline">\(\E{Y^{a, M^{a'}}}\)</span>. The logic extends directly to the other terms. We will target the quantity <span class="math inline">\(\E{Y^{1, M^0} | X=x}\)</span>, which is a component of the NDE.</p>
+<p><strong>Assumptions:</strong></p>
+<ol type="1">
+<li><strong>Consistency</strong>: <span class="math inline">\(Y = Y^{A, M}\)</span> and <span class="math inline">\(M = M^A\)</span>. If <span class="math inline">\(A=a\)</span>, then <span class="math inline">\(M=M^a\)</span>. If <span class="math inline">\(A=a\)</span> and <span class="math inline">\(M=m\)</span>, then <span class="math inline">\(Y=Y^{a,m}\)</span>.</li>
+<li><strong>Positivity</strong>: For all <span class="math inline">\(a, x, m\)</span> with <span class="math inline">\(p(A=a, X=x) &gt; 0\)</span> and <span class="math inline">\(p(M=m | A=a, X=x) &gt; 0\)</span>.</li>
+<li><strong>Sequential Ignorability</strong>:</li>
+</ol>
+<ol type="a">
+<li><span class="math inline">\({Y^{a', m}, M^a} \indep A \mid X=x\)</span></li>
+<li><span class="math inline">\(Y^{a', m} \indep M \mid A=a, X=x\)</span></li>
+</ol>
+<p><strong>Derivation:</strong></p>
+<p>Our goal is to identify <span class="math inline">\(\mathbb{E}[Y^{1, M^0} | X=x]\)</span>. This is a “cross-world” counterfactual, as it involves the outcome under treatment (<span class="math inline">\(A=1\)</span>) but the mediator as it would have been under control (<span class="math inline">\(A=0\)</span>).</p>
+<ol type="1">
+<li><strong>Law of Total Expectation</strong>: We can expand the expectation by integrating over the distribution of the counterfactual mediator <span class="math inline">\(M^0\)</span>, conditional on covariates <span class="math inline">\(X\)</span>.</li>
+</ol>
+<p><span class="math display">\[
+\mathbb{E}[Y^{1, M^0} | X=x] = \int_m \mathbb{E}[Y^{1, m} | M^0=m, X=x] \, dP(M^0=m | X=x)
+\]</span></p>
+<ol start="2" type="1">
+<li><p><strong>Apply Assumption 3a (Ignorability of A)</strong>: The first part of sequential ignorability, <span class="math inline">\(\{Y^{a', m}, M^a\} \indep A \mid X=x\)</span>, implies two key things:</p>
+<ul>
+<li><span class="math inline">\(Y^{1, m} \indep A \mid X=x\)</span>. This lets us handle the first part of the integrand.</li>
+<li><span class="math inline">\(M^0 \indep A \mid X=x\)</span>. This lets us handle the probability distribution in the integrand. Specifically, it implies that the distribution of the potential mediator under control, <span class="math inline">\(P(M^0=m | X=x)\)</span>, is the same as the <em>observed</em> distribution of the mediator among those who were actually in the control group, <span class="math inline">\(P(M=m | A=0, X=x)\)</span>. So, <span class="math inline">\(dP(M^0=m | X=x) = dP(M=m | A=0, X=x)\)</span>.</li>
+</ul></li>
+<li><p><strong>Apply Assumption 3b (Ignorability of M)</strong>: The second part of sequential ignorability, <span class="math inline">\(Y^{a', m} \indep M \mid A=a, X=x\)</span>, is now crucial. From Step 1, we have the term <span class="math inline">\(\mathbb{E}[Y^{1, m} | M^0=m, X=x]\)</span>. Assumption 3a (<span class="math inline">\(Y^{1,m} \indep A | X=x\)</span>) implies that conditioning on <span class="math inline">\(A=0\)</span> does not change this expectation. Therefore we have <span class="math inline">\(\mathbb{E}[Y^{1, m} | M^0=m, A=0, X=x]\)</span>. Since <span class="math inline">\(A=0\)</span> implies <span class="math inline">\(M=M^0\)</span>, this is equal to <span class="math inline">\(\mathbb{E}[Y^{1, m} | M=m, A=0, X=x]\)</span>. Now, by Assumption 3b (<span class="math inline">\(Y^{1,m} \indep M | A=0, X=x\)</span>), we have that <span class="math inline">\(\mathbb{E}[Y^{1, m} | M=m, A=0, X=x] = \mathbb{E}[Y^{1, m} | A=0, X=x]\)</span>. Finally, again using assumption 3a (<span class="math inline">\(Y^{1, m} \indep A \mid X=x\)</span>) we get <span class="math inline">\(\mathbb{E}[Y^{1, m} | X=x]\)</span>. We can now rewrite the first term as <span class="math inline">\(\mathbb{E}[Y | A=1, M=m, X=x]\)</span> because of consistency. Wait, there is a mistake in this step. Let’s restart the derivation of the first term.</p></li>
+</ol>
+<p>Let’s re-examine <span class="math inline">\(\mathbb{E}[Y^{1, m} | M^0=m, X=x]\)</span>. By assumption 3a, <span class="math inline">\(Y^{1,m}\)</span> is independent of <span class="math inline">\(M^0\)</span> given <span class="math inline">\(X\)</span>.</p>
+<p><span class="math display">\[
+\mathbb{E}[Y^{1, m} | M^0=m, X=x] = \mathbb{E}[Y^{1, m} | X=x]
+\]</span></p>
+<p>Now, by assumption 3a again (<span class="math inline">\(Y^{1,m} \indep A | X=x\)</span>), we can condition on <span class="math inline">\(A=1\)</span>:</p>
+<p><span class="math display">\[
+= \mathbb{E}[Y^{1, m} | A=1, X=x]
+\]</span></p>
+<p>By consistency, <span class="math inline">\(Y^{1,m}\)</span> becomes the observed <span class="math inline">\(Y\)</span> when <span class="math inline">\(A=1\)</span> and <span class="math inline">\(M=m\)</span>. So, <span class="math inline">\(\mathbb{E}[Y^{1, m} | A=1, X=x]\)</span> cannot be identified without conditioning on M.</p>
+<p>Let’s try a different path. The “mediation formula” shows that:</p>
+<p><span class="math display">\[
+\mathbb{E}[Y^{a, M^{a'}}] = \sum_m \mathbb{E}[Y | A=a, M=m] P(M=m | A=a')
+\]</span></p>
+<p>Let’s prove this for <span class="math inline">\(a=1, a'=0\)</span> and conditioning on <span class="math inline">\(X=x\)</span>.</p>
+<p><span class="math display">\[
+\mathbb{E}[Y^{1, M^0} | X=x] = \sum_m \mathbb{E}[Y^{1, M^0} | M^0=m, X=x] P(M^0=m | X=x)
+\]</span></p>
+<p>First term in sum: <span class="math inline">\(\mathbb{E}[Y^{1, M^0} | M^0=m, X=x] = \mathbb{E}[Y^{1, m} | M^0=m, X=x]\)</span>. By Assumption 3a, <span class="math inline">\((Y^{1,m}, M^0) \indep A | X\)</span>. This implies <span class="math inline">\(Y^{1,m} \indep M^0 | X\)</span>. So, <span class="math inline">\(\mathbb{E}[Y^{1, m} | M^0=m, X=x] = \mathbb{E}[Y^{1, m} | X=x]\)</span>. Again by 3a, <span class="math inline">\(Y^{1,m} \indep A | X\)</span>, so <span class="math inline">\(\mathbb{E}[Y^{1, m} | X=x] = \mathbb{E}[Y^{1, m} | A=1, X=x]\)</span>. This is where we introduce assumption 3b: <span class="math inline">\(Y^{1,m} \indep M | A=1, X=x\)</span>. Let’s try again.</p>
+<p><span class="math display">\[
+\mathbb{E}[Y^{1, M^0} | X=x] = \sum_m \mathbb{E}[Y^{1,m} | X=x] P(M^0=m | X=x)
+\]</span></p>
+<p>(This step uses <span class="math inline">\(Y^{1,m} \indep M^0 | X\)</span>, which follows from 3a).</p>
+<p>Let’s analyze the two terms separately: <strong>Term 1</strong>: <span class="math inline">\(\mathbb{E}[Y^{1,m} | X=x]\)</span>. By 3a, <span class="math inline">\(Y^{1,m} \indep A | X\)</span>, so we can condition on <span class="math inline">\(A=1\)</span>: <span class="math inline">\(\mathbb{E}[Y^{1,m} | A=1, X=x]\)</span>. By 3b, <span class="math inline">\(Y^{1,m} \indep M | A=1, X=x\)</span>. This doesn’t seem to help.</p>
+<p>Let’s use the expression from <span class="citation" data-cites="VanderWeele2015book">(<a href="#ref-VanderWeele2015book" role="doc-biblioref"><strong>VanderWeele2015book?</strong></a>)</span>, which is clearer.</p>
+<p><span class="math display">\[
+\mathbb{E}[Y^{a, M^{a'}}|c] = \sum_m \mathbb{E}[Y|a,m,c] P(m|a',c)
+\]</span></p>
+<p>Let’s prove this for <span class="math inline">\(a=1, a'=0, c=x\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*} \mathbb{E}[Y^{1, M^0} | X=x] &amp;= \sum_m \mathbb{E}[Y^{1, M^0} | M^0=m, X=x] P(M^0=m | X=x) &amp;&amp; \text{(Law of Total Expectation)} \ &amp;= \sum_m \mathbb{E}[Y^{1, m} | M^0=m, X=x] P(M^0=m | X=x) &amp;&amp; \text{(Consistency)} \ &amp;= \sum_m \mathbb{E}[Y^{1, m} | X=x] P(M=m | A=0, X=x) &amp;&amp; \text{(by Assumption 3a: } Y^{1,m} \indep M^0 | X \text{ and } M^0 \indep A | X) \ &amp;= \sum_m \mathbb{E}[Y^{1, m} | A=1, X=x] P(M=m | A=0, X=x) &amp;&amp; \text{(by Assumption 3a: } Y^{1,m} \indep A | X) \ &amp;= \sum_m \mathbb{E}[Y | A=1, M=m, X=x] P(M=m | A=0, X=x) &amp;&amp; \text{(by Assumption 3b: } Y^{1,m} \indep M | A=1, X, \text{ and Consistency)}
+\end{align*}
+\]</span></p>
+<p>The last step, <span class="math inline">\(\mathbb{E}[Y^{1, m} | A=1, X=x] = \mathbb{E}[Y | A=1, M=m, X=x]\)</span>, requires that <span class="math inline">\(Y^{1,m}\)</span> is independent of <span class="math inline">\(M\)</span> given <span class="math inline">\(A=1, X=x\)</span>. By consistency, this becomes <span class="math inline">\(\mathbb{E}[Y^{1,m} | A=1, M=m, X=x]\)</span>, which is simply <span class="math inline">\(\mathbb{E}[Y|A=1, M=m, X=x]\)</span>. This looks correct.</p>
+<ol start="4" type="1">
+<li><p><strong>Final Identification Formula</strong>: The derivation shows that the unobservable counterfactual quantity can be expressed as a function of observable quantities only:</p>
+<ul>
+<li><span class="math inline">\(\mathbb{E}[Y | A=1, M=m, X=x]\)</span>: This is the conditional expectation of the outcome, which can be estimated from a regression model of <span class="math inline">\(Y\)</span> on <span class="math inline">\(A\)</span>, <span class="math inline">\(M\)</span>, and <span class="math inline">\(X\)</span>.</li>
+<li><span class="math inline">\(P(M=m | A=0, X=x)\)</span>: This is the conditional probability of the mediator, which can be estimated from a regression model of <span class="math inline">\(M\)</span> on <span class="math inline">\(A\)</span> and <span class="math inline">\(X\)</span>.</li>
+</ul></li>
+</ol>
+<p>By integrating over all values of <span class="math inline">\(m\)</span> and then averaging over the distribution of the covariates <span class="math inline">\(X\)</span>, we can identify the NDE and NIE. For example:</p>
+<p><span class="math display">\[
+\text{ANDE}(\zeta(0)) = \mathbb{E}_X \left[ \sum_m \left( \mathbb{E}[Y|A=1,m,X] - \mathbb{E}[Y|A=0,m,X] \right) P(M=m|A=0,X) \right]
+\]</span></p>
+<p>This formula, often called the <strong>mediation formula</strong> or <strong>g-formula for mediation</strong>, is the theoretical foundation for the estimation performed by packages like <code>mediation</code>. It shows precisely how the causal assumptions allow us to piece together information from different parts of the observed data to estimate a “cross-world” causal effect.</p>
+
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-hernan2020causalwhatif" class="csl-entry" role="listitem">
+Hernán, M. Á., &amp; Robins, J. M. (2020). <em>Causal inference: <span>What</span> if</em>. Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-imbens2015causal" class="csl-entry" role="listitem">
+Imbens, G., &amp; Rubin, D. B. (2015). <em>Causal inference for statistics, social, and biomedical sciences: <span>An</span> introduction</em>. Cambridge University Press.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/Data-Wise\.github\.io\/causal-inference\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-10_mediation_analysis-rev1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

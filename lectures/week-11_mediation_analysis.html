@@ -522,7 +522,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Jul-30-2025</p>
+        <p class="date">Oct-20-2025</p>
       </div>
     </div>
     
@@ -743,7 +743,7 @@ window.Quarto = {
 <li>Total Causal Effect (TE):&nbsp;This is the familiar effect of changing the exposure from a reference level (0) to an active level (1) on the outcome.</li>
 </ul>
 <p><span class="math display">\[
-\text{TE} = E[Y(1) - Y(0)]
+\text{TE} = E[Y^1 - Y^0]
 \]</span></p>
 <p>Where&nbsp;Y(a)&nbsp;is the potential outcome for&nbsp;Y&nbsp;that would be observed if an individual were assigned exposure level&nbsp;a.</p>
 <ul>
@@ -756,7 +756,7 @@ window.Quarto = {
 <li>Controlled Direct Effect (CDE):&nbsp;The CDE quantifies the effect of the exposure while the mediator is experimentally&nbsp;controlled or fixed to a specific level,&nbsp;m, for all individuals in the population.</li>
 </ul>
 <p><span class="math display">\[
-\text{CDE}(m) = E[Y(1, m) - Y(0, m)]
+\text{CDE}(m) = E[Y^{1,m} - Y^{0,m}]
 \]</span></p>
 <p>Causal Question:&nbsp;“What would be the effect of the treatment if we could intervene to hold everyone’s mediator value constant at level&nbsp;m?” For example, in a study of a statin drug (A) on heart attacks (Y) mediated by LDL cholesterol (M), the CDE(100) would be the drug’s effect if everyone’s cholesterol could be forced to 100 mg/dL. This is policy-relevant for setting clinical targets but may not be biologically or practically feasible.</p>
 <ul>
@@ -764,16 +764,16 @@ window.Quarto = {
 <li><p>Natural Indirect Effect (NIE):&nbsp;This is the core quantity for assessing mediation. It captures the portion of the treatment’s effect that works by changing the mediator.</p></li>
 </ul>
 <p><span class="math display">\[
-\text{NIE} = E[Y(1, M(1)) - Y(1, M(0))]
+\text{NIE} = E[Y^{1, M^1} - Y^{1, M^1}]
 \]</span></p>
-<p>Causal Question:&nbsp;“What change in the outcome would be observed if we held an individual’s exposure status constant at ‘treated’ (<span class="math inline">\(A=1\)</span>) but could change their mediator from the level it would naturally take under control (<span class="math inline">\(M(0)\)</span>) to the level it would naturally take under treatment (<span class="math inline">\(M(1)\)</span>)?” This isolates the effect transmitted&nbsp;<em>only</em>&nbsp;through the&nbsp;<span class="math inline">\(A \rightarrow M\)</span>&nbsp;pathway.</p>
+<p>Causal Question:&nbsp;“What change in the outcome would be observed if we held an individual’s exposure status constant at ‘treated’ (<span class="math inline">\(A=1\)</span>) but could change their mediator from the level it would naturally take under control (<span class="math inline">\(M^0\)</span>) to the level it would naturally take under treatment (<span class="math inline">\(M^1\)</span>)?” This isolates the effect transmitted&nbsp;<em>only</em>&nbsp;through the&nbsp;<span class="math inline">\(A \rightarrow M\)</span>&nbsp;pathway.</p>
 <ul>
 <li>Natural Direct Effect (NDE):&nbsp;This captures the portion of the treatment’s effect that does not operate through the mediator&nbsp;<span class="math inline">\(M\)</span>.</li>
 </ul>
 <p><span class="math display">\[
-\text{NDE} = E[Y(1, M(0)) - Y(0, M(0))]
+\text{NDE} = E[Y^{1, M^1} - Y^{0, M^0}]
 \]</span></p>
-<p>Causal Question:&nbsp;“What would be the effect of the treatment if we could somehow block the pathway through&nbsp;<span class="math inline">\(M\)</span>&nbsp;by holding the mediator for everyone at the level it would have naturally taken in the absence of treatment (<span class="math inline">\(M(0)\)</span>)?”</p>
+<p>Causal Question:&nbsp;“What would be the effect of the treatment if we could somehow block the pathway through&nbsp;<span class="math inline">\(M\)</span>&nbsp;by holding the mediator for everyone at the level it would have naturally taken in the absence of treatment (<span class="math inline">\(M^0\)</span>)?”</p>
 <p>Under the assumption of no interaction between the exposure and the mediator on the outcome, the total effect decomposes perfectly:</p>
 <p><span class="math display">\[
 TE=NIE+NDE
@@ -862,7 +862,7 @@ Warning
 <ol type="1">
 <li><p>Fit a model for the mediator given the exposure and pre-treatment covariates:&nbsp;<span class="math inline">\(P(M∣A,X)\)</span>.</p></li>
 <li><p>Fit a model for the outcome given the exposure, mediator, and pre-treatment covariates:&nbsp;<span class="math inline">\(P(Y∣A,M,X)\)</span>. These models can be of any standard type (<code>lm</code>, <code>glm</code>, etc.).</p></li>
-<li><p>Simulate Potential Outcomes: The algorithm uses the fitted models to simulate potential outcomes for each individual under different counterfactual scenarios. For example, to calculate <span class="math inline">\(E[Y(1,M(0))]\)</span>:</p>
+<li><p>Simulate Potential Outcomes: The algorithm uses the fitted models to simulate potential outcomes for each individual under different counterfactual scenarios. For example, to calculate <span class="math inline">\(E[Y(1,M^0)]\)</span>:</p>
 <ol type="a">
 <li><p>For each individual <span class="math inline">\(i\)</span>, predict their mediator value under control: <span class="math inline">\(\hat M_i(0)\)</span> using the mediator model with <span class="math inline">\(A=0\)</span>.</p></li>
 <li><p>Predict their outcome using the outcome model with <span class="math inline">\(A=1\)</span> but with the mediator value set to <span class="math inline">\(\hat M_i(0)\)</span>.</p></li>
@@ -1101,14 +1101,14 @@ Warning
 <h2 class="anchored" data-anchor-id="appendix-advanced-derivations">8. Appendix: Advanced Derivations</h2>
 <section id="formal-decomposition-of-the-total-effect" class="level3">
 <h3 class="anchored" data-anchor-id="formal-decomposition-of-the-total-effect">Formal Decomposition of the Total Effect</h3>
-<p>The total effect, <span class="math inline">\(\text{TE}=E[Y(1)−Y(0)]\)</span>, can be decomposed by adding and subtracting a counterfactual quantity, <span class="math inline">\(E[Y(1,M(0))]\)</span>.</p>
+<p>The total effect, <span class="math inline">\(\text{TE}=E[Y^1−Y(0)]\)</span>, can be decomposed by adding and subtracting a counterfactual quantity, <span class="math inline">\(E[Y(1,M^0)]\)</span>.</p>
 <p><span class="math display">\[
-TE=E[Y(1)−Y(0)]=E[Y(1)−Y(1,M(0))]+E[Y(1,M(0))−Y(0)]
+TE=E[Y^1−Y(0)]=E[Y^1−Y(1,M^0)]+E[Y(1,M^0)−Y(0)]
 \]</span></p>
-<p>By the consistency assumption, we can state that an individual’s potential outcome Y(a) is that which would be observed if their exposure is a and their mediator is the value it would naturally take on under exposure a, i.e., Y(a)=Y(a,M(a)). Applying this:</p>
+<p>By the consistency assumption, we can state that an individual’s potential outcome Y^a is that which would be observed if their exposure is a and their mediator is the value it would naturally take on under exposure a, i.e., Y^a=Y(a,M(a)). Applying this:</p>
 <ul>
-<li><p>The first term becomes&nbsp;<span class="math inline">\(E[Y(1,M(1))−Y(1,M(0))]\)</span>, which is the definition of the&nbsp;NIE.</p></li>
-<li><p>The second term, <span class="math inline">\(E[Y(1,M(0))−Y(0)]\)</span>, can be rewritten as <span class="math inline">\(E[Y(1,M(0))−Y(0,M(0))]\)</span> by applying consistency to Y(0), which is the definition of the NDE.</p>
+<li><p>The first term becomes&nbsp;<span class="math inline">\(E[Y(1,M^1)−Y(1,M^0)]\)</span>, which is the definition of the&nbsp;NIE.</p></li>
+<li><p>The second term, <span class="math inline">\(E[Y(1,M^0)−Y(0)]\)</span>, can be rewritten as <span class="math inline">\(E[Y(1,M^0)−Y(0,M^0)]\)</span> by applying consistency to Y^0, which is the definition of the NDE.</p>
 <p>Thus, we arrive at the fundamental decomposition:</p></li>
 </ul>
 <p><span class="math display">\[
