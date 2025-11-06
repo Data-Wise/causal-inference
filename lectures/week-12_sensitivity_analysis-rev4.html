@@ -262,7 +262,7 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../assets/styles/css/home.css">
-<meta property="og:title" content="Week 10: Bounds and Tipping-Point Sensitivity Analysis – Introduction to Causal Inference">
+<meta property="og:title" content="Week 12: Bounds and Tipping-Point Sensitivity Analysis – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
 <meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
@@ -547,7 +547,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Nov-05-2025</p>
+        <p class="date">Nov-06-2025</p>
       </div>
     </div>
     
@@ -783,31 +783,31 @@ window.Quarto = {
 </section>
 <section id="part-a-bounds-partial-identification" class="level3">
 <h3 class="anchored" data-anchor-id="part-a-bounds-partial-identification">Part A: Bounds (Partial Identification)</h3>
-<p>If we make <em>no</em> assumption about <span class="math inline">\(U\)</span>, we lose point identification. We can no longer estimate a single value for the Average Treatment Effect (ATE), <span class="math inline">\(\mathbb{E}[Y(1) - Y(0)]\)</span>.</p>
+<p>If we make <em>no</em> assumption about <span class="math inline">\(U\)</span>, we lose point identification. We can no longer estimate a single value for the Average Treatment Effect (ATE), <span class="math inline">\(\mathbb{E}[Y^1 - Y^0]\)</span>.</p>
 <p>However, we can often identify a <strong>range</strong> or <strong>set</strong> of possible values. This is <strong>partial identification</strong>. The key insight is to decompose the ATE into an <em>observable</em> part and an <em>unobservable</em> (counterfactual) part.</p>
-<p>For a binary outcome <span class="math inline">\(Y \in \{0, 1\}\)</span> and exposure <span class="math inline">\(X \in \{0, 1\}\)</span>, let <span class="math inline">\(\pi = P(X=1)\)</span>. The ATE is:</p>
-<p><span class="math inline">\(ATE = \mathbb{E}[Y(1)] - \mathbb{E}[Y(0)]\)</span></p>
+<p>For a binary outcome <span class="math inline">\(Y \in \{0, 1\}\)</span> and exposure <span class="math inline">\(X \in \{0, 1\}\)</span>, let <span class="math inline">\(\pi = P(A=1)\)</span>. The ATE is:</p>
+<p><span class="math inline">\(ATE = \mathbb{E}[Y^1] - \mathbb{E}[Y^0]\)</span></p>
 <p>We can rewrite this using the law of total probability:</p>
-<p><span class="math inline">\(ATE = [P(Y(1)=1|X=1)\pi + P(Y(1)=1|X=0)(1-\pi)] - [P(Y(0)=1|X=1)\pi + P(Y(0)=1|X=0)(1-\pi)]\)</span></p>
-<p>By consistency (<span class="math inline">\(Y = Y(x)\)</span> if <span class="math inline">\(X=x\)</span>), we can identify two of these terms:</p>
+<p><span class="math inline">\(ATE = [P(Y^1=1|A=1)\pi + P(Y^1=1|A=0)(1-\pi)] - [P(Y^0=1|A=1)\pi + P(Y^0=1|A=0)(1-\pi)]\)</span></p>
+<p>By consistency (<span class="math inline">\(Y = Y^a\)</span> if <span class="math inline">\(A=a\)</span>), we can identify two of these terms:</p>
 <ul>
-<li><span class="math inline">\(P(Y(1)=1|X=1) = P(Y=1|X=1)\)</span> (Observed risk in the exposed)</li>
-<li><span class="math inline">\(P(Y(0)=1|X=0) = P(Y=1|X=0)\)</span> (Observed risk in the unexposed)</li>
+<li><span class="math inline">\(P(Y^1=1|A=1) = P(Y=1|A=1)\)</span> (Observed risk in the exposed)</li>
+<li><span class="math inline">\(P(Y^0=1|A=0) = P(Y=1|A=0)\)</span> (Observed risk in the unexposed)</li>
 </ul>
 <p>But two terms remain unknown:</p>
 <ul>
-<li><span class="math inline">\(P(Y(1)=1|X=0)\)</span> (Counterfactual risk of outcome <em>with</em> exposure, among those who were <em>unexposed</em>)</li>
-<li><span class="math inline">\(P(Y(0)=1|X=1)\)</span> (Counterfactual risk of outcome <em>without</em> exposure, among those who were <em>exposed</em>)</li>
+<li><span class="math inline">\(P(Y^1=1|A=0)\)</span> (Counterfactual risk of outcome <em>with</em> exposure, among those who were <em>unexposed</em>)</li>
+<li><span class="math inline">\(P(Y^0=1|A=1)\)</span> (Counterfactual risk of outcome <em>without</em> exposure, among those who were <em>exposed</em>)</li>
 </ul>
 <section id="the-no-assumptions-manski-bound" class="level4">
 <h4 class="anchored" data-anchor-id="the-no-assumptions-manski-bound">The No-Assumptions (Manski) Bound</h4>
 <p>If we assume <em>nothing</em> about the counterfactual terms, we only know they are probabilities, so they must lie in <span class="math inline">\([0, 1]\)</span>. To get the widest possible range for the ATE, we “plug in” the most extreme values for these unknown terms.</p>
 <ul>
-<li><strong>To find the Upper Bound for ATE:</strong> We assume the best-case scenario. We set the unknown “benefit” term <span class="math inline">\(P(Y(1)=1|X=0)\)</span> to its maximum (1) and the unknown “harm” term <span class="math inline">\(P(Y(0)=1|X=1)\)</span> to its minimum (0).</li>
-<li><strong>To find the Lower Bound for ATE:</strong> We assume the worst-case scenario. We set <span class="math inline">\(P(Y(1)=1|X=0) = 0\)</span> and <span class="math inline">\(P(Y(0)=1|X=1) = 1\)</span>.</li>
+<li><strong>To find the Upper Bound for ATE:</strong> We assume the best-case scenario. We set the unknown “benefit” term <span class="math inline">\(P(Y^1=1|A=0)\)</span> to its maximum (1) and the unknown “harm” term <span class="math inline">\(P(Y^0=1|A=1)\)</span> to its minimum (0).</li>
+<li><strong>To find the Lower Bound for ATE:</strong> We assume the worst-case scenario. We set <span class="math inline">\(P(Y^1=1|A=0) = 0\)</span> and <span class="math inline">\(P(Y^0=1|A=1) = 1\)</span>.</li>
 </ul>
 <p>This gives the “no-assumptions bound.” It is often very wide, but it is the <em>only</em> conclusion we can draw from the data alone, without untestable assumptions <span class="citation" data-cites="hernan2020causalwhatif">(<a href="#ref-hernan2020causalwhatif" role="doc-biblioref">Hernán &amp; Robins, 2020</a>)</span>.</p>
-<p>We can tighten these bounds by making weaker, non-testable assumptions, such as <strong>monotone treatment response</strong> (e.g., the vaccine <em>never</em> causes the disease, <span class="math inline">\(Y_i(1) \le Y_i(0)\)</span> for all <span class="math inline">\(i\)</span>) or <strong>monotone treatment selection</strong> (e.g., people who choose to get the vaccine are inherently healthier) <span class="citation" data-cites="neal2020intro">(<a href="#ref-neal2020intro" role="doc-biblioref">Neal, 2020</a>)</span>.</p>
+<p>We can tighten these bounds by making weaker, non-testable assumptions, such as <strong>monotone treatment response</strong> (e.g., the vaccine <em>never</em> causes the disease, <span class="math inline">\(Y_i^1 \le Y_i^0\)</span> for all <span class="math inline">\(i\)</span>) or <strong>monotone treatment selection</strong> (e.g., people who choose to get the vaccine are inherently healthier) <span class="citation" data-cites="neal2020intro">(<a href="#ref-neal2020intro" role="doc-biblioref">Neal, 2020</a>)</span>.</p>
 </section>
 </section>
 <section id="part-b-tipping-point-sensitivity-analysis" class="level3">
@@ -866,27 +866,27 @@ window.Quarto = {
 <li><strong>Exposure (<span class="math inline">\(X\)</span>):</strong> Vaccinated (<span class="math inline">\(1=\text{Yes}, 0=\text{No}\)</span>).</li>
 <li><strong>Data:</strong>
 <ul>
-<li>Proportion vaccinated: <span class="math inline">\(\pi = P(X=1) = 0.6\)</span></li>
-<li>Incidence in vaccinated: <span class="math inline">\(P(Y=1|X=1) = 0.02\)</span></li>
-<li>Incidence in unvaccinated: <span class="math inline">\(P(Y=1|X=0) = 0.10\)</span></li>
+<li>Proportion vaccinated: <span class="math inline">\(\pi = P(A=1) = 0.6\)</span></li>
+<li>Incidence in vaccinated: <span class="math inline">\(P(Y=1|A=1) = 0.02\)</span></li>
+<li>Incidence in unvaccinated: <span class="math inline">\(P(Y=1|A=0) = 0.10\)</span></li>
 </ul></li>
 </ul>
 <p>The <strong>naive associational difference</strong> (a Risk Difference) is <span class="math inline">\(0.02 - 0.10 = -0.08\)</span>. This <em>suggests</em> the vaccine is protective. But what about unobserved confounding (e.g., vaccinated people are also more cautious)?</p>
-<p>Let’s calculate the no-assumptions bounds for the ATE, <span class="math inline">\(\mathbb{E}[Y(1) - Y(0)]\)</span>.</p>
-<p><strong>Recall the ATE decomposition:</strong> <span class="math inline">\(ATE = [P(Y(1)|X=1)\pi + P(Y(1)|X=0)(1-\pi)] - [P(Y(0)|X=1)\pi + P(Y(0)|X=0)(1-\pi)]\)</span></p>
-<p><strong>Plug in what we know:</strong> <span class="math inline">\(ATE = [0.02 \times 0.6 + P(Y(1)|X=0) \times 0.4] - [P(Y(0)|X=1) \times 0.6 + 0.10 \times 0.4]\)</span> <span class="math inline">\(ATE = 0.012 + 0.4 \times P(Y(1)|X=0) - 0.6 \times P(Y(0)|X=1) - 0.04\)</span> <span class="math inline">\(ATE = -0.028 + 0.4 \times P(Y(1)|X=0) - 0.6 \times P(Y(0)|X=1)\)</span></p>
+<p>Let’s calculate the no-assumptions bounds for the ATE, <span class="math inline">\(\mathbb{E}[Y^1 - Y^0]\)</span>.</p>
+<p><strong>Recall the ATE decomposition:</strong> <span class="math inline">\(ATE = [P(Y^1|A=1)\pi + P(Y^1|A=0)(1-\pi)] - [P(Y^0|A=1)\pi + P(Y^0|A=0)(1-\pi)]\)</span></p>
+<p><strong>Plug in what we know:</strong> <span class="math inline">\(ATE = [0.02 \times 0.6 + P(Y^1|A=0) \times 0.4] - [P(Y^0|A=1) \times 0.6 + 0.10 \times 0.4]\)</span> <span class="math inline">\(ATE = 0.012 + 0.4 \times P(Y^1|A=0) - 0.6 \times P(Y^0|A=1) - 0.04\)</span> <span class="math inline">\(ATE = -0.028 + 0.4 \times P(Y^1|A=0) - 0.6 \times P(Y^0|A=1)\)</span></p>
 <p><strong>Solve for Bounds:</strong></p>
 <ul>
 <li><strong>Upper Bound (Worst-case for harm, best-case for benefit):</strong>
 <ul>
-<li>Set <span class="math inline">\(P(Y(1)|X=0) = 1\)</span> (unexposed would have all gotten sick if treated)</li>
-<li>Set <span class="math inline">\(P(Y(0)|X=1) = 0\)</span> (exposed would have all been healthy if untreated)</li>
+<li>Set <span class="math inline">\(P(Y^1|A=0) = 1\)</span> (unexposed would have all gotten sick if treated)</li>
+<li>Set <span class="math inline">\(P(Y^0|A=1) = 0\)</span> (exposed would have all been healthy if untreated)</li>
 <li><span class="math inline">\(\text{Upper} = -0.028 + 0.4 \times (1) - 0.6 \times (0) = -0.028 + 0.4 = \mathbf{0.372}\)</span></li>
 </ul></li>
 <li><strong>Lower Bound (Best-case for harm, worst-case for benefit):</strong>
 <ul>
-<li>Set <span class="math inline">\(P(Y(1)|X=0) = 0\)</span></li>
-<li>Set <span class="math inline">\(P(Y(0)|X=1) = 1\)</span></li>
+<li>Set <span class="math inline">\(P(Y^1|A=0) = 0\)</span></li>
+<li>Set <span class="math inline">\(P(Y^0|A=1) = 1\)</span></li>
 <li><span class="math inline">\(\text{Lower} = -0.028 + 0.4 \times (0) - 0.6 \times (1) = -0.028 - 0.6 = \mathbf{-0.628}\)</span></li>
 </ul></li>
 </ul>
@@ -980,11 +980,11 @@ Here is the equivalent `tikz` code, which you can embed in a Quarto document usi
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  term2 <span class="ot">&lt;-</span> E_Y_t0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> pi)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate upper bound</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We set P(Y(1)|X=0) = b (max) and P(Y(0)|X=1) = a (min)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We set P(Y^1|A=0) = b (max) and P(Y^0|A=1) = a (min)</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  upper <span class="ot">&lt;-</span> (term1 <span class="sc">+</span> b <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> pi)) <span class="sc">-</span> (a <span class="sc">*</span> pi <span class="sc">+</span> term2)</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate lower bound</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We set P(Y(1)|X=0) = a (min) and P(Y(0)|X=1) = b (max)</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We set P(Y^1|A=0) = a (min) and P(Y^0|A=1) = b (max)</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  lower <span class="ot">&lt;-</span> (term1 <span class="sc">+</span> a <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> pi)) <span class="sc">-</span> (b <span class="sc">*</span> pi <span class="sc">+</span> term2)</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">c</span>(<span class="at">lower_bound =</span> lower, <span class="at">upper_bound =</span> upper))</span>
@@ -1107,8 +1107,8 @@ Here is the equivalent `tikz` code, which you can embed in a Quarto document usi
 <ul>
 <li>Observed RR for a diet-heart study: <strong>1.4</strong></li>
 <li><span class="math inline">\(U\)</span>: “Smoker” (unmeasured)</li>
-<li>We suspect 25% of the “high-fat diet” group (<span class="math inline">\(X=1\)</span>) are smokers: <code>exposed_confounder_prev = 0.25</code></li>
-<li>We suspect 5% of the “low-fat diet” group (<span class="math inline">\(X=0\)</span>) are smokers: <code>unexposed_confounder_prev = 0.05</code></li>
+<li>We suspect 25% of the “high-fat diet” group (<span class="math inline">\(A=1\)</span>) are smokers: <code>exposed_confounder_prev = 0.25</code></li>
+<li>We suspect 5% of the “low-fat diet” group (<span class="math inline">\(A=0\)</span>) are smokers: <code>unexposed_confounder_prev = 0.05</code></li>
 </ul>
 <p>How strong must the <span class="math inline">\(U \to Y\)</span> (Smoking <span class="math inline">\(\to\)</span> Heart Disease) effect be?</p>
 <div class="cell">
@@ -1250,7 +1250,7 @@ Here is the equivalent `tikz` code, which you can embed in a Quarto document usi
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>U <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(n, <span class="dv">2</span>, <span class="dv">2</span>)</span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># X: Statin-B assignment, depends on U</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># log-odds(X=1) = -0.5 + 1.5*U</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># log-odds(A=1) = -0.5 + 1.5*U</span></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>prob_X <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">0.5</span> <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> U)</span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, prob_X)</span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
@@ -1658,14 +1658,14 @@ VanderWeele, T. J., &amp; Ding, P. (2017). Sensitivity analysis in observational
 <h2 class="anchored" data-anchor-id="appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</h2>
 <section id="observational-counterfactual-decomposition" class="level3">
 <h3 class="anchored" data-anchor-id="observational-counterfactual-decomposition">Observational-Counterfactual Decomposition</h3>
-<p>The key to bounds analysis is this decomposition. Let <span class="math inline">\(ATE = \mathbb{E}[Y(1) - Y(0)]\)</span> and <span class="math inline">\(\pi = P(X=1)\)</span>.</p>
+<p>The key to bounds analysis is this decomposition. Let <span class="math inline">\(ATE = \mathbb{E}[Y^1 - Y^0]\)</span> and <span class="math inline">\(\pi = P(A=1)\)</span>.</p>
 <ol type="1">
-<li><span class="math inline">\(ATE = \mathbb{E}[Y(1)] - \mathbb{E}[Y(0)]\)</span></li>
-<li><span class="math inline">\(ATE = [\mathbb{E}[Y(1)|X=1]\pi + \mathbb{E}[Y(1)|X=0](1-\pi)] - [\mathbb{E}[Y(0)|X=1]\pi + \mathbb{E}[Y(0)|X=0](1-\pi)]\)</span> (Law of Total Prob.)</li>
-<li><span class="math inline">\(ATE = [\mathbb{E}[Y|X=1]\pi + \mathbb{E}[Y(1)|X=0](1-\pi)] - [\mathbb{E}[Y(0)|X=1]\pi + \mathbb{E}[Y|X=0](1-\pi)]\)</span> (Consistency)</li>
-<li><span class="math inline">\(ATE = \underbrace{\mathbb{E}[Y|X=1]\pi - \mathbb{E}[Y|X=0](1-\pi)}_{\text{Observable Part}} + \underbrace{\mathbb{E}[Y(1)|X=0](1-\pi) - \mathbb{E}[Y(0)|X=1]\pi}_{\text{Unobservable (Counterfactual) Part}}\)</span></li>
+<li><span class="math inline">\(ATE = \mathbb{E}[Y^1] - \mathbb{E}[Y^0]\)</span></li>
+<li><span class="math inline">\(ATE = [\mathbb{E}[Y^1|A=1]\pi + \mathbb{E}[Y^1|A=0](1-\pi)] - [\mathbb{E}[Y^0|A=1]\pi + \mathbb{E}[Y^0|A=0](1-\pi)]\)</span> (Law of Total Prob.)</li>
+<li><span class="math inline">\(ATE = [\mathbb{E}[Y|A=1]\pi + \mathbb{E}[Y^1|A=0](1-\pi)] - [\mathbb{E}[Y^0|A=1]\pi + \mathbb{E}[Y|A=0](1-\pi)]\)</span> (Consistency)</li>
+<li><span class="math inline">\(ATE = \underbrace{\mathbb{E}[Y|A=1]\pi - \mathbb{E}[Y|A=0](1-\pi)}_{\text{Observable Part}} + \underbrace{\mathbb{E}[Y^1|A=0](1-\pi) - \mathbb{E}[Y^0|A=1]\pi}_{\text{Unobservable (Counterfactual) Part}}\)</span></li>
 </ol>
-<p>The “no-assumptions” bound is derived by setting the unobservable terms, <span class="math inline">\(\mathbb{E}[Y(1)|X=0]\)</span> and <span class="math inline">\(\mathbb{E}[Y(0)|X=1]\)</span>, to their logical extrema (e.g., <span class="math inline">\([0, 1]\)</span> for a binary outcome).</p>
+<p>The “no-assumptions” bound is derived by setting the unobservable terms, <span class="math inline">\(\mathbb{E}[Y^1|A=0]\)</span> and <span class="math inline">\(\mathbb{E}[Y^0|A=1]\)</span>, to their logical extrema (e.g., <span class="math inline">\([0, 1]\)</span> for a binary outcome).</p>
 </section>
 <section id="additive-bias-formula-linear-scm" class="level3">
 <h3 class="anchored" data-anchor-id="additive-bias-formula-linear-scm">Additive Bias Formula (Linear SCM)</h3>
