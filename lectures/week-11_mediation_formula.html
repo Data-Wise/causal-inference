@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Davood Tofighi, Ph.D.">
-<meta name="dcterms.date" content="2025-07-12">
 
-<title>Lecture Notes – Introduction to Causal Inference</title>
+<title>Understanding the Mediation Formula: Intuition and Derivation with Interaction – Introduction to Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,30 +24,28 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./home_assignments.html" rel="next">
-<link href="./syllabus/schedule.html" rel="prev">
-<link href="./assets/images/icon.png" rel="icon" type="image/png">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../assets/images/icon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -174,11 +171,40 @@ ul.task-list li input[type="checkbox"] {
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="assets/styles/css/home.css">
-<meta property="og:title" content="Lecture Notes – Introduction to Causal Inference">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="Understanding the Mediation Formula: Intuition and Derivation with Interaction – Introduction to Causal Inference">
 <meta property="og:description" content="Introduction to Causal Inference">
-<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
 <meta property="og:site_name" content="Introduction to Causal Inference">
 </head>
 
@@ -351,11 +377,11 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./assets/images/icon.png" alt="" class="navbar-logo light-content">
-    <img src="./assets/images/icon.png" alt="" class="navbar-logo dark-content">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo light-content">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo dark-content">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Introduction to Causal Inference</span>
     </a>
   </div>
@@ -366,7 +392,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -375,37 +401,37 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
         <li>
-    <a class="dropdown-item" href="./syllabus/syllabus-final.pdf">
+    <a class="dropdown-item" href="../syllabus/syllabus-final.pdf">
  <span class="dropdown-text">PDF</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./syllabus/syllabus-final.html">
+    <a class="dropdown-item" href="../syllabus/syllabus-final.html">
  <span class="dropdown-text">HTML</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="./syllabus/schedule.html"> 
+    <a class="nav-link" href="../syllabus/schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_lectures.html"> 
+    <a class="nav-link" href="../home_lectures.html"> 
 <span class="menu-text">Lecture Notes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_project.html"> 
+    <a class="nav-link" href="../home_project.html"> 
 <span class="menu-text">Project</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_readings.html"> 
+    <a class="nav-link" href="../home_readings.html"> 
 <span class="menu-text">Readings</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./home_assignments.html"> 
+    <a class="nav-link" href="../home_assignments.html"> 
 <span class="menu-text">Assignments</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./r_help.html"> 
+    <a class="nav-link" href="../r_help.html"> 
 <span class="menu-text">R Help</span></a>
   </li>  
 </ul>
@@ -427,7 +453,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./home_lectures.html">Course Materials</a></li><li class="breadcrumb-item"><a href="./home_lectures.html">Lecture Notes</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Understanding the Mediation Formula: Intuition and Derivation with Interaction</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -436,8 +462,8 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./home_lectures.html">Course Materials</a></li><li class="breadcrumb-item"><a href="./home_lectures.html">Lecture Notes</a></li></ol></nav>
-      <h1 class="title">Lecture Notes</h1>
+    <div class="quarto-title column-body">
+      <h1 class="title">Understanding the Mediation Formula: Intuition and Derivation with Interaction</h1>
                       </div>
   </div>
     
@@ -461,16 +487,10 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">July 12, 2025</p>
+        <p class="date">Nov-02-2025</p>
       </div>
     </div>
     
-      <div>
-      <div class="quarto-title-meta-heading">Modified</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date-modified">November 5, 2025</p>
-      </div>
-    </div>
       
     </div>
     
@@ -479,7 +499,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
-      <a href="./index.html" class="sidebar-logo-link">
+      <a href="../index.html" class="sidebar-logo-link">
       </a>
       </div>
     <div class="sidebar-menu-container"> 
@@ -495,7 +515,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Home</span></a>
   </div>
 </li>
@@ -510,13 +530,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
  <span class="menu-text">PDF</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">HTML</span></a>
   </div>
 </li>
@@ -524,7 +544,7 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Schedule</span></a>
   </div>
 </li>
@@ -532,34 +552,34 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">Course Materials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_lectures.html" class="sidebar-item-text sidebar-link active">
+  <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lecture Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_assignments.html" class="sidebar-item-text sidebar-link">
+  <a href="../home_assignments.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Assignments</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_project.html" class="sidebar-item-text sidebar-link">
+  <a href="../home_project.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Project</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./home_readings.html" class="sidebar-item-text sidebar-link">
+  <a href="../home_readings.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Readings</span></a>
   </div>
 </li>
@@ -576,7 +596,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./r_help.html" class="sidebar-item-text sidebar-link">
+  <a href="../r_help.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">R Help</span></a>
   </div>
 </li>
@@ -592,11 +612,28 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#part-i-foundations-of-causal-inference" id="toc-part-i-foundations-of-causal-inference" class="nav-link active" data-scroll-target="#part-i-foundations-of-causal-inference">Part I: Foundations of Causal Inference</a></li>
-  <li><a href="#part-ii-estimation-methods" id="toc-part-ii-estimation-methods" class="nav-link" data-scroll-target="#part-ii-estimation-methods">Part II: Estimation Methods</a></li>
-  <li><a href="#part-iii-advanced-topics-applications" id="toc-part-iii-advanced-topics-applications" class="nav-link" data-scroll-target="#part-iii-advanced-topics-applications">Part III: Advanced Topics &amp; Applications</a></li>
+  <li><a href="#the-causal-question-the-left-hand-side-lhs" id="toc-the-causal-question-the-left-hand-side-lhs" class="nav-link active" data-scroll-target="#the-causal-question-the-left-hand-side-lhs">The Causal Question: The Left-Hand Side (LHS)</a></li>
+  <li><a href="#the-statistical-answer-the-right-hand-side-rhs" id="toc-the-statistical-answer-the-right-hand-side-rhs" class="nav-link" data-scroll-target="#the-statistical-answer-the-right-hand-side-rhs">The Statistical Answer: The Right-Hand Side (RHS)</a>
+  <ul class="collapse">
+  <li><a href="#term-1-ey-mid-aa-mm-cc" id="toc-term-1-ey-mid-aa-mm-cc" class="nav-link" data-scroll-target="#term-1-ey-mid-aa-mm-cc">Term 1: <span class="math inline">\(\E{Y \mid A=a, M=m, C=c}\)</span></a></li>
+  <li><a href="#term-2-pm-m-mid-aa-cc" id="toc-term-2-pm-m-mid-aa-cc" class="nav-link" data-scroll-target="#term-2-pm-m-mid-aa-cc">Term 2: <span class="math inline">\(P(M = M \mid A=a^*, C=c)\)</span></a></li>
+  </ul></li>
+  <li><a href="#what-does-integrating-out-the-mediator-mean" id="toc-what-does-integrating-out-the-mediator-mean" class="nav-link" data-scroll-target="#what-does-integrating-out-the-mediator-mean">What Does “Integrating out the mediator” Mean?</a></li>
+  <li><a href="#the-assumptions-are-paramount" id="toc-the-assumptions-are-paramount" class="nav-link" data-scroll-target="#the-assumptions-are-paramount">The Assumptions Are Paramount</a>
+  <ul class="collapse">
+  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next Steps</a></li>
+  </ul></li>
+  <li><a href="#exposure-mediator-interaction" id="toc-exposure-mediator-interaction" class="nav-link" data-scroll-target="#exposure-mediator-interaction">Exposure-Mediator Interaction</a>
+  <ul class="collapse">
+  <li><a href="#define-the-statistical-models" id="toc-define-the-statistical-models" class="nav-link" data-scroll-target="#define-the-statistical-models">Define the Statistical Models</a></li>
+  <li><a href="#derive-the-mediation-formula" id="toc-derive-the-mediation-formula" class="nav-link" data-scroll-target="#derive-the-mediation-formula">Derive the Mediation Formula</a></li>
+  <li><a href="#compute-the-nde-and-nie" id="toc-compute-the-nde-and-nie" class="nav-link" data-scroll-target="#compute-the-nde-and-nie">Compute the NDE and NIE</a></li>
+  <li><a href="#natural-direct-effect-nde" id="toc-natural-direct-effect-nde" class="nav-link" data-scroll-target="#natural-direct-effect-nde">Natural Direct Effect (NDE)</a></li>
+  <li><a href="#natural-indirect-effect-nie" id="toc-natural-indirect-effect-nie" class="nav-link" data-scroll-target="#natural-indirect-effect-nie">Natural Indirect Effect (NIE)</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/home_lectures.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-11_mediation_formula.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-11_mediation_formula.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -606,204 +643,284 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>This page provides a detailed week-by-week schedule for STAT 579. Readings should be completed <em>before</em> the first class of the week.</p>
+<p>The mediation formula is a fundamental result in causal inference that allows us to express a specific counterfactual quantity in terms of observable data. The formula is given by: <span class="math display">\[
+\E{Y^{a, M^{a^{*}}} \mid C=c} = \sum_{m} \E{Y \mid A=a, M=m, C=c} \, P(M = m \mid A=a^*, C=c)
+\]</span></p>
+<p>This formula is a cornerstone of modern mediation analysis, often called the <strong>Mediation Formula</strong> or the <strong>Mediation G-Formula</strong>. It provides a non-parametric way to <em>identify</em> a very specific and important counterfactual quantity from observed data, <em>assuming</em> a set of critical assumptions hold.</p>
+<p>The quantity on the left-hand side, <span class="math inline">\(\E{Y^{a, M^{a^{*}}} \mid C=c}\)</span>, is the key building block for defining <strong>Natural Direct Effects (NDE)</strong> and <strong>Natural Indirect Effects (NIE)</strong>.</p>
+<p>Let’s break this down in detail, starting with the causal question on the left and then moving to the statistical calculation on the right.</p>
+<section id="the-causal-question-the-left-hand-side-lhs" class="level2">
+<h2 class="anchored" data-anchor-id="the-causal-question-the-left-hand-side-lhs">The Causal Question: The Left-Hand Side (LHS)</h2>
+<p>The term <span class="math inline">\(\E{Y^{a, M^{a^{*}}} \mid C=c}\)</span> represents a “nested” or “cross-world” potential outcome.</p>
 <ul>
-<li><strong>HR:</strong> Hernán, M. A., &amp; Robins, J. M. (2024). <em>Causal Inference: What If</em>.</li>
-<li><strong>Neal:</strong> Neal, B. (2020). <em>Introduction to Causal Inference</em>.</li>
-<li><strong>Cunningham:</strong> Cunningham, S. (2021). <em>Causal Inference: The Mixtape</em>.</li>
-<li><strong>VanderWeele:</strong> VanderWeele, T. J. (2015). <em>Explanation in Causal Inference</em>.</li>
+<li><strong>Notation:</strong>
+<ul>
+<li><span class="math inline">\(A\)</span>: The exposure (e.g., <span class="math inline">\(a=\)</span> treatment, <span class="math inline">\(a^*=\)</span> control).</li>
+<li><span class="math inline">\(M\)</span>: The mediator (e.g., a biomarker, a health behavior).</li>
+<li><span class="math inline">\(Y\)</span>: The outcome (e.g., disease status, recovery).</li>
+<li><span class="math inline">\(C\)</span>: A set of baseline (pre-exposure) confounders.</li>
+<li><span class="math inline">\(Y^{a}\)</span>: The potential outcome <span class="math inline">\(Y\)</span> if, possibly contrary to fact, <span class="math inline">\(A\)</span> were set to <span class="math inline">\(a\)</span>.</li>
+<li><span class="math inline">\(M^{a^*}\)</span>: The potential mediator value <span class="math inline">\(M\)</span> if, possibly contrary to fact, <span class="math inline">\(A\)</span> were set to <span class="math inline">\(a^*\)</span>.</li>
+</ul></li>
+<li><strong>The Full Term: <span class="math inline">\(\E{Y^{a, M^{a^{*}}} \mid C=c}\)</span></strong> This asks a sophisticated causal question: &gt; “Within a specific stratum of confounders <span class="math inline">\(C=c\)</span>, what would be the average outcome <span class="math inline">\(Y\)</span> if we intervened to set the exposure to level <span class="math inline">\(\boldsymbol{a}\)</span>, but simultaneously intervened to set the mediator <span class="math inline">\(M\)</span> to the value it <em>would have naturally taken</em> if the exposure had been set to <span class="math inline">\(\boldsymbol{a^*}\)</span>?”</li>
 </ul>
-<section id="part-i-foundations-of-causal-inference" class="level3">
-<h3 class="anchored" data-anchor-id="part-i-foundations-of-causal-inference">Part I: Foundations of Causal Inference</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Week</th>
-<th style="text-align: left;">Dates</th>
-<th style="text-align: left;">Core Topic</th>
-<th style="text-align: left;">Primary Readings</th>
-<th style="text-align: left;">Optional Reading (Cunningham)</th>
-<th style="text-align: left;">Project Connection</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>1</strong></td>
-<td style="text-align: left;">Aug 19, 21</td>
-<td style="text-align: left;"><a href="./lectures/week-01_what_is_causal_effect.html">What is a Causal Effect?</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 1–2; <strong>Neal:</strong> Ch. 1–2</td>
-<td style="text-align: left;">Ch. 2: Potential Outcomes</td>
-<td style="text-align: left;">Define your causal question.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>2</strong></td>
-<td style="text-align: left;">Aug 26, 28</td>
-<td style="text-align: left;"><a href="./lectures/week-02_DAG.html">DAGs &amp; Assumption Transparency</a></td>
-<td style="text-align: left;"><strong>Neal:</strong> Ch. 3; <strong>HR:</strong> Ch. 6</td>
-<td style="text-align: left;">Ch. 3: Directed Acyclic Graphs</td>
-<td style="text-align: left;">Draw a preliminary DAG.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>3</strong></td>
-<td style="text-align: left;">Sep 2, 4</td>
-<td style="text-align: left;"><a href="./lectures/week-03_exchangeability_positivity.html">Exchangeability, Positivity</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 7; <strong>Neal:</strong> Ch. 4</td>
-<td style="text-align: left;">Ch. 4: Regression</td>
-<td style="text-align: left;">Identify assumptions for your causal model.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>4</strong></td>
-<td style="text-align: left;">Sep 9, 11</td>
-<td style="text-align: left;"><a href="./lectures/week-04_bias_seleclection_measurement.html">Bias (Confounding, Selection)</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 8–9</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">Consider biases in your dataset.</td>
-</tr>
-</tbody>
-</table>
+<p>This is a “cross-world” counterfactual because it combines two different hypothetical worlds:</p>
+<ol type="1">
+<li>The exposure is set to <span class="math inline">\(a\)</span>.</li>
+<li>The mediator is set to a value derived from a world where the exposure was <span class="math inline">\(a^*\)</span>.</li>
+</ol>
+<p><strong>Practical Example (Public Health):</strong> Imagine <span class="math inline">\(A\)</span> is a new, mandatory worksite wellness program (<span class="math inline">\(a=1\)</span>) vs.&nbsp;no program (<span class="math inline">\(a^*=0\)</span>). <span class="math inline">\(M\)</span> is the level of physical activity, and <span class="math inline">\(Y\)</span> is 5-year cardiovascular disease (CVD) risk. <span class="math inline">\(C\)</span> are baseline demographics and health status.</p>
+<p>The formula <span class="math inline">\(\E{Y^{a=1, M^{a^{*}=0}} \mid C=c}\)</span> asks:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>What would the average CVD risk be if we <em>implemented the program</em> (<span class="math inline">\(A=1\)</span>), but hypothetically, everyone maintained the <em>same level of physical activity</em> (<span class="math inline">\(M\)</span>) that they <em>would have had if there were no program</em> (<span class="math inline">\(A=0\)</span>)?</p>
+</div>
+</div>
+<p>This quantity is precisely what we need to isolate the <strong>Natural Direct Effect (NDE)</strong>. The NDE compares this to the risk under no program:</p>
+<p><span class="math display">\[
+\text{NDE} = \E{Y^{a=1, M^{a^{*}=0}} \mid C=c} - \E{Y^{a^{*}=0, M^{a^{*}=0}} \mid C=c}
+\]</span></p>
+<p>This isolates the effect of the program on CVD risk that does <em>not</em> operate through physical activity.</p>
 </section>
-<section id="part-ii-estimation-methods" class="level3">
-<h3 class="anchored" data-anchor-id="part-ii-estimation-methods">Part II: Estimation Methods</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Week</th>
-<th style="text-align: left;">Dates</th>
-<th style="text-align: left;">Core Topic</th>
-<th style="text-align: left;">Primary Readings</th>
-<th style="text-align: left;">Optional Reading (Cunningham)</th>
-<th style="text-align: left;">Project Connection</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>5</strong></td>
-<td style="text-align: left;">Sep 16, 18</td>
-<td style="text-align: left;"><a href="./lectures/week-05_propensity_score.html">Propensity Scores-I</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 12–13; <strong>Neal:</strong> Ch. 7</td>
-<td style="text-align: left;">Ch. 5: Matching &amp; Subclassification</td>
-<td style="text-align: left;">Select adjustment strategy.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>5</strong></td>
-<td style="text-align: left;">Sep 16, 18</td>
-<td style="text-align: left;"><a href="./lectures/week-05_propensity_score-rev-1.html">Propensity Scores-II</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 12–13; <strong>Neal:</strong> Ch. 7</td>
-<td style="text-align: left;">Ch. 5: Matching &amp; Subclassification</td>
-<td style="text-align: left;">Select adjustment strategy.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>6</strong></td>
-<td style="text-align: left;">Sep 23, 25</td>
-<td style="text-align: left;"><a href="./lectures/week-06_IP_weighting_MSM-rev2.html">IPTW &amp; MSMs</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 15; <strong>Neal:</strong> Ch. 7.5–7.6</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">Evaluate MSM relevance.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>6</strong></td>
-<td style="text-align: left;">Sep 23, 25</td>
-<td style="text-align: left;"><a href="./lectures/week-06_IP_weighting_MSM-rev1.html">IPTW &amp; MSMs</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 15; <strong>Neal:</strong> Ch. 7.5–7.6</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">Evaluate MSM relevance.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>7</strong></td>
-<td style="text-align: left;">Sep 30, Oct 2</td>
-<td style="text-align: left;"><a href="./lectures/week-07_g_computation-rev1.html">G-computation</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 20–21</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">Explore g-methods.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>8</strong></td>
-<td style="text-align: left;">Oct 7</td>
-<td style="text-align: left;"><a href="./lectures/week-08_instrumental_variable.html">Instrumental Variables</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 16; <strong>Neal:</strong> Ch. 9</td>
-<td style="text-align: left;">Ch. 8: Instrumental Variables</td>
-<td style="text-align: left;">Assess natural experiments.</td>
-</tr>
-</tbody>
-</table>
-<p><em><strong>Note:</strong> UNM Fall Break is Oct 9–10. Thursday’s class is cancelled.</em></p>
+<section id="the-statistical-answer-the-right-hand-side-rhs" class="level2">
+<h2 class="anchored" data-anchor-id="the-statistical-answer-the-right-hand-side-rhs">The Statistical Answer: The Right-Hand Side (RHS)</h2>
+<p>The left side is the unobservable <em>question</em>. The right side is the <em>answer</em> we can calculate from observable data, assuming identification.</p>
+<p><span class="math display">\[
+\underbrace{\sum_{m} \E{Y \mid A=a, M=m, C=c} \, P(M = m \mid A=a^*, C=c)}_{\text{RHS: The Identification Formula}}
+\]</span></p>
+<p>This formula is an application of <strong>standardization</strong>. Let’s break down its two components.</p>
+<section id="term-1-ey-mid-aa-mm-cc" class="level3">
+<h3 class="anchored" data-anchor-id="term-1-ey-mid-aa-mm-cc">Term 1: <span class="math inline">\(\E{Y \mid A=a, M=m, C=c}\)</span></h3>
+<ul>
+<li><strong>What it is:</strong> The observed conditional expectation of the outcome.</li>
+<li><strong>Intuitive Meaning:</strong> “Among individuals who <em>actually received</em> exposure <span class="math inline">\(A=a\)</span>, what is the average outcome <span class="math inline">\(Y\)</span> for those who had a specific mediator value <span class="math inline">\(M=m\)</span> (within stratum <span class="math inline">\(C=c\)</span>)?”</li>
+<li><strong>How we get it:</strong> This is estimated directly from our data. We can fit a regression model for the outcome, <span class="math inline">\(\E{Y \mid A, M, C}\)</span>, and plug in the values <span class="math inline">\(A=a\)</span> and <span class="math inline">\(M=m\)</span>.</li>
+<li><strong>Example (cont.):</strong> “In our study, what is the average CVD risk among people who <em>were in the wellness program</em> (<span class="math inline">\(A=1\)</span>) and <em>also</em> had a physical activity level of <span class="math inline">\(m\)</span> (e.g., <span class="math inline">\(m\)</span>=low)?” This term represents the direct pathway from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span> and the <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span> pathway, conditional on <span class="math inline">\(A, C\)</span>.</li>
+</ul>
 </section>
-<section id="part-iii-advanced-topics-applications" class="level3">
-<h3 class="anchored" data-anchor-id="part-iii-advanced-topics-applications">Part III: Advanced Topics &amp; Applications</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Week</th>
-<th style="text-align: left;">Dates</th>
-<th style="text-align: left;">Core Topic</th>
-<th style="text-align: left;">Primary Readings</th>
-<th style="text-align: left;">Project Connection</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>9</strong></td>
-<td style="text-align: left;">Oct 14, 16</td>
-<td style="text-align: left;"><a href="./lectures/week-09_effect_modification.html">Effect Modification</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 4–5; <strong>Neal:</strong> Ch. 10</td>
-<td style="text-align: left;"><strong>Milestone: Project Proposal Due.</strong></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>9</strong></td>
-<td style="text-align: left;">Oct 14, 16</td>
-<td style="text-align: left;"><a href="./lectures/week-09_effect_modification-rev1.html">Effect Modification</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 4–5; <strong>Neal:</strong> Ch. 10</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>10</strong></td>
-<td style="text-align: left;">Oct 21, 23</td>
-<td style="text-align: left;"><a href="./lectures/week-10_mediation_analysis.html">Mediation I (Foundations)</a></td>
-<td style="text-align: left;"><strong>VanderWeele:</strong> Ch. 1–2; <strong>Neal:</strong> Ch. 14</td>
-<td style="text-align: left;">Refine DAG with mediators.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>11</strong></td>
-<td style="text-align: left;">Oct 28, 30</td>
-<td style="text-align: left;"><a href="./lectures/week-11_mediation_analysis.html">Mediation II (Application)</a></td>
-<td style="text-align: left;"><strong>VanderWeele:</strong> Ch. 3; <strong>HR:</strong> Ch. 23</td>
-<td style="text-align: left;">-</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>12</strong></td>
-<td style="text-align: left;">Nov 4, 6</td>
-<td style="text-align: left;"><a href="./lectures/week-12_sensitivity_analysis-rev3.html">Sensitivity Analysis- E-Value</a></td>
-<td style="text-align: left;"><strong>Neal:</strong> Ch. 8; <strong>HR:</strong> Ch. 14</td>
-<td style="text-align: left;">Plan robustness checks.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>12</strong></td>
-<td style="text-align: left;">Nov 4, 6</td>
-<td style="text-align: left;"><a href="./lectures/week-12_sensitivity_analysis-rev4.html">Sensitivity Analysis- Tipping Point</a></td>
-<td style="text-align: left;"><strong>Neal:</strong> Ch. 8; <strong>HR:</strong> Ch. 14</td>
-<td style="text-align: left;">Plan robustness checks.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>13</strong></td>
-<td style="text-align: left;">Nov 11, 13</td>
-<td style="text-align: left;"><a href="./lectures/week-13_target_trial.html">Target Trial Emulation</a></td>
-<td style="text-align: left;"><strong>HR:</strong> Ch. 22</td>
-<td style="text-align: left;">Reframe project as a trial.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>14</strong></td>
-<td style="text-align: left;">Nov 18, 20</td>
-<td style="text-align: left;"><strong>Final Presentations</strong></td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">Present your findings.</td>
-</tr>
-</tbody>
-</table>
-<p><em><strong>Note:</strong> Thanksgiving Break is Nov 27-28.</em></p>
-<hr>
-<p><strong>Finals Week (Dec 8–13):</strong> Final Project Paper Due.</p>
+<section id="term-2-pm-m-mid-aa-cc" class="level3">
+<h3 class="anchored" data-anchor-id="term-2-pm-m-mid-aa-cc">Term 2: <span class="math inline">\(P(M = M \mid A=a^*, C=c)\)</span></h3>
+<ul>
+<li><strong>What it is:</strong> The observed conditional probability (or density) of the mediator.</li>
+<li><strong>Intuitive Meaning:</strong> “What is the <em>distribution</em> of the mediator <span class="math inline">\(M\)</span> among individuals who <em>actually received</em> the control exposure <span class="math inline">\(A=a^*\)</span> (within stratum <span class="math inline">\(C=c\)</span>)?”</li>
+<li><strong>How we get it:</strong> This is also estimated from data. We fit a model for the mediator, <span class="math inline">\(P(M \mid A, C)\)</span>, and plug in <span class="math inline">\(A=a^*\)</span>.</li>
+<li><strong>Example (cont.):</strong> “In our study, what <em>proportion</em> of people <em>not in the wellness program</em> (<span class="math inline">\(A=0\)</span>) had a low physical activity level (<span class="math inline">\(M\)</span>=low)?” This term represents the natural distribution of the mediator under the control condition.</li>
+</ul>
+</section>
+</section>
+<section id="what-does-integrating-out-the-mediator-mean" class="level2">
+<h2 class="anchored" data-anchor-id="what-does-integrating-out-the-mediator-mean">What Does “Integrating out the mediator” Mean?</h2>
+<p>This is the most important part of your question and is the key to the intuition.</p>
+<p>The <span class="math inline">\(\sum_{m}\)</span> (or <span class="math inline">\(\int ... dm\)</span> for a continuous mediator) is the “integration.” It means we are calculating a <strong>weighted average</strong>.</p>
+<p><strong>“Integrating out the mediator” means we are performing standardization.</strong></p>
+<p>Here is the step-by-step intuition:</p>
+<ol type="1">
+<li><strong>Goal:</strong> We want the average outcome under exposure <span class="math inline">\(A=a\)</span>, but with the mediator distribution from <span class="math inline">\(A=a^*\)</span>.</li>
+<li><strong>Step 1: Get the outcome relationship under <span class="math inline">\(\boldsymbol{A=a}\)</span>:</strong> We use Term 1: <span class="math inline">\(\E{Y \mid A=a, M=m, C=c}\)</span>. This gives us a <em>list</em> of average outcomes for every possible value of <span class="math inline">\(m\)</span>, <em>all</em> in the group that received exposure <span class="math inline">\(A=a\)</span>.
+<ul>
+<li><em>Example:</em>
+<ul>
+<li>Avg. CVD risk for (Program, <span class="math inline">\(M\)</span>=low) = 15%</li>
+<li>Avg. CVD risk for (Program, <span class="math inline">\(M\)</span>=medium) = 10%</li>
+<li>Avg. CVD risk for (Program, <span class="math inline">\(M\)</span>=high) = 5%</li>
+</ul></li>
+</ul></li>
+<li><strong>Step 2: Get the mediator distribution under <span class="math inline">\(\boldsymbol{A=a^*}\)</span>:</strong> We use Term 2: <span class="math inline">\(P(M = m \mid A=a^*, C=c)\)</span>. This gives us a <em>list</em> of weights (probabilities).
+<ul>
+<li><em>Example:</em> In the <em>No Program</em> group:
+<ul>
+<li>Proportion with <span class="math inline">\(M\)</span>=low = 60%</li>
+<li>Proportion with <span class="math inline">\(M\)</span>=medium = 30%</li>
+<li>Proportion with <span class="math inline">\(M\)</span>=high = 10%</li>
+</ul></li>
+</ul></li>
+<li><strong>Step 3: Standardize (Integrate/Sum):</strong> We combine them. We “average” the outcomes from Step 1 using the “weights” from Step 2.</li>
+</ol>
+<p><span class="math display">\[
+\text{Result} = (15\% \times 60\%) + (10\% \times 30\%) + (5\% \times 10\%)
+\]</span></p>
+<p><span class="math display">\[
+\text{Result} = (0.15 \times 0.60) + (0.10 \times 0.30) + (0.05 \times 0.10)
+\]</span></p>
+<p><span class="math display">\[
+\text{Result} = 0.09 + 0.03 + 0.005 = 0.125 \text{ or } 12.5\%
+\]</span></p>
+<p>This result, 12.5%, is the value of <span class="math inline">\(\E{Y^{a=1, M^{a^{*}=0}} \mid C=c}\)</span>. It’s a <em>standardized</em> outcome. It tells us the average CVD risk we would expect in the Program group (12.5%) <em>if</em> they had the same (less healthy) physical activity distribution as the No Program group.</p>
+<p>“Integrating out” simply means we are no longer looking at <span class="math inline">\(M\)</span>-specific outcomes; we have collapsed them into a single, standardized average.</p>
+</section>
+<section id="the-assumptions-are-paramount" class="level2">
+<h2 class="anchored" data-anchor-id="the-assumptions-are-paramount">The Assumptions Are Paramount</h2>
+<p>This formula, this entire identification strategy, is <em>not</em> just a statistical manipulation. It only works—meaning the RHS truly equals the LHS—if four key identification assumptions hold (conditional on <span class="math inline">\(C\)</span>):</p>
+<ol type="1">
+<li><strong>No unmeasured Exposure-Outcome confounding.</strong></li>
+<li><strong>No unmeasured Mediator-Outcome confounding.</strong></li>
+<li><strong>No unmeasured Exposure-Mediator confounding.</strong></li>
+<li><strong>No Mediator-Outcome confounder is itself affected by the Exposure.</strong></li>
+</ol>
+<p>This last assumption is the most challenging. It means there can’t be a variable <span class="math inline">\(L\)</span> that is caused by <span class="math inline">\(A\)</span>, and which in turn causes both <span class="math inline">\(M\)</span> and <span class="math inline">\(Y\)</span>. If such a variable exists, we cannot use this simple formula and must turn to more advanced methods (like MSMs for mediation or sequential g-formula).</p>
+<section id="next-steps" class="level3">
+<h3 class="anchored" data-anchor-id="next-steps">Next Steps</h3>
+<p>Now that we have the theoretical formula, the next logical step is to think about how we would practically estimate this from a dataset. This involves:</p>
+<ol type="1">
+<li>Fitting a statistical model (e.g., logistic regression, linear regression) for the outcome <span class="math inline">\(Y\)</span> given <span class="math inline">\(A, M, \text{and } C\)</span>.</li>
+<li>Fitting a statistical model (e.g., logistic regression, linear regression, multinomial) for the mediator <span class="math inline">\(M\)</span> given <span class="math inline">\(A \text{ and } C\)</span>.</li>
+<li>Using the procedure I described (sometimes called “parametrically-adjusted” estimation or “g-computation”) to calculate the standardized means and compute the Natural Direct and Indirect Effects.</li>
+</ol>
+<!-- ### Suggested Follow-up Prompts
+
+1. How would we write the full formulas for the **Natural Direct Effect (NDE)** and **Natural Indirect Effect (NIE)** using this notation?
+2. Can you draw a DAG that *violates* the fourth assumption (no exposure-induced M-Y confounder) and explain why this formula would fail?
+3. How would we use R (e.g., with the `mediation` package or by hand) to estimate the two terms in this formula and compute the NDE? -->
+</section>
+</section>
+<section id="exposure-mediator-interaction" class="level2">
+<h2 class="anchored" data-anchor-id="exposure-mediator-interaction">Exposure-Mediator Interaction</h2>
+<p>When an exposure-mediator interaction exists, the effect of the mediator on the outcome <em>depends on the level of the exposure</em>. The counterfactual approach allows us to correctly parse this.</p>
+<p>Let’s walk through the derivation using the regression models you’ve proposed.</p>
+<section id="define-the-statistical-models" class="level3">
+<h3 class="anchored" data-anchor-id="define-the-statistical-models">Define the Statistical Models</h3>
+<p>We are in a setting with baseline confounders <span class="math inline">\(C\)</span>, a binary exposure <span class="math inline">\(A \in \{0, 1\}\)</span>, a continuous mediator <span class="math inline">\(M\)</span>, and a continuous outcome <span class="math inline">\(Y\)</span>.</p>
+<p><strong>Model 1: The Mediator Model</strong> We assume a linear model for <span class="math inline">\(M\)</span>, conditional on <span class="math inline">\(A\)</span> and <span class="math inline">\(C\)</span>: <span class="math display">\[
+\E{M \mid A=a, C=c} = \beta_0 + \beta_1 a + \boldsymbol{\beta}_2' c
+\]</span></p>
+<p>For the derivation, we will also assume the mediator’s distribution is normal, <span class="math inline">\(M \mid A=a, C=c \sim \mathcal{N}(\beta_0 + \beta_1 a + \boldsymbol{\beta}_2' c, \sigma_m^2)\)</span>. The <span class="math inline">\(\beta_1\)</span> coefficient represents the effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(M\)</span>.</p>
+<p><strong>Model 2: The Outcome Model</strong> We assume a linear model for <span class="math inline">\(Y\)</span>, conditional on <span class="math inline">\(A\)</span>, <span class="math inline">\(M\)</span>, and <span class="math inline">\(C\)</span>. Crucially, we include the <span class="math inline">\(A \times M\)</span> interaction term. <span class="math display">\[
+\E{Y \mid A=a, M=m, C=c} = \theta_0 + \theta_1 a + \theta_2 m + \boldsymbol{\theta}_3' c + \theta_4 (a \times m)
+\]</span></p>
+<p>Here:</p>
+<ul>
+<li><span class="math inline">\(\theta_1\)</span> is the “direct” effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>, when <span class="math inline">\(M=0\)</span>.</li>
+<li><span class="math inline">\(\theta_2\)</span> is the effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>, when <span class="math inline">\(A=0\)</span>.</li>
+<li><span class="math inline">\(\theta_4\)</span> is the interaction term. It tells us <em>how much the effect of M on Y changes</em> when <span class="math inline">\(A\)</span> changes from 0 to 1. The total effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span> when <span class="math inline">\(A=1\)</span> is <span class="math inline">\((\theta_2 + \theta_4)\)</span>.</li>
+</ul>
+</section>
+<section id="derive-the-mediation-formula" class="level3">
+<h3 class="anchored" data-anchor-id="derive-the-mediation-formula">Derive the Mediation Formula</h3>
+<p>Our goal is to solve for the key counterfactual quantity <span class="math inline">\(\E{Y^{a, M^{a^{*}}} \mid C=c}\)</span>. We will set <span class="math inline">\(a=1\)</span> and <span class="math inline">\(a^*=0\)</span> for clarity, so we are solving for <span class="math inline">\(\E{Y^{a=1, M^{a^{*}=0}} \mid C=c}\)</span>.</p>
+<p>Recall the <em>general</em> mediation formula, using an integral for continuous <span class="math inline">\(M\)</span>: <span class="math display">\[
+\E{Y^{1, M^{0}} \mid C=c} = \int_{-\infty}^{\infty} \E{Y \mid A=1, M=m, C=c} \, p(M = m \mid A=0, C=c) \, dm
+\]</span></p>
+<p>Let’s plug our regression models into this general formula.</p>
+<ul>
+<li><strong>Part 1: <span class="math inline">\(\E{Y \mid A=1, M=m, C=c}\)</span></strong></li>
+</ul>
+<p>From our outcome model (Model 2), we just set <span class="math inline">\(a=1\)</span>: <span class="math display">\[
+\E{Y \mid A=1, M=m, C=c} = \theta_0 + \theta_1(1) + \theta_2 m + \boldsymbol{\theta}_3' c + \theta_4 (1 \times m)
+\]</span> <span class="math display">\[
+= (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4)m
+\]</span></p>
+<ul>
+<li><strong>Part 2: <span class="math inline">\(p(M = m \mid A=0, C=c)\)</span></strong></li>
+</ul>
+<p>From our mediator model (Model 1), this is simply the probability density of a Normal distribution with its mean set by <span class="math inline">\(a=0\)</span>: <span class="math display">\[
+p(m \mid A=0, C=c) \sim \mathcal{N}(\mu = \beta_0 + \beta_1(0) + \boldsymbol{\beta}_2' c, \sigma_m^2)
+\]</span> <span class="math display">\[
+= \mathcal{N}(\mu = \beta_0 + \boldsymbol{\beta}_2' c, \sigma_m^2)
+\]</span></p>
+<ul>
+<li><strong>Putting it together:</strong></li>
+</ul>
+<p>Now we substitute these two parts back into the integral: <span class="math display">\[
+\E{Y^{1, M^{0}} \mid C=c} = \int \left[ (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4)m \right] \, p(m \mid A=0, C=c) \, dm
+\]</span></p>
+<p>We can split the integral and pull out terms that are constant <em>with respect to m</em>: <span class="math display">\[
+= (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) \int p(m \mid A=0, C=c) \, dm + (\theta_2 + \theta_4) \int m \cdot p(m \mid A=0, C=c) \, dm
+\]</span></p>
+<p>This integral simplifies beautifully based on two fundamental properties of probability: 1. <span class="math inline">\(\int p(m \mid ...) \, dm = 1\)</span> (The total probability density must integrate to 1) 2. <span class="math inline">\(\int m \cdot p(m \mid A=0, C=c) \, dm = \E{M \mid A=0, C=c}\)</span> (This is the <em>definition</em> of the expected value of <span class="math inline">\(M\)</span> given <span class="math inline">\(A=0\)</span> and <span class="math inline">\(C=c\)</span>)</p>
+<p>Substituting these in: <span class="math display">\[
+\E{Y^{1, M^{0}} \mid C=c} = (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) \cdot (1) + (\theta_2 + \theta_4) \cdot \E{M \mid A=0, C=c}
+\]</span></p>
+<p>Finally, we plug in the formula for <span class="math inline">\(\E{M \mid A=0, C=c}\)</span> from Model 1: <span class="math display">\[
+\E{Y^{1, M^{0}} \mid C=c} = (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c)
+\]</span></p>
+<p>This is the <strong>analytical solution for the mediation formula</strong> under these specific linear models.</p>
+</section>
+<section id="compute-the-nde-and-nie" class="level3">
+<h3 class="anchored" data-anchor-id="compute-the-nde-and-nie">Compute the NDE and NIE</h3>
+<p>Now we can use this result to derive the NDE and NIE. (Note: These effects are all conditional on <span class="math inline">\(C=c\)</span>).</p>
+</section>
+<section id="natural-direct-effect-nde" class="level3">
+<h3 class="anchored" data-anchor-id="natural-direct-effect-nde">Natural Direct Effect (NDE)</h3>
+<p><span class="math display">\[
+\text{NDE} = \E{Y^{1, M^{0}} \mid C=c} - \E{Y^{0, M^{0}} \mid C=c}
+\]</span></p>
+<ul>
+<li><strong>First term:</strong> We just derived this: <span class="math inline">\(\E{Y^{1, M^{0}} \mid C=c} = (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c)\)</span></li>
+<li><strong>Second term:</strong> We use the same formula, but set <span class="math inline">\(a=0\)</span> <em>and</em> <span class="math inline">\(a^*=0\)</span>: <span class="math inline">\(\E{Y^{0, M^{0}} \mid C=c} = (\theta_0 + \theta_1(0) + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4(0)) (\beta_0 + \boldsymbol{\beta}_2' c)\)</span> <span class="math inline">\(= (\theta_0 + \boldsymbol{\theta}_3' c) + \theta_2 (\beta_0 + \boldsymbol{\beta}_2' c)\)</span></li>
+<li><strong>Subtract:</strong> <span class="math inline">\(\text{NDE} = [ (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c) ] - [ (\theta_0 + \boldsymbol{\theta}_3' c) + \theta_2 (\beta_0 + \boldsymbol{\beta}_2' c) ]\)</span> <span class="math inline">\(\text{NDE} = \theta_1 + \theta_4 (\beta_0 + \boldsymbol{\beta}_2' c)\)</span></li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Intuition for NDE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Natural Direct Effect is <em>not</em> just <span class="math inline">\(\theta_1\)</span>. It is <span class="math inline">\(\theta_1\)</span> (the direct effect when <span class="math inline">\(M=0\)</span>) plus an interaction component <span class="math inline">\(\theta_4\)</span> that is <em>scaled by the natural value of the mediator under control</em>, <span class="math inline">\(\E{M\mid A=0, C=c} = \beta_0 + \boldsymbol{\beta}_2' c\)</span>. This makes perfect sense: it’s the direct effect of <span class="math inline">\(A\)</span>, evaluated at the natural level of <span class="math inline">\(M\)</span> that would occur if <span class="math inline">\(A\)</span> were 0.</p>
+</div>
+</div>
+</section>
+<section id="natural-indirect-effect-nie" class="level3">
+<h3 class="anchored" data-anchor-id="natural-indirect-effect-nie">Natural Indirect Effect (NIE)</h3>
+<p><span class="math display">\[
+\text{NIE} = \E{Y^{1, M^{1}} \mid C=c} - \E{Y^{1, M^{0}} \mid C=c}
+\]</span></p>
+<ul>
+<li><strong>First term:</strong> We use the formula, setting <span class="math inline">\(a=1\)</span> and <span class="math inline">\(a^*=1\)</span>: <span class="math inline">\(\E{Y^{1, M^{1}} \mid C=c} = (\theta_0 + \theta_1(1) + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4(1)) (\beta_0 + \beta_1(1) + \boldsymbol{\beta}_2' c)\)</span> <span class="math inline">\(= (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \beta_1 + \boldsymbol{\beta}_2' c)\)</span></li>
+<li><strong>Second term:</strong> We already have this: <span class="math inline">\(\E{Y^{1, M^{0}} \mid C=c} = (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c)\)</span></li>
+<li><strong>Subtract:</strong> <span class="math inline">\(\text{NIE} = [ (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \beta_1 + \boldsymbol{\beta}_2' c) ] - [ (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c) ]\)</span> The <span class="math inline">\((\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c)\)</span> terms cancel. <span class="math inline">\(\text{NIE} = (\theta_2 + \theta_4) (\beta_0 + \beta_1 + \boldsymbol{\beta}_2' c) - (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c)\)</span> Factor out the common term <span class="math inline">\((\theta_2 + \theta_4)\)</span>: <span class="math inline">\(\text{NIE} = (\theta_2 + \theta_4) [ (\beta_0 + \beta_1 + \boldsymbol{\beta}_2' c) - (\beta_0 + \boldsymbol{\beta}_2' c) ]\)</span> <span class="math inline">\(\text{NIE} = (\theta_2 + \theta_4) \beta_1\)</span></li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Intuition for NIE
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Natural Indirect Effect is the product of two terms:</p>
+<ol type="1">
+<li><span class="math inline">\(\beta_1\)</span>: The effect of the exposure <span class="math inline">\(A\)</span> on the mediator <span class="math inline">\(M\)</span>.</li>
+<li><span class="math inline">\((\theta_2 + \theta_4)\)</span>: The effect of the mediator <span class="math inline">\(M\)</span> on the outcome <span class="math inline">\(Y\)</span> <em>when the exposure is set to <span class="math inline">\(A=1\)</span></em>.</li>
+</ol>
+<p>This is the “product of coefficients” method, but <em>only</em> because we correctly identified which product to use: it’s the <span class="math inline">\(A \to M\)</span> path multiplied by the <span class="math inline">\(M \to Y\)</span> path <em>under the treated condition</em>.</p>
+</div>
+</div>
+</section>
+<section id="summary" class="level3">
+<h3 class="anchored" data-anchor-id="summary">Summary</h3>
+<p>Given the two linear models:</p>
+<ul>
+<li><span class="math inline">\(M = \beta_0 + \beta_1 a + \boldsymbol{\beta}_2' c\)</span></li>
+<li><span class="math inline">\(Y = \theta_0 + \theta_1 a + \theta_2 m + \boldsymbol{\theta}_3' c + \theta_4 (a \times m)\)</span></li>
+</ul>
+<p>And assuming the four main identification assumptions hold (no unmeasured confounding, and no M-Y confounder is affected by A), the conditional natural effects are:</p>
+<ul>
+<li><strong><span class="math inline">\(\text{NDE}(c) = \theta_1 + \theta_4 (\beta_0 + \boldsymbol{\beta}_2' c)\)</span></strong></li>
+<li><strong><span class="math inline">\(\text{NIE}(c) = \beta_1 (\theta_2 + \theta_4)\)</span></strong></li>
+</ul>
+<p>This derivation clearly shows why simply “controlling for the mediator” in a regression, as in the Baron-Kenny method, is insufficient when interaction is present. That old method would estimate the direct effect as <span class="math inline">\(\theta_1\)</span>, which is clearly incorrect. The mediation formula, in contrast, gives us a rigorous and interpretable result.</p>
+<!-- 
+### Next Steps
+
+This derivation gives us the *conditional* effects, which depend on the values of the confounders $C=c$. To report a single NDE and NIE for the population, we would typically average these conditional effects over the distribution of $C$ in our population. This is the next logical step in estimation. 
+-->
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -1227,22 +1344,10 @@ ul.task-list li input[type="checkbox"] {
     }
   });
   </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="./syllabus/schedule.html" class="pagination-link" aria-label="Schedule">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Schedule</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="./home_assignments.html" class="pagination-link" aria-label="Assignments">
-        <span class="nav-page-text">Assignments</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/home_lectures.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-11_mediation_formula.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

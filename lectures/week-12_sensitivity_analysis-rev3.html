@@ -56,7 +56,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -527,7 +547,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Oct-20-2025</p>
+        <p class="date">Nov-06-2025</p>
       </div>
     </div>
     
@@ -659,33 +679,34 @@ window.Quarto = {
   <li><a href="#the-limits-of-adjusting-for-confounding" id="toc-the-limits-of-adjusting-for-confounding" class="nav-link" data-scroll-target="#the-limits-of-adjusting-for-confounding">The Limits of Adjusting for Confounding</a></li>
   <li><a href="#from-assumption-to-quantification-bias-analysis" id="toc-from-assumption-to-quantification-bias-analysis" class="nav-link" data-scroll-target="#from-assumption-to-quantification-bias-analysis">From Assumption to Quantification: Bias Analysis</a></li>
   <li><a href="#the-e-value-a-tipping-point-for-a-single-confounder" id="toc-the-e-value-a-tipping-point-for-a-single-confounder" class="nav-link" data-scroll-target="#the-e-value-a-tipping-point-for-a-single-confounder">The E-Value: A Tipping-Point for a Single Confounder</a></li>
+  <li><a href="#why-risk-ratios" id="toc-why-risk-ratios" class="nav-link" data-scroll-target="#why-risk-ratios">Why Risk Ratios?</a></li>
   <li><a href="#extending-the-logic" id="toc-extending-the-logic" class="nav-link" data-scroll-target="#extending-the-logic">Extending the Logic</a></li>
   <li><a href="#connection-to-rosenbaums-sensitivity-analysis" id="toc-connection-to-rosenbaums-sensitivity-analysis" class="nav-link" data-scroll-target="#connection-to-rosenbaums-sensitivity-analysis">Connection to Rosenbaum’s Sensitivity Analysis</a></li>
   </ul></li>
-  <li><a href="#intuitive-clarifications-of-challenging-ideas" id="toc-intuitive-clarifications-of-challenging-ideas" class="nav-link" data-scroll-target="#intuitive-clarifications-of-challenging-ideas">2. Intuitive Clarifications of Challenging Ideas</a>
-  <ul class="collapse">
-  <li><a href="#analogy-the-causal-speed-bump" id="toc-analogy-the-causal-speed-bump" class="nav-link" data-scroll-target="#analogy-the-causal-speed-bump">Analogy: The Causal Speed Bump 🚗</a></li>
   <li><a href="#what-the-e-value-is-not" id="toc-what-the-e-value-is-not" class="nav-link" data-scroll-target="#what-the-e-value-is-not">What the E-value is NOT</a></li>
-  </ul></li>
-  <li><a href="#simple-hand-calculation-numerical-example" id="toc-simple-hand-calculation-numerical-example" class="nav-link" data-scroll-target="#simple-hand-calculation-numerical-example">3. Simple, Hand-Calculation Numerical Example</a></li>
-  <li><a href="#r-code-examples-interpretation" id="toc-r-code-examples-interpretation" class="nav-link" data-scroll-target="#r-code-examples-interpretation">4. R Code Examples &amp; Interpretation</a>
+  <li><a href="#simple-hand-calculation-numerical-example" id="toc-simple-hand-calculation-numerical-example" class="nav-link" data-scroll-target="#simple-hand-calculation-numerical-example">Simple, Hand-Calculation Numerical Example</a></li>
+  <li><a href="#r-code-examples-interpretation" id="toc-r-code-examples-interpretation" class="nav-link" data-scroll-target="#r-code-examples-interpretation">R Code Examples &amp; Interpretation</a>
   <ul class="collapse">
+  <li><a href="#why-the-evalue-package-converts-other-measures-to-risk-ratios" id="toc-why-the-evalue-package-converts-other-measures-to-risk-ratios" class="nav-link" data-scroll-target="#why-the-evalue-package-converts-other-measures-to-risk-ratios">Why the <code>evalue</code> Package Converts other Measures to risk Ratios</a></li>
   <li><a href="#e-value-for-a-relative-risk-rr" id="toc-e-value-for-a-relative-risk-rr" class="nav-link" data-scroll-target="#e-value-for-a-relative-risk-rr">E-value for a Relative Risk (RR)</a></li>
-  <li><a href="#e-value-for-an-odds-ratio-or-with-a-confidence-interval" id="toc-e-value-for-an-odds-ratio-or-with-a-confidence-interval" class="nav-link" data-scroll-target="#e-value-for-an-odds-ratio-or-with-a-confidence-interval">E-value for an Odds Ratio (OR) with a Confidence Interval</a></li>
-  <li><a href="#e-value-for-a-continuous-outcome" id="toc-e-value-for-a-continuous-outcome" class="nav-link" data-scroll-target="#e-value-for-a-continuous-outcome">E-value for a Continuous Outcome</a></li>
+  </ul></li>
+  <li><a href="#when-input-is-an-odds-ratio-or" id="toc-when-input-is-an-odds-ratio-or" class="nav-link" data-scroll-target="#when-input-is-an-odds-ratio-or">When Input is an <strong>Odds Ratio (OR)</strong></a>
+  <ul class="collapse">
+  <li><a href="#e-value-for-a-continuous-outcome-standardized-mean-difference" id="toc-e-value-for-a-continuous-outcome-standardized-mean-difference" class="nav-link" data-scroll-target="#e-value-for-a-continuous-outcome-standardized-mean-difference">E-value for a Continuous Outcome (Standardized Mean Difference)</a></li>
+  <li><a href="#worked-example-1-point-estimate" id="toc-worked-example-1-point-estimate" class="nav-link" data-scroll-target="#worked-example-1-point-estimate">✅ Worked Example 1 (Point Estimate)</a></li>
+  <li><a href="#step-by-step-hand-calculation" id="toc-step-by-step-hand-calculation" class="nav-link" data-scroll-target="#step-by-step-hand-calculation">Step-by-Step Hand Calculation</a></li>
   </ul></li>
   <li><a href="#hands-on-r-lab" id="toc-hands-on-r-lab" class="nav-link" data-scroll-target="#hands-on-r-lab">5. Hands-On R Lab</a>
   <ul class="collapse">
   <li><a href="#lab-objectives" id="toc-lab-objectives" class="nav-link" data-scroll-target="#lab-objectives">Lab Objectives</a></li>
-  <li><a href="#reading-warm-up-flipped-classroom" id="toc-reading-warm-up-flipped-classroom" class="nav-link" data-scroll-target="#reading-warm-up-flipped-classroom">Reading Warm-Up (Flipped Classroom)</a></li>
   <li><a href="#lab-setup-simulating-data" id="toc-lab-setup-simulating-data" class="nav-link" data-scroll-target="#lab-setup-simulating-data">Lab Setup: Simulating Data</a></li>
   <li><a href="#lab-tasks" id="toc-lab-tasks" class="nav-link" data-scroll-target="#lab-tasks">Lab Tasks</a></li>
   <li><a href="#retrieval-quiz-reflection" id="toc-retrieval-quiz-reflection" class="nav-link" data-scroll-target="#retrieval-quiz-reflection">Retrieval Quiz &amp; Reflection</a></li>
   </ul></li>
-  <li><a href="#common-pitfalls-checks" id="toc-common-pitfalls-checks" class="nav-link" data-scroll-target="#common-pitfalls-checks">6. Common Pitfalls &amp; Checks</a></li>
-  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">❓ Check Your Understanding</a></li>
-  <li><a href="#advanced-teaching-activities-interactivity" id="toc-advanced-teaching-activities-interactivity" class="nav-link" data-scroll-target="#advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</a></li>
-  <li><a href="#appendix-advanced-theory-derivations" id="toc-appendix-advanced-theory-derivations" class="nav-link" data-scroll-target="#appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</a>
+  <li><a href="#common-pitfalls-checks" id="toc-common-pitfalls-checks" class="nav-link" data-scroll-target="#common-pitfalls-checks">Common Pitfalls &amp; Checks</a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">Check Your Understanding</a></li>
+  <li><a href="#advanced-teaching-activities-interactivity" id="toc-advanced-teaching-activities-interactivity" class="nav-link" data-scroll-target="#advanced-teaching-activities-interactivity">Advanced Teaching Activities &amp; Interactivity</a></li>
+  <li><a href="#appendix-advanced-theory-derivations" id="toc-appendix-advanced-theory-derivations" class="nav-link" data-scroll-target="#appendix-advanced-theory-derivations">Appendix: Advanced Theory &amp; Derivations</a>
   <ul class="collapse">
   <li><a href="#derivation-of-the-e-value-for-a-risk-ratio" id="toc-derivation-of-the-e-value-for-a-risk-ratio" class="nav-link" data-scroll-target="#derivation-of-the-e-value-for-a-risk-ratio">Derivation of the E-value for a Risk Ratio</a></li>
   <li><a href="#probabilistic-bias-analysis-in-brief" id="toc-probabilistic-bias-analysis-in-brief" class="nav-link" data-scroll-target="#probabilistic-bias-analysis-in-brief">Probabilistic Bias Analysis in Brief</a></li>
@@ -765,34 +786,22 @@ window.Quarto = {
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p1)</span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggdag_status</span>(</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  dag_model,</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">layout     =</span> <span class="st">"manual"</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Manual repel with after_stat(label)"</span>) <span class="sc">+</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>()</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co"># p2 &lt;- ggdag_status(</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   dag_model,</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   layout     = "manual"</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># ) +</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(title = "Manual repel with after_stat(label)") +</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_dag()</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># print(p2)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-unmeasured-confounding-dag-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-unmeasured-confounding-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-unmeasured-confounding-dag-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="fig-unmeasured-confounding-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <a href="week-12_sensitivity_analysis-rev3_files/figure-html/fig-unmeasured-confounding-dag-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: The canonical problem of unmeasured confounding. The path A ← U → Y is a backdoor path that creates a spurious association between A and Y."><img src="week-12_sensitivity_analysis-rev3_files/figure-html/fig-unmeasured-confounding-dag-1.png" class="img-fluid figure-img" width="672"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-unmeasured-confounding-dag-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-unmeasured-confounding-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: The canonical problem of unmeasured confounding. The path A ← U → Y is a backdoor path that creates a spurious association between A and Y.
-</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-unmeasured-confounding-dag-2" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-unmeasured-confounding-dag-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="week-12_sensitivity_analysis-rev3_files/figure-html/fig-unmeasured-confounding-dag-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: The canonical problem of unmeasured confounding. The path A ← U → Y is a backdoor path that creates a spurious association between A and Y."><img src="week-12_sensitivity_analysis-rev3_files/figure-html/fig-unmeasured-confounding-dag-2.png" class="img-fluid figure-img" width="672"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-unmeasured-confounding-dag-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: The canonical problem of unmeasured confounding. The path A ← U → Y is a backdoor path that creates a spurious association between A and Y.
 </figcaption>
 </figure>
 </div>
@@ -826,6 +835,16 @@ Figure&nbsp;2: The canonical problem of unmeasured confounding. The path A ← U
 </ol>
 <p>A large E-value means that these confounder associations would have to be very large to explain away the result, making our finding more <strong>robust</strong>. A small E-value means that even a weak confounder could explain away the finding, making it <strong>fragile</strong>.</p>
 </section>
+<section id="why-risk-ratios" class="level3">
+<h3 class="anchored" data-anchor-id="why-risk-ratios">Why Risk Ratios?</h3>
+<p>This definition is inherently expressed in terms of <strong>risk ratios</strong> because:</p>
+<ul>
+<li>Risk ratios are <strong>collapsible</strong>, making them directly interpretable in the context of confounding;</li>
+<li>The “minimum strength of confounding” is naturally expressed as a <em>ratio of risks</em> rather than odds or standardized mean differences;</li>
+<li>Odds ratios and standardized mean differences can both be <em>mapped</em> to approximate risk ratios.</li>
+</ul>
+<p>Therefore, even when your study reports an odds ratio or a mean difference, the E-value is conceptually about <em>risk ratio equivalence</em>.</p>
+</section>
 <section id="extending-the-logic" class="level3">
 <h3 class="anchored" data-anchor-id="extending-the-logic">Extending the Logic</h3>
 <p>While our focus is on unmeasured confounding, the logic of sensitivity analysis applies to other untestable assumptions:</p>
@@ -839,32 +858,16 @@ Figure&nbsp;2: The canonical problem of unmeasured confounding. The path A ← U
 <p>The E-value concept is a direct descendant of <strong>Rosenbaum’s sensitivity analysis for matched pairs</strong>. In the 1980s, Paul Rosenbaum developed a method to quantify how a binary unmeasured confounder would affect the odds of receiving treatment. His parameter, gamma (<span class="math inline">\(\Gamma\)</span>), measures the maximum odds ratio by which two individuals with the same measured covariates might differ in their odds of treatment due to an unmeasured confounder. The analysis then determines how large <span class="math inline">\(\Gamma\)</span> must be to render the study’s conclusions uncertain. The E-value generalizes this logic beyond matched pairs and expresses the result on the familiar risk ratio scale.</p>
 </section>
 </section>
-<section id="intuitive-clarifications-of-challenging-ideas" class="level2">
-<h2 class="anchored" data-anchor-id="intuitive-clarifications-of-challenging-ideas">2. Intuitive Clarifications of Challenging Ideas</h2>
-<section id="analogy-the-causal-speed-bump" class="level3">
-<h3 class="anchored" data-anchor-id="analogy-the-causal-speed-bump">Analogy: The Causal Speed Bump 🚗</h3>
-<p>Think of your observed association (e.g., a Relative Risk of 2.0) as a car moving towards a causal conclusion. Unmeasured confounding (<code>U</code>) is a <strong>speed bump</strong> on the road.</p>
-<ul>
-<li>A <strong>small speed bump</strong> (a weak confounder, like one with <span class="math inline">\(RR_{AU}=1.2\)</span> and <span class="math inline">\(RR_{UY}=1.2\)</span>) might slow your car down a bit, but it won’t stop it. Your conclusion remains largely intact.</li>
-<li>A <strong>large speed bump</strong> (a strong confounder, like one with <span class="math inline">\(RR_{AU}=4.0\)</span> and <span class="math inline">\(RR_{UY}=4.0\)</span>) could bring your car to a complete halt, “explaining away” your entire association.</li>
-</ul>
-<p>The <strong>E-value tells you the minimum height of the speed bump required to stop your car.</strong></p>
-<ul>
-<li>An <strong>E-value of 4.0</strong> means you need a speed bump of at least “height 4.0” to stop your car. Any confounder weaker than that cannot fully explain your result. This makes your finding quite robust.</li>
-<li>An <strong>E-value of 1.2</strong> means a tiny speed bump can stop you. Your finding is very fragile.</li>
-</ul>
-</section>
-<section id="what-the-e-value-is-not" class="level3">
-<h3 class="anchored" data-anchor-id="what-the-e-value-is-not">What the E-value is NOT</h3>
+<section id="what-the-e-value-is-not" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-e-value-is-not">What the E-value is NOT</h2>
 <p>It’s crucial to avoid common misinterpretations.</p>
 <ol type="1">
 <li><strong>The E-value does NOT measure the actual confounding in your study.</strong> It tells you the minimum amount of confounding that <em>would be necessary</em> to create the observed association if the true causal effect were null. The actual confounding could be smaller or larger.</li>
 <li><strong>A large E-value does NOT prove your effect is causal.</strong> It only provides a measure of resilience against a <em>single</em> unmeasured confounder with specific properties. Multiple, weaker confounders acting in concert could still explain the result. It is a tool for skepticism, not a stamp of proof.</li>
 </ol>
 </section>
-</section>
 <section id="simple-hand-calculation-numerical-example" class="level2">
-<h2 class="anchored" data-anchor-id="simple-hand-calculation-numerical-example">3. Simple, Hand-Calculation Numerical Example</h2>
+<h2 class="anchored" data-anchor-id="simple-hand-calculation-numerical-example">Simple, Hand-Calculation Numerical Example</h2>
 <p>Let’s make this concrete. Imagine a study on the effect of a new medication (<code>A=1</code>) versus a placebo (<code>A=0</code>) on recovery from an illness (<code>Y=1</code>).</p>
 <p>We observe the following data from 200 patients:</p>
 <table class="caption-top table">
@@ -933,8 +936,11 @@ E\text{-value} = 2.0 + \sqrt{2.0} \approx 2.0 + 1.414 = \mathbf{3.414}
 </section>
 </section>
 <section id="r-code-examples-interpretation" class="level2">
-<h2 class="anchored" data-anchor-id="r-code-examples-interpretation">4. R Code Examples &amp; Interpretation</h2>
-<p>The <code>EValue</code> package in R makes these calculations trivial.</p>
+<h2 class="anchored" data-anchor-id="r-code-examples-interpretation">R Code Examples &amp; Interpretation</h2>
+<section id="why-the-evalue-package-converts-other-measures-to-risk-ratios" class="level3">
+<h3 class="anchored" data-anchor-id="why-the-evalue-package-converts-other-measures-to-risk-ratios">Why the <code>evalue</code> Package Converts other Measures to risk Ratios</h3>
+<p>The package follows the logic from <span class="citation" data-cites="vanderweele2017evalue">VanderWeele &amp; Ding (<a href="#ref-vanderweele2017evalue" role="doc-biblioref">2017</a>)</span> and <span class="citation" data-cites="mathur2018web">Mathur et al. (<a href="#ref-mathur2018web" role="doc-biblioref">2018</a>)</span>: every input (OR, HR, MD, etc.) is first <strong>translated to an approximate risk ratio</strong> before computing the E-value. This ensures that the E-value is always interpreted on the risk ratio scale, which is the foundation of its definition.</p>
+</section>
 <section id="e-value-for-a-relative-risk-rr" class="level3">
 <h3 class="anchored" data-anchor-id="e-value-for-a-relative-risk-rr">E-value for a Relative Risk (RR)</h3>
 <p>Let’s confirm our hand calculation. We provide the point estimate (<code>est</code>) of our RR.</p>
@@ -951,49 +957,144 @@ RR       2.000000    NA    NA
 E-values 3.414214    NA    NA</code></pre>
 </div>
 </div>
-<p><strong>Interpretation:</strong> The output confirms our hand calculation. The E-value for the point estimate of 2.0 is <strong>3.41</strong>. The table shows the trade-off: if the confounder-exposure RR (<span class="math inline">\(RR_{AU}\)</span>) was, say, 5.8, the confounder-outcome RR (<span class="math inline">\(RR_{UY}\)</span>) would only need to be 1.5 to explain the effect.</p>
+<p><strong>Interpretation:</strong> The output confirms our hand calculation. The E-value for the point estimate of 2.0 is 3.4142136. This means that to explain away the entire association, an unmeasured confounder would need to be associated with both exposure and outcome by a risk ratio of at least 3.414 each.</p>
 </section>
-<section id="e-value-for-an-odds-ratio-or-with-a-confidence-interval" class="level3">
-<h3 class="anchored" data-anchor-id="e-value-for-an-odds-ratio-or-with-a-confidence-interval">E-value for an Odds Ratio (OR) with a Confidence Interval</h3>
-<p>In practice, we care more about the robustness of our entire finding, including its statistical uncertainty. The most conservative approach is to calculate the E-value for the limit of the confidence interval that is closest to the null (1.0 for ratio measures).</p>
-<p>Suppose a case-control study reports an OR of 2.5 with a 95% CI of [1.5, 4.17]. We care most about the <strong>1.5</strong>, as it’s the weakest effect compatible with our data.</p>
+</section>
+<section id="when-input-is-an-odds-ratio-or" class="level2">
+<h2 class="anchored" data-anchor-id="when-input-is-an-odds-ratio-or">When Input is an <strong>Odds Ratio (OR)</strong></h2>
+<p>When you call:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">evalues.OR</span>(<span class="at">est =</span> <span class="fl">2.5</span>, <span class="at">lo =</span> <span class="fl">1.5</span>, <span class="at">hi =</span> <span class="fl">4.17</span>, <span class="at">rare =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>the package converts the odds ratio to a <strong>risk ratio (RR)</strong> approximation.</p>
+<p>If the outcome is <strong>not rare</strong>, the relationship between OR and RR is nonlinear. For interpretability, the package uses the “equal causative strength” RR equivalent to the given OR.</p>
+<ul>
+<li>If <code>rare = TRUE</code>, it assumes the event is rare (&lt; 15%), so <span class="math inline">\(RR \approx OR\)</span>.</li>
+<li>If <code>rare = FALSE</code> (default), it adjusts for non-rare outcomes using the identity:</li>
+</ul>
+<!-- 
+$$
+RR = \frac{OR}{1 - p_0 + (p_0 \times OR)}
+$${#eq-or-to-rr} 
+-->
+<p><span id="eq-or-to-rr-approx"><span class="math display">\[
+RR \approx \sqrt{OR}
+\tag{1}\]</span></span></p>
+<p>This yields the “Risk Ratio equivalent” column in your output.</p>
+<p>That’s why your output shows:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate E-value for point estimate and CI</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>evalue_result_or <span class="ot">&lt;-</span> <span class="fu">evalues.OR</span>(<span class="at">est =</span> <span class="fl">2.5</span>, <span class="at">lo =</span> <span class="fl">1.5</span>, <span class="at">hi =</span> <span class="fl">4.17</span>, <span class="at">rare=</span><span class="cn">FALSE</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(evalue_result_or)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>            point    lower    upper
 RR       1.581139 1.224745 2.042058
 E-values 2.539711 1.749392       NA</code></pre>
 </div>
 </div>
-<p><strong>Interpretation:</strong></p>
+<p>Even though you started with an <strong>odds ratio</strong>, the function <em>converts</em> to the RR scale to preserve conceptual consistency with the E-value’s definition. Here, the RR equivalent of the OR of 2.5 is <span class="math inline">\(\sqrt{2.5} \approx\)</span> 1.581. Similarly, the RR equivalent of the lower confidence limit of 1.5 is <span class="math inline">\(\sqrt{1.5} \approx\)</span> 1.225.</p>
+<p><strong>Interpretation:</strong> The E-value for the point estimate of RR = 1.581 is 2.54, while the E-value for the lower confidence limit of 1.225 is 1.749. This means that to explain away the entire association (including uncertainty), an unmeasured confounder would need to be associated with both exposure and outcome by a risk ratio of at least 1.749 each.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When the lower confidence limit is present, always report the E-value for the limit closest to the null. This is a more conservative measure of robustness.</p>
+</div>
+</div>
+<section id="e-value-for-a-continuous-outcome-standardized-mean-difference" class="level3">
+<h3 class="anchored" data-anchor-id="e-value-for-a-continuous-outcome-standardized-mean-difference">E-value for a Continuous Outcome (Standardized Mean Difference)</h3>
+<p>The E-value framework was originally designed for binary outcomes on the risk ratio (RR) scale. However, its logic can be extended to continuous outcomes (e.g., test scores, blood pressure, income) from linear regression.</p>
+<p>To do this, we must first convert our finding into a <strong>standardized mean difference (SMD)</strong>, also known as <strong>Cohen’s <span class="math inline">\(d\)</span></strong>. This puts the effect on a “scale-free” metric that can then be (approximately) converted to the RR scale that the E-value formula requires.</p>
+<p><strong>The logic follows three steps:</strong></p>
+<ol type="1">
+<li><strong>Standardize the Effect:</strong> Calculate the standardized mean difference, <span class="math inline">\(d = \frac{\mu_1 - \mu_0}{\sigma}\)</span>, where <span class="math inline">\(\mu_1 - \mu_0\)</span> is the mean difference found in your study (your regression coefficient <span class="math inline">\(\beta_1\)</span>) and <span class="math inline">\(\sigma\)</span> is the standard deviation of the outcome.</li>
+<li><strong>Convert <span class="math inline">\(d\)</span> to an “Equivalent RR”:</strong> The <code>EValue</code> package uses an approximation to find the risk ratio that would, in a hypothetical cohort, be equivalent to observing a standardized mean difference of <span class="math inline">\(d\)</span>.</li>
+<li><strong>Calculate the E-value:</strong> The standard E-value formula is then applied to this equivalent risk ratio.</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Cohen’s d and its Standard Error
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Cohen’s d</strong> <span class="citation" data-cites="cohen1988statistical">(<a href="#ref-cohen1988statistical" role="doc-biblioref">Cohen, 1988</a>)</span>:</p>
+<p><span class="math display">\[
+d = \frac{\bar{X}_1 - \bar{X}_2}{s_p}
+\]</span></p>
+<p>Where pooled SD is: <span class="math display">\[
+s_p = \sqrt{\frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{n_1 + n_2 - 2}}
+\]</span></p>
+<p><strong>Standard Error for d</strong> <span class="citation" data-cites="hedges2014statistical">(<a href="#ref-hedges2014statistical" role="doc-biblioref">Hedges &amp; Olkin, 2014</a>)</span>:</p>
+<p><span class="math display">\[
+SE_d = \sqrt{\frac{n_1 + n_2}{n_1 n_2} + \frac{d^2}{2(n_1 + n_2)}}
+\]</span></p>
+<p><strong>Key Nuances:</strong></p>
 <ul>
-<li><strong>Point Estimate:</strong> To explain away the OR of 2.5, we would need a confounder with an OR of <strong>4.44</strong> for both its association with the exposure and the outcome.</li>
-<li><strong>Confidence Interval:</strong> To shift the lower bound of the CI to the null value of 1.0, we would need a confounder with an OR of <strong>2.37</strong>. This is the more important number. We should report: “An unmeasured confounder associated with both the exposure and the outcome by an odds ratio of 2.37-fold each, above and beyond the measured covariates, could explain away the observed association, but weaker confounding could not.”</li>
+<li>This formula assumes <strong>equal population variances</strong></li>
+<li>The term <span class="math inline">\(\frac{d^2}{2(n_1 + n_2)}\)</span> accounts for uncertainty in estimating the population standard deviation</li>
+<li>With small samples (&lt;20 per group), this can substantially underestimate the true SE</li>
 </ul>
+</div>
+</div>
 </section>
-<section id="e-value-for-a-continuous-outcome" class="level3">
-<h3 class="anchored" data-anchor-id="e-value-for-a-continuous-outcome">E-value for a Continuous Outcome</h3>
-<p>The logic also applies to continuous outcomes. The function <code>evalues.MD</code> works with the standardized mean difference, <span class="math inline">\(d = \frac{\mu_1 - \mu_0}{\sigma}\)</span>. You also need the standard deviation (<code>sd</code>) of the outcome.</p>
-<p>Imagine a study finds that a tutoring program increases student test scores by 5 points, and the standard deviation of scores is 10.</p>
+<section id="worked-example-1-point-estimate" class="level3">
+<h3 class="anchored" data-anchor-id="worked-example-1-point-estimate">✅ Worked Example 1 (Point Estimate)</h3>
+<p>Imagine a study finds that a new tutoring program (<span class="math inline">\(A=1\)</span>) increases student test scores (<span class="math inline">\(Y\)</span>) by <strong>5 points</strong> compared to no program (<span class="math inline">\(A=0\)</span>). The standard deviation of all test scores in the sample is <strong>10 points</strong>.</p>
+<p><strong>Question:</strong> How robust is this 5-point finding to unmeasured confounding?</p>
+</section>
+<section id="step-by-step-hand-calculation" class="level3">
+<h3 class="anchored" data-anchor-id="step-by-step-hand-calculation">Step-by-Step Hand Calculation</h3>
+<ol type="1">
+<li><strong>Standardize the Effect (Calculate Cohen’s <span class="math inline">\(d\)</span>):</strong></li>
+</ol>
+<p><span class="math display">\[
+d = \frac{\text{Mean Difference}}{\text{Standard Deviation}} = \frac{5}{10} = 0.5
+\]</span></p>
+<p>This is a “medium” sized effect.</p>
+<ol start="2" type="1">
+<li><strong>Convert <span class="math inline">\(d\)</span> to an Equivalent Risk Ratio (<span class="math inline">\(RR_{equiv}\)</span>):</strong> The conversion formula used by the <code>EValue</code> package (derived from <span class="citation" data-cites="vanderweele2017evalue">VanderWeele &amp; Ding (<a href="#ref-vanderweele2017evalue" role="doc-biblioref">2017</a>)</span>) is <span class="math inline">\(RR_{equiv} \approx \exp(0.91 \times d)\)</span>.</li>
+</ol>
+<p><span class="math display">\[
+RR_{equiv} \approx \exp(0.91 \times 0.5) = \exp(0.455) \approx 1.576
+\]</span></p>
+<p>This means a standardized mean difference of 0.5 is approximately as strong as an association with a Risk Ratio of 1.58.</p>
+<ol type="1">
+<li><strong>Calculate the E-value from this <span class="math inline">\(RR_{equiv}\)</span>:</strong> We use the standard E-value formula: <span class="math inline">\(E = RR + \sqrt{RR \times (RR - 1)}\)</span></li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+E\text{-value} &amp; = 1.576 + \sqrt{1.576 \times (1.576 - 1)}\\
+&amp;= 1.576 + \sqrt{1.576 \times 0.576}\\
+&amp;= 1.576 + \sqrt{0.9079}\\
+&amp; \approx 1.576 + 0.953 = 2.529
+\end{aligned}
+\]</span></p>
+<p><strong>R Code Implementation:</strong></p>
+<p>The <code>EValue::evalues.MD()</code> function performs these steps for us automatically. We just provide the estimated Cohen’s <span class="math inline">\(d\)</span> (<code>est</code>), and in case of the having the the standard error (<code>se</code>) of the estimate, we can provide that as well. The standard error is optional; if omitted, the function will compute the E-value for the point estimate only.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># est = 5 point difference, sd = 10</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>evalue_result_md <span class="ot">&lt;-</span> <span class="fu">evalues.MD</span>(<span class="at">est =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="dv">10</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(evalue_result_md)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>evalue_result_md <span class="ot">&lt;-</span> EValue<span class="sc">::</span><span class="fu">evalues.MD</span>(.<span class="dv">5</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(evalue_result_md)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>             point lower upper
-RR        94.63241    NA    NA
-E-values 188.76349    NA    NA</code></pre>
+<pre><code>            point lower upper
+RR       1.576173    NA    NA
+E-values 2.529142    NA    NA</code></pre>
 </div>
 </div>
-<p><strong>Interpretation:</strong> The standardized difference is <span class="math inline">\(d = 5/10 = 0.5\)</span>. The corresponding E-value is <strong>2.37</strong>. This means an unmeasured confounder (e.g., student motivation) would need to be associated with both receiving tutoring and higher test scores with a strength equivalent to a risk ratio of 2.37 to explain this 5-point difference.</p>
+<p><strong>Interpretation:</strong></p>
+<ul>
+<li>The <code>RR</code> row (1.58) shows the equivalent Risk Ratio corresponding to our <span class="math inline">\(d=0.5\)</span> effect.</li>
+<li>The <code>E-values</code> row (2.53) shows our final result, which matches our hand calculation.</li>
+<li>For the lower confidence limit, the E-value is NA</li>
+<li><strong>Conclusion:</strong> To fully explain away our 5-point finding, an unmeasured confounder <span class="math inline">\(U\)</span> (e.g., student motivation) would need to be associated with <em>both</em> receiving tutoring (<span class="math inline">\(A\)</span>) and test scores (<span class="math inline">\(Y\)</span>) by a risk ratio of <strong>2.53-fold each</strong>, above and beyond any covariates we already adjusted for.</li>
+</ul>
 </section>
 </section>
 <section id="hands-on-r-lab" class="level2">
@@ -1005,11 +1106,6 @@ E-values 188.76349    NA    NA</code></pre>
 <li>Apply sensitivity analysis to a simulated dataset.</li>
 <li>Reflect on the role of unmeasured confounding in your own research domain.</li>
 </ul>
-</section>
-<section id="reading-warm-up-flipped-classroom" class="level3">
-<h3 class="anchored" data-anchor-id="reading-warm-up-flipped-classroom">Reading Warm-Up (Flipped Classroom)</h3>
-<p><strong>Instructions:</strong> Please read VanderWeele, T. J., &amp; Ding, P. (2017). Sensitivity Analysis in Observational Research: Introducing the E-Value. <em>Annals of Internal Medicine</em>, 167(4), 268–274.</p>
-<p><strong>Question:</strong> In one sentence, what is the primary question the E-value helps an investigator answer? <em>(Answer: The E-value helps an investigator determine how strong an unmeasured confounder’s associations with the exposure and outcome would need to be to explain away the observed exposure-outcome association.)</em></p>
 </section>
 <section id="lab-setup-simulating-data" class="level3">
 <h3 class="anchored" data-anchor-id="lab-setup-simulating-data">Lab Setup: Simulating Data</h3>
@@ -1028,7 +1124,7 @@ E-values 188.76349    NA    NA</code></pre>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Treatment assignment A depends on L and U</span></span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Health conscious people (U=1) are more likely to join</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>prob_A <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">+</span> <span class="fl">0.05</span> <span class="sc">*</span> L <span class="sc">+</span> <span class="fl">1.2</span> <span class="sc">*</span> U)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>prob_A <span class="ot">&lt;-</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">+</span> <span class="fl">0.05</span> <span class="sc">*</span> L <span class="sc">+</span> <span class="fl">2.5</span> <span class="sc">*</span> U)</span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, prob_A)</span>
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Outcome Y depends on A, L, and U</span></span>
@@ -1059,18 +1155,18 @@ E-values 188.76349    NA    NA</code></pre>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(…)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>&lt;details&gt;</p>
-<p>&lt;summary&gt;Click for Solution&lt;/summary&gt;</p>
+<details>
+<summary>
+Click for Solution
+</summary>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the naive model</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>naive_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> sim_data)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarize the model</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(naive_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>naive_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A, <span class="at">data =</span> sim_data)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarize the model</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(naive_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1079,22 +1175,22 @@ lm(formula = Y ~ A, data = sim_data)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--45.280 -11.467  -0.946  10.760  50.954 
+-44.767 -11.411  -0.707  10.678  51.467 
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  121.248      1.338   90.62  &lt; 2e-16 ***
-A             -5.700      1.579   -3.61 0.000337 ***
+(Intercept)  123.123      1.477  83.366  &lt; 2e-16 ***
+A             -8.089      1.683  -4.806 2.04e-06 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 15.89 on 498 degrees of freedom
-Multiple R-squared:  0.0255,    Adjusted R-squared:  0.02354 
-F-statistic: 13.03 on 1 and 498 DF,  p-value: 0.0003372</code></pre>
+Residual standard error: 15.84 on 498 degrees of freedom
+Multiple R-squared:  0.04432,   Adjusted R-squared:  0.0424 
+F-statistic:  23.1 on 1 and 498 DF,  p-value: 2.043e-06</code></pre>
 </div>
 </div>
-<p><strong>Commentary:</strong> The naive model shows an association of -9.84. It suggests the program reduces stress by nearly 10 points. But this is confounded by both <code>L</code> and <code>U</code>.</p>
-
+<p><strong>Commentary:</strong> The naive model shows an association of -8.089. It suggests the program reduces stress by nearly -8.089 points. But this is confounded by both <code>L</code> and <code>U</code>.</p>
+</details>
 </section>
 <section id="task-2-the-adjusted-association" class="level4">
 <h4 class="anchored" data-anchor-id="task-2-the-adjusted-association">Task 2: The “Adjusted” Association</h4>
@@ -1109,86 +1205,83 @@ F-statistic: 13.03 on 1 and 498 DF,  p-value: 0.0003372</code></pre>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(…)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>&lt;details&gt;</p>
-<p>&lt;summary&gt;Click for Solution&lt;/summary&gt;</p>
+<details>
+<summary>
+Click for Solution
+</summary>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the adjusted model</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>adj_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> L, <span class="at">data =</span> sim_data)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarize the model</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adj_model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>adj_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> L, <span class="at">data =</span> sim_data)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>adj_model_tbl <span class="ot">&lt;-</span> broom<span class="sc">::</span><span class="fu">tidy</span>(adj_model)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>adj_model_tbl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["std.error"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["statistic"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"(Intercept)","2":"96.787955","3":"3.51743382","4":"27.516639","5":"5.833742e-102"},{"1":"A","2":"-10.756425","3":"1.61588791","4":"-6.656665","5":"7.425469e-11"},{"1":"L","2":"0.570194","3":"0.06997288","4":"8.148785","5":"3.003533e-15"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sigma</span>(adj_model)  <span class="co"># Get the residual standard deviation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = Y ~ A + L, data = sim_data)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--44.064 -10.419  -0.652  10.328  43.794 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) 95.44429    3.50869  27.202  &lt; 2e-16 ***
-A           -8.64421    1.53635  -5.626 3.08e-08 ***
-L            0.56071    0.07114   7.882 2.05e-14 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 14.99 on 497 degrees of freedom
-Multiple R-squared:  0.1338,    Adjusted R-squared:  0.1303 
-F-statistic: 38.38 on 2 and 497 DF,  p-value: 3.16e-16</code></pre>
+<pre><code>[1] 14.89034</code></pre>
 </div>
 </div>
-<p><strong>Commentary:</strong> After adjusting for workload <code>L</code>, the effect estimate for <code>A</code> is <strong>-7.14</strong>. The association was attenuated, as we expected, but it’s still large and statistically significant. This is the estimate we will subject to sensitivity analysis.</p>
-
+<p><strong>Commentary:</strong> After adjusting for workload <code>L</code>, the effect estimate for <code>A</code> is -10.756. The association is almost 2.2 the size of the true effect (-5), indicating some residual confounding likely remains due to unmeasured <code>U</code>.</p>
+</details>
 </section>
 <section id="task-3-calculate-the-e-value" class="level4">
 <h4 class="anchored" data-anchor-id="task-3-calculate-the-e-value">Task 3: Calculate the E-value</h4>
-<p>This is our primary research finding: an adjusted effect of -7.14. But we know “health consciousness” (<code>U</code>) is an unmeasured confounder. How robust is our -7.14 estimate? Calculate the E-value for this point estimate.</p>
-<p><em>Hint:</em> You’ll need the outcome standard deviation, which you can get with <code>sd(sim_data$Y)</code>.</p>
+<p>This is our primary research finding: an adjusted effect of -10.756. But we know “health consciousness” (<code>U</code>) is an unmeasured confounder. How robust is our -10.756 estimate? Calculate the E-value for this point estimate.</p>
+<p>We need to use the <code>values.OLS</code> function because our outcome is continuous. The first argument is the estimate, the second is the standard error of the estimate, and the third is the standard deviation of the outcome <code>Y</code>, or the residual standard deviation from the model.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Get the standard deviation of the outcome Y</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>outcome_sd <span class="ot">&lt;-</span> <span class="fu">sd</span>(…)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Calculate the E-value for the point estimate from adj_model</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Remember the estimate is negative, but E-values are for positive associations,</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># so use the absolute value.</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">evalues.MD</span>(<span class="at">est =</span> <span class="fu">abs</span>(…), <span class="at">sd =</span> …)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Get the standard deviation of the outcome Y</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>outcome_sd <span class="ot">&lt;-</span> <span class="fu">sd</span>(…)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>outcome_sd <span class="ot">&lt;-</span> <span class="fu">sigma</span>(…)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Calculate the E-value for the point estimate from adj_model</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Remember the estimate is negative, but E-values are for positive associations,</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># so use the absolute value.</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="fu">evalues.OLS</span>(<span class="at">est =</span> , <span class="at">se =</span> , <span class="at">sd =</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>&lt;details&gt;</p>
-<p>&lt;summary&gt;Click for Solution&lt;/summary&gt;</p>
+<details>
+<summary>
+Click for Solution
+</summary>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the standard deviation of the outcome Y</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>outcome_sd <span class="ot">&lt;-</span> <span class="fu">sd</span>(sim_data<span class="sc">$</span>Y)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Outcome SD:"</span>, <span class="fu">round</span>(outcome_sd, <span class="dv">2</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the standard deviation of the outcome Y</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>mse_adj <span class="ot">&lt;-</span> <span class="fu">sigma</span>(adj_model)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Outcome SD:"</span>, <span class="fu">round</span>(mse_adj, <span class="dv">2</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Outcome SD: 16.08"</code></pre>
+<pre><code>[1] "Outcome SD: 14.89"</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the E-value for the point estimate from adj_model</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">evalues.MD</span>(<span class="at">est =</span> <span class="fu">abs</span>(<span class="sc">-</span><span class="fl">7.14</span>), <span class="at">sd =</span> outcome_sd)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>se_trt <span class="ot">&lt;-</span> adj_model_tbl[adj_model_tbl<span class="sc">$</span>term <span class="sc">==</span> <span class="st">"A"</span>, <span class="st">"std.error"</span>] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the E-value for the point estimate from adj_model</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>evalue_ols <span class="ot">&lt;-</span> <span class="fu">evalues.OLS</span>(<span class="at">est =</span> <span class="fu">abs</span>(<span class="fu">coef</span>(adj_model)[<span class="dv">2</span>]), <span class="at">se =</span> se_trt, <span class="at">sd =</span> mse_adj)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>evalue_ols</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>             point lower upper
-RR        663.4145    NA    NA
-E-values 1326.3288    NA    NA</code></pre>
+<pre><code>            point    lower    upper
+RR       1.929695 1.590738 2.340879
+E-values 3.269109 2.560124       NA</code></pre>
 </div>
 </div>
-
+</details>
 </section>
 <section id="task-4-interpret-the-e-value" class="level4">
 <h4 class="anchored" data-anchor-id="task-4-interpret-the-e-value">Task 4: Interpret the E-value</h4>
@@ -1197,65 +1290,35 @@ E-values 1326.3288    NA    NA</code></pre>
 <summary>
 Click for Solution
 </summary>
-<p><strong>Interpretation:</strong> The E-value is <strong>2.21</strong>. This means that the unmeasured confounder, health consciousness, would need to be associated with both joining the wellness program and having lower stress by a risk ratio of at least 2.21-fold each, conditional on baseline workload, to fully explain away the observed effect. A confounder weaker than this cannot account for the entire effect.</p>
+<p><strong>Interpretation:</strong> The E-value for the absolute value of the point estimate of 10.76 (RR= 1.93) is 3.27 and for the lower confidence limit of 1.59 is 2.56.</p>
+<p>This means that the unmeasured confounder, health consciousness, would need to be associated with both joining the wellness program and having lower stress by a risk ratio of at least 2.56-fold each, conditional on baseline workload, to fully explain away the observed effect. A confounder weaker than this cannot account for the entire effect.</p>
 </details>
-</section>
-<section id="task-5-bonus-check-against-reality" class="level4">
-<h4 class="anchored" data-anchor-id="task-5-bonus-check-against-reality">Task 5 (Bonus): Check Against Reality</h4>
-<p>We have “God’s eye view” because we simulated the data. Let’s calculate the <em>actual</em> strength of our unmeasured confounder <code>U</code>.</p>
-<ol type="1">
-<li>What is the association between <code>U</code> and <code>A</code> (health consciousness and joining the program), conditional on <code>L</code>? This is our <span class="math inline">\(RR_{AU}\)</span>.</li>
-<li>What is the association between <code>U</code> and <code>Y</code> (health consciousness and stress), conditional on <code>A</code> and <code>L</code>? This gives us <span class="math inline">\(RR_{UY}\)</span>.</li>
-</ol>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Association of U on A (RR_AU)</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We can approximate this with an OR from a logistic regression</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>u_a_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(A <span class="sc">~</span> U <span class="sc">+</span> L, <span class="at">data =</span> true_data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># The OR is exp(coef)</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>rr_au_approx <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">coef</span>(u_a_model)[<span class="st">"U"</span>])</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Approximate RR_AU:"</span>, <span class="fu">round</span>(rr_au_approx, <span class="dv">2</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Approximate RR_AU: 2.88"</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Association of U on Y (RR_UY)</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a bit trickier, as Y is continuous. We can get the standardized effect.</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># From our simulation, the coefficient was -10.</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># So the standardized mean difference is abs(-10) / sd(Y)</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>smd_uy <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="sc">-</span><span class="dv">10</span>) <span class="sc">/</span> <span class="fu">sd</span>(true_data<span class="sc">$</span>Y)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># We can convert this to an approximate RR</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>rr_uy_approx <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fl">0.91</span> <span class="sc">*</span> smd_uy) <span class="co"># A common approximation</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Approximate RR_UY:"</span>, <span class="fu">round</span>(rr_uy_approx, <span class="dv">2</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Approximate RR_UY: 1.76"</code></pre>
-</div>
-</div>
-<p><strong>Commentary:</strong> The actual strength of the confounder’s associations are approximately <span class="math inline">\(RR_{AU} \approx 3.37\)</span> and <span class="math inline">\(RR_{UY} \approx 1.62\)</span>. Notice that one of these (3.37) is <em>larger</em> than our E-value of 2.21, while the other (1.62) is smaller. The E-value assumes the two arms of confounding are equal. Since one of them is quite strong, it is plausible that <code>U</code> could indeed be responsible for a large part of the effect we saw. In fact, if we run the “true” model, we see the effect of A is -5, just as we specified.</p>
 </section>
 </section>
 <section id="retrieval-quiz-reflection" class="level3">
 <h3 class="anchored" data-anchor-id="retrieval-quiz-reflection">Retrieval Quiz &amp; Reflection</h3>
 <ol type="1">
-<li><strong>Q:</strong> True or False: The E-value tells us the exact magnitude of bias due to unmeasured confounding. <strong>A:</strong> False. It provides a minimum threshold, not a measurement of the actual bias.</li>
-<li><strong>Q:</strong> You report an RR of 1.8 with a 95% CI of [1.1, 2.9]. Which E-value is more important to report for assessing the study’s robustness? The one for the 1.8 or the one for the 1.1? <strong>A:</strong> The E-value for the 1.1, as it represents the sensitivity of the conclusion at the boundary of statistical significance. It’s the most conservative and honest assessment.</li>
+<li><strong>Q:</strong> True or False: The E-value tells us the exact magnitude of bias due to unmeasured confounding.
+<ol type="1">
+<li><strong>A:</strong> False. It provides a minimum threshold, not a measurement of the actual bias.</li>
+</ol></li>
+<li><strong>Q:</strong> You report an RR of 1.8 with a 95% CI of [1.1, 2.9]. Which E-value is more important to report for assessing the study’s robustness? The one for the 1.8 or the one for the 1.1?
+<ol type="1">
+<li><strong>A:</strong> The E-value for the 1.1, as it represents the sensitivity of the conclusion at the boundary of statistical significance. It’s the most conservative and honest assessment.</li>
+</ol></li>
 <li><strong>Reflection Prompt:</strong> Consider a key causal question in your field of study. What is the most important potential unmeasured confounder? Search the literature for a typical effect size for that relationship. How does it compare to the E-values you might expect for typical findings in your field?</li>
 </ol>
 </section>
 </section>
 <section id="common-pitfalls-checks" class="level2">
-<h2 class="anchored" data-anchor-id="common-pitfalls-checks">6. Common Pitfalls &amp; Checks</h2>
+<h2 class="anchored" data-anchor-id="common-pitfalls-checks">Common Pitfalls &amp; Checks</h2>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>⚠️ Misinterpreting the E-value
+<span class="screen-reader-only">Warning</span>Misinterpreting the E-value
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1268,7 +1331,7 @@ Click for Solution
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>📌 Always Report the E-value for the Confidence Interval
+<span class="screen-reader-only">Important</span>Always Report the E-value for the Confidence Interval
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1281,7 +1344,7 @@ Click for Solution
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>🧠 Compare the E-value to Known Associations
+<span class="screen-reader-only">Tip</span>Compare the E-value to Known Associations
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1290,11 +1353,11 @@ Click for Solution
 </div>
 </section>
 <section id="check-your-understanding" class="level2 callout-question">
-<h2 class="anchored" data-anchor-id="check-your-understanding">❓ Check Your Understanding</h2>
+<h2 class="anchored" data-anchor-id="check-your-understanding">Check Your Understanding</h2>
 <p><strong>Q:</strong> A study finds that drinking coffee is associated with a lower risk of death (Hazard Ratio = 0.80). The E-value is calculated to be 1.8. What does this mean? <strong>A:</strong> The observed HR is <span class="math inline">\(1/0.80 = 1.25\)</span> on the risk scale. The E-value of 1.8 means that an unmeasured factor (e.g., healthier lifestyle) would have to be associated with <em>both</em> drinking coffee and a lower risk of death by a risk ratio of at least 1.8 each (above and beyond measured covariates) to fully explain away the protective association.</p>
 </section>
 <section id="advanced-teaching-activities-interactivity" class="level2">
-<h2 class="anchored" data-anchor-id="advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</h2>
+<h2 class="anchored" data-anchor-id="advanced-teaching-activities-interactivity">Advanced Teaching Activities &amp; Interactivity</h2>
 <ul>
 <li><strong>Think-Pair-Share:</strong>
 <ul>
@@ -1312,7 +1375,7 @@ Click for Solution
 </ul>
 </section>
 <section id="appendix-advanced-theory-derivations" class="level2">
-<h2 class="anchored" data-anchor-id="appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</h2>
+<h2 class="anchored" data-anchor-id="appendix-advanced-theory-derivations">Appendix: Advanced Theory &amp; Derivations</h2>
 <section id="derivation-of-the-e-value-for-a-risk-ratio" class="level3">
 <h3 class="anchored" data-anchor-id="derivation-of-the-e-value-for-a-risk-ratio">Derivation of the E-value for a Risk Ratio</h3>
 <p>The goal is to find the minimum values for the confounder-outcome risk ratio, <span class="math inline">\(RR_{UY}\)</span>, and the confounder-exposure risk ratio, <span class="math inline">\(RR_{AU}\)</span>, that could suffice to explain an observed risk ratio, <span class="math inline">\(RR_{AY}^{\text{obs}}\)</span>.</p>
@@ -1373,10 +1436,24 @@ E\text{-value} = RR + \sqrt{RR(RR-1)}
 <p>This method is more complex and requires more assumptions, but it can provide a richer picture of the potential impact of bias than a single E-value.</p>
 
 
+
 </section>
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-cohen1988statistical" class="csl-entry" role="listitem">
+Cohen, J. (1988). <em>Statistical power analysis for the behavioral sciences</em> (2nd ed.). Erlbaum.
+</div>
+<div id="ref-hedges2014statistical" class="csl-entry" role="listitem">
+Hedges, L. V., &amp; Olkin, I. (2014). <em>Statistical methods for meta-analysis</em>. Elsevier Science.
+</div>
+<div id="ref-mathur2018web" class="csl-entry" role="listitem">
+Mathur, M. B., Ding, P., Riddell, C. A., &amp; VanderWeele, T. J. (2018). Web site and <span>R</span> package for computing e-values. <em>Epidemiology</em>, <em>29</em>(5), e45. <a href="https://doi.org/10.1097/EDE.0000000000000864">https://doi.org/10.1097/EDE.0000000000000864</a>
+</div>
+<div id="ref-vanderweele2017evalue" class="csl-entry" role="listitem">
+VanderWeele, T. J., &amp; Ding, P. (2017). Sensitivity analysis in observational research: <span>Introducing</span> the e-value. <em>Annals of Internal Medicine</em>, <em>167</em>(4), 268–274. <a href="https://doi.org/10/gbtnqk">https://doi.org/10/gbtnqk</a>
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right

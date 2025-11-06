@@ -547,7 +547,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Oct-21-2025</p>
+        <p class="date">Oct-25-2025</p>
       </div>
     </div>
     
@@ -893,6 +893,14 @@ Y_i = Y^{A_i, M^{A_i}}_i
 \bar{\delta}(a) = \E{Y^{a, M^{1}} - Y^{a, M^{0}}}
 \]</span></p>
 <p>Typically, researchers report <span class="math inline">\(\bar{\delta}(0)\)</span> (NIE when <span class="math inline">\(A=0\)</span>) or <span class="math inline">\(\bar{\delta}(1)\)</span> (NIE when <span class="math inline">\(A=1\)</span>), or the average across both.</p>
+<section id="pure-vs.-total-indirect-effect" class="level5">
+<h5 class="anchored" data-anchor-id="pure-vs.-total-indirect-effect">Pure vs.&nbsp;Total Indirect Effect</h5>
+<ul>
+<li><span class="math inline">\(\bar{\delta}(0)\)</span> is sometimes called the <strong>pure natural indirect effect</strong> (holding <span class="math inline">\(A\)</span> at control).</li>
+<li><span class="math inline">\(\bar{\delta}(1)\)</span> is the <strong>total natural indirect effect</strong> (holding <span class="math inline">\(A\)</span> at treatment).</li>
+<li>When there’s no <span class="math inline">\(A \times M\)</span> interaction, <span class="math inline">\(\bar{\delta}(0) = \bar{\delta}(1)\)</span>.</li>
+</ul>
+</section>
 </section>
 <section id="natural-direct-effect-nde" class="level4">
 <h4 class="anchored" data-anchor-id="natural-direct-effect-nde">1.4.2 Natural Direct Effect (NDE)</h4>
@@ -906,6 +914,14 @@ Y_i = Y^{A_i, M^{A_i}}_i
 \bar{\zeta}(a) = \E{Y^{1, M^{a}} - Y^{0, M^{a}}}
 \]</span></p>
 <p>Often, <span class="math inline">\(\bar{\zeta}(0)\)</span> is called the “pure” natural direct effect (holding <span class="math inline">\(M\)</span> at its control value).</p>
+<section id="pure-vs.-total-direct-effect" class="level5">
+<h5 class="anchored" data-anchor-id="pure-vs.-total-direct-effect">Pure vs.&nbsp;Total Direct Effect</h5>
+<ul>
+<li><span class="math inline">\(\bar{\zeta}(0)\)</span> is sometimes called the <strong>pure natural direct effect</strong> (holding <span class="math inline">\(M\)</span> at control).</li>
+<li><span class="math inline">\(\bar{\zeta}(1)\)</span> is the <strong>total natural direct effect</strong> (holding <span class="math inline">\(M\)</span> at treatment).</li>
+<li>When there’s no <span class="math inline">\(A \times M\)</span> interaction, <span class="math inline">\(\bar{\zeta}(0) = \bar{\zeta}(1)\)</span>.</li>
+</ul>
+</section>
 </section>
 <section id="decomposition-of-the-total-effect" class="level4">
 <h4 class="anchored" data-anchor-id="decomposition-of-the-total-effect">1.4.3 Decomposition of the Total Effect</h4>

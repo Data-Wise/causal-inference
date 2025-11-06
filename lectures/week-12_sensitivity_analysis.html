@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Davood Tofighi, Ph.D.">
+
+<title>Week 10: Quantitative Bias Analysis, Tipping-Point Logic, and The E-value – Introduction to Causal Inference</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../assets/images/icon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-95f147d06fdb9f8ce149f95e323965f4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-1cc737af391b68f89dec849c5b71efa1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-04c5d32edec1d96b0b97d09ec792dc21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script>
+    MathJax = {
+        tex: {
+            macros: {
+                RR: "{\\mathbb{R}}",
+                NN: "{\\mathbb{N}}",
+                QQ: "{\\mathbb{Q}}",
+                ZZ: "{\\mathbb{Z}}",
+                PP: "{\\mathbb{P}}",
+                // expectation & probability
+                E: ["{\\EE\\left[ #1 \\right]}", 1],
+                Ehat: ["{\\hat{\\EE}\\left[#1\\right]}", 1],
+                EHat: ["{\\hat{\\mathbb{E}}\\left[#1\\right]}", 1],
+                EHatSup: ["{\\hat{\\EE}^{#1}\\!\\left[#2\\right]}", 2],
+                EHatSS: ["\\hat{\\mathbb{E}}^{#1}_{#2}\\!\\left[#3\\right]", 3],
+                Es: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESub: ["{\\mathbb{E}_{#1}\\left[ #2 \\right]}", 2],
+                ESup: ["{\\mathbb{E}^{#1}\\!\\left[ #2 \\right]}", 2],
+                ESubSup: ["{\\mathbb{E}^{#1}_{#2}\\!\\left[ #3 \\right]}", 3],
+                Prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                prob: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                pr: ["{\\mathbb{P}\\left( #1 \\right)}", 1],
+                ProbHat: ["{\\hat{\\mathbb{P}}\\left( #1 \\right)}", 1],
+                ProbSub: ["{\\mathbb{P}_{#1}\\left( #2 \\right)}", 2],
+                ProbHatSub: ["{\\hat{\\mathbb{P}}}_{#1}\\left( #2 \\right)", 2],
+                ProbHatSup: ["{\\hat{\\mathbb{P}}}^{#1}\\left( #2 \\right)", 2],
+                ProbHatSS: ["{\\hat{\\mathbb{P}}}^{#1}_{#2}\\left( #3 \\right)", 3],
+                // operators (both lower & upper case)
+                var: ["{\\operatorname{var}\\left( #1 \\right)}", 1],
+                Var: ["{\\operatorname{Var}\\left( #1 \\right)}", 1],
+                cov: ["{\\operatorname{cov}\\left( #1, #2 \\right)}", 2],
+                Cov: ["{\\operatorname{Cov}\\left( #1, #2 \\right)}", 2],
+                cor: ["{\\operatorname{cor}\\left( #1, #2 \\right)}", 2],
+                Cor: ["{\\operatorname{Cor}\\left( #1, #2 \\right)}", 2],
+                logit: "{\\operatorname{logit}}",
+                expit: "{\\operatorname{expit}}", // inverse logit
+                sgn: "{\\operatorname{sgn}}",
+                EE: "{\\operatorname{\\mathbb{E}}}",
+
+
+                // vector & basic constructs
+                vect: ["{\\mathbf{#1}}", 1],
+                abs: ["{\\left\\lvert #1 \\right\\rvert}", 1],
+                norm: ["{\\left\\lVert #1 \\right\\rVert}", 1],
+                ip: ["{\\left\\langle #1,\\,#2 \\right\\rangle}", 2], // inner product
+
+                // indicator variants
+                indf: ["{\\mathbf{1}\\left\\{ #1 \\right\\}}", 1],
+                ind: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+                I: ["{\\mathbb{I}\\left\\{ #1 \\right\\}}", 1],
+
+                // independence & non-independence (bare + braced forms via separate names)
+                indep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+                Indep: ["{#1\\,\\mathrel{\\perp\\!\\!\\!\\perp}\\,#2}", 2],
+                nindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Nindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+                notindep: "{\\not\\!\\perp\\!\\!\\!\\perp}",
+                Notindep: ["{#1\\,\\not\\!\\perp\\!\\!\\!\\perp\\,#2}", 2],
+
+                // do-operator & d-separation
+                doop: ["{\\mathrm{do}\\!\\left(#1\\right)}", 1],
+                dsep: "{\\mathrel{\\perp\\!\\!\\!\\perp}}",
+
+                // potential outcomes & notational conveniences
+                Y: ["{Y^{#1}}", 1],
+                Ya: "{Y^a}",
+                Yone: "{Y^1}",
+                Yzero: "{Y^0}",
+
+                // estimands
+                ATE: "{\\tau_{\\text{ATE}}}",
+                ATT: "{\\tau_{\\text{ATT}}}",
+                ATC: "{\\tau_{\\text{ATC}}}",
+                CATE: "{\\tau_{\\text{CATE}}}",
+
+                DefATE: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0) \\right]}",
+                DefATT: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=1 \\right]}",
+                DefATC: "{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid A=0 \\right]}",
+                DefCATE: ["{\\mathbb{E}\\!\\left[ Y(1)-Y(0)\\mid #1 \\right]}", 1],
+
+                // identification blocks
+                gform: ["{\\sum_{l} \\\\mathbb{E}\\!\\left[ Y\\mid A=#1, L=l \\right]\\\\,\\mathbb{P}(L=l)}", 1],
+                ipw: ["{\\frac{\\mathbf{1}\\{#1\\}}{\\mathbb{P}(#1\\mid #2)}}", 2],
+
+                // risk measures
+                RD: "{\\operatorname{RD}}",
+                OR: "{\\operatorname{OR}}",
+
+                // optimization operators
+                argmin: ["{\\mathop{\\mathrm{arg\\,min}}\\limits}", 0],
+                argmax: ["{\\mathop{\\mathrm{arg\\,max}}\\limits}", 0]
+            }
+        }
+    };
+</script>
+<link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;family=Montserrat:wght@400;700&amp;family=Fira+Code:wght@400;700&amp;display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/styles/css/home.css">
+<meta property="og:title" content="Week 10: Quantitative Bias Analysis, Tipping-Point Logic, and The E-value – Introduction to Causal Inference">
+<meta property="og:description" content="Introduction to Causal Inference">
+<meta property="og:image" content="https://Data-Wise.github.io/causal-inference/lectures/data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==">
+<meta property="og:site_name" content="Introduction to Causal Inference">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo light-content">
+    <img src="../assets/images/icon.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Introduction to Causal Inference</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-syllabus" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Syllabus</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-syllabus">    
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.pdf">
+ <span class="dropdown-text">PDF</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../syllabus/syllabus-final.html">
+ <span class="dropdown-text">HTML</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../syllabus/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_lectures.html"> 
+<span class="menu-text">Lecture Notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_project.html"> 
+<span class="menu-text">Project</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_readings.html"> 
+<span class="menu-text">Readings</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../home_assignments.html"> 
+<span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../r_help.html"> 
+<span class="menu-text">R Help</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Data-Wise/causal-inference"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Week 10: Quantitative Bias Analysis, Tipping-Point Logic, and The E-value</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Week 10: Quantitative Bias Analysis, Tipping-Point Logic, and The E-value</h1>
+                      </div>
+  </div>
+    
+  <div class="quarto-title-meta-author">
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Affiliation</div>
+    
+      <div class="quarto-title-meta-contents">
+      <p class="author"><a href="https://Data-Wise.github.io/regression">Davood Tofighi, Ph.D.</a> <a href="mailto:dtofighi@unm.edu" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-8523-7776" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              Department of Mathematics and Statistics, University of New Mexico
+            </p>
+        </div>
+    </div>
+
+  <div class="quarto-title-meta">
+
+        
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Nov-03-2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Overview</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Syllabus</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-final.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PDF</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/syllabus-final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HTML</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus/schedule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schedule</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Materials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_lectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lecture Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_assignments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignments</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_project.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../home_readings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">R Code and Datasets</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../r_help.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R Help</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#r-packages" id="toc-r-packages" class="nav-link" data-scroll-target="#r-packages">R Packages</a></li>
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">Background</a>
+  <ul class="collapse">
+  <li><a href="#the-true-causal-risk-ratio-rr_ayc" id="toc-the-true-causal-risk-ratio-rr_ayc" class="nav-link" data-scroll-target="#the-true-causal-risk-ratio-rr_ayc">The True, Causal Risk Ratio (<span class="math inline">\(RR_{AY}^c\)</span>)</a></li>
+  <li><a href="#the-observed-associational-risk-ratio-rr_ayl" id="toc-the-observed-associational-risk-ratio-rr_ayl" class="nav-link" data-scroll-target="#the-observed-associational-risk-ratio-rr_ayl">The Observed, Associational Risk Ratio (<span class="math inline">\(RR_{AY|L}\)</span>)</a></li>
+  <li><a href="#the-crucial-link" id="toc-the-crucial-link" class="nav-link" data-scroll-target="#the-crucial-link">The Crucial Link</a></li>
+  </ul></li>
+  <li><a href="#comprehensive-topic-explanation" id="toc-comprehensive-topic-explanation" class="nav-link" data-scroll-target="#comprehensive-topic-explanation">Comprehensive Topic Explanation</a>
+  <ul class="collapse">
+  <li><a href="#the-core-problem-unmeasured-confounding" id="toc-the-core-problem-unmeasured-confounding" class="nav-link" data-scroll-target="#the-core-problem-unmeasured-confounding">The Core Problem: Unmeasured Confounding</a></li>
+  <li><a href="#from-is-there-bias-to-how-much-bias" id="toc-from-is-there-bias-to-how-much-bias" class="nav-link" data-scroll-target="#from-is-there-bias-to-how-much-bias">From “Is there bias?” to “How much bias?”</a></li>
+  <li><a href="#the-e-value-a-tipping-point-metric" id="toc-the-e-value-a-tipping-point-metric" class="nav-link" data-scroll-target="#the-e-value-a-tipping-point-metric">The E-value: A Tipping-Point Metric</a></li>
+  <li><a href="#bias-parameters" id="toc-bias-parameters" class="nav-link" data-scroll-target="#bias-parameters">Bias Parameters</a></li>
+  <li><a href="#two-types-of-e-values" id="toc-two-types-of-e-values" class="nav-link" data-scroll-target="#two-types-of-e-values">Two Types of E-values</a></li>
+  </ul></li>
+  <li><a href="#intuitive-clarifications-of-challenging-ideas" id="toc-intuitive-clarifications-of-challenging-ideas" class="nav-link" data-scroll-target="#intuitive-clarifications-of-challenging-ideas">Intuitive Clarifications of Challenging Ideas</a>
+  <ul class="collapse">
+  <li><a href="#analogy-the-missing-witness-in-a-trial" id="toc-analogy-the-missing-witness-in-a-trial" class="nav-link" data-scroll-target="#analogy-the-missing-witness-in-a-trial">Analogy: The “Missing Witness” in a Trial</a></li>
+  </ul></li>
+  <li><a href="#simple-hand-calculation-numerical-examples" id="toc-simple-hand-calculation-numerical-examples" class="nav-link" data-scroll-target="#simple-hand-calculation-numerical-examples">Simple, Hand-Calculation Numerical Example(s)</a></li>
+  <li><a href="#worked-example-point-estimate-and-ci" id="toc-worked-example-point-estimate-and-ci" class="nav-link" data-scroll-target="#worked-example-point-estimate-and-ci">Worked Example: Point Estimate and CI</a>
+  <ul class="collapse">
+  <li><a href="#e-value-for-the-point-estimate" id="toc-e-value-for-the-point-estimate" class="nav-link" data-scroll-target="#e-value-for-the-point-estimate">1. E-value for the Point Estimate</a></li>
+  <li><a href="#e-value-for-the-confidence-interval" id="toc-e-value-for-the-confidence-interval" class="nav-link" data-scroll-target="#e-value-for-the-confidence-interval">2. E-value for the Confidence Interval</a></li>
+  </ul></li>
+  <li><a href="#r-code-examples-interpretation" id="toc-r-code-examples-interpretation" class="nav-link" data-scroll-target="#r-code-examples-interpretation">R Code Examples &amp; Interpretation</a>
+  <ul class="collapse">
+  <li><a href="#example-1-the-evalues.rr-function" id="toc-example-1-the-evalues.rr-function" class="nav-link" data-scroll-target="#example-1-the-evalues.rr-function">Example 1: The <code>evalues.RR()</code> Function</a></li>
+  <li><a href="#example-2-protective-effects" id="toc-example-2-protective-effects" class="nav-link" data-scroll-target="#example-2-protective-effects">Example 2: Protective Effects</a></li>
+  </ul></li>
+  <li><a href="#hands-on-r-lab" id="toc-hands-on-r-lab" class="nav-link" data-scroll-target="#hands-on-r-lab">Hands-On R Lab</a>
+  <ul class="collapse">
+  <li><a href="#week-12-r-lab-quantifying-robustness-with-e-values" id="toc-week-12-r-lab-quantifying-robustness-with-e-values" class="nav-link" data-scroll-target="#week-12-r-lab-quantifying-robustness-with-e-values">Week 12 R Lab: Quantifying Robustness with E-values</a></li>
+  <li><a href="#lab-scenario" id="toc-lab-scenario" class="nav-link" data-scroll-target="#lab-scenario">Lab Scenario</a></li>
+  <li><a href="#task-1-load-packages" id="toc-task-1-load-packages" class="nav-link" data-scroll-target="#task-1-load-packages">Task 1: Load Packages</a></li>
+  <li><a href="#task-2-calculate-the-e-value" id="toc-task-2-calculate-the-e-value" class="nav-link" data-scroll-target="#task-2-calculate-the-e-value">Task 2: Calculate the E-value</a></li>
+  <li><a href="#task-3-interpret-the-e-values" id="toc-task-3-interpret-the-e-values" class="nav-link" data-scroll-target="#task-3-interpret-the-e-values">Task 3: Interpret the E-values</a></li>
+  <li><a href="#task-4-reflection-plausibility-discussion" id="toc-task-4-reflection-plausibility-discussion" class="nav-link" data-scroll-target="#task-4-reflection-plausibility-discussion">Task 4: Reflection &amp; Plausibility Discussion</a></li>
+  <li><a href="#lab-retrieval-quiz" id="toc-lab-retrieval-quiz" class="nav-link" data-scroll-target="#lab-retrieval-quiz">Lab Retrieval Quiz</a></li>
+  </ul></li>
+  <li><a href="#common-pitfalls-checks" id="toc-common-pitfalls-checks" class="nav-link" data-scroll-target="#common-pitfalls-checks">6. Common Pitfalls &amp; Checks</a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">Check Your Understanding</a></li>
+  <li><a href="#advanced-teaching-activities-interactivity" id="toc-advanced-teaching-activities-interactivity" class="nav-link" data-scroll-target="#advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#appendix-advanced-theory-derivations" id="toc-appendix-advanced-theory-derivations" class="nav-link" data-scroll-target="#appendix-advanced-theory-derivations">Appendix: Advanced Theory &amp; Derivations</a>
+  <ul class="collapse">
+  <li><a href="#derivation-of-the-e-value-formula" id="toc-derivation-of-the-e-value-formula" class="nav-link" data-scroll-target="#derivation-of-the-e-value-formula">Derivation of the E-value Formula</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-12_sensitivity_analysis.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="week-12_sensitivity_analysis.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>Welcome, class. For the past eleven weeks, we have dedicated ourselves to the rigorous estimation of causal effects, primarily focusing on methods to control for <em>measured</em> confounders. We have used regression, matching, stratification, and inverse probability weighting to “close backdoor paths” and emulate a randomized controlled trial (RCT) from observational data.</p>
+<p>All of these methods, however, rest on one critical, untestable assumption: <strong>conditional exchangeability</strong>, or “no unmeasured confounding.” We <em>assume</em> that the set of covariates <span class="math inline">\(L\)</span> we measured and adjusted for is sufficient to make the exposed and unexposed groups comparable.</p>
+<p>This week, we confront the “Achilles’ heel” of observational research head-on. What if our assumption is wrong? What if there is an unmeasured confounder <span class="math inline">\(U\)</span> that biases our results?</p>
+<p>This module introduces <strong>sensitivity analysis</strong>, a formal method for quantifying the potential impact of unmeasured confounding. We will shift our question from the unanswerable, “Is there unmeasured confounding?” to the answerable, “How strong would an unmeasured confounder have to be to <em>change our conclusion</em>?”</p>
+<p>We will focus on a powerful, intuitive, and now standard tool: the <strong>E-value</strong> <span class="citation" data-cites="vanderweele2017evalue">(<a href="#ref-vanderweele2017evalue" role="doc-biblioref">VanderWeele &amp; Ding, 2017</a>)</span>. The E-value provides a “tipping point” analysis, helping us gauge the robustness of our findings and fostering a more honest and critical discussion about the limitations of our causal claims.</p>
+</section>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<p>By the end of this module, you will be able to:</p>
+<ol type="1">
+<li><strong>Explain</strong> the fundamental problem of unmeasured confounding and articulate why the “no unmeasured confounding” assumption is untestable from data alone.</li>
+<li><strong>Define</strong> the logic of “tipping-point” sensitivity analysis and specify the key bias parameters (confounder-exposure and confounder-outcome associations).</li>
+<li><strong>Calculate</strong> the E-value for an observed risk ratio (both point estimate and confidence interval) using the standard formula.</li>
+<li><strong>Implement</strong> E-value calculations in R using the <code>EValue</code> package.</li>
+<li><strong>Interpret</strong> the E-value in the context of a public health problem, justifying the <em>plausibility</em> (or implausibility) of an unmeasured confounder explaining away a research finding.</li>
+<li><strong>Critique</strong> research by assessing the sensitivity of its claims to unmeasured confounding.</li>
+</ol>
+</section>
+<section id="r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="r-packages">R Packages</h2>
+<p>We will use the following packages. The <code>EValue</code> package is the star of this week’s module.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use pacman to load (and install if needed) packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  tidyverse, <span class="co"># For data manipulation and plotting</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  dagitty, <span class="co"># For creating and analyzing DAGs</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  ggdag, <span class="co"># For plotting DAGs with ggplot2</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  EValue, <span class="co"># For calculating E-values</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  knitr <span class="co"># For formatting tables</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<p>Excellent question. This distinction is the absolute core of our work in this course. It’s the difference between what we <em>want</em> to know (the causal effect) and what we can <em>actually calculate</em> from our data (the association).</p>
+<p>Let’s define these terms formally.</p>
+<section id="the-true-causal-risk-ratio-rr_ayc" class="level3">
+<h3 class="anchored" data-anchor-id="the-true-causal-risk-ratio-rr_ayc">The True, Causal Risk Ratio (<span class="math inline">\(RR_{AY}^c\)</span>)</h3>
+<p>This is our <strong>causal estimand</strong>. It answers the “what if” question.</p>
+<p>The true, causal risk ratio compares the risk of the outcome (<span class="math inline">\(Y=1\)</span>) in an entire population <em>if everyone were exposed (<span class="math inline">\(a=1\)</span>)</em> to the risk of the outcome in that <em>same population</em> if <em>everyone were unexposed (<span class="math inline">\(a=0\)</span>)</em>.</p>
+<p>We define it using <strong>potential outcomes</strong> (see Chapter 1 of <span class="citation" data-cites="hernan2020causalwhatif">Hernán &amp; Robins (<a href="#ref-hernan2020causalwhatif" role="doc-biblioref">2020</a>)</span>):</p>
+<ul>
+<li>Let <span class="math inline">\(Y^{a=1}\)</span> be the potential outcome for an individual had they, possibly contrary to fact, received the exposure.</li>
+<li>Let <span class="math inline">\(Y^{a=0}\)</span> be the potential outcome for that same individual had they not received the exposure.</li>
+</ul>
+<p>The causal risk ratio is the ratio of the population-level probabilities (or risks) of these two potential outcomes:</p>
+<p><span class="math display">\[
+RR_{AY}^c = \frac{P(Y^{a=1} = 1)}{P(Y^{a=0} = 1)}
+\]</span></p>
+<ul>
+<li>The numerator, <span class="math inline">\(P(Y^{a=1} = 1)\)</span>, is the <strong>causal risk</strong> under exposure.</li>
+<li>The denominator, <span class="math inline">\(P(Y^{a=0} = 1)\)</span>, is the <strong>causal risk</strong> under non-exposure.</li>
+</ul>
+<p><strong>Key Idea:</strong> This is a comparison of two hypothetical, counterfactual worlds. We can never observe both potential outcomes for the same person at the same time (the “fundamental problem of causal inference”). Our goal in an observational study is to use data to <em>estimate</em> this unobservable quantity.</p>
+</section>
+<section id="the-observed-associational-risk-ratio-rr_ayl" class="level3">
+<h3 class="anchored" data-anchor-id="the-observed-associational-risk-ratio-rr_ayl">The Observed, Associational Risk Ratio (<span class="math inline">\(RR_{AY|L}\)</span>)</h3>
+<p>This is our <strong>associational measure</strong>. It’s what we <em>actually compute</em> from our observational data after adjusting for a set of <em>measured</em> covariates, <span class="math inline">\(L\)</span>.</p>
+<p>The observed, conditional risk ratio compares the risk of the outcome among the exposed to the risk of the outcome among the unexposed, <em>within a specific stratum</em> (or subset) of the population defined by <span class="math inline">\(L=l\)</span>.</p>
+<p>We define it using standard <strong>conditional probabilities</strong>:</p>
+<p><span class="math display">\[
+RR_{AY|L=l} = \frac{P(Y=1 \mid A=1, L=l)}{P(Y=1 \mid A=0, L=l)}
+\]</span></p>
+<ul>
+<li>The numerator, <span class="math inline">\(P(Y=1 \mid A=1, L=l)\)</span>, is the <strong>observed risk</strong> among the exposed in stratum <span class="math inline">\(l\)</span>.</li>
+<li>The denominator, <span class="math inline">\(P(Y=1 \mid A=0, L=l)\)</span>, is the <strong>observed risk</strong> among the unexposed in that same stratum <span class="math inline">\(l\)</span>.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We often report a single “adjusted” or “standardized” <span class="math inline">\(RR_{AY|L}\)</span> by averaging these stratum-specific measures, for example, by standardizing them to the population distribution of <span class="math inline">\(L\)</span> or by using a regression model (e.g., logistic, log-binomial) that assumes a common <span class="math inline">\(RR\)</span> across strata.</p>
+</div>
+</div>
+</section>
+<section id="the-crucial-link" class="level3">
+<h3 class="anchored" data-anchor-id="the-crucial-link">The Crucial Link</h3>
+<p>In an observational study, we <em>hope</em> that our adjusted associational measure <span class="math inline">\(RR_{AY|L}\)</span> is a valid estimate of the true causal measure <span class="math inline">\(RR_{AY}^c\)</span>.</p>
+<p>This “hope” is our key assumption: <strong>conditional exchangeability (or no unmeasured confounding)</strong>.</p>
+<p>If we assume <span class="math inline">\(Y^a \indep A \mid L\)</span>, then the causal risks <em>within a stratum</em> equal the associational risks:</p>
+<ul>
+<li><span class="math inline">\(P(Y^{a=1} = 1 \mid L=l) = P(Y=1 \mid A=1, L=l)\)</span></li>
+<li><span class="math inline">\(P(Y^{a=0} = 1 \mid L=l) = P(Y=1 \mid A=0, L=l)\)</span></li>
+</ul>
+<p>When this holds, our adjusted <span class="math inline">\(RR_{AY|L}\)</span> <em>identifies</em> the causal <span class="math inline">\(RR_{AY}^c\)</span>. The purpose of sensitivity analysis is to probe what happens when this assumption fails.</p>
+</section>
+</section>
+<section id="comprehensive-topic-explanation" class="level2">
+<h2 class="anchored" data-anchor-id="comprehensive-topic-explanation">Comprehensive Topic Explanation</h2>
+<section id="the-core-problem-unmeasured-confounding" class="level3">
+<h3 class="anchored" data-anchor-id="the-core-problem-unmeasured-confounding">The Core Problem: Unmeasured Confounding</h3>
+<p>All our methods for causal inference from observational data—regression, matching, IPW—rely on the assumption of <strong>conditional exchangeability</strong>. Formally, given a set of <em>measured</em> covariates <span class="math inline">\(L\)</span>:</p>
+<p><span class="math display">\[
+Y^a \indep A \mid L
+\]</span></p>
+<p>This assumption states that, within strata of <span class="math inline">\(L\)</span>, treatment assignment <span class="math inline">\(A\)</span> is independent of the potential outcomes <span class="math inline">\(Y^a\)</span>. In DAG terminology, it means our set <span class="math inline">\(L\)</span> is sufficient to block all non-causal backdoor paths between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p>The problem is that we can <em>never</em> be certain we have measured all relevant covariates. There may be an unmeasured variable <span class="math inline">\(U\)</span> (e.g., genetic predisposition, health-seeking behavior, lifestyle factors) that is a common cause of both <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p>Our causal diagram would look like this:</p>
+<div id="fig-unmeasured-confounding-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-unmeasured-confounding-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="330310cf7cfe0b01263af66478ba3c20e273d195.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: DAG showing unmeasured confounding by U between exposure A and outcome Y, with measured covariates L."><img src="week-12_sensitivity_analysis_files/mediabag/330310cf7cfe0b01263af66478ba3c20e273d195.svg" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-unmeasured-confounding-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: DAG showing unmeasured confounding by <span class="math inline">\(U\)</span> between exposure <span class="math inline">\(A\)</span> and outcome <span class="math inline">\(Y\)</span>, with measured covariates <span class="math inline">\(L\)</span>.
+</figcaption>
+</figure>
+</div>
+<p>If we adjust for <span class="math inline">\(L\)</span>, we successfully block the backdoor path <span class="math inline">\(A \leftarrow L \rightarrow Y\)</span>. However, the path <strong><span class="math inline">\(A \leftarrow U \rightarrow Y\)</span></strong> remains open, and our effect estimate will be a mix of the true causal effect and bias from this unmeasured confounding.</p>
+</section>
+<section id="from-is-there-bias-to-how-much-bias" class="level3">
+<h3 class="anchored" data-anchor-id="from-is-there-bias-to-how-much-bias">From “Is there bias?” to “How much bias?”</h3>
+<p>We cannot use our data to test for the presence of <span class="math inline">\(U\)</span>. This is a fundamental limitation. Data you <em>don’t have</em> cannot be analyzed.</p>
+<p>Therefore, we must pivot. Instead of claiming “there is no unmeasured confounding,” we perform a <strong>sensitivity analysis</strong>. We assume our observed association (e.g., <span class="math inline">\(RR_{AY|L} = 2.0\)</span>) is <em>biased</em> and ask a “what if” question:</p>
+<blockquote class="blockquote">
+<p><strong>“How strong would an unmeasured confounder <span class="math inline">\(U\)</span> have to be to <em>fully explain away</em> this observed association?”</strong></p>
+</blockquote>
+<p>“Explain away” means: how strong would the <span class="math inline">\(U \rightarrow A\)</span> and <span class="math inline">\(U \rightarrow Y\)</span> relationships need to be to make the <em>true, causal</em> risk ratio <span class="math inline">\(RR_{AY}^c\)</span> equal to 1.0 (the null)?</p>
+</section>
+<section id="the-e-value-a-tipping-point-metric" class="level3">
+<h3 class="anchored" data-anchor-id="the-e-value-a-tipping-point-metric">The E-value: A Tipping-Point Metric</h3>
+<p>The <strong>E-value</strong> provides a direct answer to this question <span class="citation" data-cites="vanderweele2017evalue">(<a href="#ref-vanderweele2017evalue" role="doc-biblioref">VanderWeele &amp; Ding, 2017</a>)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>📖 Definition
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The E-value is the <strong>minimum</strong> strength of association (on the risk ratio scale) that an unmeasured confounder <span class="math inline">\(U\)</span> would need to have with <em>both</em> the exposure <span class="math inline">\(A\)</span> and the outcome <span class="math inline">\(Y\)</span>, conditional on the measured covariates <span class="math inline">\(L\)</span>, to reduce the observed risk ratio to 1.0.</p>
+</div>
+</div>
+</section>
+<section id="bias-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="bias-parameters">Bias Parameters</h3>
+<p>To formalize this, we define two bias parameters for a (hypothetical, binary) unmeasured confounder <span class="math inline">\(U\)</span>:</p>
+<ol type="1">
+<li><strong><span class="math inline">\(RR_{AU}\)</span></strong>: The risk ratio for the association between the confounder <span class="math inline">\(U\)</span> and the exposure <span class="math inline">\(A\)</span>.
+<ul>
+<li><span class="math inline">\(RR_{AU} = \frac{P(A=1 | U=1, L)}{P(A=1 | U=0, L)}\)</span></li>
+</ul></li>
+<li><strong><span class="math inline">\(RR_{UY}\)</span></strong>: The risk ratio for the association between the confounder <span class="math inline">\(U\)</span> and the outcome <span class="math inline">\(Y\)</span>.
+<ul>
+<li><span class="math inline">\(RR_{UY} = \frac{P(Y=1 | A, U=1, L)}{P(Y=1 | A, U=0, L)}\)</span></li>
+</ul></li>
+</ol>
+<p>The E-value simplifies this by setting <span class="math inline">\(RR_{AU} = RR_{UY} = \gamma\)</span> and finding the minimum <span class="math inline">\(\gamma\)</span> that could “explain away” the effect.</p>
+</section>
+<section id="two-types-of-e-values" class="level3">
+<h3 class="anchored" data-anchor-id="two-types-of-e-values">Two Types of E-values</h3>
+<p>We must consider two distinct “tipping points”:</p>
+<ol type="1">
+<li><strong>E-value for the Point Estimate:</strong> The minimum <span class="math inline">\(\gamma\)</span> needed to move the <em>point estimate</em> (e.g., <span class="math inline">\(RR=2.0\)</span>) to the null (<span class="math inline">\(RR_c=1.0\)</span>).</li>
+<li><strong>E-value for the Confidence Interval:</strong> The minimum <span class="math inline">\(\gamma\)</span> needed to move the <em>confidence interval limit closest to the null</em> (e.g., <span class="math inline">\(RR=1.2\)</span>) to the null.</li>
+</ol>
+<p>As we will see, the E-value for the CI is the more important and conservative metric. It answers the question: “How strong would confounding have to be to make our finding <em>statistically non-significant</em>?”</p>
+</section>
+</section>
+<section id="intuitive-clarifications-of-challenging-ideas" class="level2">
+<h2 class="anchored" data-anchor-id="intuitive-clarifications-of-challenging-ideas">Intuitive Clarifications of Challenging Ideas</h2>
+<section id="analogy-the-missing-witness-in-a-trial" class="level3">
+<h3 class="anchored" data-anchor-id="analogy-the-missing-witness-in-a-trial">Analogy: The “Missing Witness” in a Trial</h3>
+<p>Think of your observational study as a court case. You are the prosecutor, arguing that <span class="math inline">\(A\)</span> “caused” <span class="math inline">\(Y\)</span>. You present your evidence: an adjusted risk ratio of <span class="math inline">\(RR=2.5\)</span> (95% CI [1.5, 4.0]).</p>
+<p>The defense (a skeptical colleague) argues, “Your finding is just confounding. You forgot to account for <span class="math inline">\(U\)</span>.”</p>
+<p>This is like the defense claiming a “missing witness” (<span class="math inline">\(U\)</span>) would have provided an alibi.</p>
+<ul>
+<li><strong>Before the E-value:</strong> The argument stops. The prosecutor says “I measured <span class="math inline">\(L\)</span>,” and the defense says “But you didn’t measure <span class="math inline">\(U\)</span>.” We are at an impasse.</li>
+<li><strong>With the E-value:</strong> The judge (the scientific community) turns to the defense and says, “Okay. If this ‘missing witness’ <span class="math inline">\(U\)</span> exists, how compelling must their testimony be?”</li>
+</ul>
+<p>The E-value calculation tells us: “To acquit the defendant (i.e., make the true effect <span class="math inline">\(RR_c=1.0\)</span>), the missing witness <span class="math inline">\(U\)</span> must be a <em>very</em> strong predictor of both the crime (outcome <span class="math inline">\(Y\)</span>) and the defendant’s presence (exposure <span class="math inline">\(A\)</span>).”</p>
+<p>If the E-value is <strong>high</strong> (e.g., 5.0), we can say: “This ‘missing witness’ <span class="math inline">\(U\)</span> would need to be 5-fold associated with <em>both</em> <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>. That’s a stronger risk factor than smoking for this exposure! We find that implausible.” This strengthens our case.</p>
+<p>If the E-value is <strong>low</strong> (e.g., 1.5), we must concede: “A ‘missing witness’ <span class="math inline">\(U\)</span> who is only 1.5-fold associated with <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>—like modest confounding by ‘healthy lifestyle’—could undo our finding. Our case is weak.”</p>
+</section>
+</section>
+<section id="simple-hand-calculation-numerical-examples" class="level2">
+<h2 class="anchored" data-anchor-id="simple-hand-calculation-numerical-examples">Simple, Hand-Calculation Numerical Example(s)</h2>
+<p>The formula for the E-value (for an <span class="math inline">\(RR_{obs} &gt; 1\)</span>) is surprisingly simple:</p>
+<p><span class="math display">\[
+E\text{-value} = RR_{obs} + \sqrt{RR_{obs} \times (RR_{obs} - 1)}
+\]</span></p>
+<p>If <span class="math inline">\(RR_{obs} &lt; 1\)</span> (a protective effect), we simply invert it (<span class="math inline">\(1/RR_{obs}\)</span>) and use the same formula.</p>
+</section>
+<section id="worked-example-point-estimate-and-ci" class="level2 callout-example">
+<h2 class="anchored" data-anchor-id="worked-example-point-estimate-and-ci">Worked Example: Point Estimate and CI</h2>
+<p>A (fictional) clinical epidemiology study finds that patients taking a new diabetes drug (<span class="math inline">\(A\)</span>) have an elevated risk of pancreatitis (<span class="math inline">\(Y\)</span>). After adjusting for age, sex, BMI, and smoking status (<span class="math inline">\(L\)</span>), they report:</p>
+<ul>
+<li><strong>Adjusted Risk Ratio (<span class="math inline">\(RR_{obs}\)</span>): 3.0</strong></li>
+<li><strong>95% Confidence Interval: [1.8, 5.0]</strong></li>
+</ul>
+<p>Let’s calculate the E-values.</p>
+<section id="e-value-for-the-point-estimate" class="level3">
+<h3 class="anchored" data-anchor-id="e-value-for-the-point-estimate">1. E-value for the Point Estimate</h3>
+<p>We use <span class="math inline">\(RR_{obs} = 3.0\)</span>.</p>
+<ul>
+<li><strong>Step 1:</strong> <span class="math inline">\(E\text{-value} = 3.0 + \sqrt{3.0 \times (3.0 - 1)}\)</span></li>
+<li><strong>Step 2:</strong> <span class="math inline">\(E\text{-value} = 3.0 + \sqrt{3.0 \times 2.0}\)</span></li>
+<li><strong>Step 3:</strong> <span class="math inline">\(E\text{-value} = 3.0 + \sqrt{6.0}\)</span></li>
+<li><strong>Step 4:</strong> <span class="math inline">\(E\text{-value} \approx 3.0 + 2.45 = \mathbf{5.45}\)</span></li>
+</ul>
+<p><strong>Interpretation:</strong> To fully explain away the 3-fold observed increase in risk, an unmeasured confounder <span class="math inline">\(U\)</span> would need to be associated with <em>both</em> the new drug (<span class="math inline">\(A\)</span>) and pancreatitis (<span class="math inline">\(Y\)</span>) by a risk ratio of at least 5.45-fold, conditional on <span class="math inline">\(L\)</span>.</p>
+</section>
+<section id="e-value-for-the-confidence-interval" class="level3">
+<h3 class="anchored" data-anchor-id="e-value-for-the-confidence-interval">2. E-value for the Confidence Interval</h3>
+<p>This is the more critical measure. We want to know what it would take to make the finding <em>non-significant</em>, i.e., move the CI to touch 1.0. We must use the CI limit <em>closest</em> to the null.</p>
+<p>Here, the lower limit is <span class="math inline">\(1.8\)</span>. We use <span class="math inline">\(RR_{obs} = 1.8\)</span>.</p>
+<ul>
+<li><strong>Step 1:</strong> <span class="math inline">\(E\text{-value (CI)} = 1.8 + \sqrt{1.8 \times (1.8 - 1)}\)</span></li>
+<li><strong>Step 2:</strong> <span class="math inline">\(E\text{-value (CI)} = 1.8 + \sqrt{1.8 \times 0.8}\)</span></li>
+<li><strong>Step 3:</strong> <span class="math inline">\(E\text{-value (CI)} = 1.8 + \sqrt{1.44}\)</span></li>
+<li><strong>Step 4:</strong> <span class="math inline">\(E\text{-value (CI)} = 1.8 + 1.2 = \mathbf{3.0}\)</span></li>
+</ul>
+<p><strong>Interpretation:</strong> This is the key finding. An unmeasured confounder <span class="math inline">\(U\)</span> associated with <em>both</em> <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> by a risk ratio of <strong>3.0</strong> would be strong enough to shift the 95% confidence interval to include the null value of 1.0.</p>
+<p>We would then ask ourselves: “Is there a plausible confounder (e.g., ‘pre-pancreatic disease state’) that we failed to measure that could increase the risk of receiving this new drug by 3-fold <em>and</em> increase the risk of pancreatitis by 3-fold, even after we’ve adjusted for BMI and smoking?” This is a concrete, debatable question.</p>
+</section>
+</section>
+<section id="r-code-examples-interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="r-code-examples-interpretation">R Code Examples &amp; Interpretation</h2>
+<p>Calculating the E-value by hand is essential for intuition, but in practice, we use the <code>EValue</code> package.</p>
+<section id="example-1-the-evalues.rr-function" class="level3">
+<h3 class="anchored" data-anchor-id="example-1-the-evalues.rr-function">Example 1: The <code>evalues.RR()</code> Function</h3>
+<p>Let’s use our hand-calculation example: <span class="math inline">\(RR = 3.0\)</span> (95% CI [1.8, 5.0]).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the Library</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(EValue)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate E-value for RR, with Lower (lo) and Upper (hi) CI</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">evalues.RR</span>(<span class="at">est =</span> <span class="fl">3.0</span>, <span class="at">lo =</span> <span class="fl">1.8</span>, <span class="at">hi =</span> <span class="fl">5.0</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the Results</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>R Output (Simulated):</strong></p>
+<pre><code>          point    lower    upper
+RR        3.000    1.800    5.000
+E-value   5.449    3.000       NA</code></pre>
+<p><strong>Interpretation:</strong></p>
+<ul>
+<li>The output provides the E-value for the point estimate (<code>point</code>: 5.449) and the E-value for the CI limit closest to the null (<code>lower</code>: 3.000).</li>
+<li>The <code>NA</code> for the upper bound is correct; we don’t care how much bias is needed to explain away the upper limit, only the one closest to the null.</li>
+<li>Our hand-calculations are confirmed! The E-value for the point estimate is 5.45, and the E-value for the CI is 3.0.</li>
+</ul>
+</section>
+<section id="example-2-protective-effects" class="level3">
+<h3 class="anchored" data-anchor-id="example-2-protective-effects">Example 2: Protective Effects</h3>
+<p>What about a study finding a <em>protective</em> effect? A (fictional) study suggests moderate coffee consumption (<span class="math inline">\(A\)</span>) reduces the 10-year risk of dementia (<span class="math inline">\(Y\)</span>).</p>
+<ul>
+<li><strong>Adjusted Risk Ratio (<span class="math inline">\(RR_{obs}\)</span>): 0.80</strong></li>
+<li><strong>95% Confidence Interval: [0.70, 0.92]</strong></li>
+</ul>
+<p>The <code>evalues.RR</code> function handles this automatically.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Function Knows that an RR &lt; 1 is Protective</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># It Will Automatically Calculate E-values for 1/RR</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>protective_results <span class="ot">&lt;-</span> <span class="fu">evalues.RR</span>(<span class="at">est =</span> <span class="fl">0.80</span>, <span class="at">lo =</span> <span class="fl">0.70</span>, <span class="at">hi =</span> <span class="fl">0.92</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(protective_results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>R Output (Simulated):</strong></p>
+<pre><code>          point    lower    upper
+RR        0.800    0.700    0.920
+E-value   1.809       NA    1.319</code></pre>
+<p><strong>Interpretation:</strong></p>
+<ul>
+<li>Notice the E-values are now calculated for the <em>inverted</em> RRs.
+<ul>
+<li>Point estimate: <span class="math inline">\(RR = 1/0.80 = 1.25\)</span>. E-value = <span class="math inline">\(1.25 + \sqrt{1.25(0.25)} \approx 1.81\)</span>.</li>
+<li>CI limit: <span class="math inline">\(RR = 1/0.92 \approx 1.087\)</span>. E-value = <span class="math inline">\(1.087 + \sqrt{1.087(0.087)} \approx 1.32\)</span>.</li>
+</ul></li>
+<li>The E-value for the CI is <strong>1.32</strong> (on the <code>upper</code> column, as <span class="math inline">\(1/0.92\)</span> is the CI limit closest to the null).</li>
+<li><strong>Conclusion:</strong> This finding is <strong>highly sensitive</strong> to unmeasured confounding. A confounder <span class="math inline">\(U\)</span> (e.g., “higher socioeconomic status”) that is associated with drinking coffee by 1.32-fold and <em>also</em> associated with reduced dementia risk by 1.32-fold would be sufficient to make this finding statistically non-significant. This is a very plausible level of confounding.</li>
+</ul>
+</section>
+</section>
+<section id="hands-on-r-lab" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-r-lab">Hands-On R Lab</h2>
+<section id="week-12-r-lab-quantifying-robustness-with-e-values" class="level3">
+<h3 class="anchored" data-anchor-id="week-12-r-lab-quantifying-robustness-with-e-values">Week 12 R Lab: Quantifying Robustness with E-values</h3>
+<p><strong>Objective:</strong> To practice calculating and, more importantly, <em>interpreting</em> E-values from a simulated study finding.</p>
+<p><strong>Lab Warm-Up (Flipped Design):</strong> Before starting this lab, please answer the following:</p>
+<ol type="1">
+<li>Read Chapter 19 from <span class="citation" data-cites="hernan2020causalwhatif">Hernán &amp; Robins (<a href="#ref-hernan2020causalwhatif" role="doc-biblioref">2020</a>)</span>.</li>
+<li>In your own words, what is the key difference between an E-value for a point estimate and an E-value for a confidence interval?</li>
+<li>Why is the latter (for the CI) the more important metric for researchers?</li>
+</ol>
+</section>
+<section id="lab-scenario" class="level3">
+<h3 class="anchored" data-anchor-id="lab-scenario">Lab Scenario</h3>
+<p>You are a biostatistician collaborating on an observational study of a new anti-hypertensive medication (let’s call it “Drug X”). The team followed 10,000 patients for 5 years to see if Drug X (<span class="math inline">\(A=1\)</span>) reduced the risk of stroke (<span class="math inline">\(Y=1\)</span>) compared to standard care (<span class="math inline">\(A=0\)</span>).</p>
+<p>After adjusting for a rich set of measured covariates <span class="math inline">\(L\)</span> (age, sex, baseline blood pressure, diabetes status, smoking), the final model produced the following:</p>
+<ul>
+<li><strong>Adjusted Risk Ratio (<span class="math inline">\(RR_{obs}\)</span>): 0.60</strong></li>
+<li><strong>95% Confidence Interval: [0.45, 0.80]</strong></li>
+</ul>
+<p>The clinical team is very excited and believes this drug is highly effective. It’s your job to assess how robust this finding is to potential <em>unmeasured</em> confounding.</p>
+</section>
+<section id="task-1-load-packages" class="level3">
+<h3 class="anchored" data-anchor-id="task-1-load-packages">Task 1: Load Packages</h3>
+<p>Please load the <code>EValue</code> and <code>tidyverse</code> packages.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Fill in the Package Names</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(..., ...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<details>
+<summary>
+<b>Solution: Task 1</b>
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the EValue Package for Calculations</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Tidyverse for General R Usability</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) {</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(EValue, tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</details>
+</section>
+<section id="task-2-calculate-the-e-value" class="level3">
+<h3 class="anchored" data-anchor-id="task-2-calculate-the-e-value">Task 2: Calculate the E-value</h3>
+<p>Use the <code>evalues.RR()</code> function to calculate the E-values for the study’s point estimate and 95% CI.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Fill in the Correct Values for Est, Lo, and Hi</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>study_evalue <span class="ot">&lt;-</span> <span class="fu">evalues.RR</span>(<span class="at">est =</span> __, <span class="at">lo =</span> __, <span class="at">hi =</span> __)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the Results</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(study_evalue)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<details>
+<summary>
+<b>Solution: Task 2</b>
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We Are given RR = 0.60, 95% CI [0.45, 0.80]</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>study_evalue <span class="ot">&lt;-</span> <span class="fu">evalues.RR</span>(<span class="at">est =</span> <span class="fl">0.60</span>, <span class="at">lo =</span> <span class="fl">0.45</span>, <span class="at">hi =</span> <span class="fl">0.80</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the Results</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(study_evalue)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># EXPECTED OUTPUT:</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Point Lower Upper</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># RR 0.600 0.450 0.800</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># E-value 2.140 NA 1.809</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</details>
+</section>
+<section id="task-3-interpret-the-e-values" class="level3">
+<h3 class="anchored" data-anchor-id="task-3-interpret-the-e-values">Task 3: Interpret the E-values</h3>
+<p>Based on the R output from Task 2, please answer the following:</p>
+<ol type="1">
+<li>What is the E-value for the point estimate?</li>
+<li>What is the E-value for the 95% confidence interval? (Hint: It’s the one that corresponds to the CI limit closest to the null, which for a protective effect is the <em>upper</em> limit).</li>
+<li>In one sentence, explain what this E-value for the CI <em>means</em>.</li>
+</ol>
+<details>
+<summary>
+<b>Solution: Task 3</b>
+</summary>
+<ol type="1">
+<li>The E-value for the point estimate (RR=0.60) is <strong>2.14</strong>.</li>
+<li>The E-value for the 95% confidence interval (CI Limit=0.80) is <strong>1.81</strong>.</li>
+<li><strong>Interpretation:</strong> An unmeasured confounder <span class="math inline">\(U\)</span> associated with <em>both</em> Drug X use and stroke risk by a risk ratio of <strong>1.81-fold</strong> (above and beyond our measured covariates <span class="math inline">\(L\)</span>) would be sufficient to shift the 95% CI to include 1.0, rendering the finding statistically non-significant.</li>
+</ol>
+</details>
+</section>
+<section id="task-4-reflection-plausibility-discussion" class="level3">
+<h3 class="anchored" data-anchor-id="task-4-reflection-plausibility-discussion">Task 4: Reflection &amp; Plausibility Discussion</h3>
+<p>This is the most important part of the analysis. Now you must <em>think</em> like a causal inference scientist and epidemiologist.</p>
+<p><strong>Question:</strong> Is an unmeasured confounder with <span class="math inline">\(RR_{AU}=1.81\)</span> and <span class="math inline">\(RR_{UY}=1.81\)</span> <em>plausible</em> in this scenario?</p>
+<ul>
+<li><strong>Propose a specific unmeasured confounder <span class="math inline">\(U\)</span></strong> that might be relevant (e.g., patient adherence, socioeconomic status, physician skill, unmeasured co-morbidity).</li>
+<li><strong>Justify your argument:</strong> Do you think it’s plausible this <span class="math inline">\(U\)</span> is associated with <em>both</em> receiving Drug X (<span class="math inline">\(A\)</span>) and avoiding a stroke (<span class="math inline">\(Y\)</span>) by 1.81-fold, even after adjusting for all of <span class="math inline">\(L\)</span>?</li>
+<li><strong>Write your final conclusion:</strong> “Therefore, the study’s finding that Drug X is protective (RR=0.60, 95% CI [0.45, 0.80]) appears to be [<strong>robust</strong> / <strong>somewhat robust</strong> / <strong>highly sensitive</strong>] to unmeasured confounding.”</li>
+</ul>
+<details>
+<summary>
+<b>Example Solution: Task 4</b>
+</summary>
+<ul>
+<li><strong>Proposed Confounder <span class="math inline">\(U\)</span>:</strong> Let’s propose “patient compliance” or “health-seeking behavior.”</li>
+<li><strong>Justification:</strong> Patients who are highly compliant (<span class="math inline">\(U=1\)</span>) may be more likely to (a) be prescribed and take the new Drug X (<span class="math inline">\(A=1\)</span>) and (b) <em>also</em> be compliant with diet, exercise, and other lifestyle advice that reduces stroke risk (<span class="math inline">\(Y=0\)</span>). Is it plausible that this “compliance” factor has a 1.81-fold association with both?
+<ul>
+<li><span class="math inline">\(RR_{AU} \ge 1.81\)</span>: Is it plausible that compliant patients are 81% more likely to get the new drug? Perhaps. Physicians might preferentially give new drugs to “good” patients. This is plausible.</li>
+<li><span class="math inline">\(RR_{UY} \ge 1.81\)</span>: Is it plausible that compliance with a healthy lifestyle reduces stroke risk by 1.81-fold (i.e., <span class="math inline">\(RR=1/1.81 \approx 0.55\)</span>), <em>even after</em> we’ve already adjusted for smoking and diabetes? This is also quite plausible.</li>
+</ul></li>
+<li><strong>Final Conclusion:</strong> “Therefore, the study’s finding (RR=0.60, 95% CI [0.45, 0.80]) appears to be <strong>highly sensitive</strong> to unmeasured confounding. An E-value of 1.81 for the confidence interval is modest. Plausible confounders, such as patient compliance or general health-seeking behavior, could very well have associations of this magnitude, which would be sufficient to explain away the observed statistical significance.”</li>
+</ul>
+</details>
+</section>
+<section id="lab-retrieval-quiz" class="level3">
+<h3 class="anchored" data-anchor-id="lab-retrieval-quiz">Lab Retrieval Quiz</h3>
+<ol type="1">
+<li><strong>True/False:</strong> An E-value of 4.0 proves that the study’s finding is causal.</li>
+<li>A study reports <span class="math inline">\(RR=2.0\)</span> (95% CI [0.9, 3.1]). What is the E-value?</li>
+<li>Why do we <em>always</em> report the E-value for the CI, not just the point estimate?</li>
+</ol>
+<details>
+<summary>
+<b>Quiz Answers</b>
+</summary>
+<ol type="1">
+<li><strong>False.</strong> The E-value <em>never</em> proves causation. It is a quantitative measure of robustness. It states that <em>if</em> unmeasured confounding exists, it would have to be at least 4.0-fold strong on both paths to explain the point estimate.</li>
+<li><strong>This is a trick question.</strong> The E-value is not calculated. The 95% CI already includes the null (1.0). There is no statistically significant association to “explain away.”</li>
+<li>We report the E-value for the CI because we are typically most interested in the robustness of our <em>conclusion</em> (i.e., whether the effect is non-null). The E-value for the CI tells us the minimum amount of confounding needed to flip our conclusion from “statistically significant” to “not statistically significant.” This is a more conservative and important threshold than the point estimate.</li>
+</ol>
+</details>
+</section>
+</section>
+<section id="common-pitfalls-checks" class="level2">
+<h2 class="anchored" data-anchor-id="common-pitfalls-checks">6. Common Pitfalls &amp; Checks</h2>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Pitfall: Misinterpreting the E-value as the “Actual” Bias
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The E-value is the strength of <em>one</em> confounder <span class="math inline">\(U\)</span> (with <span class="math inline">\(RR_{AU}=RR_{UY}\)</span>) that would be needed. It is a <em>lower bound</em>. In reality, the bias could be due to <em>multiple</em> weaker confounders. An E-value of 3.0 does <em>not</em> mean the bias <em>is</em> 3.0; it means the bias <em>must be at least that strong</em> (under this model) to explain the finding.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Key Assumption: The E-value is a Bound
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The standard E-value formula (<span class="math inline">\(RR + \sqrt{...}\)</span>) is itself a bound derived from a more complex bias formula. It provides the <em>minimum</em> strength, which is what makes it so useful. We don’t need to know the exact bias structure, only this lower bound on the required strength.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Tip: Reporting E-values in Your Paper
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When you write a paper, you should <em>always</em> report the E-value for your main finding.</p>
+<p><strong>Example text:</strong> “Our study found an adjusted risk ratio of 0.75 (95% CI, 0.65-0.87). This finding is moderately robust to unmeasured confounding; the E-value for the confidence interval is 1.48, meaning an unmeasured confounder associated with both the exposure and outcome by at least 1.48-fold could explain this finding. We judge this level of confounding to be [plausible / implausible] given that we already controlled for smoking, BMI, and socioeconomic status.”</p>
+</div>
+</div>
+</section>
+<section id="check-your-understanding" class="level2 callout-question">
+<h2 class="anchored" data-anchor-id="check-your-understanding">Check Your Understanding</h2>
+<ul>
+<li><strong>Q:</strong> My E-value for the CI is 1.2. My E-value for the point estimate is 3.0. Which one do I emphasize, and what does it mean?</li>
+<li><strong>A:</strong> You <em>must</em> emphasize the E-value for the CI: 1.2. This means your finding is extremely fragile. A very weak confounder, associated with <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> by only 1.2-fold (i.e., a 20% increase in risk/prevalence), could render your finding non-significant.</li>
+<li><strong>Q:</strong> Can I use the E-value for an Odds Ratio (OR) or Hazard Ratio (HR)?</li>
+<li><strong>A:</strong> Yes. If the outcome is rare (&lt; 10%), the OR and HR approximate an RR, and you can use <code>evalues.RR</code>. The <code>EValue</code> package also has <code>evalues.OR</code> and <code>evalues.HR</code> which use transformations to approximate the E-value, but <code>evalues.RR</code> is the most direct.</li>
+</ul>
+</section>
+<section id="advanced-teaching-activities-interactivity" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-teaching-activities-interactivity">7. Advanced Teaching Activities &amp; Interactivity</h2>
+<ol type="1">
+<li><p><strong>Flipped Classroom (Pre-Class):</strong> “Read the original paper, <span class="citation" data-cites="vanderweele2017evalue">VanderWeele &amp; Ding (<a href="#ref-vanderweele2017evalue" role="doc-biblioref">2017</a>)</span>. Come to class prepared to discuss: (1) What is the historical relationship between the E-value and Cornfield’s 1959 bounds on confounding? (2) The paper provides a formula for a <em>non-binary</em> confounder. How does this change the interpretation?”</p></li>
+<li><p><strong>Think-Pair-Share (In-Class):</strong></p>
+<ul>
+<li><strong>Think:</strong> “I am giving you two study findings. Both have the <em>same</em> point estimate (<span class="math inline">\(RR=1.5\)</span>), but different CIs.”
+<ul>
+<li><em>Study 1:</em> <span class="math inline">\(RR = 1.5\)</span> (95% CI [1.4, 1.6])</li>
+<li><em>Study 2:</em> <span class="math inline">\(RR = 1.5\)</span> (95% CI [1.01, 2.5])</li>
+</ul></li>
+<li><strong>Pair:</strong> “With your partner, calculate the E-value for the CI for both studies. Which study is <em>more robust</em> to unmeasured confounding?”</li>
+<li><strong>Share:</strong> “We’ll vote. Which study is more robust? Why?” (Answer: Study 1. Its CI is tight and far from the null. Its E-value for the CI (for 1.4) will be <span class="math inline">\(1.4 + \sqrt{1.4(0.4)} \approx 2.15\)</span>. Study 2’s E-value for the CI (for 1.01) will be <span class="math inline">\(1.01 + \sqrt{1.01(0.01)} \approx 1.11\)</span>. Study 2 is <em>extremely</em> sensitive, despite having the same point estimate.)</li>
+</ul></li>
+<li><p><strong>Problem-Based Critique (Take-Home):</strong></p>
+<ul>
+<li>“Find a recent observational study in your field (e.g., epidemiology, public health, economics) that reports a statistically significant RR or OR as its main finding.</li>
+<li>Calculate the E-value for the point estimate and the confidence interval.</li>
+<li>Write a one-paragraph ‘Sensitivity Analysis’ section for this paper.</li>
+<li>Conclude with your professional judgment: Do you believe the authors’ causal claim is robust or fragile? Why?”</li>
+</ul></li>
+</ol>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+</section>
+<section id="appendix-advanced-theory-derivations" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-advanced-theory-derivations">Appendix: Advanced Theory &amp; Derivations</h2>
+<section id="derivation-of-the-e-value-formula" class="level3">
+<h3 class="anchored" data-anchor-id="derivation-of-the-e-value-formula">Derivation of the E-value Formula</h3>
+<p>This derivation is advanced but shows where the formula comes from. It is based on the work of Cornfield, Bross, and most recently Ding &amp; VanderWeele (2016).</p>
+<ol type="1">
+<li><strong>The Goal:</strong> We have an observed <span class="math inline">\(RR_{obs}\)</span> and we want to find the “tipping point” where the true, causal risk ratio <span class="math inline">\(RR_c = 1.0\)</span>.</li>
+<li><strong>The Bias Formula:</strong> The relationship between the observed <span class="math inline">\(RR_{obs}\)</span> and the true <span class="math inline">\(RR_c\)</span> can be bounded. A key bound from <span class="citation" data-cites="vanderweele2017evalue">VanderWeele &amp; Ding (<a href="#ref-vanderweele2017evalue" role="doc-biblioref">2017</a>)</span> and colleagues, assuming a binary confounder <span class="math inline">\(U\)</span>, is:</li>
+</ol>
+<p><span class="math display">\[
+RR_{obs} \le RR_c \times \frac{\gamma_{AU} \cdot \gamma_{UY}}{\gamma_{AU} + \gamma_{UY} - 1}
+\]</span></p>
+<p>where <span class="math inline">\(\gamma_{AU}\)</span> and <span class="math inline">\(\gamma_{UY}\)</span> are the bias parameters (<span class="math inline">\(RR_{AU}\)</span> and <span class="math inline">\(RR_{UY}\)</span> as defined earlier). 3. <strong>The Tipping Point:</strong> We are interested in the case where the causal effect is null, <span class="math inline">\(RR_c = 1.0\)</span>. We want to find the parameters that could produce our <span class="math inline">\(RR_{obs}\)</span>.</p>
+<p><span class="math display">\[
+RR_{obs} \le \frac{\gamma_{AU} \cdot \gamma_{UY}}{\gamma_{AU} + \gamma_{UY} - 1}
+\]</span></p>
+<ol start="4" type="1">
+<li><strong>The E-value Assumption:</strong> The E-value seeks the <em>minimum</em> strength <span class="math inline">\(\gamma\)</span> such that <span class="math inline">\(\gamma = \gamma_{AU} = \gamma_{UY}\)</span>. We set this as an equality to find the boundary:</li>
+</ol>
+<p><span class="math display">\[
+RR_{obs} = \frac{\gamma \cdot \gamma}{\gamma + \gamma - 1} = \frac{\gamma^2}{2\gamma - 1}
+\]</span></p>
+<p><span class="math display">\[
+5. **Solve for $\gamma$:** We now have a simple equation to solve for $\gamma$.
+\]</span></p>
+<p><span class="math display">\[
+RR_{obs} \cdot (2\gamma - 1) = \gamma^2
+\]</span></p>
+<p><span class="math display">\[
+2\gamma \cdot RR_{obs} - RR_{obs} = \gamma^2
+\]</span></p>
+<ol start="6" type="1">
+<li><strong>Quadratic Form:</strong> Rearrange this into a standard quadratic equation <span class="math inline">\(a\gamma^2 + b\gamma + c = 0\)</span>:</li>
+</ol>
+<p><span class="math display">\[
+\gamma^2 - (2 \cdot RR_{obs})\gamma + RR_{obs} = 0
+\]</span></p>
+<p>Here, <span class="math inline">\(a=1\)</span>, <span class="math inline">\(b = -2 \cdot RR_{obs}\)</span>, and <span class="math inline">\(c = RR_{obs}\)</span>. 7. <strong>Quadratic Formula:</strong> We use the formula <span class="math inline">\(\gamma = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}\)</span>:</p>
+<p><span class="math display">\[
+\gamma = \frac{ -(-2 \cdot RR_{obs}) \pm \sqrt{(-2 \cdot RR_{obs})^2 - 4(1)(RR_{obs})} }{ 2(1) }
+\]</span></p>
+<p><span class="math display">\[
+\gamma = \frac{ 2 \cdot RR_{obs} \pm \sqrt{4 \cdot RR_{obs}^2 - 4 \cdot RR_{obs}} }{ 2 }
+\]</span></p>
+<ol start="8" type="1">
+<li><strong>Simplify:</strong> Factor out the 4 from the square root:</li>
+</ol>
+<p><span class="math display">\[
+\gamma = \frac{ 2 \cdot RR_{obs} \pm \sqrt{4 \cdot (RR_{obs}^2 - RR_{obs})} }{ 2 }
+\]</span></p>
+<p><span class="math display">\[
+\gamma = \frac{ 2 \cdot RR_{obs} \pm 2 \cdot \sqrt{RR_{obs}^2 - RR_{obs}} }{ 2 }
+\]</span></p>
+<ol start="9" type="1">
+<li><strong>Final Formula:</strong> Divide by 2:</li>
+</ol>
+<p><span class="math display">\[
+\gamma = RR_{obs} \pm \sqrt{RR_{obs}^2 - RR_{obs}}
+\]</span></p>
+<p><span class="math display">\[
+\gamma = RR_{obs} \pm \sqrt{RR_{obs}(RR_{obs} - 1)}
+\]</span></p>
+<p>We take the positive root, <span class="math inline">\(RR_{obs} + \sqrt{RR_{obs}(RR_{obs} - 1)}\)</span>, as this represents the boundary condition for the bias parameters. This is the E-value.</p>
+
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-hernan2020causalwhatif" class="csl-entry" role="listitem">
+Hernán, M. Á., &amp; Robins, J. M. (2020). <em>Causal inference: <span>What</span> if</em>. Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-vanderweele2017evalue" class="csl-entry" role="listitem">
+VanderWeele, T. J., &amp; Ding, P. (2017). Sensitivity analysis in observational research: <span>Introducing</span> the e-value. <em>Annals of Internal Medicine</em>, <em>167</em>(4), 268–274. <a href="https://doi.org/10/gbtnqk">https://doi.org/10/gbtnqk</a>
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/Data-Wise\.github\.io\/causal-inference\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Data-Wise/causal-inference/edit/main/lectures/week-12_sensitivity_analysis.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Data-Wise/causal-inference/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
