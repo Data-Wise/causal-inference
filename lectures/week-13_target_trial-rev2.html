@@ -705,15 +705,13 @@ window.Quarto = {
   <li><a href="#task-0-explore-the-raw-data" id="toc-task-0-explore-the-raw-data" class="nav-link" data-scroll-target="#task-0-explore-the-raw-data">3. Task 0: Explore the Raw Data</a></li>
   <li><a href="#task-1-the-biased-immortal-time-analysis" id="toc-task-1-the-biased-immortal-time-analysis" class="nav-link" data-scroll-target="#task-1-the-biased-immortal-time-analysis">4. Task 1: The Biased “Immortal Time” Analysis</a></li>
   <li><a href="#task-2-emulating-the-target-trial-correctly" id="toc-task-2-emulating-the-target-trial-correctly" class="nav-link" data-scroll-target="#task-2-emulating-the-target-trial-correctly">5. Task 2: Emulating the Target Trial (Correctly)</a></li>
-  <li><a href="#lab-reflection-retrieval" id="toc-lab-reflection-retrieval" class="nav-link" data-scroll-target="#lab-reflection-retrieval">6. Lab Reflection &amp; Retrieval</a></li>
   </ul></li>
   <li><a href="#common-pitfalls-checks" id="toc-common-pitfalls-checks" class="nav-link" data-scroll-target="#common-pitfalls-checks">6. Common Pitfalls &amp; Checks</a></li>
   <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">Check Your Understanding</a></li>
-  <li><a href="#learning-activities" id="toc-learning-activities" class="nav-link" data-scroll-target="#learning-activities">7. Learning Activities</a></li>
-  <li><a href="#appendix-advanced-theory-derivations" id="toc-appendix-advanced-theory-derivations" class="nav-link" data-scroll-target="#appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</a>
+  <li><a href="#appendix-advanced-theory-derivations" id="toc-appendix-advanced-theory-derivations" class="nav-link" data-scroll-target="#appendix-advanced-theory-derivations">Appendix: Advanced Theory &amp; Derivations</a>
   <ul class="collapse">
-  <li><a href="#formalizing-the-itt-and-per-protocol-estimands" id="toc-formalizing-the-itt-and-per-protocol-estimands" class="nav-link" data-scroll-target="#formalizing-the-itt-and-per-protocol-estimands">8.1 Formalizing the ITT and Per-Protocol Estimands</a></li>
-  <li><a href="#formalizing-cloning-for-complex-assignment" id="toc-formalizing-cloning-for-complex-assignment" class="nav-link" data-scroll-target="#formalizing-cloning-for-complex-assignment">8.2 Formalizing “Cloning” for Complex Assignment</a></li>
+  <li><a href="#formalizing-the-itt-and-per-protocol-estimands" id="toc-formalizing-the-itt-and-per-protocol-estimands" class="nav-link" data-scroll-target="#formalizing-the-itt-and-per-protocol-estimands">Formalizing the ITT and Per-Protocol Estimands</a></li>
+  <li><a href="#formalizing-cloning-for-complex-assignment" id="toc-formalizing-cloning-for-complex-assignment" class="nav-link" data-scroll-target="#formalizing-cloning-for-complex-assignment">Formalizing “Cloning” for Complex Assignment</a></li>
   </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
@@ -1253,7 +1251,6 @@ Figure&nbsp;3: Target trial emulation with treatment-confounder feedback. <span 
 </ul></li>
 <li><strong>Follow-up:</strong> Start at <span class="math inline">\(T_0\)</span> for 5 years.</li>
 </ul>
-<!-- end list -->
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># STUDENT TO FILL IN</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dat_biased <span class="ot">&lt;-</span> dat_raw <span class="sc">|&gt;</span></span>
@@ -1329,8 +1326,11 @@ Figure&nbsp;3: Target trial emulation with treatment-confounder feedback. <span 
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the biased result</span></span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_regression</span>(cox_biased, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Interpretation:</strong> This (biased) analysis suggests that “Ever Aspirin” users have a <strong>52% lower hazard of death</strong> (HR = 0.48) compared to “Never Aspirin” users. This looks like a miracle drug!</p>
-<p><strong>Why is it wrong?</strong> An individual who initiated aspirin 2 years <em>after</em> surgery must have survived for those 2 years. Their follow-up time from <span class="math inline">\(T_0\)</span> includes 2 years of <strong>immortal time</strong> during which they <em>could not</em> have died (because if they had, they never would have initiated aspirin and would be in the “Never Aspirin” group).</p>
+<!-- 
+**Interpretation:** This (biased) analysis suggests that "Ever Aspirin" users have a **52% lower hazard of death** (HR = 0.48) compared to "Never Aspirin" users. This looks like a miracle drug!
+
+**Why is it wrong?** An individual who initiated aspirin 2 years *after* surgery must have survived for those 2 years. Their follow-up time from $T_0$ includes 2 years of **immortal time** during which they *could not* have died (because if they had, they never would have initiated aspirin and would be in the "Never Aspirin" group). 
+-->
 </div>
 </div>
 </section>
@@ -1347,7 +1347,6 @@ Figure&nbsp;3: Target trial emulation with treatment-confounder feedback. <span 
 </ul></li>
 <li><strong>Analysis:</strong> ITT-analog. We compare the groups <em>as defined at baseline</em> and follow them for 5 years, regardless of what they do after the grace period.</li>
 </ul>
-<!-- end list -->
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># STUDENT TO FILL IN</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>dat_tt <span class="ot">&lt;-</span> dat_raw <span class="sc">|&gt;</span></span>
@@ -1382,7 +1381,6 @@ Figure&nbsp;3: Target trial emulation with treatment-confounder feedback. <span 
 <span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the target trial emulation result</span></span>
 <span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_regression</span>(cox_tt, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><br></p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1428,19 +1426,16 @@ Figure&nbsp;3: Target trial emulation with treatment-confounder feedback. <span 
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the target trial emulation result</span></span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_regression</span>(cox_tt, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Interpretation:</strong> This (correct) analysis estimates a <strong>24% lower hazard of death</strong> (HR = 0.76) for the Aspirin Strategy. This is much more modest than the 52% reduction from the biased analysis, and much closer to our <em>true</em> simulated effect (HR = 0.7). We still have residual confounding from the unmeasured <code>U_frailty</code>, so our estimate is not perfect, but we have successfully <em>prevented the self-inflicted immortal time bias</em>.</p>
+<!-- **Interpretation:** This (correct) analysis estimates a **24% lower hazard of death** (HR = 0.76) for the Aspirin Strategy. This is much more modest than the 52% reduction from the biased analysis, and much closer to our *true* simulated effect (HR = 0.7). We still have residual confounding from the unmeasured `U_frailty`, so our estimate is not perfect, but we have successfully *prevented the self-inflicted immortal time bias*. -->
 </div>
 </div>
-</section>
-<section id="lab-reflection-retrieval" class="level3">
-<h3 class="anchored" data-anchor-id="lab-reflection-retrieval">6. Lab Reflection &amp; Retrieval</h3>
-<ol type="1">
-<li><strong>Reflection:</strong> In your own words, why did the Task 1 result (HR <span class="math inline">\(\approx\)</span> 0.48) differ so much from the Task 2 result (HR <span class="math inline">\(\approx\)</span> 0.76)? Where <em>exactly</em> was the immortal time in the <code>dat_biased</code> analysis?</li>
-<li><strong>Retrieval 1:</strong> What are the seven components of a target trial protocol?</li>
-<li><strong>Retrieval 2:</strong> What is the key difference between an Intention-to-Treat (ITT) effect and a Per-Protocol effect? Which did our Task 2 analysis most closely resemble?</li>
-<li><strong>Elaboration:</strong> In Task 2, we adjusted for <code>age</code> and <code>history_chd</code>. Why? What causal assumption are we making when we do this?</li>
-<li><strong>Extension:</strong> How would our Task 2 analysis change if we wanted to estimate the <em>per-protocol</em> effect (i.e., the effect of <em>staying</em> on aspirin)? What data would we need to collect over time? What analysis method would we have to use?</li>
-</ol>
+<!-- ### 6. Lab Reflection & Retrieval
+
+1. **Reflection:** In your own words, why did the Task 1 result (HR $\approx$ 0.48) differ so much from the Task 2 result (HR $\approx$ 0.76)? Where *exactly* was the immortal time in the `dat_biased` analysis?
+2. **Retrieval 1:** What are the seven components of a target trial protocol?
+3. **Retrieval 2:** What is the key difference between an Intention-to-Treat (ITT) effect and a Per-Protocol effect? Which did our Task 2 analysis most closely resemble?
+4. **Elaboration:** In Task 2, we adjusted for `age` and `history_chd`. Why? What causal assumption are we making when we do this?
+5. **Extension:** How would our Task 2 analysis change if we wanted to estimate the *per-protocol* effect (i.e., the effect of *staying* on aspirin)? What data would we need to collect over time? What analysis method would we have to use? -->
 <p><em>(End of Lab)</em></p>
 </section>
 </section>
@@ -1486,46 +1481,41 @@ Figure&nbsp;3: Target trial emulation with treatment-confounder feedback. <span 
 <section id="check-your-understanding" class="level2 callout-question">
 <h2 class="anchored" data-anchor-id="check-your-understanding">Check Your Understanding</h2>
 <ol type="1">
-<li><p><strong>Question:</strong> An analyst wants to study the effect of statins on heart attacks. They define the “treated” group as anyone who filled <span class="math inline">\(\ge 2\)</span> statin prescriptions and the “control” group as anyone who filled 0. They start follow-up for <em>everyone</em> at Jan 1, 2020. A patient who dies on Jan 15, 2020 (and filled 0 prescriptions) is put in the control group. What bias is this?</p>
+<li><strong>Question:</strong> An analyst wants to study the effect of statins on heart attacks. They define the “treated” group as anyone who filled <span class="math inline">\(\ge 2\)</span> statin prescriptions and the “control” group as anyone who filled 0. They start follow-up for <em>everyone</em> at Jan 1, 2020. A patient who dies on Jan 15, 2020 (and filled 0 prescriptions) is put in the control group. What bias is this?</li>
+</ol>
 <ul>
 <li><strong>Answer:</strong> This is classic immortal time bias (Emulation Failure 4). The “treated” group is guaranteed to be immortal for the time it takes to fill 2 prescriptions, while the “control” group includes people who die early.</li>
-</ul></li>
-<li><p><strong>Question:</strong> What is the <em>only</em> way to correctly estimate a per-protocol effect in a trial with non-adherence and time-varying prognostic factors (e.g., factors that predict both adherence and the outcome)?</p>
+</ul>
+<ol start="2" type="1">
+<li><strong>Question:</strong> What is the <em>only</em> way to correctly estimate a per-protocol effect in a trial with non-adherence and time-varying prognostic factors (e.g., factors that predict both adherence and the outcome)?</li>
+</ol>
 <ul>
 <li><strong>Answer:</strong> You must use a method that can handle time-varying treatment-confounder feedback, such as the g-methods (IP weighting, g-formula, g-estimation).</li>
-</ul></li>
-<li><p><strong>Question:</strong> You are emulating a target trial. You find that many people in your observational data don’t start their assigned “aspirin” strategy exactly at <span class="math inline">\(T_0\)</span>, but rather 2-3 months later. If you <em>exclude</em> them, what bias might you introduce? What is a better approach?</p>
+</ul>
+<ol start="3" type="1">
+<li><strong>Question:</strong> You are emulating a target trial. You find that many people in your observational data don’t start their assigned “aspirin” strategy exactly at <span class="math inline">\(T_0\)</span>, but rather 2-3 months later. If you <em>exclude</em> them, what bias might you introduce? What is a better approach?</li>
+</ol>
 <ul>
 <li><strong>Answer:</strong> Excluding them could introduce selection bias if the reasons for their delay are related to the outcome. A better approach is to specify a <strong>grace period</strong> (e.g., 3 months) in your target trial protocol. This defines the “Aspirin Strategy” as “initiating within 3 months”. This makes the emulation more realistic and increases the number of eligible individuals.</li>
-</ul></li>
-</ol>
-</section>
-<section id="learning-activities" class="level2">
-<h2 class="anchored" data-anchor-id="learning-activities">7. Learning Activities</h2>
-<ul>
-<li><strong>Flipped Classroom:</strong>
-<ul>
-<li><em>Prep:</em> Students read a classic observational study abstract (e.g., a real study on hormone replacement therapy or statins).</li>
-<li><em>Activity:</em> In class, break into small groups. Each group must write the 7-component protocol for the <em>target trial</em> that the observational study was trying to emulate.</li>
-<li><em>Discussion:</em> Groups present their protocols. The class discusses where the observational study <em>deviated</em> from the target trial (e.g., “They used prevalent users, which misaligns <span class="math inline">\(T_0\)</span>” or “They didn’t have data on confounder <span class="math inline">\(L_k\)</span>”).</li>
-</ul></li>
-<li><strong>Think-Pair-Share:</strong>
-<ul>
-<li><em>Prompt:</em> “I propose a study to estimate the effect of <em>never</em> smoking on lung cancer. I’ll use a database of 60-year-olds, define <span class="math inline">\(T_0\)</span> as their 60th birthday, and define my ‘never-smoker’ group as those who report 0 cigarettes smoked in their life. What is the target trial I am emulating? Is this a valid emulation?”</li>
-<li><em>Think:</em> Student considers the 7 components.</li>
-<li><em>Pair:</em> Student discusses with a neighbor. They should realize…</li>
-<li><em>Share:</em> The class discusses that this is <strong>Emulation Failure 1</strong> (prevalent user bias). The “assignment” to “never-smoker” vs.&nbsp;“smoker” strategies happened <em>long ago</em> (e.g., at age 15), not at <span class="math inline">\(T_0=60\)</span>. We are comparing 60-year-old smokers and 60-year-old never-smokers. This is biased unless we can adjust for all confounders accumulated since age 15. The <em>correct</em> target trial would randomize people to “start smoking” vs.&nbsp;“never start smoking” at age 15 and follow them for 45 years.</li>
-</ul></li>
-<li><strong>Design Critique:</strong>
-<ul>
-<li><em>Activity:</em> Present two <em>different</em> target trial protocols for the same observational database (e.g., 1. Initiation trial; 2. Discontinuation trial). Ask students to discuss which protocol is (a) more feasible to emulate with the available data and (b) answers a more relevant clinical or policy question.</li>
-</ul></li>
 </ul>
 </section>
+<!-- ## 7. Learning Activities
+
+  - **Flipped Classroom:**
+      - *Prep:* Students read a classic observational study abstract (e.g., a real study on hormone replacement therapy or statins).
+      - *Activity:* In class, break into small groups. Each group must write the 7-component protocol for the *target trial* that the observational study was trying to emulate.
+      - *Discussion:* Groups present their protocols. The class discusses where the observational study *deviated* from the target trial (e.g., "They used prevalent users, which misaligns $T_0$" or "They didn't have data on confounder $L_k$").
+  - **Think-Pair-Share:**
+      - *Prompt:* "I propose a study to estimate the effect of *never* smoking on lung cancer. I'll use a database of 60-year-olds, define $T_0$ as their 60th birthday, and define my 'never-smoker' group as those who report 0 cigarettes smoked in their life. What is the target trial I am emulating? Is this a valid emulation?"
+      - *Think:* Student considers the 7 components.
+      - *Pair:* Student discusses with a neighbor. They should realize...
+      - *Share:* The class discusses that this is **Emulation Failure 1** (prevalent user bias). The "assignment" to "never-smoker" vs. "smoker" strategies happened *long ago* (e.g., at age 15), not at $T_0=60$. We are comparing 60-year-old smokers and 60-year-old never-smokers. This is biased unless we can adjust for all confounders accumulated since age 15. The *correct* target trial would randomize people to "start smoking" vs. "never start smoking" at age 15 and follow them for 45 years.
+  - **Design Critique:**
+      - *Activity:* Present two *different* target trial protocols for the same observational database (e.g., 1. Initiation trial; 2. Discontinuation trial). Ask students to discuss which protocol is (a) more feasible to emulate with the available data and (b) answers a more relevant clinical or policy question. -->
 <section id="appendix-advanced-theory-derivations" class="level2">
-<h2 class="anchored" data-anchor-id="appendix-advanced-theory-derivations">8. Appendix: Advanced Theory &amp; Derivations</h2>
+<h2 class="anchored" data-anchor-id="appendix-advanced-theory-derivations">Appendix: Advanced Theory &amp; Derivations</h2>
 <section id="formalizing-the-itt-and-per-protocol-estimands" class="level3">
-<h3 class="anchored" data-anchor-id="formalizing-the-itt-and-per-protocol-estimands">8.1 Formalizing the ITT and Per-Protocol Estimands</h3>
+<h3 class="anchored" data-anchor-id="formalizing-the-itt-and-per-protocol-estimands">Formalizing the ITT and Per-Protocol Estimands</h3>
 <p>Let’s formalize the concepts from Section 2. We use the potential outcomes framework from <span class="citation" data-cites="hernan2020causalwhatif">Hernán &amp; Robins (<a href="#ref-hernan2020causalwhatif" role="doc-biblioref">2020</a>)</span> (Chapter 22).</p>
 <ul>
 <li>Let <span class="math inline">\(Z_i\)</span> be the <strong>randomized assignment</strong> for individual <span class="math inline">\(i\)</span> at <span class="math inline">\(T_0\)</span>.
@@ -1582,7 +1572,7 @@ ACE_{PP} = \E{Y^{\overline{a}=\overline{g}_1}} - \E{Y^{\overline{a}=\overline{g}
 </section>
 </section>
 <section id="formalizing-cloning-for-complex-assignment" class="level3">
-<h3 class="anchored" data-anchor-id="formalizing-cloning-for-complex-assignment">8.2 Formalizing “Cloning” for Complex Assignment</h3>
+<h3 class="anchored" data-anchor-id="formalizing-cloning-for-complex-assignment">Formalizing “Cloning” for Complex Assignment</h3>
 <p>In Section 2.2, we discussed two problems: (1) individuals being eligible for multiple strategies at <span class="math inline">\(T_0\)</span>, and (2) grace periods. Both are solved by “cloning” <span class="citation" data-cites="hernan2020causalwhatif">(<a href="#ref-hernan2020causalwhatif" role="doc-biblioref">Hernán &amp; Robins, 2020, Chapter 22</a>)</span>.</p>
 <ol type="1">
 <li><strong>The Problem:</strong> At <span class="math inline">\(T_0\)</span>, an individual (e.g., <span class="math inline">\(L_0=0\)</span>) is eligible for both strategy <span class="math inline">\(g_1\)</span> (“start when <span class="math inline">\(L_1=1\)</span>”) and strategy <span class="math inline">\(g_0\)</span> (“never start”). Their observed data <span class="math inline">\(\overline{A}\)</span> and <span class="math inline">\(\overline{L}\)</span> are consistent with both.</li>
