@@ -1,50 +1,45 @@
-# Quarto project files
-.quarto/
-_site/
-_freeze/
-_book/
+# Quarto
+/_site/
+/_quarto/
+/_freeze/
+.quarto/_freeze/
+.quarto/idx/
+.quarto/xref/
+.quarto/project-cache/
+.quarto/quarto-session-temp*/
+*.html
+*.pdf
+*.log
+*.aux
+*.synctex(busy)
+*.fdb_latexmk
+*.fls
+*~
+*#
 
-# RStudio files
+# R
 .Rproj.user
 .Rhistory
 .RData
-
-# VSCode
+.Ruserdata
+renv/
+.DS_Store
 .vscode/
+rmarkdown/
 
 # Jupyter
 .ipynb_checkpoints/
-**/*.quarto_ipynb
-.luarc.json
+*.ipynb
 
-# renv
-renv/
-
-# OS generated files
+# OS
 .DS_Store
 Thumbs.db
+**/*.quarto_ipynb
 
-# Temporary files
-*~
-*.tmp
-*.bak
+# Git status files
+.git/.gitstatus.*
 
 /.quarto/
 
-# Generated files
-/_extensions/
-/_manuscript/
-/*_cache/
-/*_files/
-/diagram-cache/
-/.vsc.ipynb/
-/_publish.yml
-*.log
-*.aux
-*.fdb_latexmk
-*.fls
-*.synctex.gz
-*.synctex(busy)
-*.pdf
-*.docx
-*.tex
+# Quarto per-document build output (was tracked before this rule existed)
+build/
