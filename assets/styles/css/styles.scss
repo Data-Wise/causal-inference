@@ -19,6 +19,25 @@ $line-height-code: 1.3; // Line height for code blocks
 $padding-code: 0.5em; // Padding for code blocks
 $border-radius: 4px; // Border radius for elements like buttons and cards
 
+// Spacing variables
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+// University of New Mexico Colors
+$unm-green-chile: #ba0c2f;
+$unm-sandia-sunset: #ed8b00;
+$unm-turquoise: #007a86;
+$unm-sandia: #f2a900;
+
+// SVG Icons for Callouts
+$icon-question: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/></svg>');
+$icon-example: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.823c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.5.81c-1.084 0-2.13.125-3.086.452V14.5c.955-.325 2.005-.452 3.086-.452 1.084 0 2.13.125 3.086.452V1.783z"/></svg>');
+$icon-insight: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13h-5a.5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6 8.5a.5.5 0 0 1 .5-.5h.5a.5.5 0 0 1 0 1h-.5a.5.5 0 0 1-.5-.5zM8 1a5 5 0 0 0-3.69 8.481A2.965 2.965 0 0 1 3.5 12.5h9a2.965 2.965 0 0 1-1.19-2.019A5 5 0 0 0 8 1z"/></svg>');
+$icon-definition: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M6 8V1h1v6.117L8.743 8.07a.5.5 0 0 1 .514 0L11 7.117V1h1v7a.5.5 0 0 1-.757.429L9 7.083 6.757 8.43A.5.5 0 0 1 6 8z"/><path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/><path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/></svg>');
+$icon-error: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>');
+$icon-tip: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/></svg>');
+
 /*-- scss:rules --*/
 // Base styles
 body {
@@ -197,25 +216,7 @@ div.code-with-filename-file pre {
   color: $secondary-color;
 }
 
-// Header menu styles
-.header-menu {
-  color: $secondary-color;
-  /* Set text color to black */
-}
-
-// Additional styles for header menu links
-.header-menu a {
-  color: $secondary-color;
-  /* Set link color to black */
-  text-decoration: none;
-}
-
-.header-menu a:hover {
-  text-decoration: underline;
-}
-
 // Footer styles
-
 .site-footer {
   background-color: var(--background-color);
   color: var(--secondary-color);
@@ -255,8 +256,197 @@ div.code-with-filename-file pre {
   box-shadow: $x $y $blur $color;
 }
 
+/* ===========================
+   Modern Callouts with Icons and Headings
+=========================== */
+
+/* Base Callout Style */
+.callout-example,
+.callout-question,
+.callout-insight,
+.callout-definition,
+.callout-error,
+.callout-tip {
+  margin: $spacing-lg 0;
+  border-left: 6px solid;
+  border-bottom: 2px solid #dfdfe0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  padding-left: .75rem;
+  color: black;
+}
+
+/* Shared Title Bar Styles */
+.callout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: black;
+  border-radius: 7px 7px 0 0;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+}
+
+.callout-title::before {
+  flex-shrink: 0;
+  width: 1.2em;
+  height: 1.2em;
+  content: "";
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+}
+
+/* Normalize any heading level inside callout-title */
+.callout-title h2,
+.callout-title h3,
+.callout-title h4,
+.callout-title h5,
+.callout-title h6 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1.1;
+  color: inherit;
+  background-color: inherit;
+}
+
+/* --- Callout: Question --- */
+.callout-question {
+  border-left-color: $unm-sandia-sunset;
+
+  .callout-title {
+    background-color: lighten($unm-sandia-sunset, 43%);
+
+    &::before {
+      background-image: $icon-question;
+    }
+  }
+}
+
+/* --- Callout: Example --- */
+.callout-example {
+  border-left-color: $unm-green-chile;
+
+  h2 {
+    color: $secondary-color;
+    font-size: 1.2em;
+  }
+
+  .callout-title {
+    background-color: lighten($unm-green-chile, 40%);
+
+    &::before {
+      background-image: $icon-example;
+    }
+
+    h2 {
+      font-size: inherit;
+      color: inherit;
+      font-weight: inherit;
+      margin: 0;
+      line-height: 1.1;
+      background-color: inherit;
+    }
+  }
+}
+
+/* --- Callout: Insight --- */
+.callout-insight {
+  border-left-color: $unm-turquoise;
+
+  .callout-title {
+    background-color: lighten($unm-turquoise, 43%);
+
+    &::before {
+      background-image: $icon-insight;
+    }
+  }
+}
+
+/* --- Callout: Definition --- */
+.callout-definition {
+  border-left-color: $unm-sandia;
+
+  .callout-title {
+    background-color: lighten($unm-sandia, 40%);
+
+    &::before {
+      background-image: $icon-definition;
+    }
+  }
+}
+
+/* --- Callout: Error --- */
+.callout-error {
+  border-left-color: $accent-color;
+
+  .callout-title {
+    background-color: lighten($accent-color, 40%);
+
+    &::before {
+      background-image: $icon-error;
+    }
+  }
+}
+
+/* --- Callout: Tip --- */
+.callout-tip {
+  border-left-color: #28a745; // A green color for tips
+
+  .callout-title {
+    background-color: lighten(#28a745, 45%);
+
+    &::before {
+      background-image: $icon-tip;
+    }
+  }
+}
+
+/* Hover Effects with Proper Colored Shadows */
+.callout-example:hover {
+  background-color: lighten($unm-green-chile, 43%);
+  box-shadow: 0 8px 20px rgba(186, 12, 47, 0.25);
+  /* Corrected Green Chile */
+}
+
+.callout-question:hover {
+  background-color: lighten($unm-sandia-sunset, 43%);
+  box-shadow: 0 8px 20px rgba(237, 139, 0, 0.25);
+  /* Sandia Sunset */
+}
+
+.callout-insight:hover {
+  background-color: lighten($unm-turquoise, 43%);
+  box-shadow: 0 8px 20px rgba(0, 122, 134, 0.25);
+  /* Turquoise */
+}
+
+.callout-definition:hover {
+  background-color: lighten($unm-sandia, 43%);
+  box-shadow: 0 8px 20px rgba(242, 169, 0, 0.25);
+  /* Sandia */
+}
+
+.callout-error:hover {
+  background-color: lighten($accent-color, 43%);
+  box-shadow: 0 8px 20px rgba(186, 12, 47, 0.25);
+  /* Accent/Error Red */
+}
+
+.callout-tip:hover {
+  background-color: lighten(#28a745, 43%);
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.25);
+  /* Tip Green */
+}
+
 /*-- scss:functions --*/
 // Add functions here if needed
-
-/*-- scss:uses --*/
-// Add uses here if needed

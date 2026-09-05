@@ -1,14 +1,16 @@
 project:
   type: website
+  output-dir: _site
   render:
     - "*.qmd"
     - "!templates/"
     - "!appendix/"
     - "!assignments/"
+    - "!.git/"
     - "lectures/"
 profiles:
   group:
-  - [ default, pdf ]
+    - [default, pdf]
 metadata-files:
   - _website.yml
 bibliography: "references.bib"
@@ -21,6 +23,7 @@ author:
   affiliations: "{{< var affiliations >}}"
 df-print: paged
 execute:
+  engine: knitr
   eval: true
   echo: true
   warning: false
@@ -92,7 +95,7 @@ diagram:
       header-includes:
       - '\usepackage{adjustbox}'
       - '\usetikzlibrary{arrows, fit, shapes, shapes.geometric, arrows, arrows.meta, decorations.markings, positioning}'
-  cache: true
+  cache: false
   format:
     html: png
     pdf: pdf

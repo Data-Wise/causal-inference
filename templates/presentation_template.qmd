@@ -1,0 +1,156 @@
+---
+title: "The Causal Effect of [Treatment] on [Outcome]"
+subtitle: "STAT 579 Final Project"
+author: "[Your Name]"
+institute: "University of New Mexico"
+format:
+  revealjs:
+    #theme: cosmo # Options: beige, blood, moon, night, serif, simple, solarized
+    transition: slide
+    slide-number: true
+    show-notes: separate-page
+    embed-resources: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(knitr)
+library(kableExtra)
+```
+
+# Introduction
+
+## The Research Question
+
+**Does [Intervention] cause a change in [Outcome] among [Population]?**
+
+- **Background:** [Briefly state why this matters. 1-2 bullets.]
+- **Gap:** Previous studies were limited by [e.g., selection bias, lack of robust methods].
+- **Goal:** Emulate a Target Trial to estimate the causal effect.
+
+## The Target Trial Protocol
+
+To avoid bias, we emulate the following hypothetical trial:
+
+|**Component**|**Target Trial**|**Observational Emulation**|
+|---|---|---|
+|**Eligibility**|Adults >18|Filtered EHR data|
+|**Treatment**|Assigned Drug A|Prescription at $T_0$|
+|**Outcome**|5-yr Mortality|Death records|
+|**Contrast**|ITT|Adjusted ITT|
+
+::: notes
+
+Speaker Note: Emphasize that specific exclusion criteria were applied to match the target trial as closely as possible to prevent immortal time bias.
+
+:::
+
+# Identification Strategy
+
+## Causal Assumptions
+
+We rely on the assumption of Conditional Exchangeability:
+
+$$
+Y^a \perp A | L
+$$
+
+- We assume we have measured all sufficient confounders.
+- **Positivity:** All participants had a non-zero probability of receiving treatment.
+
+## The Causal DAG
+
+Code snippet
+
+```r
+#| echo: false
+#| fig-align: center
+#| fig-height: 4.5
+
+dag <- dagify(
+  Y ~ A + L1 + L2,
+  A ~ L1 + L2,
+  exposure = "A",
+  outcome = "Y",
+  labels = c(Y="Outcome", A="Treatment", L1="Age", L2="Health")
+)
+
+ggdag(dag, text = FALSE, use_labels = "label") +
+  theme_dag() + theme(legend.position = "none")
+```
+
+# Data & Methods
+
+## Methodology
+
+1. **Design:** Retrospective Cohort Study.
+2. **Propensity Score Model:** Logistic regression on [List key covariates].
+3. **Adjustment:** 1:1 Nearest Neighbor Matching (without replacement).
+4. **Sensitivity:** E-value calculation for unmeasured confounding.
+
+## Covariate Balance
+
+Did the matching work?
+
+Code snippet
+
+```r
+#| echo: false
+#| fig-align: center
+# Placeholder for your actual Love Plot
+# love.plot(m.out, binary = "std", thresholds = c(m = .1))
+plot(1, 1, main = "Insert Love Plot Here", axes = FALSE, xlab = "", ylab = "")
+```
+
+::: notes
+
+Note: All standardized mean differences were below 0.1 after matching, indicating good balance.
+
+:::
+
+# Results
+
+## Main Causal Estimate
+
+After adjustment, we found:
+
+### Risk Difference: -0.05
+
+**(95% CI: -0.08, -0.02)**
+
+> **Interpretation:** Treatment reduced the absolute risk of the outcome by 5 percentage points compared to the control group.
+
+## Sensitivity Analysis
+
+How robust is this finding?
+
+- **E-value (Point Estimate):** 2.5
+- **E-value (CI Lower Bound):** 1.8
+
+**Implication:** An unmeasured confounder would need to be associated with both the treatment and outcome by a risk ratio of **1.8** to explain away these results.
+
+# Discussion
+
+## Conclusions
+
+- **Summary:** We found a significant causal effect of X on Y.
+- **Limitations:**
+    - Potential unmeasured confounding (e.g., socioeconomic status).
+    - Generalizability limited to [specific population].
+- **Next Steps:** Replicate in a different database or investigate effect modification.
+
+## Questions?
+
+Thank you!
+
+---
+
+### 🎤 Presentation Tips for This Course
+
+1. **Don't Read the Slides:** Your slides are for the audience (visuals, key numbers). Your *notes* are for you.
+2. **Focus on the "Why":** In a causal inference course, the **identification strategy** (The DAG and the Target Trial) is often more important than the specific P-value. Spend time explaining *why* you think your confounding control is sufficient.
+3. **Be Honest about Limitations:** You will get more points for correctly identifying a weakness (e.g., "We could not measure frailty, which likely biases our result upwards") than for pretending your study is perfect.

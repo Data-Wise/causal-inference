@@ -1,0 +1,630 @@
+---
+title: "Week 10: Quantitative Bias Analysis, Tipping-Point Logic, and The E-value"
+---
+
+## Overview
+
+Welcome, class. For the past eleven weeks, we have dedicated ourselves to the rigorous estimation of causal effects, primarily focusing on methods to control for *measured* confounders. We have used regression, matching, stratification, and inverse probability weighting to "close backdoor paths" and emulate a randomized controlled trial (RCT) from observational data.
+
+All of these methods, however, rest on one critical, untestable assumption: **conditional exchangeability**, or "no unmeasured confounding." We *assume* that the set of covariates $L$ we measured and adjusted for is sufficient to make the exposed and unexposed groups comparable.
+
+This week, we confront the "Achilles' heel" of observational research head-on. What if our assumption is wrong? What if there is an unmeasured confounder $U$ that biases our results?
+
+This module introduces **sensitivity analysis**, a formal method for quantifying the potential impact of unmeasured confounding. We will shift our question from the unanswerable, "Is there unmeasured confounding?" to the answerable, "How strong would an unmeasured confounder have to be to *change our conclusion*?"
+
+We will focus on a powerful, intuitive, and now standard tool: the **E-value** [@vanderweele2017evalue]. The E-value provides a "tipping point" analysis, helping us gauge the robustness of our findings and fostering a more honest and critical discussion about the limitations of our causal claims.
+
+## Learning Objectives
+
+By the end of this module, you will be able to:
+
+1. **Explain** the fundamental problem of unmeasured confounding and articulate why the "no unmeasured confounding" assumption is untestable from data alone.
+2. **Define** the logic of "tipping-point" sensitivity analysis and specify the key bias parameters (confounder-exposure and confounder-outcome associations).
+3. **Calculate** the E-value for an observed risk ratio (both point estimate and confidence interval) using the standard formula.
+4. **Implement** E-value calculations in R using the `EValue` package.
+5. **Interpret** the E-value in the context of a public health problem, justifying the *plausibility* (or implausibility) of an unmeasured confounder explaining away a research finding.
+6. **Critique** research by assessing the sensitivity of its claims to unmeasured confounding.
+
+## R Packages
+
+We will use the following packages. The `EValue` package is the star of this week's module.
+
+```{r}
+#| label: load-packages
+#| echo: true
+#| eval: false
+
+# Use pacman to load (and install if needed) packages
+if (!require("pacman")) {
+  install.packages("pacman")
+}
+pacman::p_load(
+  tidyverse, # For data manipulation and plotting
+  dagitty, # For creating and analyzing DAGs
+  ggdag, # For plotting DAGs with ggplot2
+  EValue, # For calculating E-values
+  knitr # For formatting tables
+)
+```
+
+## Background
+
+Excellent question. This distinction is the absolute core of our work in this course. It's the difference between what we *want* to know (the causal effect) and what we can *actually calculate* from our data (the association).
+
+Let's define these terms formally.
+
+### The True, Causal Risk Ratio ($RR_{AY}^c$)
+
+This is our **causal estimand**. It answers the "what if" question.
+
+The true, causal risk ratio compares the risk of the outcome ($Y=1$) in an entire population *if everyone were exposed ($a=1$)* to the risk of the outcome in that *same population* if *everyone were unexposed ($a=0$)*.
+
+We define it using **potential outcomes** (see Chapter 1 of @hernan2020causalwhatif):
+
+* Let $Y^{a=1}$ be the potential outcome for an individual had they, possibly contrary to fact, received the exposure.
+* Let $Y^{a=0}$ be the potential outcome for that same individual had they not received the exposure.
+
+The causal risk ratio is the ratio of the population-level probabilities (or risks) of these two potential outcomes:
+
+$$
+RR_{AY}^c = \frac{P(Y^{a=1} = 1)}{P(Y^{a=0} = 1)}
+$$
+
+* The numerator, $P(Y^{a=1} = 1)$, is the **causal risk** under exposure.
+* The denominator, $P(Y^{a=0} = 1)$, is the **causal risk** under non-exposure.
+
+**Key Idea:** This is a comparison of two hypothetical, counterfactual worlds. We can never observe both potential outcomes for the same person at the same time (the "fundamental problem of causal inference"). Our goal in an observational study is to use data to *estimate* this unobservable quantity.
+
+### The Observed, Associational Risk Ratio ($RR_{AY|L}$)
+
+This is our **associational measure**. It's what we *actually compute* from our observational data after adjusting for a set of *measured* covariates, $L$.
+
+The observed, conditional risk ratio compares the risk of the outcome among the exposed to the risk of the outcome among the unexposed, *within a specific stratum* (or subset) of the population defined by $L=l$.
+
+We define it using standard **conditional probabilities**:
+
+$$
+RR_{AY|L=l} = \frac{P(Y=1 \mid A=1, L=l)}{P(Y=1 \mid A=0, L=l)}
+$$
+
+* The numerator, $P(Y=1 \mid A=1, L=l)$, is the **observed risk** among the exposed in stratum $l$.
+* The denominator, $P(Y=1 \mid A=0, L=l)$, is the **observed risk** among the unexposed in that same stratum $l$.
+
+::: {.callout-note}
+We often report a single "adjusted" or "standardized" $RR_{AY|L}$ by averaging these stratum-specific measures, for example, by standardizing them to the population distribution of $L$ or by using a regression model (e.g., logistic, log-binomial) that assumes a common $RR$ across strata.
+:::
+
+### The Crucial Link
+
+In an observational study, we *hope* that our adjusted associational measure $RR_{AY|L}$ is a valid estimate of the true causal measure $RR_{AY}^c$.
+
+This "hope" is our key assumption: **conditional exchangeability (or no unmeasured confounding)**.
+
+If we assume $Y^a \indep A \mid L$, then the causal risks *within a stratum* equal the associational risks:
+
+- $P(Y^{a=1} = 1 \mid L=l) = P(Y=1 \mid A=1, L=l)$
+- $P(Y^{a=0} = 1 \mid L=l) = P(Y=1 \mid A=0, L=l)$
+
+When this holds, our adjusted $RR_{AY|L}$ *identifies* the causal $RR_{AY}^c$. The purpose of sensitivity analysis is to probe what happens when this assumption fails.
+
+## Comprehensive Topic Explanation
+
+### The Core Problem: Unmeasured Confounding
+
+All our methods for causal inference from observational data—regression, matching, IPW—rely on the assumption of **conditional exchangeability**. Formally, given a set of *measured* covariates $L$:
+
+$$
+Y^a \indep A \mid L
+$$
+
+This assumption states that, within strata of $L$, treatment assignment $A$ is independent of the potential outcomes $Y^a$. In DAG terminology, it means our set $L$ is sufficient to block all non-causal backdoor paths between $A$ and $Y$.
+
+The problem is that we can *never* be certain we have measured all relevant covariates. There may be an unmeasured variable $U$ (e.g., genetic predisposition, health-seeking behavior, lifestyle factors) that is a common cause of both $A$ and $Y$.
+
+Our causal diagram would look like this:
+
+::: {#fig-unmeasured-confounding-dag}
+```tikz
+\usetikzlibrary{positioning, shapes, arrows.meta}
+\begin{tikzpicture}[
+node distance=1.5cm and 3cm,
+var/.style={draw, thick, rounded corners, minimum size=1cm, text width=2cm, text centered, font=\sffamily},
+unobs/.style={var, dashed, text=gray},
+arr/.style={-Latex, thick},
+path/.style={arr, red, thick}
+]
+\node[var] (A) {$A$ (Exposure)};
+\node[var, right=of A] (Y) {$Y$ (Outcome)};
+\node[unobs, above=of A, xshift=1.5cm] (U) {$U$ (Unmeasured)};
+\node[var, above=of U, xshift=-1.5cm] (L) {$L$ (Measured)};
+
+% Causal path
+\draw[arr, blue, ultra thick] (A) -- (Y) node[midway, below, black, yshift=-2mm] {Causal Effect?};
+
+% Backdoor paths
+\draw[path] (U) -- (A);
+\draw[path] (U) -- (Y);
+\draw[arr] (L) -- (A);
+\draw[arr] (L) -- (Y);
+\draw[arr, gray, dashed] (L) -- (U); % U might even be related to L
+\end{tikzpicture}
+```
+
+DAG showing unmeasured confounding by $U$ between exposure $A$ and outcome $Y$, with measured covariates $L$.
+:::
+
+If we adjust for $L$, we successfully block the backdoor path $A \leftarrow L \rightarrow Y$. However, the path **$A \leftarrow U \rightarrow Y$** remains open, and our effect estimate will be a mix of the true causal effect and bias from this unmeasured confounding.
+
+### From "Is there bias?" to "How much bias?"
+
+We cannot use our data to test for the presence of $U$. This is a fundamental limitation. Data you *don't have* cannot be analyzed.
+
+Therefore, we must pivot. Instead of claiming "there is no unmeasured confounding," we perform a **sensitivity analysis**. We assume our observed association (e.g., $RR_{AY|L} = 2.0$) is *biased* and ask a "what if" question:
+
+> **"How strong would an unmeasured confounder $U$ have to be to *fully explain away* this observed association?"**
+
+"Explain away" means: how strong would the $U \rightarrow A$ and $U \rightarrow Y$ relationships need to be to make the *true, causal* risk ratio $RR_{AY}^c$ equal to 1.0 (the null)?
+
+### The E-value: A Tipping-Point Metric
+
+The **E-value** provides a direct answer to this question [@vanderweele2017evalue].
+
+::: {.callout-note icon= 'false'}
+## 📖 Definition
+The E-value is the **minimum** strength of association (on the risk ratio scale) that an unmeasured confounder $U$ would need to have with *both* the exposure $A$ and the outcome $Y$, conditional on the measured covariates $L$, to reduce the observed risk ratio to 1.0.
+:::
+
+### Bias Parameters
+
+To formalize this, we define two bias parameters for a (hypothetical, binary) unmeasured confounder $U$:
+
+1. **$RR_{AU}$**: The risk ratio for the association between the confounder $U$ and the exposure $A$.
+   - $RR_{AU} = \frac{P(A=1 | U=1, L)}{P(A=1 | U=0, L)}$
+2. **$RR_{UY}$**: The risk ratio for the association between the confounder $U$ and the outcome $Y$.
+   - $RR_{UY} = \frac{P(Y=1 | A, U=1, L)}{P(Y=1 | A, U=0, L)}$
+
+The E-value simplifies this by setting $RR_{AU} = RR_{UY} = \gamma$ and finding the minimum $\gamma$ that could "explain away" the effect.
+
+### Two Types of E-values
+
+We must consider two distinct "tipping points":
+
+1. **E-value for the Point Estimate:** The minimum $\gamma$ needed to move the *point estimate* (e.g., $RR=2.0$) to the null ($RR_c=1.0$).
+2. **E-value for the Confidence Interval:** The minimum $\gamma$ needed to move the *confidence interval limit closest to the null* (e.g., $RR=1.2$) to the null.
+
+As we will see, the E-value for the CI is the more important and conservative metric. It answers the question: "How strong would confounding have to be to make our finding *statistically non-significant*?"
+
+## Intuitive Clarifications of Challenging Ideas
+
+### Analogy: The "Missing Witness" in a Trial
+
+Think of your observational study as a court case. You are the prosecutor, arguing that $A$ "caused" $Y$. You present your evidence: an adjusted risk ratio of $RR=2.5$ (95% CI [1.5, 4.0]).
+
+The defense (a skeptical colleague) argues, "Your finding is just confounding. You forgot to account for $U$."
+
+This is like the defense claiming a "missing witness" ($U$) would have provided an alibi.
+
+- **Before the E-value:** The argument stops. The prosecutor says "I measured $L$," and the defense says "But you didn't measure $U$." We are at an impasse.
+- **With the E-value:** The judge (the scientific community) turns to the defense and says, "Okay. If this 'missing witness' $U$ exists, how compelling must their testimony be?"
+
+The E-value calculation tells us: "To acquit the defendant (i.e., make the true effect $RR_c=1.0$), the missing witness $U$ must be a *very* strong predictor of both the crime (outcome $Y$) and the defendant's presence (exposure $A$)."
+
+If the E-value is **high** (e.g., 5.0), we can say: "This 'missing witness' $U$ would need to be 5-fold associated with *both* $A$ and $Y$. That's a stronger risk factor than smoking for this exposure! We find that implausible." This strengthens our case.
+
+If the E-value is **low** (e.g., 1.5), we must concede: "A 'missing witness' $U$ who is only 1.5-fold associated with $A$ and $Y$—like modest confounding by 'healthy lifestyle'—could undo our finding. Our case is weak."
+
+## Simple, Hand-Calculation Numerical Example(s)
+
+The formula for the E-value (for an $RR_{obs} > 1$) is surprisingly simple:
+
+$$
+E\text{-value} = RR_{obs} + \sqrt{RR_{obs} \times (RR_{obs} - 1)}
+$$
+
+If $RR_{obs} < 1$ (a protective effect), we simply invert it ($1/RR_{obs}$) and use the same formula.
+
+::: {.callout-example}
+
+## Worked Example: Point Estimate and CI
+
+A (fictional) clinical epidemiology study finds that patients taking a new diabetes drug ($A$) have an elevated risk of pancreatitis ($Y$). After adjusting for age, sex, BMI, and smoking status ($L$), they report:
+
+  - **Adjusted Risk Ratio ($RR_{obs}$): 3.0**
+  - **95% Confidence Interval: [1.8, 5.0]**
+
+Let's calculate the E-values.
+
+### 1. E-value for the Point Estimate
+
+We use $RR_{obs} = 3.0$.
+
+  - **Step 1:** $E\text{-value} = 3.0 + \sqrt{3.0 \times (3.0 - 1)}$
+  - **Step 2:** $E\text{-value} = 3.0 + \sqrt{3.0 \times 2.0}$
+  - **Step 3:** $E\text{-value} = 3.0 + \sqrt{6.0}$
+  - **Step 4:** $E\text{-value} \approx 3.0 + 2.45 = \mathbf{5.45}$
+
+**Interpretation:** To fully explain away the 3-fold observed increase in risk, an unmeasured confounder $U$ would need to be associated with *both* the new drug ($A$) and pancreatitis ($Y$) by a risk ratio of at least 5.45-fold, conditional on $L$.
+
+### 2. E-value for the Confidence Interval
+
+This is the more critical measure. We want to know what it would take to make the finding *non-significant*, i.e., move the CI to touch 1.0. We must use the CI limit *closest* to the null.
+
+Here, the lower limit is $1.8$. We use $RR_{obs} = 1.8$.
+
+  - **Step 1:** $E\text{-value (CI)} = 1.8 + \sqrt{1.8 \times (1.8 - 1)}$
+  - **Step 2:** $E\text{-value (CI)} = 1.8 + \sqrt{1.8 \times 0.8}$
+  - **Step 3:** $E\text{-value (CI)} = 1.8 + \sqrt{1.44}$
+  - **Step 4:** $E\text{-value (CI)} = 1.8 + 1.2 = \mathbf{3.0}$
+
+**Interpretation:** This is the key finding. An unmeasured confounder $U$ associated with *both* $A$ and $Y$ by a risk ratio of **3.0** would be strong enough to shift the 95% confidence interval to include the null value of 1.0.
+
+We would then ask ourselves: "Is there a plausible confounder (e.g., 'pre-pancreatic disease state') that we failed to measure that could increase the risk of receiving this new drug by 3-fold *and* increase the risk of pancreatitis by 3-fold, even after we've adjusted for BMI and smoking?" This is a concrete, debatable question.
+:::
+
+## R Code Examples & Interpretation
+
+Calculating the E-value by hand is essential for intuition, but in practice, we use the `EValue` package.
+
+### Example 1: The `evalues.RR()` Function
+
+Let's use our hand-calculation example: $RR = 3.0$ (95% CI [1.8, 5.0]).
+
+```{r}
+#| label: evalue-rr
+#| echo: true
+#| eval: false
+
+# Load the Library
+library(EValue)
+
+# Calculate E-value for RR, with Lower (lo) and Upper (hi) CI
+results <- evalues.RR(est = 3.0, lo = 1.8, hi = 5.0)
+
+# Print the Results
+print(results)
+```
+
+**R Output (Simulated):**
+
+```
+          point    lower    upper
+RR        3.000    1.800    5.000
+E-value   5.449    3.000       NA
+```
+
+**Interpretation:**
+
+  - The output provides the E-value for the point estimate (`point`: 5.449) and the E-value for the CI limit closest to the null (`lower`: 3.000).
+  - The `NA` for the upper bound is correct; we don't care how much bias is needed to explain away the upper limit, only the one closest to the null.
+  - Our hand-calculations are confirmed! The E-value for the point estimate is 5.45, and the E-value for the CI is 3.0.
+
+### Example 2: Protective Effects
+
+What about a study finding a *protective* effect?
+A (fictional) study suggests moderate coffee consumption ($A$) reduces the 10-year risk of dementia ($Y$).
+
+  - **Adjusted Risk Ratio ($RR_{obs}$): 0.80**
+  - **95% Confidence Interval: [0.70, 0.92]**
+
+The `evalues.RR` function handles this automatically.
+
+```{r}
+#| label: evalue-protective
+#| echo: true
+#| eval: false
+
+# The Function Knows that an RR < 1 is Protective
+# It Will Automatically Calculate E-values for 1/RR
+protective_results <- evalues.RR(est = 0.80, lo = 0.70, hi = 0.92)
+
+print(protective_results)
+```
+
+**R Output (Simulated):**
+
+```
+          point    lower    upper
+RR        0.800    0.700    0.920
+E-value   1.809       NA    1.319
+```
+
+**Interpretation:**
+
+  - Notice the E-values are now calculated for the *inverted* RRs.
+      - Point estimate: $RR = 1/0.80 = 1.25$. E-value = $1.25 + \sqrt{1.25(0.25)} \approx 1.81$.
+      - CI limit: $RR = 1/0.92 \approx 1.087$. E-value = $1.087 + \sqrt{1.087(0.087)} \approx 1.32$.
+  - The E-value for the CI is **1.32** (on the `upper` column, as $1/0.92$ is the CI limit closest to the null).
+  - **Conclusion:** This finding is **highly sensitive** to unmeasured confounding. A confounder $U$ (e.g., "higher socioeconomic status") that is associated with drinking coffee by 1.32-fold and *also* associated with reduced dementia risk by 1.32-fold would be sufficient to make this finding statistically non-significant. This is a very plausible level of confounding.
+
+## Hands-On R Lab
+
+### Week 12 R Lab: Quantifying Robustness with E-values
+
+**Objective:** To practice calculating and, more importantly, *interpreting* E-values from a simulated study finding.
+
+**Lab Warm-Up (Flipped Design):**
+Before starting this lab, please answer the following:
+
+1. Read Chapter 19 from @hernan2020causalwhatif.
+2. In your own words, what is the key difference between an E-value for a point estimate and an E-value for a confidence interval?
+3. Why is the latter (for the CI) the more important metric for researchers?
+
+### Lab Scenario
+
+You are a biostatistician collaborating on an observational study of a new anti-hypertensive medication (let's call it "Drug X"). The team followed 10,000 patients for 5 years to see if Drug X ($A=1$) reduced the risk of stroke ($Y=1$) compared to standard care ($A=0$).
+
+After adjusting for a rich set of measured covariates $L$ (age, sex, baseline blood pressure, diabetes status, smoking), the final model produced the following:
+
+  - **Adjusted Risk Ratio ($RR_{obs}$): 0.60**
+  - **95% Confidence Interval: [0.45, 0.80]**
+
+The clinical team is very excited and believes this drug is highly effective. It's your job to assess how robust this finding is to potential *unmeasured* confounding.
+
+### Task 1: Load Packages
+
+Please load the `EValue` and `tidyverse` packages.
+
+```{r}
+#| label: lab-packages
+#| eval: false
+#| echo: true
+
+# TODO: Fill in the Package Names
+if (!require("pacman")) {
+  install.packages("pacman")
+}
+pacman::p_load(..., ...)
+
+```
+
+<details>
+<summary><b>Solution: Task 1</b></summary>
+
+```{r}
+#| label: lab-packages-sol
+#| eval: false
+#| echo: true
+#| code-fold: false
+
+# Load the EValue Package for Calculations
+
+# Load Tidyverse for General R Usability
+
+if (!require("pacman")) {
+  install.packages("pacman")
+}
+pacman::p_load(EValue, tidyverse)
+
+```
+
+</details>
+
+### Task 2: Calculate the E-value
+
+Use the `evalues.RR()` function to calculate the E-values for the study's point estimate and 95% CI.
+
+```{r}
+#| label: lab-calc
+#| eval: false
+#| echo: true
+
+# TODO: Fill in the Correct Values for Est, Lo, and Hi
+study_evalue <- evalues.RR(est = __, lo = __, hi = __)
+
+# Print the Results
+print(study_evalue)
+
+```
+
+<details>
+<summary><b>Solution: Task 2</b></summary>
+
+```{r}
+#| label: lab-calc-sol
+#| eval: false
+#| echo: true
+#| code-fold: false
+
+# We Are given RR = 0.60, 95% CI [0.45, 0.80]
+
+study_evalue <- evalues.RR(est = 0.60, lo = 0.45, hi = 0.80)
+
+# Print the Results
+
+print(study_evalue)
+
+# EXPECTED OUTPUT:
+
+# Point Lower Upper
+
+# RR 0.600 0.450 0.800
+
+# E-value 2.140 NA 1.809
+
+```
+
+</details>
+
+### Task 3: Interpret the E-values
+
+Based on the R output from Task 2, please answer the following:
+
+1. What is the E-value for the point estimate?
+2. What is the E-value for the 95% confidence interval? (Hint: It's the one that corresponds to the CI limit closest to the null, which for a protective effect is the *upper* limit).
+3. In one sentence, explain what this E-value for the CI *means*.
+
+<details>
+<summary><b>Solution: Task 3</b></summary>
+
+1. The E-value for the point estimate (RR=0.60) is **2.14**.
+2. The E-value for the 95% confidence interval (CI Limit=0.80) is **1.81**.
+3. **Interpretation:** An unmeasured confounder $U$ associated with *both* Drug X use and stroke risk by a risk ratio of **1.81-fold** (above and beyond our measured covariates $L$) would be sufficient to shift the 95% CI to include 1.0, rendering the finding statistically non-significant.
+
+</details>
+
+### Task 4: Reflection & Plausibility Discussion
+
+This is the most important part of the analysis. Now you must *think* like a causal inference scientist and epidemiologist.
+
+**Question:** Is an unmeasured confounder with $RR_{AU}=1.81$ and $RR_{UY}=1.81$ *plausible* in this scenario?
+
+  - **Propose a specific unmeasured confounder $U$** that might be relevant (e.g., patient adherence, socioeconomic status, physician skill, unmeasured co-morbidity).
+  - **Justify your argument:** Do you think it's plausible this $U$ is associated with *both* receiving Drug X ($A$) and avoiding a stroke ($Y$) by 1.81-fold, even after adjusting for all of $L$?
+  - **Write your final conclusion:** "Therefore, the study's finding that Drug X is protective (RR=0.60, 95% CI [0.45, 0.80]) appears to be [**robust** / **somewhat robust** / **highly sensitive**] to unmeasured confounding."
+
+<details>
+<summary><b>Example Solution: Task 4</b></summary>
+
+  - **Proposed Confounder $U$:** Let's propose "patient compliance" or "health-seeking behavior."
+  - **Justification:** Patients who are highly compliant ($U=1$) may be more likely to (a) be prescribed and take the new Drug X ($A=1$) and (b) *also* be compliant with diet, exercise, and other lifestyle advice that reduces stroke risk ($Y=0$). Is it plausible that this "compliance" factor has a 1.81-fold association with both?
+      - $RR_{AU} \ge 1.81$: Is it plausible that compliant patients are 81% more likely to get the new drug? Perhaps. Physicians might preferentially give new drugs to "good" patients. This is plausible.
+      - $RR_{UY} \ge 1.81$: Is it plausible that compliance with a healthy lifestyle reduces stroke risk by 1.81-fold (i.e., $RR=1/1.81 \approx 0.55$), *even after* we've already adjusted for smoking and diabetes? This is also quite plausible.
+  - **Final Conclusion:** "Therefore, the study's finding (RR=0.60, 95% CI [0.45, 0.80]) appears to be **highly sensitive** to unmeasured confounding. An E-value of 1.81 for the confidence interval is modest. Plausible confounders, such as patient compliance or general health-seeking behavior, could very well have associations of this magnitude, which would be sufficient to explain away the observed statistical significance."
+
+</details>
+
+### Lab Retrieval Quiz
+
+1. **True/False:** An E-value of 4.0 proves that the study's finding is causal.
+2. A study reports $RR=2.0$ (95% CI [0.9, 3.1]). What is the E-value?
+3. Why do we *always* report the E-value for the CI, not just the point estimate?
+
+<details>
+<summary><b>Quiz Answers</b></summary>
+1. **False.** The E-value *never* proves causation. It is a quantitative measure of robustness. It states that *if* unmeasured confounding exists, it would have to be at least 4.0-fold strong on both paths to explain the point estimate.
+2. **This is a trick question.** The E-value is not calculated. The 95% CI already includes the null (1.0). There is no statistically significant association to "explain away."
+3. We report the E-value for the CI because we are typically most interested in the robustness of our *conclusion* (i.e., whether the effect is non-null). The E-value for the CI tells us the minimum amount of confounding needed to flip our conclusion from "statistically significant" to "not statistically significant." This is a more conservative and important threshold than the point estimate.
+</details>
+
+## 6. Common Pitfalls \& Checks
+
+::: {.callout-warning}
+
+### Pitfall: Misinterpreting the E-value as the "Actual" Bias
+
+The E-value is the strength of *one* confounder $U$ (with $RR_{AU}=RR_{UY}$) that would be needed. It is a *lower bound*. In reality, the bias could be due to *multiple* weaker confounders. An E-value of 3.0 does *not* mean the bias *is* 3.0; it means the bias *must be at least that strong* (under this model) to explain the finding.
+:::
+
+::: {.callout-important}
+
+### Key Assumption: The E-value is a Bound
+
+The standard E-value formula ($RR + \sqrt{...}$) is itself a bound derived from a more complex bias formula. It provides the *minimum* strength, which is what makes it so useful. We don't need to know the exact bias structure, only this lower bound on the required strength.
+:::
+
+::: {.callout-tip}
+
+### Tip: Reporting E-values in Your Paper
+
+When you write a paper, you should *always* report the E-value for your main finding.
+
+**Example text:** "Our study found an adjusted risk ratio of 0.75 (95% CI, 0.65-0.87). This finding is moderately robust to unmeasured confounding; the E-value for the confidence interval is 1.48, meaning an unmeasured confounder associated with both the exposure and outcome by at least 1.48-fold could explain this finding. We judge this level of confounding to be [plausible / implausible] given that we already controlled for smoking, BMI, and socioeconomic status."
+:::
+
+::: {.callout-question}
+
+## Check Your Understanding
+
+  - **Q:** My E-value for the CI is 1.2. My E-value for the point estimate is 3.0. Which one do I emphasize, and what does it mean?
+  - **A:** You *must* emphasize the E-value for the CI: 1.2. This means your finding is extremely fragile. A very weak confounder, associated with $A$ and $Y$ by only 1.2-fold (i.e., a 20% increase in risk/prevalence), could render your finding non-significant.
+  - **Q:** Can I use the E-value for an Odds Ratio (OR) or Hazard Ratio (HR)?
+  - **A:** Yes. If the outcome is rare (< 10%), the OR and HR approximate an RR, and you can use `evalues.RR`. The `EValue` package also has `evalues.OR` and `evalues.HR` which use transformations to approximate the E-value, but `evalues.RR` is the most direct.
+:::
+
+## 7. Advanced Teaching Activities & Interactivity
+
+1. **Flipped Classroom (Pre-Class):** "Read the original paper, @vanderweele2017evalue. Come to class prepared to discuss: (1) What is the historical relationship between the E-value and Cornfield's 1959 bounds on confounding? (2) The paper provides a formula for a *non-binary* confounder. How does this change the interpretation?"
+2. **Think-Pair-Share (In-Class):**
+
+      - **Think:** "I am giving you two study findings. Both have the *same* point estimate ($RR=1.5$), but different CIs."
+          - *Study 1:* $RR = 1.5$ (95% CI [1.4, 1.6])
+          - *Study 2:* $RR = 1.5$ (95% CI [1.01, 2.5])
+      - **Pair:** "With your partner, calculate the E-value for the CI for both studies. Which study is *more robust* to unmeasured confounding?"
+      - **Share:** "We'll vote. Which study is more robust? Why?" (Answer: Study 1. Its CI is tight and far from the null. Its E-value for the CI (for 1.4) will be $1.4 + \sqrt{1.4(0.4)} \approx 2.15$. Study 2's E-value for the CI (for 1.01) will be $1.01 + \sqrt{1.01(0.01)} \approx 1.11$. Study 2 is *extremely* sensitive, despite having the same point estimate.)
+
+3. **Problem-Based Critique (Take-Home):**
+
+      - "Find a recent observational study in your field (e.g., epidemiology, public health, economics) that reports a statistically significant RR or OR as its main finding.
+      - Calculate the E-value for the point estimate and the confidence interval.
+      - Write a one-paragraph 'Sensitivity Analysis' section for this paper.
+      - Conclude with your professional judgment: Do you believe the authors' causal claim is robust or fragile? Why?"
+
+## References
+
+
+## Appendix: Advanced Theory & Derivations
+
+### Derivation of the E-value Formula
+
+This derivation is advanced but shows where the formula comes from. It is based on the work of Cornfield, Bross, and most recently Ding & VanderWeele (2016).
+
+1. **The Goal:** We have an observed $RR_{obs}$ and we want to find the "tipping point" where the true, causal risk ratio $RR_c = 1.0$.
+2. **The Bias Formula:** The relationship between the observed $RR_{obs}$ and the true $RR_c$ can be bounded. A key bound from @vanderweele2017evalue and colleagues, assuming a binary confounder $U$, is:
+
+$$
+RR_{obs} \le RR_c \times \frac{\gamma_{AU} \cdot \gamma_{UY}}{\gamma_{AU} + \gamma_{UY} - 1}
+$$
+
+where $\gamma_{AU}$ and $\gamma_{UY}$ are the bias parameters ($RR_{AU}$ and $RR_{UY}$ as defined earlier).
+3. **The Tipping Point:** We are interested in the case where the causal effect is null, $RR_c = 1.0$. We want to find the parameters that could produce our $RR_{obs}$.
+
+$$
+RR_{obs} \le \frac{\gamma_{AU} \cdot \gamma_{UY}}{\gamma_{AU} + \gamma_{UY} - 1}
+$$
+
+4. **The E-value Assumption:** The E-value seeks the *minimum* strength $\gamma$ such that $\gamma = \gamma_{AU} = \gamma_{UY}$. We set this as an equality to find the boundary:
+
+$$
+RR_{obs} = \frac{\gamma \cdot \gamma}{\gamma + \gamma - 1} = \frac{\gamma^2}{2\gamma - 1}
+$$
+
+$$
+5. **Solve for $\gamma$:** We now have a simple equation to solve for $\gamma$.
+$$
+
+$$
+RR_{obs} \cdot (2\gamma - 1) = \gamma^2
+$$
+
+$$
+2\gamma \cdot RR_{obs} - RR_{obs} = \gamma^2
+$$
+
+6. **Quadratic Form:** Rearrange this into a standard quadratic equation $a\gamma^2 + b\gamma + c = 0$:
+
+$$
+\gamma^2 - (2 \cdot RR_{obs})\gamma + RR_{obs} = 0
+$$
+
+Here, $a=1$, $b = -2 \cdot RR_{obs}$, and $c = RR_{obs}$.
+7. **Quadratic Formula:** We use the formula $\gamma = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$:
+
+$$
+\gamma = \frac{ -(-2 \cdot RR_{obs}) \pm \sqrt{(-2 \cdot RR_{obs})^2 - 4(1)(RR_{obs})} }{ 2(1) }
+$$
+
+$$
+\gamma = \frac{ 2 \cdot RR_{obs} \pm \sqrt{4 \cdot RR_{obs}^2 - 4 \cdot RR_{obs}} }{ 2 }
+$$
+
+8. **Simplify:** Factor out the 4 from the square root:
+
+$$
+\gamma = \frac{ 2 \cdot RR_{obs} \pm \sqrt{4 \cdot (RR_{obs}^2 - RR_{obs})} }{ 2 }
+$$
+
+$$
+\gamma = \frac{ 2 \cdot RR_{obs} \pm 2 \cdot \sqrt{RR_{obs}^2 - RR_{obs}} }{ 2 }
+$$
+
+9. **Final Formula:** Divide by 2:
+
+$$
+\gamma = RR_{obs} \pm \sqrt{RR_{obs}^2 - RR_{obs}}
+$$
+
+$$
+\gamma = RR_{obs} \pm \sqrt{RR_{obs}(RR_{obs} - 1)}
+$$
+
+We take the positive root, $RR_{obs} + \sqrt{RR_{obs}(RR_{obs} - 1)}$, as this represents the boundary condition for the bias parameters. This is the E-value.

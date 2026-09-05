@@ -1,0 +1,1410 @@
+---
+title: "Week 13: Target Trial Emulation"
+---
+
+## Overview
+
+This lecture introduces the **target trial framework**, a unifying conceptual structure for designing and critiquing observational research by explicitly emulating a hypothetical randomized trial. Unlike earlier discussions of simplified target trials comparing time-fixed treatments, this session addresses realistic trials comparing **sustained treatment strategies** over time. We explore how to define, identify, and estimate causal effects in both randomized experiments and observational studies, emphasizing that both require similar methodological rigor when dealing with time-varying treatments, non-adherence, and loss to follow-up.
+
+The target trial framework bridges counterfactual reasoning and causal diagrams, grounding abstract theory in the familiar concept of the experiment. By specifying exactly which randomized trial we would conduct if we could, we clarify our causal question, identify the interventions we wish to compare, and determine the data and methods needed for valid inference. This approach reveals that per-protocol analyses of randomized trials and observational studies face identical challenges—time-varying confounding and selection bias—requiring g-methods for valid estimation [@hernan2020causalwhatif].
+
+## Learning Objectives
+
+By the end of this session, students will be able to:
+
+1. **Articulate** the distinction between intention-to-treat (ITT) and per-protocol effects in both randomized trials and observational studies, including precise counterfactual definitions of each
+2. **Specify** the key components of a target trial protocol (eligibility, time zero, treatment strategies, outcomes, causal contrast, analysis plan) for a given research question
+3. **Identify** common time-zero errors in observational studies and **apply** solutions including sequential trial emulation and cloning-censoring-weighting procedures
+4. **Recognize** when conventional ITT and "per-protocol" analyses fail to estimate their intended causal effects and **justify** the need for g-methods
+5. **Design** an observational analysis that explicitly emulates a target trial, including handling multiple eligibility times and non-unique strategy assignment
+
+## R Packages
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+pacman::p_load(
+  tidyverse, # data manipulation and visualization
+  dagitty, # DAG analysis
+  ggdag, # DAG visualization
+  gt, # tables
+  gtsummary, # summary tables
+  survival, # survival analysis
+  broom, # tidy model outputs
+  knitr, # document generation
+  kableExtra # enhanced tables
+)
+```
+
+## 1 Comprehensive Topic Explanation
+
+### 1.1 From Simple to Realistic Target Trials
+
+Throughout Parts I and II of *What If*, we considered simplified target trials comparing **time-fixed treatments**—interventions assigned at baseline with perfect adherence. While pedagogically useful, this simplification obscures critical features of real-world research [@hernan2020causalwhatif, Chapter 22]. Realistic trials compare **sustained treatment strategies** that unfold over time, permit protocol deviations (non-adherence, treatment switching), and experience loss to follow-up.
+
+Consider a trial evaluating antiretroviral therapy in HIV-infected individuals. A realistic protocol would not simply assign "treatment" versus "no treatment" at baseline and assume everyone adheres perfectly for 5 years. Instead, it would specify:
+
+- **Strategy $g_1$**: "Initiate therapy immediately and continue unless contraindications or toxicity arise"
+- **Strategy $g_0$**: "Defer therapy indefinitely"
+
+These are **dynamic strategies** that incorporate decision rules responding to evolving patient status. The first strategy mandates treatment discontinuation if medically necessary—this is adherence to the protocol, not deviation from it.
+
+### 1.2 Intention-to-Treat vs. Per-Protocol Effects
+
+#### Defining ITT Effects
+
+The **intention-to-treat (ITT) effect** compares outcomes under assignment to different strategies at baseline, regardless of subsequent adherence. Let $Z$ denote randomized assignment ($Z=1$ for strategy $g_1$, $Z=0$ for strategy $g_0$), $A_k$ denote received treatment at time $k$, and $D_k$ denote death by time $k$. The ITT effect at time $k$ is:
+
+$$
+\text{ITT Effect}_k = \Pr[D_k^{z=1,\bar{c}_k=\bar{0}} = 1] - \Pr[D_k^{z=0,\bar{c}_k=\bar{0}} = 1]
+$$
+
+where $\bar{c}_k = \bar{0}$ indicates no censoring through time $k$. This contrast reflects:
+
+1. The effect of **assignment** to treatment strategies
+2. The effect of **initiating** treatment (if assignment and initiation coincide)
+3. All downstream consequences of assignment, including adherence patterns, behavioral changes, and awareness effects
+
+::: {.callout-important}
+
+## Key Distinction
+
+The ITT effect is **not** "the effect of treating with $A$" but rather "the effect of assigning participants to being treated with $A$" or "the effect of having the intention of treating with $A$."
+:::
+
+The causal effect of assignment $Z$ depends on three pathways (see Figure 22.1 in the text):
+
+1. $Z \rightarrow A \rightarrow Y$: Assignment affects received treatment, which affects outcome
+2. $Z \rightarrow Y$: Assignment directly affects outcome (e.g., through awareness, behavioral changes)
+3. The strength of $Z \rightarrow A$ (adherence level in the study)
+
+#### Defining Per-Protocol Effects
+
+The **per-protocol effect** compares outcomes under **full adherence** to the assigned strategies:
+
+$$
+\text{Per-protocol Effect}_k = \Pr[D_k^{g_1,\bar{c}_k=\bar{0}} = 1] - \Pr[D_k^{g_0,\bar{c}_k=\bar{0}} = 1]
+$$
+
+This is the effect that would be observed if everyone followed their assigned strategy as specified in the protocol. For sustained strategies, this generally involves comparing **dynamic** rather than static strategies.
+
+::: {.callout-warning}
+
+## Critical Insight
+
+Estimating per-protocol effects requires viewing the randomized experiment as an **observational study**. Non-adherence creates confounding via the backdoor path $A \leftarrow U \rightarrow Y$, where $U$ represents unmeasured factors affecting both adherence and outcome.
+:::
+
+### 1.3 Why ITT Effects Are Insufficient
+
+Several justifications for privileging ITT effects require scrutiny:
+
+**Null Preservation**: Under the sharp causal null and exclusion restriction, if $A$ has no effect on $Y$, then $Z$ has no effect on $Y$. However, this fails when the exclusion restriction doesn't hold (non-blinded trials). The arrow $Z \rightarrow Y$ can exist even when $A \rightarrow Y$ is absent.
+
+**Conservativeness**: The claim that ITT effects provide lower bounds for per-protocol effects (i.e., are "conservative") is not universally true. With high non-adherence or non-monotonic effects, the per-protocol effect may be closer to the null than the ITT effect. In head-to-head trials of two active treatments, differential adherence can make the ITT risk ratio further from the null than the per-protocol risk ratio.
+
+**Effectiveness vs. Efficacy**: This dichotomy is misleading. The ITT effect measures the effect of assignment under the specific adherence conditions in *that particular trial*—conditions that may differ in other settings or change after evidence emerges. The per-protocol effect is often more policy-relevant because decision-makers want to know the effect of actually following a treatment strategy.
+
+### 1.4 Target Trials with Sustained Strategies
+
+Consider a trial randomizing HIV-infected individuals (18+, no AIDS, no prior antiretroviral therapy) to:
+
+- **Strategy $g_1$**: Receive $A_k = 1$ continuously unless contraindications/toxicity arise
+- **Strategy $g_0$**: Receive $A_k = 0$ continuously
+
+Follow-up starts at randomization ($k=0$) and continues for 60 months or until death/loss to follow-up.
+
+The ITT effect contrasts static strategies:
+
+- $(z=1, \bar{c}_K = \bar{0})$: Assigned to $g_1$ and remain in study
+- $(z=0, \bar{c}_K = \bar{0})$: Assigned to $g_0$ and remain in study
+
+The per-protocol effect contrasts dynamic strategies:
+
+- Receive strategy $g_1$ continuously (including medically-indicated discontinuations)
+- Receive strategy $g_0$ continuously
+
+::: {.callout-tip}
+
+## Protocol Clarity
+
+Sensible protocols mandate treatment continuation only while medically appropriate. Discontinuing therapy due to toxicity is **adherence** to the protocol, not deviation. Protocols should explicitly define what constitutes adherence versus deviation.
+:::
+
+### 1.5 Emulating Target Trials with Observational Data
+
+When randomized trials are infeasible, we emulate them using observational data. Specifying the target trial protocol forces us to clarify:
+
+1. **Eligibility criteria**: Who would be enrolled?
+2. **Time zero**: When does follow-up start?
+3. **Treatment strategies**: What interventions are compared?
+4. **Outcomes**: What is measured and when?
+5. **Causal contrast**: ITT analog, per-protocol, or other?
+6. **Analysis plan**: How will effects be estimated?
+
+**Observational Analog of ITT**: Rarely possible because actual assignment is unknown. The closest analog compares **initiators** of different strategies at baseline:
+
+$$
+\Pr[D_k^{a_0=1,\bar{c}_k=\bar{0}} = 1] - \Pr[D_k^{a_0=0,\bar{c}_k=\bar{0}} = 1]
+$$
+
+This resembles a modified ITT analysis, defining groups by treatment initiation rather than assignment.
+
+**Observational Analog of Per-Protocol**: Defined identically to the randomized trial per-protocol effect. We can only emulate target trials whose interventions are actually followed by some individuals in the data (or use structural models to extrapolate).
+
+### 1.6 The Time-Zero Problem
+
+**Time zero** (baseline) is when:
+
+- Eligibility criteria are met
+- Treatment strategies are assigned (in trials) or can be assigned (in observational studies)
+- Follow-up begins
+- Outcomes start being counted
+
+Errors in defining time zero are endemic in observational research and lead to two major problems:
+
+#### Problem 1: Non-Unique Time Zero
+
+Eligibility criteria may be met at **multiple times** during an individual's life. Example: A study of hormone therapy in postmenopausal women with no chronic disease. If a woman meets criteria continuously from age 51-65, when is her time zero?
+
+**Solutions**:
+
+a) Choose first eligible time
+b) Choose randomly among eligible times
+c) **Sequential trial emulation**: Emulate multiple trials, one starting at each eligible time
+
+Strategy (c) is most efficient but requires:
+
+- Fixed time units (days, weeks, months) if data collection is subject-specific (e.g., medical records)
+- Pre-specified times (e.g., study visits) if data collection follows a fixed schedule
+- Bootstrapping to account for individuals appearing in multiple trials
+
+#### Problem 2: Non-Unique Strategy Assignment
+
+At baseline, an individual's observed data may be compatible with multiple strategies. Example: Comparing three strategies based on CD4 thresholds (initiate immediately, at <350, or at <200). An individual who doesn't initiate immediately has data consistent with both delay strategies.
+
+**Solution: Cloning + Censoring + Weighting**
+
+1. **Clone** the individual, creating copies assigned to each compatible strategy
+2. **Censor** each clone when their data become incompatible with their assigned strategy
+3. **Weight** to adjust for informative censoring using IP weights
+4. **Bootstrap** to account for correlated data
+
+Example: If someone doesn't initiate at CD4=350, the clone assigned to "initiate at <350" is censored. If they died before any clone was censored, the death is assigned to all strategies.
+
+### 1.7 Unified Framework for Causal Inference
+
+The target trial framework provides a **unified approach** to causal inference:
+
+1. **Common language**: Same concepts apply to trials and observational studies
+2. **Same methods**: G-methods handle time-varying confounding in both settings
+3. **Same challenges**: Selection bias from loss to follow-up affects ITT estimates in trials; confounding affects per-protocol estimates in both
+
+The key insight: **A randomized trial is a follow-up study with baseline randomization; an observational study is a follow-up study without baseline randomization**. For per-protocol effects of sustained strategies, both face identical methodological challenges.
+
+## 2 Intuitive Clarifications of Challenging Ideas
+
+### 2.1 Why Isn't ITT Always Conservative?
+
+**The Intuition**: Many believe imperfect adherence always dilutes treatment effects, making ITT estimates "conservative" (closer to the null than per-protocol effects).
+
+**The Reality**: Consider a head-to-head trial of Drug A vs. Drug B for pain relief (lower is better). Unknown to investigators, both drugs are equally effective (per-protocol risk ratio = 1). But Drug B has mild side effects causing more people to stop it. The ITT risk ratio > 1 wrongly suggests Drug B is inferior—the ITT effect is further from the null than the true per-protocol effect.
+
+**The Lesson**: "Conservative" only means "systematically biased in one direction"—which isn't necessarily better than unbiased.
+
+### 2.2 The Exclusion Restriction Intuition
+
+The **exclusion restriction** states: Assignment $Z$ affects outcome $Y$ **only through** received treatment $A$, with no direct arrow $Z \rightarrow Y$.
+
+**Visual Metaphor**: Think of $Z$ as a switch that only controls the treatment machine $A$. If flipping the switch changes your outcome through any other pathway (awareness, psychological effects, behavioral changes), the exclusion restriction fails.
+
+**When It Holds**: Double-blind placebo-controlled trials attempt to eliminate $Z \rightarrow Y$ by making assignment unobservable to participants and clinicians.
+
+**When It Fails**: Most pragmatic trials, all observational studies, trials where treatment has obvious side effects.
+
+### 2.3 Why Per-Protocol Analysis Is Observational
+
+**The Paradox**: You carefully randomized 1000 people. Why does analyzing those who adhered require treating the data as observational?
+
+**The Explanation**: Randomization ensures $Z \perp!!!\perp Y^z$ (assigned groups are exchangeable). But adherence is **post-randomization** and typically related to prognosis:
+
+- High-risk patients in the control arm may seek treatment outside the study
+- Patients experiencing side effects may stop treatment
+- Healthier patients may adhere better
+
+These create confounding: $A \leftarrow U \rightarrow Y$. The randomization cannot eliminate $U$ because $U$ affects decisions made *after* randomization.
+
+**The Analogy**: Imagine randomizing students to study groups, but some students skip group meetings. Comparing outcomes by actual attendance (not assignment) requires accounting for factors that predict both attendance and performance.
+
+### 2.4 Cloning Intuition
+
+**Why Clone?** When someone's baseline data are compatible with multiple strategies, randomly assigning them to one strategy wastes information.
+
+**The Solution**: Create clones assigned to each compatible strategy. Track each clone until its observed behavior contradicts its assigned strategy, then censor.
+
+**Key Insight**: If death occurs before any clone is censored, the death is assigned to **all** strategies. This prevents systematically assigning early events to only one strategy (which would bias results).
+
+**The Cost**: Clones are correlated, so we must bootstrap to get valid standard errors.
+
+### 2.5 Why G-Methods Are Necessary
+
+**For Per-Protocol Effects**: Non-adherence creates time-varying confounding. At each time $k$:
+
+- Past treatment affects current confounders: $A_{k-1} \rightarrow L_k$
+- Current confounders affect current treatment: $L_k \rightarrow A_k$
+- Current confounders affect outcome: $L_k \rightarrow Y$
+
+Standard regression cannot properly adjust because $L_k$ is simultaneously a confounder (must condition on) and a mediator (must not condition on). G-methods (IP weighting, g-formula, g-estimation) resolve this.
+
+**For ITT Effects with LTFU**: Loss to follow-up creates selection bias. The probability of remaining in the study depends on time-varying prognostic factors. G-methods adjust for this selection.
+
+## 3 Simple, Hand-Calculation Numerical Example(s)
+
+### 3.1 Example: ITT Vs Per-Protocol with Non-Adherence
+
+Consider a trial of vaccine ($Z=1$) vs. no vaccine ($Z=0$) to prevent infection. Each individual has a risk type $U$:
+
+- $U=1$ (high-risk): 50% of population
+- $U=0$ (low-risk): 50% of population
+
+**True vaccine effect** (per-protocol):
+
+- For high-risk: $P(Y^{a=1}=1) = 0.2$, $P(Y^{a=0}=1) = 0.6$ (Risk Difference = -0.4)
+- For low-risk: $P(Y^{a=1}=1) = 0.1$, $P(Y^{a=0}=1) = 0.3$ (Risk Difference = -0.2)
+
+**Trial design**: Randomize 200 people (100 per arm). Perfect adherence in $Z=1$ arm. In $Z=0$ arm, all high-risk people seek vaccination outside the study ($A=1$), while low-risk people remain unvaccinated ($A=0$).
+
+::: {.callout-example}
+
+## Worked Example: Computing ITT and Per-Protocol Effects
+
+**Step 1**: Calculate observed outcomes
+
+*$Z=1$ arm (all receive vaccine):*
+- 50 high-risk: $50 \times 0.2 = 10$ infected
+- 50 low-risk: $50 \times 0.1 = 5$ infected
+- Total: 15/100 infected
+
+*$Z=0$ arm:*
+- 50 high-risk get vaccine: $50 \times 0.2 = 10$ infected
+- 50 low-risk remain unvaccinated: $50 \times 0.3 = 15$ infected
+- Total: 25/100 infected
+
+**Step 2**: ITT effect (intention-to-treat)
+
+$$
+\text{ITT RD} = P(Y=1|Z=1) - P(Y=1|Z=0) = 0.15 - 0.25 = -0.10
+$$
+
+**Step 3**: Per-protocol effect (marginal average)
+
+$$
+\text{PP RD} = 0.5 \times (-0.4) + 0.5 \times (-0.2) = -0.30
+$$
+
+**Step 4**: Naive per-protocol analysis (compares $A=1$ vs $A=0$)
+
+- $A=1$: 150 people (all high-risk from $Z=0$, all from $Z=1$), 20/150 = 0.133 infected
+- $A=0$: 50 people (low-risk from $Z=0$), 15/50 = 0.30 infected
+- Naive PP RD = $0.133 - 0.30 = -0.167$ (biased!)
+
+**Interpretation**:
+
+- **ITT effect** (-0.10) is attenuated because high-risk controls got vaccinated
+- **Per-protocol effect** (-0.30) is the true average causal effect
+- **Naive PP estimate** (-0.167) is biased because $A=1$ group has more high-risk people
+:::
+
+**Key Lesson**: The ITT effect is easy to compute but may not answer the right question. The per-protocol effect requires adjustment for post-randomization confounding.
+
+### 3.2 Example: Time-Zero Error
+
+Consider studying whether statin initiation reduces cardiovascular events in people with diabetes.
+
+**Correct approach**: Time zero = diabetes diagnosis. Compare:
+
+- Group A: Initiate statin within 30 days of diagnosis
+- Group B: Never initiate statin
+
+**Incorrect approach 1** (immortal time bias): Define time zero as statin initiation for Group A, but also at diabetes diagnosis for Group B.
+
+| Person | Diabetes Dx | Statin Start | Death | Assignment | Follow-up Start |
+|--------|-------------|--------------|-------|------------|-----------------|
+| 1      | Jan 2020    | Mar 2020     | -     | Statin     | Mar 2020        |
+| 2      | Jan 2020    | -            | Feb 2020 | No Statin | Jan 2020       |
+
+Person 1 cannot die between Jan-Mar (immortal time). Person 2 can die immediately. This guarantees finding a "protective" effect of statins even if they're harmful!
+
+**Incorrect approach 2** (prevalent user bias): Compare current statin users to non-users, ignoring duration of use and indication.
+
+::: {.callout-warning}
+
+## Common Pitfall
+
+Never start follow-up at different calendar times for different strategy groups unless you're explicitly emulating sequential trials with different start times.
+:::
+
+## 4 R Code Examples & Interpretation
+
+### 4.1 Visualizing ITT Vs Per-Protocol Effects
+
+```{r}
+#| label: fig-itt-pp-dag
+#| fig-cap: "Causal diagram showing confounding for per-protocol effect"
+#| column: margin
+
+# Create DAG for per-protocol confounding
+dag <- dagify(
+  Y ~ A + U + Z,
+  A ~ Z + U,
+  exposure = "A",
+  outcome = "Y",
+  coords = list(
+    x = c(Z = 1, U = 2, A = 3, Y = 4),
+    y = c(Z = 2, U = 1, A = 2, Y = 2)
+  )
+)
+
+# Plot with ggdag
+ggdag(dag, text_size = 3.5) +
+  theme_dag() +
+  labs(
+    title = "Per-Protocol Confounding",
+    subtitle = "Backdoor path A ← U → Y creates confounding"
+  )
+```
+
+**Interpretation**: Even though $Z$ is randomized ($Z \perp!!!\perp Y^z$), the received treatment $A$ is not randomized relative to $Y$ due to the common cause $U$. This necessitates adjustment for $U$ (or proxies of $U$) when estimating per-protocol effects.
+
+### 4.2 Simulating a Trial with Non-Adherence
+
+```{r}
+#| label: simulate-trial
+#| tbl-cap: "Simulated trial results by randomization and adherence"
+
+set.seed(579)
+n <- 1000
+
+# Simulate trial data
+trial_data <- tibble(
+  id = 1:n,
+  # Unmeasured risk factor
+  U = rbinom(n, 1, 0.5),
+  # Randomized assignment
+  Z = rbinom(n, 1, 0.5),
+  # Received treatment (adherence depends on U and Z)
+  A = case_when(
+    Z == 1 ~ 1, # Perfect adherence in treatment arm
+    Z == 0 & U == 1 ~ rbinom(n, 1, 0.7), # High-risk seek treatment
+    Z == 0 & U == 0 ~ 0, # Low-risk remain untreated
+    TRUE ~ 0 # Default case
+  ),
+  # Outcome (depends on A and U)
+  Y = rbinom(
+    n,
+    1,
+    prob = case_when(
+      A == 1 & U == 1 ~ 0.20,
+      A == 1 & U == 0 ~ 0.10,
+      A == 0 & U == 1 ~ 0.60,
+      A == 0 & U == 0 ~ 0.30
+    )
+  )
+)
+
+# Calculate effects
+trial_summary <- trial_data %>%
+  summarise(
+    # ITT effect
+    ITT_Risk_Z1 = mean(Y[Z == 1]),
+    ITT_Risk_Z0 = mean(Y[Z == 0]),
+    ITT_RD = ITT_Risk_Z1 - ITT_Risk_Z0,
+
+    # Naive per-protocol (unadjusted)
+    PP_Risk_A1 = mean(Y[A == 1]),
+    PP_Risk_A0 = mean(Y[A == 0]),
+    Naive_PP_RD = PP_Risk_A1 - PP_Risk_A0,
+
+    # True per-protocol (adjusted by U, but U is unmeasured)
+    # We can calculate it because we simulated U
+    True_PP_RD = 0.5 * (-0.4) + 0.5 * (-0.2)
+  )
+
+trial_summary %>%
+  pivot_longer(everything(), names_to = "Measure", values_to = "Value") %>%
+  gt() %>%
+  fmt_number(columns = Value, decimals = 3) %>%
+  tab_header(title = "Comparison of ITT and Per-Protocol Estimates")
+```
+
+**Interpretation**:
+
+- The **ITT effect** is attenuated (closer to null) because many controls got treated
+- The **naive per-protocol estimate** is biased because the $A=1$ group includes more high-risk individuals
+- The **true per-protocol effect** (-0.30) requires adjustment for $U$, which is unmeasured in real data
+
+### 4.3 Sequential Trial Emulation
+
+```{r}
+#| label: sequential-trials
+
+# Simulate cohort with multiple eligible times
+set.seed(579)
+cohort <- expand_grid(
+  id = 1:200,
+  time = 0:5
+) %>%
+  group_by(id) %>%
+  mutate(
+    # Eligibility (e.g., postmenopausal, no chronic disease)
+    eligible = time >= rbinom(1, 5, 0.5),
+    # Treatment initiation
+    initiated = if_else(eligible, rbinom(1, 1, 0.3), 0),
+    # Once initiated, stays initiated
+    A = cummax(initiated),
+    # Outcome risk increases with time and is lower with treatment
+    Y = rbinom(1, 1, prob = 0.05 * time - 0.02 * A)
+  ) %>%
+  ungroup()
+
+# Emulate trials starting at each time point
+trial_results <- cohort %>%
+  filter(eligible) %>%
+  group_by(time) %>%
+  nest() %>%
+  mutate(
+    trial_data = map(
+      data,
+      ~ {
+        # For each time, create trial
+        .x %>%
+          filter(time == min(time)) %>% # Baseline for this trial
+          left_join(
+            cohort %>%
+              filter(time > min(.x$time)) %>%
+              select(id, time, A, Y),
+            by = "id"
+          )
+      }
+    ),
+    # Estimate effect for each trial
+    effect = map_dbl(
+      trial_data,
+      ~ {
+        mean(.x$Y[.x$A == 1], na.rm = TRUE) -
+          mean(.x$Y[.x$A == 0], na.rm = TRUE)
+      }
+    )
+  )
+
+# Pool across trials (simple average; proper analysis would use bootstrapping)
+trial_results %>%
+  summarise(
+    n_trials = n(),
+    pooled_effect = mean(effect, na.rm = TRUE),
+    se_effect = sd(effect, na.rm = TRUE) / sqrt(n())
+  ) %>%
+  gt() %>%
+  fmt_number(decimals = 3) %>%
+  tab_header(title = "Pooled Results from Sequential Trial Emulation")
+```
+
+**Interpretation**: By emulating multiple trials (one starting at each time individuals become eligible), we use more available data and avoid arbitrary choice of a single time zero. Proper implementation requires bootstrapping to account for individuals appearing in multiple trials.
+
+### 4.4 Cloning for Non-Unique Strategy Assignment
+
+```{r}
+#| label: cloning-example
+
+# Simulate individuals whose baseline data are compatible with multiple strategies
+set.seed(579)
+base_data <- tibble(
+  id = 1:100,
+  cd4_baseline = rnorm(100, 400, 100)
+) %>%
+  filter(cd4_baseline > 300 & cd4_baseline < 500) # Eligible for all strategies
+
+# Strategies:
+# g1: Initiate immediately
+# g2: Initiate when CD4 < 350
+# g3: Initiate when CD4 < 200
+
+# Clone each individual into 3 copies
+cloned_data <- base_data %>%
+  crossing(strategy = c("Immediate", "At_350", "At_200")) %>%
+  mutate(clone_id = paste0(id, "_", strategy))
+
+# Simulate follow-up
+set.seed(579)
+followup <- cloned_data %>%
+  crossing(month = 0:12) %>%
+  group_by(clone_id) %>%
+  mutate(
+    # CD4 declines over time (simplified)
+    cd4 = cd4_baseline - month * 15 + rnorm(n(), 0, 20),
+
+    # Observed treatment (person's actual behavior, same across clones)
+    observed_treatment = case_when(
+      month == 0 ~ 0, # Nobody treated at baseline
+      month <= 3 ~ 0, # Delay 3 months
+      TRUE ~ 1 # Then initiate
+    ),
+
+    # Treatment assigned by strategy
+    assigned_treatment = case_when(
+      strategy == "Immediate" ~ if_else(month >= 0, 1, 0),
+      strategy == "At_350" ~ if_else(cd4 < 350, 1, 0),
+      strategy == "At_200" ~ if_else(cd4 < 200, 1, 0)
+    ),
+
+    # Censor when observed != assigned
+    censored = observed_treatment != assigned_treatment,
+    censored = cumsum(censored) > 0,
+
+    # Outcome
+    death = if_else(
+      !censored,
+      rbinom(n(), 1, 0.01 + 0.02 * (1 - observed_treatment)),
+      NA_integer_
+    )
+  ) %>%
+  ungroup()
+
+# Estimate effect (simplified; would need IP weighting for censoring)
+followup %>%
+  filter(!censored, month == 12) %>%
+  group_by(strategy) %>%
+  summarise(
+    n = n(),
+    deaths = sum(death, na.rm = TRUE),
+    risk = mean(death, na.rm = TRUE)
+  ) %>%
+  gt() %>%
+  fmt_number(columns = risk, decimals = 3) %>%
+  tab_header(title = "Risk by Strategy (Cloning Approach)")
+```
+
+**Interpretation**: Each individual is cloned into copies assigned to each strategy they could follow at baseline. Clones are censored when observed behavior contradicts assigned strategy. This avoids arbitrarily assigning individuals to a single strategy and throwing away information.
+
+## 5 Hands-On R Lab
+
+### Lab Objectives
+
+1. Specify a target trial protocol for a given research question
+2. Identify and classify protocol deviations as adherence vs. non-adherence
+3. Implement sequential trial emulation for multiple eligibility times
+4. Apply cloning for non-unique strategy assignment
+5. Compare ITT and per-protocol analyses
+
+### Pre-Lab Reading
+
+Before lab, review:
+
+- Hernán & Robins (2020), Chapter 22, Sections 22.1-22.4
+- The concepts of ITT effect, per-protocol effect, and time zero
+
+### Lab Scenario
+
+You have electronic health record data on 5,000 patients with newly diagnosed type 2 diabetes between 2015-2020. You want to estimate the 3-year risk of cardiovascular events under two treatment strategies:
+
+- **Intensive strategy**: Initiate ≥2 medications immediately
+- **Standard strategy**: Initiate 1 medication, add others as needed
+
+### Task 1: Specify the Target Trial Protocol
+
+Write out the key components of your target trial:
+
+```{r}
+#| label: task1-protocol
+#| eval: false
+
+# Target Trial Protocol Specification
+# -----------------------------------
+
+# 1. Eligibility criteria:
+# Adults (18+) with new type 2 diabetes diagnosis
+# No prior diabetes medications
+# No cardiovascular disease at diagnosis
+
+# 2. Time zero:
+# Date of diabetes diagnosis
+
+# 3. Treatment strategies:
+# g1 (intensive): Initiate ≥2 medications within 30 days of diagnosis
+# g0 (standard): Initiate 1 medication within 30 days, may add others later
+
+# 4. Outcome:
+# Cardiovascular event (MI, stroke, CV death) within 36 months
+
+# 5. Causal contrast:
+# Per-protocol effect: Risk difference under full adherence to g1 vs g0
+
+# 6. Analysis plan:
+# Sequential trial emulation with monthly time units
+# IP weighting for time-varying confounding and censoring
+```
+
+### Task 2: Simulate Data and Identify Time Zero
+
+```{r}
+#| label: task2-simulate
+
+set.seed(20241111)
+
+# Simulate patient cohort
+n_patients <- 500 # Reduced for lab
+
+diabetes_cohort <- tibble(
+  patient_id = 1:n_patients,
+
+  # Demographics
+  age = rnorm(n_patients, 55, 10),
+  female = rbinom(n_patients, 1, 0.45),
+
+  # Diagnosis date (time zero!)
+  dx_date = as.Date("2015-01-01") + runif(n_patients, 0, 365 * 5),
+
+  # Baseline risk factors
+  hba1c_baseline = rnorm(n_patients, 8.5, 1.5),
+  sbp_baseline = rnorm(n_patients, 140, 20),
+
+  # Treatment initiation
+  days_to_treat = rexp(n_patients, 1 / 60) * (1 + 0.5 * (hba1c_baseline > 9)),
+
+  # Number of initial medications (strategy assignment)
+  n_meds_initial = case_when(
+    days_to_treat <= 30 & hba1c_baseline > 9 ~ rpois(n_patients, 2),
+    days_to_treat <= 30 ~ 1,
+    TRUE ~ 0
+  )
+) %>%
+  mutate(
+    strategy = case_when(
+      n_meds_initial >= 2 ~ "Intensive",
+      n_meds_initial == 1 ~ "Standard",
+      TRUE ~ "None"
+    )
+  )
+
+# Inspect time zero
+diabetes_cohort %>%
+  select(patient_id, dx_date, days_to_treat, n_meds_initial, strategy) %>%
+  head(10) %>%
+  gt() %>%
+  tab_header(title = "Time Zero = Date of Diabetes Diagnosis")
+```
+
+::: {.callout-question}
+
+## Check Your Understanding
+
+**Q1**: Why is `dx_date` the correct time zero?
+**A1**: It's when eligibility criteria are met (new diabetes diagnosis, no prior meds), and when treatment strategies would be assigned in the target trial.
+
+**Q2**: What would be wrong with using `days_to_treat` as time zero?
+**A2**: This varies across patients and occurs *after* diagnosis. Starting follow-up at treatment initiation would:
+- Exclude patients who died before treatment
+- Miss early treatment effects
+- Create selection bias if sicker patients delay treatment
+:::
+
+### Task 3: Implement Basic Intention-to-Treat Analog
+
+```{r}
+#| label: task3-itt-analog
+
+# ITT analog: Compare initiators at baseline
+itt_data <- diabetes_cohort %>%
+  filter(days_to_treat <= 30) %>% # Initiated within grace period
+  mutate(
+    # Simulate 3-year outcomes
+    cvd_risk_3y = case_when(
+      strategy == "Intensive" ~ 0.08 +
+        0.01 * (age - 55) / 10 +
+        0.03 * (female == 0),
+      strategy == "Standard" ~ 0.12 +
+        0.01 * (age - 55) / 10 +
+        0.03 * (female == 0),
+      TRUE ~ 0.15
+    ),
+    cvd_event = rbinom(n(), 1, cvd_risk_3y)
+  )
+
+# Estimate ITT analog effect
+itt_results <- itt_data %>%
+  group_by(strategy) %>%
+  summarise(
+    n = n(),
+    events = sum(cvd_event),
+    risk = mean(cvd_event)
+  ) %>%
+  arrange(desc(strategy))
+
+itt_results %>%
+  gt() %>%
+  fmt_number(columns = risk, decimals = 3) %>%
+  tab_header(title = "ITT Analog: Comparing Treatment Initiators")
+
+# Risk difference
+risk_diff <- itt_results$risk[1] - itt_results$risk[2]
+cat("ITT Analog Risk Difference:", round(risk_diff, 3), "\n")
+```
+
+**Student Exercise**: Modify the code to:
+
+a) Add adjustment for age and sex using logistic regression
+b) Calculate a confidence interval for the risk difference
+c) Interpret why this is only an *analog* of the true ITT effect
+
+```{r}
+#| label: task3-solution
+#| code-fold: true
+#| code-summary: "Show Solution"
+
+# Solution: Adjusted ITT analog
+
+# Fit logistic regression
+model_adj <- glm(
+  cvd_event ~ strategy + age + female,
+  data = itt_data,
+  family = binomial()
+)
+
+# Extract adjusted estimates (marginal standardization)
+adjusted_risks <- itt_data %>%
+  mutate(
+    pred_intensive = predict(
+      model_adj,
+      newdata = mutate(., strategy = "Intensive"),
+      type = "response"
+    ),
+    pred_standard = predict(
+      model_adj,
+      newdata = mutate(., strategy = "Standard"),
+      type = "response"
+    )
+  ) %>%
+  summarise(
+    risk_intensive = mean(pred_intensive),
+    risk_standard = mean(pred_standard),
+    adj_RD = risk_intensive - risk_standard
+  )
+
+adjusted_risks %>%
+  gt() %>%
+  fmt_number(decimals = 3) %>%
+  tab_header(title = "Adjusted ITT Analog Effect")
+
+# Bootstrap CI
+library(boot)
+
+boot_rd <- function(data, indices) {
+  d <- data[indices, ]
+  m <- glm(cvd_event ~ strategy + age + female, data = d, family = binomial())
+  d_aug <- d %>%
+    mutate(
+      pred_int = predict(
+        m,
+        newdata = mutate(d, strategy = "Intensive"),
+        type = "response"
+      ),
+      pred_std = predict(
+        m,
+        newdata = mutate(d, strategy = "Standard"),
+        type = "response"
+      )
+    )
+  mean(d_aug$pred_int) - mean(d_aug$pred_std)
+}
+
+boot_results <- boot(itt_data, boot_rd, R = 500)
+boot_ci <- boot.ci(boot_results, type = "perc")
+
+cat(
+  "\n95% Bootstrap CI:",
+  round(boot_ci$percent[4], 3),
+  "to",
+  round(boot_ci$percent[5], 3),
+  "\n"
+)
+```
+
+### Task 4: Sequential Trial Emulation
+
+```{r}
+#| label: task4-sequential-trials
+#| eval: false
+
+# Create person-month dataset
+person_months <- diabetes_cohort %>%
+  crossing(month = 0:36) %>%
+  group_by(patient_id) %>%
+  mutate(
+    # Follow-up time
+    time_since_dx = month,
+
+    # Still eligible (simplified: no CVD yet, no death)
+    eligible = month == 0 | lag(cvd_event, default = 0) == 0,
+
+    # Treatment assignment at this time point
+    # (In reality, would determine based on observed treatment patterns)
+
+    # Outcome in this month
+    cvd_event = if_else(
+      eligible,
+      rbinom(n(), 1, 0.002 * (1 + 0.5 * (strategy == "Standard"))),
+      NA_real_
+    )
+  ) %>%
+  ungroup()
+
+# YOUR TURN: Complete the sequential trial emulation
+# For each month, create a trial including all eligible patients
+# Follow them forward and estimate effect
+
+# Hint: Use nest() and map() to iterate over start times
+```
+
+::: {.callout-tip}
+
+## Implementation Hint
+
+For each potential time zero (month 0, 1, 2, ..., 36):
+
+1. Filter to patients eligible at that month
+2. Assign strategies based on treatment within next 30 days
+3. Follow forward to measure 36-month outcome
+4. Estimate effect for this trial
+5. Pool across trials using bootstrapping
+:::
+
+### Task 5: Reflection and Discussion
+
+After completing the lab, discuss:
+
+1. **When would you prefer ITT analog vs. per-protocol effect?** What factors determine which is more policy-relevant?
+2. **How would you handle grace periods?** If we allow 30 days to initiate "immediate" treatment, how does this affect cloning and censoring?
+3. **What if eligibility changes over time?** Suppose some patients develop CVD (making them ineligible). How does this affect sequential trial emulation?
+4. **Unmeasured confounding**: What patient characteristics might affect both treatment choice and outcomes but aren't in EHR data?
+
+### Post-Lab Quiz
+
+::: {.callout-question}
+
+## Quick Knowledge Check
+
+**Q1**: True or False: The ITT effect from a randomized trial always requires no adjustment for confounding.
+**A1**: False. While baseline confounding is eliminated by randomization, loss to follow-up can create post-randomization selection bias requiring adjustment.
+
+**Q2**: What makes a conventional "per-protocol analysis" (restricting to adherers) potentially biased?
+**A2**: Adherence is post-randomization and typically related to prognosis, creating confounding through $A \leftarrow U \rightarrow Y$. Simply restricting to adherers doesn't eliminate this bias.
+
+**Q3**: Why might a per-protocol analysis be more informative than ITT for decision-making?
+**A3**: Decision-makers typically want to know the effect of actually following a treatment strategy, not the effect of being assigned to it with uncertain adherence patterns.
+:::
+
+## 6 Common Pitfalls & Checks
+
+::: {.callout-warning}
+
+## Pitfall 1: Misunderstanding "Per-Protocol"
+
+**Wrong**: "Per-protocol analysis just means restricting to people who adhered."
+**Right**: Per-protocol effect is a causal contrast requiring adjustment for confounding, just like any observational analysis.
+
+**Check**: Did you adjust for factors predicting adherence and outcome? If not, your estimate is biased.
+:::
+
+::: {.callout-warning}
+
+## Pitfall 2: Immortal Time Bias
+
+**Wrong**: Starting follow-up at treatment initiation for the treated group but at an earlier time for controls.
+**Right**: All groups must have the same time zero—when eligibility is met and strategies could be assigned.
+
+**Check**: Can every individual die/experience the outcome at any time after time zero? If treatment group has "immortal time" before treatment, you have bias.
+:::
+
+::: {.callout-warning}
+
+## Pitfall 3: Censoring Medically-Indicated Treatment Changes
+
+**Wrong**: Censoring anyone who stops treatment, including those who stop due to toxicity.
+**Right**: Realistic strategies include rules like "stop if toxicity occurs." Following this rule is adherence, not deviation.
+
+**Check**: Does your protocol explicitly define when treatment changes are mandated? If stopping for toxicity is required, don't censor those patients.
+:::
+
+::: {.callout-warning}
+
+## Pitfall 4: Assuming ITT Is Always Conservative
+
+**Wrong**: "The ITT effect is always closer to the null than the true effect, so it's safe."
+**Right**: In head-to-head trials or with high non-adherence, ITT can be further from the null than the per-protocol effect.
+
+**Check**: Don't rely on ITT being conservative for safety assessment. Estimate per-protocol effects when evaluating harms.
+:::
+
+::: {.callout-warning}
+
+## Pitfall 5: Ignoring Time-Varying Confounding
+
+**Wrong**: Using standard regression to adjust for baseline covariates when treatments and confounders vary over time.
+**Right**: Use g-methods (IP weighting, g-formula, g-estimation) when $A_{k-1} \rightarrow L_k \rightarrow A_k$.
+
+**Check**: Draw a DAG. If past treatment affects future confounders, standard regression fails. Use g-methods.
+:::
+
+::: {.callout-important}
+
+## Essential Pre-Analysis Checks
+
+Before analyzing any comparative study:
+
+1. **Write out the target trial protocol** - What would the RCT look like?
+2. **Define time zero precisely** - When is eligibility met?
+3. **Specify treatment strategies exactly** - What actions at what times?
+4. **Distinguish adherence from deviation** - What changes are mandated by the protocol?
+5. **Identify time-varying confounders** - What post-baseline factors affect both treatment and outcome?
+6. **Choose appropriate methods** - Do you need g-methods or will standard methods suffice?
+:::
+
+## 7 Advanced Teaching Activities & Interactivity
+
+### 7.1 Flipped Classroom: Protocol Critique
+
+**Pre-Class**: Students read a published observational study and identify the implicit target trial.
+
+**In-Class**: Small groups critique the study:
+
+- What was the time zero?
+- What strategies were compared?
+- Were there time-zero errors?
+- What confounders were adjusted for?
+- Were g-methods needed?
+
+Present findings to class and discuss.
+
+### 7.2 Think-Pair-Share: When Is ITT Sufficient?
+
+**Prompt**: "Your collaborator says: 'Randomization eliminates confounding, so we just need an ITT analysis. Why complicate things with per-protocol?' How do you respond?"
+
+**Think** (2 min): Write down your response
+**Pair** (3 min): Discuss with a partner
+**Share** (10 min): Class discussion
+
+**Teaching Points**:
+
+- Randomization eliminates *baseline* confounding for effect of assignment
+- Doesn't eliminate post-randomization selection bias (LTFU)
+- Doesn't eliminate confounding for per-protocol effect
+- ITT may not answer the policy question
+
+### 7.3 Case Study: Hormone Therapy Controversy
+
+Present the Women's Health Initiative randomized trial vs. observational studies of postmenopausal hormone therapy:
+
+- Observational: Protective effect on CHD
+- WHI Trial: Harmful effect on CHD
+
+**Group Activity**: Analyze why estimates differed. Consider:
+
+1. Different populations (healthy user bias)
+2. Different time zeros (initiation at menopause vs. years later)
+3. Different durations of follow-up
+4. Different outcome ascertainment
+
+**Key Learning**: Many "trial vs. observational study" discrepancies reflect poor emulation rather than fundamental limitations of observational data.
+
+### 7.4 Interactive Simulation: Explore Non-Adherence Patterns
+
+Provide R Shiny app where students manipulate:
+
+- Degree of non-adherence (0-100%)
+- Direction of confounding (high-risk more vs. less likely to adhere)
+- Strength of treatment effect
+
+Observe effects on:
+
+- ITT estimate
+- Naive per-protocol estimate
+- Adjusted per-protocol estimate
+
+**Discussion**: When does ITT fail to be conservative? When is adjustment most critical?
+
+### 7.5 Retrieval Practice: Spaced Quizzing
+
+**Week 1**: Define ITT and per-protocol effects
+**Week 3**: Identify time-zero errors in example studies
+**Week 5**: Determine when g-methods are needed
+**Week 7**: Design a target trial emulation
+
+Each quiz includes:
+
+- Multiple-choice questions
+- Short-answer conceptual questions
+- Code-reading exercises (identify errors in provided R code)
+
+### 7.6 Peer Instruction: ConceptTests
+
+**Question 1**: In a randomized trial with sustained treatment strategies, which statement is TRUE?
+
+A. ITT analysis never requires adjustment for any variables
+B. Per-protocol analysis only requires adjustment for baseline confounders
+C. Both ITT and per-protocol analyses may require g-methods for time-varying factors
+D. Only observational studies need adjustment for time-varying confounding
+
+*Correct: C*
+
+**Process**:
+
+1. Students vote individually (30 sec)
+2. Discuss with neighbors (2 min)
+3. Vote again
+4. Instructor explains correct answer
+
+**Question 2**: A study compares statin users to non-users. Statin users have lower CVD risk. Time zero was defined as the date of first statin prescription for users, and as a randomly selected date for non-users. What bias is present?
+
+A. Immortal time bias
+B. Confounding by indication
+C. Selection bias
+D. All of the above
+
+*Correct: D*
+
+### 7.7 Problem-Based Learning: Design Your Own Target Trial
+
+**Scenario**: You want to study whether intensive blood pressure control (target <120 mmHg) reduces dementia risk compared to standard control (<140 mmHg) in adults 60+.
+
+**Tasks**:
+
+1. Draft the full target trial protocol (6 components)
+2. Identify potential eligibility times in observational data
+3. Specify when you would censor clones
+4. List time-varying confounders requiring g-methods
+5. Anticipate challenges in emulation
+
+**Deliverable**: 2-page protocol + 1-page analysis plan
+
+**Peer Review**: Exchange with classmates for feedback
+
+## 8 Appendix: Advanced Theory & Derivations
+
+### 8.1 Formal Definition of Per-Protocol Effect Under Sustained Strategies
+
+Let $\bar{A}_k = (A_0, A_1, \ldots, A_k)$ denote treatment history through time $k$. A **treatment strategy** $g$ is a function that assigns treatment $A_k$ at time $k$ based on past information:
+
+$$
+g: (\bar{A}_{k-1}, \bar{L}_k) \mapsto \{0, 1\}
+$$
+
+where $\bar{L}_k$ is covariate history through $k$. The strategy $g$ can be:
+
+- **Static**: $g(\bar{A}_{k-1}, \bar{L}_k) = a$ for all $k$ (always treat or never treat)
+- **Dynamic**: $g(\bar{A}_{k-1}, \bar{L}_k)$ depends on $\bar{L}_k$ (e.g., "treat if CD4 < 200")
+
+**Per-Protocol Effect**: For strategies $g$ and $g'$, the per-protocol effect at time $K$ is:
+
+$$
+\Delta_{PP} = E[Y_K^g] - E[Y_K^{g'}]
+$$
+
+where $Y_K^g$ is the outcome at time $K$ under strategy $g$.
+
+#### Identification Conditions
+
+To identify $E[Y_K^g]$ from observed data, we require:
+
+1. **Consistency**: $Y_K = Y_K^{\bar{a}}$ when $\bar{A} = \bar{a}$
+2. **Sequential exchangeability**: $Y_K^{\bar{a}} \perp!!!\perp A_k \mid \bar{A}_{k-1}, \bar{L}_k$ for all $k$
+3. **Positivity**: $\Pr[A_k = g(\bar{A}_{k-1}, \bar{L}_k) \mid \bar{A}_{k-1}, \bar{L}_k] > 0$ for all $k$
+
+Under these conditions:
+
+$$
+E[Y_K^g] = \int E[Y_K \mid \bar{A} = \bar{a}^g, \bar{L}] \prod_{k=0}^{K-1} f(L_k \mid \bar{A}_{k-1}, \bar{L}_{k-1}) d\bar{L}
+$$
+
+where $\bar{a}^g$ is the treatment path assigned by strategy $g$.
+
+**Proof Sketch**: By sequential exchangeability and consistency, we can express the counterfactual mean as an iterated expectation over observed data distributions.
+
+### 8.2 When Does ITT Equal Per-Protocol Effect?
+
+**Theorem**: The ITT effect equals the per-protocol effect if and only if:
+
+1. **Perfect adherence**: $A_k = g_z(k)$ for all $k$, where $g_z$ is the strategy assigned by $Z$
+2. **Exclusion restriction**: $Z$ affects $Y$ only through $\bar{A}$
+
+**Proof**:
+
+Under perfect adherence and exclusion restriction:
+
+$$
+E[Y_K^{z=1}] = E[Y_K^{g_1}]
+$$
+
+$$
+E[Y_K^{z=0}] = E[Y_K^{g_0}]
+$$
+
+Therefore:
+
+$$
+\Delta_{ITT} = E[Y_K^{z=1}] - E[Y_K^{z=0}] = E[Y_K^{g_1}] - E[Y_K^{g_0}] = \Delta_{PP}
+$$
+
+**Numeric Example**:
+
+Consider a 2-period trial ($k \in \{0,1\}$, outcome at $k=2$):
+
+- Perfect adherence: All $Z=1$ follow $g_1$: $(A_0=1, A_1=1)$; all $Z=0$ follow $g_0$: $(A_0=0, A_1=0)$
+- Exclusion restriction holds
+
+Suppose true counterfactual risks:
+
+$$
+\Pr[Y_2^{g_1}=1] = 0.20
+$$
+
+$$
+\Pr[Y_2^{g_0}=1] = 0.30
+$$
+
+Then observed risks:
+
+$$
+\Pr[Y_2=1|Z=1] = \Pr[Y_2^{g_1}=1] = 0.20
+$$
+
+$$
+\Pr[Y_2=1|Z=0] = \Pr[Y_2^{g_0}=1] = 0.30
+$$
+
+Thus $\Delta_{ITT} = \Delta_{PP} = -0.10$.
+
+### 8.3 Selection Bias from Loss to Follow-Up in ITT Analysis
+
+Even with randomization, censoring $C$ can induce selection bias for the ITT effect.
+
+**DAG**:
+
+$$
+Z \rightarrow A \rightarrow L \rightarrow C
+$$
+
+$$
+L \rightarrow Y
+$$
+
+Conditioning on $C=0$ opens collider-stratification bias via $Z \rightarrow A \rightarrow L \leftarrow C$.
+
+**Formal Proof**:
+
+We want $E[Y^{z=1,c=0}] - E[Y^{z=0,c=0}]$, but observe:
+
+$$
+E[Y \mid Z=1, C=0] - E[Y \mid Z=0, C=0]
+$$
+
+These differ because:
+
+$$
+E[Y \mid Z=z, C=0] = \sum_\ell E[Y \mid Z=z, C=0, L=\ell] \Pr[L=\ell \mid Z=z, C=0]
+$$
+
+The distribution $\Pr[L \mid Z=z, C=0]$ differs from $\Pr[L^z]$ due to selection on $C$.
+
+**IP Weighting Solution**:
+
+Create weights:
+
+$$
+W = \frac{1}{\Pr[C=0 \mid Z, L]}
+$$
+
+Then:
+
+$$
+E\left[\frac{Y \cdot I(C=0)}{\Pr[C=0 \mid Z, L]} \mid Z=z\right] = E[Y^{z,c=0}]
+$$
+
+**Numeric Example**:
+
+| Group | $\Pr[Y=1 \mid C=0]$ | $\Pr[C=0]$ | True $E[Y^{z,c=0}]$ |
+|-------|---------------------|------------|----------------------|
+| $Z=1$ | 0.15                | 0.90       | 0.18                 |
+| $Z=0$ | 0.25                | 0.95       | 0.24                 |
+
+**Naive estimate** (complete cases): $0.15 - 0.25 = -0.10$
+**True ITT effect**: $0.18 - 0.24 = -0.06$
+**Bias**: $-0.04$ (underestimates benefit)
+
+With IP weighting:
+
+$$
+W_{Z=1} = \frac{1}{0.90}, \quad W_{Z=0} = \frac{1}{0.95}
+$$
+
+Weighted estimate recovers $-0.06$.
+
+### 8.4 Cloning + Censoring + Weighting: Formal Justification
+
+**Setup**: At baseline, individual $i$'s data are consistent with strategies $\{g_1, g_2, \ldots, g_m\}$. We cannot uniquely assign them to one strategy.
+
+**Procedure**:
+
+1. Create $m$ clones $\{i_1, i_2, \ldots, i_m\}$, assign each to one strategy
+2. At each time $k$, censor clone $i_j$ if observed treatment $A_k$ violates strategy $g_j$
+3. Weight by inverse probability of remaining uncensored
+
+**Key Result**: If censoring at time $k$ depends on $(\bar{A}_{k-1}, \bar{L}_k)$, and we weight by:
+
+$$
+W_k = \prod_{j=0}^{k-1} \frac{1}{\Pr[C_{j+1}=0 \mid \bar{A}_j, \bar{L}_j, C_j=0]}
+$$
+
+Then:
+
+$$
+E\left[\frac{Y_K \cdot I(\bar{C}=\bar{0})}{\prod_k W_k} \mid g\right] = E[Y_K^g]
+$$
+
+**Proof Sketch**: By sequential exchangeability of censoring:
+
+$$
+E[Y_K^{g,\bar{c}=\bar{0}}] = E\left[E[Y_K \mid \bar{A}=\bar{a}^g, \bar{C}=\bar{0}, \bar{L}] \prod_k \Pr[C_{k+1}=0 \mid \bar{A}_k, \bar{L}_k]\right]
+$$
+
+The weight $1/\Pr[C_{k+1}=0 \mid \cdots]$ removes the selection.
+
+**Numeric Example**:
+
+Two strategies: $g_1$ (immediate treatment), $g_2$ (delay treatment).
+
+Person 1 delays treatment:
+
+- Clone 1 (assigned $g_1$): Censored at $k=0$ when treatment not initiated
+  - Weight at censoring: $W_0 = 1/\Pr[\text{initiate} \mid L_0] = 1/0.30 = 3.33$
+- Clone 2 (assigned $g_2$): Remains uncensored
+  - If dies at $k=5$: Contributes death to $g_2$ strategy
+  - Weight: $W_5 = \prod_{k=0}^4 1/\Pr[C_{k+1}=0 \mid \bar{A}_k, \bar{L}_k]$
+
+Person 2 initiates immediately, then stops at $k=2$ due to toxicity (mandated by $g_1$):
+
+- Clone 1 (assigned $g_1$): Remains uncensored (stopping is adherence)
+- Clone 2 (assigned $g_2$): Censored at $k=0$ when treatment initiated
+
+### 8.5 Bias Decomposition for Naive Per-Protocol Analysis
+
+**Setting**: Randomized trial with non-adherence. True per-protocol effect $\Delta_{PP}$, observed naive estimate $\hat{\Delta}_{\text{naive}}$ comparing $A=1$ vs $A=0$ without adjustment.
+
+**Bias**:
+
+$$
+\text{Bias} = E[\hat{\Delta}_{\text{naive}}] - \Delta_{PP}
+$$
+
+Can be decomposed:
+
+$$
+\text{Bias} = \underbrace{\text{Confounding bias}}_{\text{Selection into } A} + \underbrace{\text{Selection bias}}_{\text{Censoring/LTFU}}
+$$
+
+**Confounding bias**:
+
+$$
+E[Y \mid A=1] - E[Y \mid A=0] = \underbrace{E[Y^{a=1}] - E[Y^{a=0}]}_{\text{Causal effect}} + \underbrace{E[Y^{a=0} \mid A=1] - E[Y^{a=0} \mid A=0]}_{\text{Confounding}}
+$$
+
+**Selection bias** (if conditioning on $C=0$):
+
+$$
+E[Y \mid A=a, C=0] \neq E[Y^{a,c=0}]
+$$
+
+**Numeric Example**:
+
+Suppose unmeasured $U$ (high-risk):
+
+| $U$ | $\Pr[U]$ | $\Pr[A=1 \mid U]$ | $E[Y^{a=1} \mid U]$ | $E[Y^{a=0} \mid U]$ |
+|-----|----------|-------------------|---------------------|---------------------|
+| 1   | 0.5      | 0.7               | 0.20                | 0.60                |
+| 0   | 0.5      | 0.3               | 0.10                | 0.30                |
+
+**True PP effect**:
+
+$$
+\Delta_{PP} = 0.5(-0.40) + 0.5(-0.20) = -0.30
+$$
+
+**Naive estimate**:
+
+$$
+\Pr[A=1] = 0.5(0.7) + 0.5(0.3) = 0.50
+$$
+
+$$
+E[Y \mid A=1] = \frac{0.5(0.7)(0.20) + 0.5(0.3)(0.10)}{0.50} = 0.155
+$$
+
+$$
+E[Y \mid A=0] = \frac{0.5(0.3)(0.60) + 0.5(0.7)(0.30)}{0.50} = 0.285
+$$
+
+$$
+\hat{\Delta}_{\text{naive}} = 0.155 - 0.285 = -0.130
+$$
+
+**Bias**: $-0.130 - (-0.30) = +0.17$ (attenuation toward null)
+
+**Confounding component**:
+
+$$
+E[Y^{a=0} \mid A=1] - E[Y^{a=0} \mid A=0] = 0.515 - 0.315 = +0.20
+$$
+
+This positive confounding (high-risk more likely treated) attenuates the beneficial effect.
+
+## References
+
+Cain, L. E., Robins, J. M., Lanoy, E., Logan, R., Costagliola, D., & Hernán, M. A. (2010). When to start treatment? A systematic approach to the comparison of dynamic regimes using observational data. *The International Journal of Biostatistics*, *6*(2), Article 18.
+
+Frangakis, C. E., & Rubin, D. B. (2002). Principal stratification in causal inference. *Biometrics*, *58*(1), 21-29.
+
+Hernán, M. A., & Hernández-Díaz, S. (2012). Beyond the intention-to-treat in comparative effectiveness research. *Clinical Trials*, *9*(1), 48-55.
+
+Hernán, M. A., Alonso, A., Logan, R., Grodstein, F., Michels, K. B., Willett, W. C., Manson, J. E., & Robins, J. M. (2008). Observational studies analyzed like randomized experiments: an application to postmenopausal hormone therapy and coronary heart disease. *Epidemiology*, *19*(6), 766-779.
+
+Hernán, M. A., & Robins, J. M. (2016). Using big data to emulate a target trial when a randomized trial is not available. *American Journal of Epidemiology*, *183*(8), 758-764.
+
+Hernán, M. A., & Robins, J. M. (2017). Per-protocol analyses of pragmatic trials. *New England Journal of Medicine*, *377*(14), 1391-1398.
+
+Hernán, M. A., & Robins, J. M. (2020). *Causal Inference: What If*. Chapman & Hall/CRC.
+
+Little, R. J., D'Agostino, R., Cohen, M. L., Dickersin, K., Emerson, S. S., Farrar, J. T., Frangakis, C., Hogan, J. W., Molenberghs, G., Murphy, S. A., Neaton, J. D., Rotnitzky, A., Scharfstein, D., Shih, W. J., Siegel, J. P., & Stern, H. (2012). The prevention and treatment of missing data in clinical trials. *New England Journal of Medicine*, *367*(14), 1355-1360.
+
+Pearl, J. (2001). Direct and indirect effects. In *Proceedings of the Seventeenth Conference on Uncertainty in Artificial Intelligence* (pp. 411-420). Morgan Kaufmann.
+
+Pearl, J. (2009). *Causality: Models, Reasoning, and Inference* (2nd ed.). Cambridge University Press.
+
+Robins, J. M. (1986). A new approach to causal inference in mortality studies with sustained exposure periods—application to control of the healthy worker survivor effect. *Mathematical Modelling*, *7*(9-12), 1393-1512.
+
+Robins, J. M., & Greenland, S. (1992). Identifiability and exchangeability for direct and indirect effects. *Epidemiology*, *3*(2), 143-155.
+
+Robins, J. M. (1998). Marginal structural models versus structural nested models as tools for causal inference. In M. E. Halloran & D. Berry (Eds.), *Statistical Models in Epidemiology, the Environment, and Clinical Trials* (pp. 95-133). Springer-Verlag.
+
+Robins, J. M., Hernán, M. A., & Siebert, U. (2007). Effects of multiple interventions. In W. Ezzati, A. D. Lopez, A. Rodgers, & C. J. L. Murray (Eds.), *Comparative Quantification of Health Risks: Global and Regional Burden of Disease Attributable to Selected Major Risk Factors* (pp. 2191-2230). World Health Organization.
+
+Robins, J. M., Orellana, L., & Rotnitzky, A. (2008). Estimation and extrapolation of optimal treatment and testing strategies. *Statistics in Medicine*, *27*(23), 4678-4721.
+
+Robins, J. M., & Richardson, T. S. (2010). Alternative graphical causal models and the identification of direct effects. In P. Shrout (Ed.), *Causality and Psychopathology: Finding the Determinants of Disorders and Their Cures*. Oxford University Press.
+
+Rubin, D. B. (2004). Direct and indirect causal effects via potential outcomes. *Scandinavian Journal of Statistics*, *31*(2), 161-170.
+
+van der Laan, M. J., & Petersen, M. L. (2007). Causal effect models for realistic individualized treatment and intention to treat rules. *The International Journal of Biostatistics*, *3*(1), Article 3.
+
+VanderWeele, T. J. (2015). *Explanation in Causal Inference: Methods for Mediation and Interaction*. Oxford University Press.
+

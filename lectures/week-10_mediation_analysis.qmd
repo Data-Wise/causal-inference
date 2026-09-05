@@ -77,7 +77,7 @@ The **indirect effect** is estimated as $\hat{a} \times \hat{b}$, and the **dire
 - **Model dependence**: The definitions rely on specific functional forms (linear regression). With nonlinear models (logistic, Poisson), the product $a \times b$ lacks clear causal interpretation [@vanderweele2015book].
 - **Unclear assumptions**: What covariates $X$ are needed? The approach doesn't explicitly state conditions for causal interpretation.
 - **Exposure-mediator interactions**: When $A \times M$ interactions exist, the decomposition becomes ambiguous.
-- **Collider bias**: Conditioning on $M$ in model (3) can induce bias if $M$ is affected by unmeasured factors that also influence $Y$ [@pearl2014].
+- **Collider bias**: Conditioning on $M$ in model (3) can induce bias if $M$ is affected by unmeasured factors that also influence $Y$ [@pearl2014interpretation].
 
 These issues motivated the development of a **counterfactual framework** for mediation.
 
@@ -147,6 +147,12 @@ $$
 
 Typically, researchers report $\bar{\delta}(0)$ (NIE when $A=0$) or $\bar{\delta}(1)$ (NIE when $A=1$), or the average across both.
 
+##### Pure vs. Total Indirect Effect
+
+- $\bar{\delta}(0)$ is sometimes called the **pure natural indirect effect** (holding $A$ at control).
+- $\bar{\delta}(1)$ is the **total natural indirect effect** (holding $A$ at treatment).
+- When there's no $A \times M$ interaction, $\bar{\delta}(0) = \bar{\delta}(1)$.
+
 #### 1.4.2 Natural Direct Effect (NDE)
 
 The **natural direct effect (NDE)** captures the effect of changing the exposure while holding the mediator at the value it would naturally take under a reference exposure level:
@@ -165,12 +171,18 @@ $$
 
 Often, $\bar{\zeta}(0)$ is called the "pure" natural direct effect (holding $M$ at its control value).
 
+##### Pure vs. Total Direct Effect
+
+- $\bar{\zeta}(0)$ is sometimes called the **pure natural direct effect** (holding $M$ at control).
+- $\bar{\zeta}(1)$ is the **total natural direct effect** (holding $M$ at treatment).
+- When there's no $A \times M$ interaction, $\bar{\zeta}(0) = \bar{\zeta}(1)$.
+
 #### 1.4.3 Decomposition of the Total Effect
 
 The total effect decomposes as:
 
 $$
-E[Y^{1, M^{1}} - Y^{0, M^{0}}] = \bar{\delta}(a) + \bar{\zeta}(1 - a)
+\E{Y^{1, M^{1}} - Y^{0, M^{0}}} = \bar{\delta}(a) + \bar{\zeta}(1 - a)
 $$
 
 Two common decomposition
@@ -411,7 +423,7 @@ $\bar{\zeta}(1) = 8$. Check: $4 + 8 = 12$ ✓
 Suppose we fix $M = 4$ interviews for everyone. The CDE compares:
 
 $$
-\text{CDE}(4) = E[Y^{1, 4}] - E[Y^{0, 4}]
+\text{CDE}(4) = \E{Y^{1, 4}} - \E{Y^{0, 4}}
 $$
 
 From the table (interpolating if needed, or suppose we have):
@@ -689,7 +701,7 @@ med_results_int <- mediate(
 summary(med_results_int)
 ```
 
-**Interpretation**: With the interaction term, the ACME and ADE will differ depending on whether we condition on $A=0$ (control) or $A=1$ (treated). The `mediation` package reports both by default. Notice that ACME(0) ≠ ACME(1) and ADE(0) ≠ ADE(1).
+**Interpretation**: With the interaction term, the ACME and ADE will differ depending on whether we condition on $A=0$ (control) or $A=1$ (treated). The `mediation` package reports both by default. Notice that $ACME(0) ≠ ACME(1)$ and $ADE(0) ≠ ADE(1)$.
 
 ## 5 Hands-On R Lab
 
@@ -1205,7 +1217,7 @@ We derive the identification formula for the average natural indirect effect (NI
    - $Y^{a', m} \perp M \mid A = a, X$
 3. **Positivity**: $0 < P(A=a \mid X) < 1$ and $0 < P(M=m \mid A=a, X) < 1$ for all relevant $(a, m, X)$.
 
-**Goal**: Identify $\bar{\delta}(a) = E[Y^{a, M^{1}} - Y^{a, M^{0}}]$ in terms of observed data.
+**Goal**: Identify $\bar{\delta}(a) = \E{Y^{a, M^{1}} - Y^{a, M^{0}}}$ in terms of observed data.
 
 **Step 1**: Expand the expectation over the covariate distribution.
 

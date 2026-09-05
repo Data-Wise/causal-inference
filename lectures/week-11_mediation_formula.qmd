@@ -1,0 +1,305 @@
+---
+title: "Understanding the Mediation Formula: Intuition and Derivation with Interaction"
+---
+
+The mediation formula is a fundamental result in causal inference that allows us to express a specific counterfactual quantity in terms of observable data. The formula is given by:
+$$
+\E{Y^{a, M^{a^{*}}} \mid C=c} = \sum_{m} \E{Y \mid A=a, M=m, C=c} \, P(M = m \mid A=a^*, C=c)
+$$
+
+This formula is a cornerstone of modern mediation analysis, often called the **Mediation Formula** or the **Mediation G-Formula**. It provides a non-parametric way to *identify* a very specific and important counterfactual quantity from observed data, *assuming* a set of critical assumptions hold.
+
+The quantity on the left-hand side, $\E{Y^{a, M^{a^{*}}} \mid C=c}$, is the key building block for defining **Natural Direct Effects (NDE)** and **Natural Indirect Effects (NIE)**.
+
+Let's break this down in detail, starting with the causal question on the left and then moving to the statistical calculation on the right.
+
+## The Causal Question: The Left-Hand Side (LHS)
+
+The term $\E{Y^{a, M^{a^{*}}} \mid C=c}$ represents a "nested" or "cross-world" potential outcome.
+
+- **Notation:**
+    - $A$: The exposure (e.g., $a=$ treatment, $a^*=$ control).
+    - $M$: The mediator (e.g., a biomarker, a health behavior).
+    - $Y$: The outcome (e.g., disease status, recovery).
+    - $C$: A set of baseline (pre-exposure) confounders.
+    - $Y^{a}$: The potential outcome $Y$ if, possibly contrary to fact, $A$ were set to $a$.
+    - $M^{a^*}$: The potential mediator value $M$ if, possibly contrary to fact, $A$ were set to $a^*$.
+- **The Full Term: $\E{Y^{a, M^{a^{*}}} \mid C=c}$**
+    This asks a sophisticated causal question:
+    > "Within a specific stratum of confounders $C=c$, what would be the average outcome $Y$ if we intervened to set the exposure to level $\boldsymbol{a}$, but simultaneously intervened to set the mediator $M$ to the value it *would have naturally taken* if the exposure had been set to $\boldsymbol{a^*}$?"
+
+This is a "cross-world" counterfactual because it combines two different hypothetical worlds:
+
+1. The exposure is set to $a$.
+2. The mediator is set to a value derived from a world where the exposure was $a^*$.
+
+**Practical Example (Public Health):**
+Imagine $A$ is a new, mandatory worksite wellness program ($a=1$) vs. no program ($a^*=0$). $M$ is the level of physical activity, and $Y$ is 5-year cardiovascular disease (CVD) risk. $C$ are baseline demographics and health status.
+
+The formula $\E{Y^{a=1, M^{a^{*}=0}} \mid C=c}$ asks:
+
+::: {.callout-note}
+What would the average CVD risk be if we *implemented the program* ($A=1$), but hypothetically, everyone maintained the *same level of physical activity* ($M$) that they *would have had if there were no program* ($A=0$)?
+:::
+
+This quantity is precisely what we need to isolate the **Natural Direct Effect (NDE)**. The NDE compares this to the risk under no program:
+
+$$
+\text{NDE} = \E{Y^{a=1, M^{a^{*}=0}} \mid C=c} - \E{Y^{a^{*}=0, M^{a^{*}=0}} \mid C=c}
+$$
+
+This isolates the effect of the program on CVD risk that does *not* operate through physical activity.
+
+## The Statistical Answer: The Right-Hand Side (RHS)
+
+The left side is the unobservable *question*. The right side is the *answer* we can calculate from observable data, assuming identification.
+
+$$
+\underbrace{\sum_{m} \E{Y \mid A=a, M=m, C=c} \, P(M = m \mid A=a^*, C=c)}_{\text{RHS: The Identification Formula}}
+$$
+
+This formula is an application of **standardization**. Let's break down its two components.
+
+### Term 1: $\E{Y \mid A=a, M=m, C=c}$
+
+- **What it is:** The observed conditional expectation of the outcome.
+- **Intuitive Meaning:** "Among individuals who *actually received* exposure $A=a$, what is the average outcome $Y$ for those who had a specific mediator value $M=m$ (within stratum $C=c$)?"
+- **How we get it:** This is estimated directly from our data. We can fit a regression model for the outcome, $\E{Y \mid A, M, C}$, and plug in the values $A=a$ and $M=m$.
+- **Example (cont.):** "In our study, what is the average CVD risk among people who *were in the wellness program* ($A=1$) and *also* had a physical activity level of $m$ (e.g., $m$=low)?" This term represents the direct pathway from $A$ to $Y$ and the $M$ to $Y$ pathway, conditional on $A, C$.
+
+### Term 2: $P(M = M \mid A=a^*, C=c)$
+
+- **What it is:** The observed conditional probability (or density) of the mediator.
+- **Intuitive Meaning:** "What is the *distribution* of the mediator $M$ among individuals who *actually received* the control exposure $A=a^*$ (within stratum $C=c$)?"
+- **How we get it:** This is also estimated from data. We fit a model for the mediator, $P(M \mid A, C)$, and plug in $A=a^*$.
+- **Example (cont.):** "In our study, what *proportion* of people *not in the wellness program* ($A=0$) had a low physical activity level ($M$=low)?" This term represents the natural distribution of the mediator under the control condition.
+
+## What Does "Integrating out the mediator" Mean?
+
+This is the most important part of your question and is the key to the intuition.
+
+The $\sum_{m}$ (or $\int ... dm$ for a continuous mediator) is the "integration." It means we are calculating a **weighted average**.
+
+**"Integrating out the mediator" means we are performing standardization.**
+
+Here is the step-by-step intuition:
+
+1. **Goal:** We want the average outcome under exposure $A=a$, but with the mediator distribution from $A=a^*$.
+2. **Step 1: Get the outcome relationship under $\boldsymbol{A=a}$:**
+    We use Term 1: $\E{Y \mid A=a, M=m, C=c}$. This gives us a *list* of average outcomes for every possible value of $m$, *all* in the group that received exposure $A=a$.
+    - *Example:*
+        - Avg. CVD risk for (Program, $M$=low) = 15%
+        - Avg. CVD risk for (Program, $M$=medium) = 10%
+        - Avg. CVD risk for (Program, $M$=high) = 5%
+
+3. **Step 2: Get the mediator distribution under $\boldsymbol{A=a^*}$:**
+    We use Term 2: $P(M = m \mid A=a^*, C=c)$. This gives us a *list* of weights (probabilities).
+    - *Example:* In the *No Program* group:
+        - Proportion with $M$=low = 60%
+        - Proportion with $M$=medium = 30%
+        - Proportion with $M$=high = 10%
+
+4. **Step 3: Standardize (Integrate/Sum):**
+    We combine them. We "average" the outcomes from Step 1 using the "weights" from Step 2.
+
+$$
+\text{Result} = (15\% \times 60\%) + (10\% \times 30\%) + (5\% \times 10\%)
+$$
+
+$$
+\text{Result} = (0.15 \times 0.60) + (0.10 \times 0.30) + (0.05 \times 0.10)
+$$
+
+$$
+\text{Result} = 0.09 + 0.03 + 0.005 = 0.125 \text{ or } 12.5\%
+$$
+
+This result, 12.5%, is the value of $\E{Y^{a=1, M^{a^{*}=0}} \mid C=c}$. It's a *standardized* outcome. It tells us the average CVD risk we would expect in the Program group (12.5%) *if* they had the same (less healthy) physical activity distribution as the No Program group.
+
+"Integrating out" simply means we are no longer looking at $M$-specific outcomes; we have collapsed them into a single, standardized average.
+
+## The Assumptions Are Paramount
+
+This formula, this entire identification strategy, is *not* just a statistical manipulation. It only works—meaning the RHS truly equals the LHS—if four key identification assumptions hold (conditional on $C$):
+
+1. **No unmeasured Exposure-Outcome confounding.**
+2. **No unmeasured Mediator-Outcome confounding.**
+3. **No unmeasured Exposure-Mediator confounding.**
+4. **No Mediator-Outcome confounder is itself affected by the Exposure.**
+
+This last assumption is the most challenging. It means there can't be a variable $L$ that is caused by $A$, and which in turn causes both $M$ and $Y$. If such a variable exists, we cannot use this simple formula and must turn to more advanced methods (like MSMs for mediation or sequential g-formula).
+
+### Next Steps
+
+Now that we have the theoretical formula, the next logical step is to think about how we would practically estimate this from a dataset. This involves:
+
+1. Fitting a statistical model (e.g., logistic regression, linear regression) for the outcome $Y$ given $A, M, \text{and } C$.
+2. Fitting a statistical model (e.g., logistic regression, linear regression, multinomial) for the mediator $M$ given $A \text{ and } C$.
+3. Using the procedure I described (sometimes called "parametrically-adjusted" estimation or "g-computation") to calculate the standardized means and compute the Natural Direct and Indirect Effects.
+
+<!-- ### Suggested Follow-up Prompts
+
+1. How would we write the full formulas for the **Natural Direct Effect (NDE)** and **Natural Indirect Effect (NIE)** using this notation?
+2. Can you draw a DAG that *violates* the fourth assumption (no exposure-induced M-Y confounder) and explain why this formula would fail?
+3. How would we use R (e.g., with the `mediation` package or by hand) to estimate the two terms in this formula and compute the NDE? -->
+
+## Exposure-Mediator Interaction
+
+When an exposure-mediator interaction exists, the effect of the mediator on the outcome *depends on the level of the exposure*. The counterfactual approach allows us to correctly parse this.
+
+Let's walk through the derivation using the regression models you've proposed.
+
+### Define the Statistical Models
+
+We are in a setting with baseline confounders $C$, a binary exposure $A \in \{0, 1\}$, a continuous mediator $M$, and a continuous outcome $Y$.
+
+**Model 1: The Mediator Model**
+We assume a linear model for $M$, conditional on $A$ and $C$:
+$$
+\E{M \mid A=a, C=c} = \beta_0 + \beta_1 a + \boldsymbol{\beta}_2' c
+$$
+
+For the derivation, we will also assume the mediator's distribution is normal, $M \mid A=a, C=c \sim \mathcal{N}(\beta_0 + \beta_1 a + \boldsymbol{\beta}_2' c, \sigma_m^2)$. The $\beta_1$ coefficient represents the effect of $A$ on $M$.
+
+**Model 2: The Outcome Model**
+We assume a linear model for $Y$, conditional on $A$, $M$, and $C$. Crucially, we include the $A \times M$ interaction term.
+$$
+\E{Y \mid A=a, M=m, C=c} = \theta_0 + \theta_1 a + \theta_2 m + \boldsymbol{\theta}_3' c + \theta_4 (a \times m)
+$$
+
+Here:
+
+- $\theta_1$ is the "direct" effect of $A$ on $Y$, when $M=0$.
+- $\theta_2$ is the effect of $M$ on $Y$, when $A=0$.
+- $\theta_4$ is the interaction term. It tells us *how much the effect of M on Y changes* when $A$ changes from 0 to 1. The total effect of $M$ on $Y$ when $A=1$ is $(\theta_2 + \theta_4)$.
+
+### Derive the Mediation Formula
+
+Our goal is to solve for the key counterfactual quantity $\E{Y^{a, M^{a^{*}}} \mid C=c}$. We will set $a=1$ and $a^*=0$ for clarity, so we are solving for $\E{Y^{a=1, M^{a^{*}=0}} \mid C=c}$.
+
+Recall the *general* mediation formula, using an integral for continuous $M$:
+$$
+\E{Y^{1, M^{0}} \mid C=c} = \int_{-\infty}^{\infty} \E{Y \mid A=1, M=m, C=c} \, p(M = m \mid A=0, C=c) \, dm
+$$
+
+Let's plug our regression models into this general formula.
+
+- **Part 1: $\E{Y \mid A=1, M=m, C=c}$**
+
+From our outcome model (Model 2), we just set $a=1$:
+$$
+\E{Y \mid A=1, M=m, C=c} = \theta_0 + \theta_1(1) + \theta_2 m + \boldsymbol{\theta}_3' c + \theta_4 (1 \times m)
+$$
+$$
+= (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4)m
+$$
+
+- **Part 2: $p(M = m \mid A=0, C=c)$**
+
+From our mediator model (Model 1), this is simply the probability density of a Normal distribution with its mean set by $a=0$:
+$$
+p(m \mid A=0, C=c) \sim \mathcal{N}(\mu = \beta_0 + \beta_1(0) + \boldsymbol{\beta}_2' c, \sigma_m^2)
+$$
+$$
+= \mathcal{N}(\mu = \beta_0 + \boldsymbol{\beta}_2' c, \sigma_m^2)
+$$
+
+- **Putting it together:**
+
+Now we substitute these two parts back into the integral:
+$$
+\E{Y^{1, M^{0}} \mid C=c} = \int \left[ (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4)m \right] \, p(m \mid A=0, C=c) \, dm
+$$
+
+We can split the integral and pull out terms that are constant *with respect to m*:
+$$
+= (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) \int p(m \mid A=0, C=c) \, dm + (\theta_2 + \theta_4) \int m \cdot p(m \mid A=0, C=c) \, dm
+$$
+
+This integral simplifies beautifully based on two fundamental properties of probability:
+1. $\int p(m \mid ...) \, dm = 1$ (The total probability density must integrate to 1)
+2. $\int m \cdot p(m \mid A=0, C=c) \, dm = \E{M \mid A=0, C=c}$ (This is the *definition* of the expected value of $M$ given $A=0$ and $C=c$)
+
+Substituting these in:
+$$
+\E{Y^{1, M^{0}} \mid C=c} = (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) \cdot (1) + (\theta_2 + \theta_4) \cdot \E{M \mid A=0, C=c}
+$$
+
+Finally, we plug in the formula for $\E{M \mid A=0, C=c}$ from Model 1:
+$$
+\E{Y^{1, M^{0}} \mid C=c} = (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c)
+$$
+
+This is the **analytical solution for the mediation formula** under these specific linear models.
+
+### Compute the NDE and NIE
+
+Now we can use this result to derive the NDE and NIE. (Note: These effects are all conditional on $C=c$).
+
+### Natural Direct Effect (NDE)
+$$
+\text{NDE} = \E{Y^{1, M^{0}} \mid C=c} - \E{Y^{0, M^{0}} \mid C=c}
+$$
+
+- **First term:** We just derived this:
+    $\E{Y^{1, M^{0}} \mid C=c} = (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c)$
+- **Second term:** We use the same formula, but set $a=0$ *and* $a^*=0$:
+    $\E{Y^{0, M^{0}} \mid C=c} = (\theta_0 + \theta_1(0) + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4(0)) (\beta_0 + \boldsymbol{\beta}_2' c)$
+    $= (\theta_0 + \boldsymbol{\theta}_3' c) + \theta_2 (\beta_0 + \boldsymbol{\beta}_2' c)$
+- **Subtract:**
+    $\text{NDE} = [ (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c) ] - [ (\theta_0 + \boldsymbol{\theta}_3' c) + \theta_2 (\beta_0 + \boldsymbol{\beta}_2' c) ]$
+    $\text{NDE} = \theta_1 + \theta_4 (\beta_0 + \boldsymbol{\beta}_2' c)$
+
+::: {.callout-tip}
+## Intuition for NDE
+ The Natural Direct Effect is *not* just $\theta_1$. It is $\theta_1$ (the direct effect when $M=0$) plus an interaction component $\theta_4$ that is *scaled by the natural value of the mediator under control*, $\E{M\mid A=0, C=c} = \beta_0 + \boldsymbol{\beta}_2' c$. This makes perfect sense: it's the direct effect of $A$, evaluated at the natural level of $M$ that would occur if $A$ were 0.
+:::
+
+### Natural Indirect Effect (NIE)
+$$
+\text{NIE} = \E{Y^{1, M^{1}} \mid C=c} - \E{Y^{1, M^{0}} \mid C=c}
+$$
+
+- **First term:** We use the formula, setting $a=1$ and $a^*=1$:
+    $\E{Y^{1, M^{1}} \mid C=c} = (\theta_0 + \theta_1(1) + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4(1)) (\beta_0 + \beta_1(1) + \boldsymbol{\beta}_2' c)$
+    $= (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \beta_1 + \boldsymbol{\beta}_2' c)$
+- **Second term:** We already have this:
+    $\E{Y^{1, M^{0}} \mid C=c} = (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c)$
+- **Subtract:**
+    $\text{NIE} = [ (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \beta_1 + \boldsymbol{\beta}_2' c) ] - [ (\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c) + (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c) ]$
+    The $(\theta_0 + \theta_1 + \boldsymbol{\theta}_3' c)$ terms cancel.
+    $\text{NIE} = (\theta_2 + \theta_4) (\beta_0 + \beta_1 + \boldsymbol{\beta}_2' c) - (\theta_2 + \theta_4) (\beta_0 + \boldsymbol{\beta}_2' c)$
+    Factor out the common term $(\theta_2 + \theta_4)$:
+    $\text{NIE} = (\theta_2 + \theta_4) [ (\beta_0 + \beta_1 + \boldsymbol{\beta}_2' c) - (\beta_0 + \boldsymbol{\beta}_2' c) ]$
+    $\text{NIE} = (\theta_2 + \theta_4) \beta_1$
+
+
+::: {.callout-tip}
+### Intuition for NIE
+The Natural Indirect Effect is the product of two terms:
+
+1. $\beta_1$: The effect of the exposure $A$ on the mediator $M$.
+2. $(\theta_2 + \theta_4)$: The effect of the mediator $M$ on the outcome $Y$ *when the exposure is set to $A=1$*.
+
+This is the "product of coefficients" method, but *only* because we correctly identified which product to use: it's the $A \to M$ path multiplied by the $M \to Y$ path *under the treated condition*.
+:::
+
+### Summary
+
+Given the two linear models:
+
+- $M = \beta_0 + \beta_1 a + \boldsymbol{\beta}_2' c$
+- $Y = \theta_0 + \theta_1 a + \theta_2 m + \boldsymbol{\theta}_3' c + \theta_4 (a \times m)$
+
+And assuming the four main identification assumptions hold (no unmeasured confounding, and no M-Y confounder is affected by A), the conditional natural effects are:
+
+- **$\text{NDE}(c) = \theta_1 + \theta_4 (\beta_0 + \boldsymbol{\beta}_2' c)$**
+- **$\text{NIE}(c) = \beta_1 (\theta_2 + \theta_4)$**
+
+This derivation clearly shows why simply "controlling for the mediator" in a regression, as in the Baron-Kenny method, is insufficient when interaction is present. That old method would estimate the direct effect as $\theta_1$, which is clearly incorrect. The mediation formula, in contrast, gives us a rigorous and interpretable result.
+
+<!-- 
+### Next Steps
+
+This derivation gives us the *conditional* effects, which depend on the values of the confounders $C=c$. To report a single NDE and NIE for the population, we would typically average these conditional effects over the distribution of $C$ in our population. This is the next logical step in estimation. 
+-->

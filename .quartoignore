@@ -1,0 +1,7 @@
+/.git/
+_site/
+_freeze/
+renv/
+.DS_Store
+node_modules/.git/**
+.git/.gitstatus.*

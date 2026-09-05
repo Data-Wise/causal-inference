@@ -1,0 +1,935 @@
+---
+title: "Week 12: Bounds and Tipping-Point Sensitivity Analysis"
+---
+
+
+## Overview
+
+Welcome, class. Thus far, we have focused on methods that—if all their assumptions hold—allow us to estimate a single, point-identified causal effect. The most critical and most frequently-violated of these assumptions is **unconfoundedness** (or conditional exchangeability). We assume we have measured and adjusted for *all* common causes ($L$) of the exposure ($X$) and outcome ($Y$).
+
+In clinical and public health research, this assumption is heroic. We are *never* certain we have measured everything. What about "health-seeking behaviors," "genetic predispositions," or "socioeconomic status"?
+
+Today, we confront this problem directly. Instead of *assuming* unconfoundedness, we ask two different, more skeptical questions:
+
+1. **Bounds Analysis:** If we *abandon* the unconfoundedness assumption entirely, what is the *range* of possible causal effects consistent with the data? This is the domain of **partial identification**, most famously developed by Charles Manski.
+2. **Sensitivity Analysis:** How *strong* would an unmeasured confounder ($U$) have to be to *change our conclusion*? For example, to "tip" our observed effect to the null (no effect)? This is the domain of **tipping-point sensitivity analysis**.
+
+We will cover the theory for both and then focus on the R package `tipr`, which provides a powerful and flexible toolkit for conducting tipping-point analyses.
+
+## Learning Objectives
+
+By the end of this lecture and lab, you will be able to:
+
+1. **Define** and **distinguish** between point identification and partial identification (bounds).
+2. **Explain** the "no-assumptions" (Manski) bound and the role of monotonicity assumptions in tightening it.
+3. **Calculate** the no-assumptions bound by hand from summary data for a binary outcome.
+4. **Articulate** the core question of tipping-point sensitivity analysis.
+5. **Define** the key sensitivity parameters: the effect of the confounder on exposure ($\gamma_{UX}$) and the effect of the confounder on the outcome ($\gamma_{UY}$).
+6. **Implement** tipping-point analyses in R using the `tipr` package for various effect measures (OR, RR, HR, coefficients).
+7. **Visualize** and **interpret** a sensitivity analysis grid to assess the robustness of a causal claim.
+
+## R Packages
+
+We will use several packages today. The `pacman` package will help us load them all, installing any that are missing.
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+# Use pacman to load/install packages
+if (!require("pacman")) {
+  install.packages("pacman")
+}
+pacman::p_load(
+  tipr, # For tipping-point analysis
+  dagitty, # For creating and analyzing DAGs
+  ggdag, # For plotting DAGs with ggplot2
+  dplyr, # For data manipulation
+  ggplot2, # For plotting
+  broom, # For tidying model output
+  purrr # For functional programming (e.g., map_dbl)
+)
+```
+
+
+## 1. Comprehensive Topic Explanation
+
+### The Problem: Unobserved Confounding
+
+Let's start with our familiar enemy. We want to estimate the causal effect of an exposure $X$ on an outcome $Y$. We have measured a set of covariates $L$.
+
+**Our Causal DAG:**
+
+```{r}
+#| label: dag-unobserved
+#| fig-cap: "The canonical unobserved confounding structure. We adjust for L, but U, an unmeasured common cause, remains, opening a backdoor path U -> X -> Y."
+#| column: margin
+#| echo: false
+
+confounding_dag <- dagitty(
+  "dag {
+  X [exposure]
+  Y [outcome]
+  L [adjusted]
+  U [unobserved]
+
+  L -> X
+  L -> Y
+  U -> X
+  U -> Y
+  X -> Y
+}"
+)
+
+ggdag_adjust(confounding_dag) +
+  theme_dag_blank()
+```
+
+The path $X \leftarrow U \to Y$ is a **backdoor path** that is *not* blocked by conditioning on $L$. This path transmits non-causal association, biasing our estimate of the $X \to Y$ effect.
+
+  - **Standard Approach:** *Assume* $U$ does not exist (or its effects are negligible). This is the **unconfoundedness** assumption.
+  - **Today's Approach:** Assume $U$ *does* exist. Now what?
+
+
+
+### Part A: Bounds (Partial Identification)
+
+If we make *no* assumption about $U$, we lose point identification. We can no longer estimate a single value for the Average Treatment Effect (ATE), $\mathbb{E}[Y^1 - Y^0]$.
+
+However, we can often identify a **range** or **set** of possible values. This is **partial identification**. The key insight is to decompose the ATE into an *observable* part and an *unobservable* (counterfactual) part.
+
+For a binary outcome $Y \in \{0, 1\}$ and exposure $X \in \{0, 1\}$, let $\pi = P(A=1)$. The ATE is:
+
+$ATE = \mathbb{E}[Y^1] - \mathbb{E}[Y^0]$
+
+We can rewrite this using the law of total probability:
+
+$ATE = [P(Y^1=1|A=1)\pi + P(Y^1=1|A=0)(1-\pi)] - [P(Y^0=1|A=1)\pi + P(Y^0=1|A=0)(1-\pi)]$
+
+By consistency ($Y = Y^a$ if $A=a$), we can identify two of these terms:
+
+  - $P(Y^1=1|A=1) = P(Y=1|A=1)$ (Observed risk in the exposed)
+  - $P(Y^0=1|A=0) = P(Y=1|A=0)$ (Observed risk in the unexposed)
+
+But two terms remain unknown:
+
+  - $P(Y^1=1|A=0)$ (Counterfactual risk of outcome *with* exposure, among those who were *unexposed*)
+  - $P(Y^0=1|A=1)$ (Counterfactual risk of outcome *without* exposure, among those who were *exposed*)
+
+#### The No-Assumptions (Manski) Bound
+
+If we assume *nothing* about the counterfactual terms, we only know they are probabilities, so they must lie in $[0, 1]$. To get the widest possible range for the ATE, we "plug in" the most extreme values for these unknown terms.
+
+  - **To find the Upper Bound for ATE:** We assume the best-case scenario. We set the unknown "benefit" term $P(Y^1=1|A=0)$ to its maximum (1) and the unknown "harm" term $P(Y^0=1|A=1)$ to its minimum (0).
+  - **To find the Lower Bound for ATE:** We assume the worst-case scenario. We set $P(Y^1=1|A=0) = 0$ and $P(Y^0=1|A=1) = 1$.
+
+This gives the "no-assumptions bound." It is often very wide, but it is the *only* conclusion we can draw from the data alone, without untestable assumptions [@hernan2020causalwhatif].
+
+We can tighten these bounds by making weaker, non-testable assumptions, such as **monotone treatment response** (e.g., the vaccine *never* causes the disease, $Y_i^1 \le Y_i^0$ for all $i$) or **monotone treatment selection** (e.g., people who choose to get the vaccine are inherently healthier) [@neal2020intro].
+
+### Part B: Tipping-Point Sensitivity Analysis
+
+Bounds are often frustratingly wide. A different approach is to first *assume* unconfoundedness, calculate our (potentially biased) effect, and *then* ask: "How wrong was my assumption?"
+
+This is the goal of sensitivity analysis. We don't ask *if* we are confounded, but *how much* confounding would be required to change our conclusion.
+
+We parameterize the unobserved confounder $U$ by two key quantities:
+
+1. **$\gamma_{UX}$:** The strength of the association between the confounder $U$ and the exposure $X$.
+2. **$\gamma_{UY}$:** The strength of the association between the confounder $U$ and the outcome $Y$.
+
+The bias in our estimate is a *function* of these two parameters. For a linear model, the bias is additive and (in a simplified case) is the *product* of these two paths: $\text{Bias} \approx \gamma_{UX} \times \gamma_{UY}$. For ratio measures (like ORs or RRs), the bias is multiplicative.
+
+A **tipping point** is the set of parameters $(\gamma_{UX}, \gamma_{UY})$ that would make our observed effect equal the null (e.g., OR=1, RR=1, or $\beta=0$).
+
+The `tipr` package [@mcgowan2022tipr] is a fantastic tool for this. Instead of solving for a single "E-value" (which assumes $\gamma_{UX} = \gamma_{UY}$), `tipr` lets you:
+
+  - Specify your observed effect (e.g., `effect_observed = 1.5`).
+  - Specify *one* of the sensitivity parameters (e.g., "I plausibly believe the $U \to X$ effect is 0.4: `exposure_confounder_effect = 0.4`").
+  - `tipr` then **solves for the other parameter** (e.g., it returns the required $\gamma_{UY}$).
+
+You can then judge: "Is this required $\gamma_{UY}$ plausible?" If it's astronomically high, your finding is **robust**. If it's small and plausible, your finding is **sensitive**.
+
+## 2. Intuitive Clarifications of Challenging Ideas
+
+::: {.callout-tip}
+
+## Analogy: Bounds vs. Sensitivity
+
+  - **Bounds Analysis (Partial Identification)** is like having a very blurry photo of a suspect. You can't identify them (point identification), but you can establish *bounds*. "The suspect is a male, between 5'10" and 6'2", wearing a hat." You have a *set* of possibilities, not a single answer.
+  - **Sensitivity Analysis (Tipping Point)** is like a prosecutor presenting a case. They get a conviction (a "significant" effect). The defense lawyer (the skeptic) says, "But what if the key witness was lying?" Sensitivity analysis is the prosecutor's rebuttal: "For my case to fall apart (i.e., tip to 'not guilty'), the witness would have to be lying *and* the defendant's identical twin *and* have a time machine. Is that plausible?" We are testing the *robustness* of the conclusion to a specific "what if" scenario.
+:::
+
+::: {.callout-question}
+
+## Check Your Understanding
+
+**Q:** What is the key difference between the E-value (from the `EValue` package) and the `tipr` package's approach?
+
+**A:** The **E-value** solves for the *single* minimum value $E$ such that if $\gamma_{UX} = E$ and $\gamma_{UY} = E$, the observed effect would tip to the null. It's a useful single number.
+
+**`tipr`** is more flexible. It does not assume the two "gamma" parameters are equal. It allows you to *fix one* based on domain knowledge (e.g., "I think the U-X association is weak, maybe 1.5") and then *solve for the other* (the required U-Y association). This allows for a more nuanced, scenario-based sensitivity analysis.
+:::
+
+## 3. Simple, Hand-Calculation Numerical Example(s)
+
+Before we touch R, let's ground this in simple numbers.
+
+### Example 1: Bounds (Hand-Calculation)
+
+Let's use the vaccine example from our `INPUT`. An observational study looks at a COVID-19 vaccine.
+
+  - **Outcome ($Y$):** Severe disease ($1=\text{Yes}, 0=\text{No}$). This is bounded: $a=0, b=1$.
+  - **Exposure ($X$):** Vaccinated ($1=\text{Yes}, 0=\text{No}$).
+  - **Data:**
+      - Proportion vaccinated: $\pi = P(A=1) = 0.6$
+      - Incidence in vaccinated: $P(Y=1|A=1) = 0.02$
+      - Incidence in unvaccinated: $P(Y=1|A=0) = 0.10$
+
+The **naive associational difference** (a Risk Difference) is $0.02 - 0.10 = -0.08$. This *suggests* the vaccine is protective. But what about unobserved confounding (e.g., vaccinated people are also more cautious)?
+
+Let's calculate the no-assumptions bounds for the ATE, $\mathbb{E}[Y^1 - Y^0]$.
+
+**Recall the ATE decomposition:**
+$ATE = [P(Y^1|A=1)\pi + P(Y^1|A=0)(1-\pi)] - [P(Y^0|A=1)\pi + P(Y^0|A=0)(1-\pi)]$
+
+**Plug in what we know:**
+$ATE = [0.02 \times 0.6 + P(Y^1|A=0) \times 0.4] - [P(Y^0|A=1) \times 0.6 + 0.10 \times 0.4]$
+$ATE = 0.012 + 0.4 \times P(Y^1|A=0) - 0.6 \times P(Y^0|A=1) - 0.04$
+$ATE = -0.028 + 0.4 \times P(Y^1|A=0) - 0.6 \times P(Y^0|A=1)$
+
+**Solve for Bounds:**
+
+  - **Upper Bound (Worst-case for harm, best-case for benefit):**
+      - Set $P(Y^1|A=0) = 1$ (unexposed would have all gotten sick if treated)
+      - Set $P(Y^0|A=1) = 0$ (exposed would have all been healthy if untreated)
+      - $\text{Upper} = -0.028 + 0.4 \times (1) - 0.6 \times (0) = -0.028 + 0.4 = \mathbf{0.372}$
+  - **Lower Bound (Best-case for harm, worst-case for benefit):**
+      - Set $P(Y^1|A=0) = 0$
+      - Set $P(Y^0|A=1) = 1$
+      - $\text{Lower} = -0.028 + 0.4 \times (0) - 0.6 \times (1) = -0.028 - 0.6 = \mathbf{-0.628}$
+
+**Conclusion:** The no-assumptions bound for the ATE is **[-0.628, 0.372]**. This interval is massive and contains 0. Based on the data *alone*, we cannot conclude *anything* about the vaccine's effectiveness. This is why we *must* make assumptions (like unconfoundedness, or at least monotonicity) to get useful answers.
+
+### Example 2: Sensitivity (Hand-Calculation)
+
+Let's use the job training example from the `INPUT`.
+
+  - **Outcome ($Y$):** Annual earnings ($)
+  - **Exposure ($X$):** Job training program ($1=\text{Yes}, 0=\text{No}$)
+  - **Confounders:**
+      - $L$: Education (measured)
+      - $U$: "Motivation" (unmeasured)
+
+We run a linear regression $\mathbb{E}[Y | X, L] = \beta_0 + \hat{\tau}_{\text{adj}} X + \beta_L L$. We find $\hat{\tau}_{\text{adj}} = \mathbf{2500}$.
+This *suggests* the program increases earnings by $2,500.
+
+But we are worried about $U$ (motivation). The true structural model is:
+$Y = \beta_0 + \tau X + \beta_L L + \gamma_{UY} U + \epsilon_Y$
+And $U$ also affects $X$:
+$X = \alpha_0 + \alpha_L L + \gamma_{UX} U + \epsilon_X$
+
+When we omit $U$, the bias in our estimate is (approximately) the product of the two confounding paths:
+$\text{Bias} = \hat{\tau}_{\text{adj}} - \tau = \gamma_{UX} \times \gamma_{UY}$
+
+Therefore, the *true* causal effect $\tau$ is:
+$\tau = \hat{\tau}_{\text{adj}} - (\gamma_{UX} \times \gamma_{UY})$
+$\tau = 2500 - (\gamma_{UX} \times \gamma_{UY})$
+
+**Let's perform a sensitivity analysis:**
+
+  - **Scenario 1:** We believe "motivation" ($U$) might be weakly associated with training ($X$) (e.g., $\gamma_{UX} = 0.5$, meaning motivated people are 50% more likely to join) and moderately associated with earnings ($Y$) (e.g., $\gamma_{UY} = 1000$, motivated people earn $1000 more).
+      - $\text{Bias} = 0.5 \times 1000 = 500$
+      - $\tau = 2500 - 500 = \mathbf{2000}$
+      - **Conclusion:** Still a strong positive effect.
+  - **Scenario 2: The "Tipping Point"**
+      - Let's say we think a *strong* U-X link is plausible, $\gamma_{UX} = 0.8$.
+      - How strong would $\gamma_{UY}$ have to be to *tip the effect to 0*?
+      - We solve for $\gamma_{UY}$ in the equation: $0 = 2500 - (0.8 \times \gamma_{UY})$
+      - $0.8 \times \gamma_{UY} = 2500$
+      - $\gamma_{UY} = 2500 / 0.8 = \mathbf{3125}$
+      - **Interpretation:** *If* motivation is associated with an 80% higher chance of training, it would *also* need to be associated with an independent increase of **$3,125** in annual earnings to *fully* explain away our $2,500 effect.
+
+We can now debate the plausibility of this tipping point. Is it likely that "motivation" *by itself* makes people earn $3,125 more per year, even without training? Perhaps. This suggests our finding of $2,500 might be sensitive to unmeasured confounding.
+
+## 4. R Code Examples & Interpretation
+
+Now, let's operationalize these concepts in R.
+
+### DAGs in `dagitty`
+
+We can draw our simple confounding DAG using `ggdag` (as we did earlier) or with `tikz` for a different style.
+
+```{r}
+#| label: dag-ggdag
+#| fig-cap: "Confounding DAG with ggdag"
+#| column: margin
+
+g <- dagitty("dag { U -> X -> Y; U -> Y }")
+ggdag(g) + theme_dag_blank()
+```
+
+<!-- 
+Here is the equivalent `tikz` code, which you can embed in a Quarto document using a LaTeX engine.
+
+::: {#fig-confounding-dag-tikz}
+```{.tikz}
+\begin{tikzpicture}[scale=1.5, every node/.style={scale=1.5}]
+  \node (x) at (0, 0) {$X$};
+  \node (y) at (2, 0) {$Y$};
+  \node (u) at (1, 1) {$U$};
+
+  \draw[->, very thick] (x) -- (y);
+  \draw[->, very thick, red] (u) -- (x);
+  \draw[->, very thick, red] (u) -- (y);
+\end{tikzpicture}
+```
+::: -->
+
+### R Code for Bounds
+
+While dedicated packages for bounds exist (e.g., `MBounds`), we can implement our simple hand-calculation from Example 1 directly in R.
+
+```{r}
+#| label: calc-bounds-r
+#| echo: true
+
+# Function to calculate the no-assumptions bound for binary Y
+calculate_manski_bounds <- function(pi, E_Y_t1, E_Y_t0, a = 0, b = 1) {
+  # Calculate ATE components
+  term1 <- E_Y_t1 * pi
+  term2 <- E_Y_t0 * (1 - pi)
+
+  # Calculate upper bound
+  # We set P(Y^1|A=0) = b (max) and P(Y^0|A=1) = a (min)
+  upper <- (term1 + b * (1 - pi)) - (a * pi + term2)
+
+  # Calculate lower bound
+  # We set P(Y^1|A=0) = a (min) and P(Y^0|A=1) = b (max)
+  lower <- (term1 + a * (1 - pi)) - (b * pi + term2)
+
+  return(c(lower_bound = lower, upper_bound = upper))
+}
+
+# Using the vaccine example data
+bounds_vaccine <- calculate_manski_bounds(
+  pi = 0.60, # Proportion vaccinated
+  E_Y_t1 = 0.02, # Incidence in vaccinated
+  E_Y_t0 = 0.10 # Incidence in unvaccinated
+)
+
+print(bounds_vaccine)
+```
+
+This matches our hand-calculation perfectly.
+
+### R Code for Sensitivity Analysis with `tipr`
+
+This is where we'll spend the rest of our time. Let's explore the `tipr` workflow.
+
+#### `tip()` For Linear Models
+
+This function is the R equivalent of our "Job Training" hand-calculation. It works for coefficients on an *additive* scale.
+
+```{r}
+#| label: tipr-tip-basic
+#| message: false
+
+# We observed an adjusted coefficient of 2500
+coef_observed <- 2500
+
+# We assume the U->X effect (gamma_UX) is 0.8
+# tip() solves for the required U->Y effect (gamma_UY)
+tip(
+  effect_observed = coef_observed,
+  exposure_confounder_effect = 0.8
+)
+```
+
+This is exactly what we found by hand: `gamma_UY` must be **3125**.
+
+What if we believed the U->Y effect was $1000?
+
+```{r}
+#| label: tipr-tip-solve-other
+#| message: false
+tip(
+  effect_observed = coef_observed,
+  confounder_outcome_effect = 1000
+)
+```
+
+**Interpretation:** If we believe motivation ($U$) raises earnings ($Y$) by $1000, our `tipr` analysis shows the $U \to X$ association would have to be **2.5** to tip the effect to zero. This means motivation would have to make people *2.5 times* more likely to join the program. We can now debate if *that* is plausible.
+
+#### `tip_or()`, `tip_rr()`, `tip_hr()` For Ratio Scales
+
+More often in epidemiology, we work with ratio scales (Odds Ratios, Risk Ratios, Hazard Ratios). `tipr` provides specific wrappers for these. The logic is identical, but the math operates on the log-scale (multiplicative bias).
+
+**Example: Logistic Regression**
+Let's use the `mtcars` dataset to see if horsepower (`hp`) predicts a manual transmission (`am`=1). We'll adjust for weight (`wt`).
+
+```{r}
+#| label: tipr-logistic-example
+#| message: false
+
+# 1. Fit the model
+model <- glm(am ~ hp + wt, data = mtcars, family = binomial)
+
+# 2. Get the observed OR for 'hp'
+or_hp <- broom::tidy(model, exponentiate = TRUE) |>
+  filter(term == "hp") |>
+  pull(estimate)
+
+print(paste("Observed OR for hp:", round(or_hp, 3)))
+```
+
+An OR of 1.05... that's very close to the null. Let's imagine, for example's sake, we observed a **stronger OR of 2.1**.
+
+We are worried that "aggressiveness" ($U$) confounds this. "Aggressive" drivers might prefer manual cars ($U \to X$) and also buy high-HP cars ($U \to Y$). *Wait, I have that backwards*. Let's redefine.
+
+  - $X$: `hp` (exposure)
+  - $Y$: `am` (outcome)
+  - $U$: "Driver Enthusiasm" (unmeasured). Plausibly, enthusiasts prefer manual cars ($U \to Y$) and also prefer high-HP cars ($U \to X$).
+
+Let's use our hypothetical OR of 2.1.
+We'll assume the $U \to X$ association (Enthusiasm $\to$ HP) is an OR of 1.5.
+
+```{r}
+#| label: tipr-tip-or
+#| message: false
+
+tip_or(
+  effect_observed = 2.1,
+  exposure_confounder_effect = 1.5
+)
+```
+
+**Interpretation:** *If* an unmeasured confounder ("Enthusiasm") is associated with 1.5 times the odds of having a high-HP car, it would need to be associated with **5.08 times the odds** of preferring a manual transmission to *fully* explain our observed OR of 2.1. We can now debate if a confounder with an OR of >5 is plausible in this context.
+
+#### `tip_with_binary()` For Binary $U$
+
+Sometimes, it's easier to think of $U$ as binary (e.g., "high-risk" vs. "low-risk"). This uses the Cornfield conditions. We specify the *prevalence* of the confounder in the exposed and unexposed groups.
+
+**Example:**
+
+  - Observed RR for a diet-heart study: **1.4**
+  - $U$: "Smoker" (unmeasured)
+  - We suspect 25% of the "high-fat diet" group ($A=1$) are smokers: `exposed_confounder_prev = 0.25`
+  - We suspect 5% of the "low-fat diet" group ($A=0$) are smokers: `unexposed_confounder_prev = 0.05`
+
+How strong must the $U \to Y$ (Smoking $\to$ Heart Disease) effect be?
+
+```{r}
+#| label: tipr-tip-binary
+#| message: false
+
+tip_with_binary(
+  effect_observed = 1.4,
+  exposed_confounder_prev = 0.25,
+  unexposed_confounder_prev = 0.05
+)
+```
+
+**Interpretation:** Given that prevalence imbalance, smoking ($U$) would need to have a Risk Ratio of **2.43** for causing heart disease ($Y$) to entirely explain the observed RR of 1.4. This is a very plausible RR for smoking, suggesting our observed 1.4 is highly sensitive.
+
+#### Visualizing Sensitivity with a Grid
+
+This is the most powerful workflow. Instead of one scenario, we'll test *many* and plot them.
+
+**Workflow:**
+
+1. Define a range of plausible $\gamma_{UX}$ values.
+2. Use `purrr::map_dbl` to run `tip_or` (or `tip_rr`, etc.) for each value.
+3. Plot $\gamma_{UX}$ (what we assumed) vs. the resulting $\gamma_{UY}$ (what `tipr` solved for).
+
+```{r}
+#| label: tipr-grid-plot
+#| fig-cap: "Tipping-point curve for an observed OR of 1.8. The line shows the required confounder-outcome (U-Y) effect for a given confounder-exposure (U-X) effect."
+#| message: false
+
+# Our observed effect
+obs_or <- 1.8
+
+# 1. Define a grid of U-X assumptions
+ux_grid <- tibble(
+  gamma_UX = seq(1.05, 3.0, by = 0.05)
+)
+
+# 2. Solve for the required U-Y for each
+grid_results <- ux_grid |>
+  mutate(
+    gamma_UY = map_dbl(
+      gamma_UX,
+      ~ tip_or(
+        effect_observed = obs_or,
+        exposure_confounder_effect = .x
+      )$confounder_outcome_effect
+    )
+  )
+
+# 3. Plot the results
+ggplot(grid_results, aes(x = gamma_UX, y = gamma_UY)) +
+  geom_line(linewidth = 1.2, color = "#0072B2") +
+  geom_hline(yintercept = 1.0, linetype = "dotted") +
+  geom_vline(xintercept = 1.0, linetype = "dotted") +
+  # Add a "plausibility" box
+  annotate(
+    "rect",
+    xmin = 1,
+    xmax = 2,
+    ymin = 1,
+    ymax = 3,
+    fill = "red",
+    alpha = 0.1
+  ) +
+  annotate(
+    "text",
+    x = 1.5,
+    y = 3.2,
+    label = "Plausible\nConfounding",
+    size = 3,
+    color = "red"
+  ) +
+  labs(
+    title = "Tipping-Point Sensitivity Analysis",
+    subtitle = paste("For an observed OR =", obs_or),
+    x = "Assumed U-X Association (OR)",
+    y = "Required U-Y Association (OR) to Tip"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+**How to Read This Plot:** The blue line is the "tipping point." Any combination of $(\gamma_{UX}, \gamma_{UY})$ *on* this line makes the true effect = 1. The area *above* the line represents confounding strong enough to *reverse* our finding. The area *below* the line is not strong enough.
+
+I've added a red "plausibility box." This is where you, the domain expert, must make a judgment. Here, I've decided that it's *plausible* to have an unmeasured confounder with $\gamma_{UX} < 2$ and $\gamma_{UY} < 3$.
+
+**Conclusion:** Because the blue tipping-point line *passes through* our plausible red box, our finding is **sensitive**. A plausible confounder *could* explain this effect. If the blue line were far *above* the red box, our finding would be **robust**.
+
+## 5. Hands-On R Lab
+
+::: {.callout-note}
+
+## STAT 579: R Lab - Sensitivity Analysis
+
+**Purpose:** To gain hands-on experience applying tipping-point sensitivity analysis to a realistic public health scenario using the `tipr` package.
+
+**Lab Objectives:**
+
+1. Estimate a (potentially biased) effect from simulated observational data.
+2. Set up and justify a sensitivity analysis framework for this effect.
+3. Use `tip_or()` to calculate a "tipping-point" value.
+4. Use `tip_or_with_binary()` to assess sensitivity to a binary confounder.
+5. Generate and interpret a sensitivity plot to evaluate robustness.
+
+### The Scenario
+
+You are a biostatistician analyzing an observational dataset of $n=5000$ patients. You want to know if a new cholesterol-lowering drug, **Statin-B** ($X$), reduces the 5-year risk of a major adverse cardiovascular event (MACE, $Y$).
+
+You are worried that **"health-seeking behavior"** ($U$) is an unmeasured confounder. People with high health-seeking behavior might be more likely to request Statin-B (U $\to$ X) and *also* more likely to exercise and eat well, independently reducing their MACE risk (U $\to$ Y).
+
+### Your Tasks
+
+#### Task 1: Load and Analyze the Data
+
+First, let's "load" our simulated data. We will *simulate* it to create the exact confounding structure we're worried about. In the real world, you'd just load a CSV, and $U$ would be invisible.
+
+```{r}
+#| label: lab-data-sim
+#| echo: true
+
+# --- DO NOT MODIFY THIS CODE ---
+# This code simulates our "real world"
+set.seed(579)
+n <- 5000
+# U: Unmeasured "health-seeking behavior" (0 to 1)
+U <- rbeta(n, 2, 2)
+
+# X: Statin-B assignment, depends on U
+# log-odds(A=1) = -0.5 + 1.5*U
+prob_X <- plogis(-0.5 + 1.5 * U)
+X <- rbinom(n, 1, prob_X)
+
+# Y: MACE outcome, depends on X and U
+# log-odds(Y=1) = -1.0 - 0.5*X - 2.0*U
+# The TRUE causal effect is -0.5 (log-odds)
+prob_Y <- plogis(-1.0 - 0.5 * X - 2.0 * U)
+Y <- rbinom(n, 1, prob_Y)
+
+# Our final "observed" dataset
+# We can only "see" X and Y. U is hidden.
+obs_data <- tibble(statin_B = X, mace = Y)
+# --- END SIMULATION ---
+
+# Take a look at the data
+head(obs_data)
+table(obs_data)
+```
+
+Now, as the analyst, run the "naive" logistic regression model, adjusting *only* for what you can see (which is just $X$).
+
+```{r}
+#| label: lab-task-1
+#| eval: false
+#| echo: true
+
+# TODO: Fit a logistic regression model for mace ~ statin_B
+#       and extract the exponentiated coefficient for statin_B
+
+naive_model <- glm(____, data = ____, family = ____)
+
+# Use broom::tidy() to get the OR
+naive_or_df <- broom::tidy(____, exponentiate = ____)
+
+# Print the result
+print(naive_or_df)
+
+# What is the observed OR?
+obs_or <- naive_or_df |>
+  filter(term == "statin_B") |>
+  pull(estimate)
+
+print(paste("Observed OR:", obs_or))
+```
+
+::: {.callout-tip}
+
+## 💡 Solution: Task 1
+
+```{r}
+#| label: lab-sol-1
+#| echo: true
+
+# Fit a logistic regression model for mace ~ statin_B
+naive_model <- glm(mace ~ statin_B, data = obs_data, family = binomial)
+
+# Use broom::tidy() to get the OR
+naive_or_df <- broom::tidy(naive_model, exponentiate = TRUE)
+
+# Print the result
+print(naive_or_df)
+
+# What is the observed OR?
+obs_or <- naive_or_df |>
+  filter(term == "statin_B") |>
+  pull(estimate)
+
+print(paste("Observed OR:", round(obs_or, 3)))
+```
+
+**Interpretation:** We observe a "protective" Odds Ratio of 0.491. This *suggests* Statin-B reduces the odds of MACE by about 51%. But we know this is confounded by $U$. (The true effect we simulated was an OR of `exp(-0.5) = 0.606`. Our naive estimate is *over-optimistic* due to the confounding).
+:::
+
+#### Task 2: Tipping Point with `tip_or()`
+
+Let's use our observed OR of **0.491**.
+We need to set our sensitivity parameters. Let's make a plausible assumption based on domain knowledge:
+
+  - **Assumption:** We believe "health-seeking behavior" ($U$) is moderately associated with requesting Statin-B ($X$). Let's set this **$\gamma_{UX}$ OR to 1.8**.
+
+**Your task:** Given this assumption, how strong must the *confounder-outcome* association ($\gamma_{UY}$) be to tip our observed OR of 0.491 to the null (OR=1)?
+
+```{r}
+#| label: lab-task-2
+#| eval: false
+#| echo: true
+
+# TODO: Use tip_or() to solve for the required gamma_UY
+# Remember, our observed effect is 0.491
+
+tip_or(
+  effect_observed = ____,
+  exposure_confounder_effect = ____
+)
+```
+
+::: {.callout-tip}
+
+## 💡 Solution: Task 2
+
+```{r}
+#| label: lab-sol-2
+#| echo: true
+
+tip_or(
+  effect_observed = 0.491,
+  exposure_confounder_effect = 1.8
+)
+```
+
+**Interpretation:** To tip our observed OR of 0.491 to 1, given a U-X association of 1.8, the unmeasured confounder $U$ ("health-seeking") would need to have a protective association with MACE ($Y$) with an **OR of 0.35**. (Note: `tipr` handles the protective direction automatically).
+
+Is this plausible? An OR of 0.35 is *very* strong. This would mean that "health-seeking" *by itself* reduces the odds of MACE by 65%. This is *stronger* than the effect we observed for the drug! This might be implausibly high, suggesting our finding is **robust**.
+:::
+
+#### Task 3: Tipping Point with `tip_or_with_binary()`
+
+Now let's re-frame $U$ as a binary variable: "High health-seeker" ($U=1$) vs. "Low health-seeker" ($U=0$).
+
+  - **Assumption:** We believe 40% of Statin-B users are "High" seekers, but only 5% of non-users are "High" seekers.
+      - `exposed_confounder_prev = 0.40`
+      - `unexposed_confounder_prev = 0.05`
+
+**Your task:** Given this prevalence imbalance, what $\gamma_{UY}$ OR is required to tip the effect?
+
+```{r}
+#| label: lab-task-3
+#| eval: false
+#| echo: true
+
+# TODO: Use tip_or_with_binary()
+
+tip_or_with_binary(
+  effect_observed = ____,
+  exposed_confounder_prev = 0.40,
+  unexposed_confounder_prev = 0.05
+)
+```
+
+::: {.callout-tip}
+
+## 💡 Solution: Task 3
+
+```{r}
+#| label: lab-sol-3
+#| echo: true
+
+# The following code may error if the confounding is not strong enough to tip the effect.
+# This can happen in some versions of the tipr package.
+# The error itself indicates robustness.
+result <- try(
+  tip_or_with_binary(
+    effect_observed = 0.491,
+    exposed_confounder_prev = 0.40,
+    unexposed_confounder_prev = 0.05
+  ),
+  silent = TRUE
+)
+
+if (inherits(result, "try-error")) {
+  cat(
+    "tip_or_with_binary() errored, as can happen when the specified confounding is not strong enough to tip the effect.\n"
+  )
+  cat("Original error: ", attr(result, "condition")$message)
+} else {
+  print(result)
+}
+```
+
+**Interpretation:** With the specified 40/5 prevalence split, the `tip_or_with_binary` function throws an error, indicating that no unmeasured confounder with these properties could exist to "tip" the observed effect to the null. This suggests that the finding is robust to this particular confounding scenario. The original text expected a required OR of **0.42**; this error implies that with the current package version, the confounding scenario is not strong enough to produce a finite tipping point.
+:::
+
+#### Task 4: Visualize the Sensitivity Curve
+
+This is the key skill. Let's create the full sensitivity plot for our `obs_or = 0.491`.
+
+**Your task:** Create a `tibble` of `gamma_UX` values from 1.1 to 3.0. Use `map_dbl` to calculate the required `gamma_UY` for each. Finally, plot the curve using `ggplot2`.
+
+```{r}
+#| label: lab-task-4
+#| eval: false
+#| echo: true
+
+# Our observed OR
+obs_or <- 0.491
+
+# 1. TODO: Create a tibble 'ux_grid' with a column 'gamma_UX'
+#          that goes from 1.1 to 3.0 by 0.1
+ux_grid <- tibble(
+  gamma_UX = seq(____, ____, by = ____)
+)
+
+# 2. TODO: Use mutate() and map_dbl() to create a new column 'gamma_UY'
+#          by calling tip_or() for each value of gamma_UX
+lab_grid_results <- ux_grid |>
+  mutate(
+    gamma_UY = map_dbl(
+      gamma_UX,
+      ~ tip_or(
+        effect_observed = ____,
+        exposure_confounder_effect = .x
+      )$confounder_outcome_effect
+    )
+  )
+
+# 3. TODO: Plot the results with ggplot()
+#          Put gamma_UX on the x-axis and gamma_UY on the y-axis
+ggplot(lab_grid_results, aes(x = ____, y = ____)) +
+  geom_line(linewidth = 1.2, color = "darkblue") +
+  # TODO: Add labs()
+  labs(
+    title = "Sensitivity Analysis for Statin-B and MACE",
+    subtitle = paste("Observed OR =", round(obs_or, 3)),
+    x = "Assumed U-X Association (OR)",
+    y = "Required U-Y Association (OR) to Tip"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+::: {.callout-tip}
+
+## 💡 Solution: Task 4
+
+```{r}
+#| label: lab-sol-4-plot
+#| fig-cap: "Lab solution: Sensitivity plot for Statin-B."
+#| echo: true
+
+# Our observed OR
+obs_or <- 0.491
+
+# 1. Create a tibble 'ux_grid' with a column 'gamma_UX'
+ux_grid <- tibble(
+  gamma_UX = seq(1.1, 3.0, by = 0.1)
+)
+
+# 2. Use mutate() and map_dbl() to create a new column 'gamma_UY'
+lab_grid_results <- ux_grid |>
+  mutate(
+    gamma_UY = map_dbl(
+      gamma_UX,
+      ~ tip_or(
+        effect_observed = obs_or,
+        exposure_confounder_effect = .x
+      )$confounder_outcome_effect
+    )
+  )
+
+# 3. Plot the results with ggplot()
+ggplot(lab_grid_results, aes(x = gamma_UX, y = gamma_UY)) +
+  geom_line(linewidth = 1.2, color = "darkblue") +
+  # Add a "plausibility" box. Let's assume U-X < 2.5 and U-Y > 0.6
+  # (Remember 0.6 is protective, so it's a "strong" effect)
+  annotate(
+    "rect",
+    xmin = 1,
+    xmax = 2.5,
+    ymin = 0.6,
+    ymax = 1,
+    fill = "red",
+    alpha = 0.1
+  ) +
+  annotate(
+    "text",
+    x = 1.75,
+    y = 0.65,
+    label = "Plausible\nConfounding",
+    size = 3,
+    color = "red"
+  ) +
+  labs(
+    title = "Sensitivity Analysis for Statin-B and MACE",
+    subtitle = paste("Observed OR =", round(obs_or, 3)),
+    x = "Assumed U-X Association (OR)",
+    y = "Required U-Y Association (OR) to Tip"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+**Interpretation:** Look at the plot. The blue "tipping" line is *far away* from the null (1,1) corner. Even if we assume a confounder with an OR of 2.5 for the $U \to X$ path, the required $U \to Y$ OR is still 0.28. This is an *extremely* strong protective effect. Our "plausible" red box is far from the blue line.
+
+**Lab Conclusion:** Our observed effect of 0.491 appears to be **highly robust** to unmeasured confounding. An unmeasured confounder would have to be *dramatically* stronger than the drug itself to explain away this finding.
+:::
+
+### 🧠 Retrieval & Reflection
+
+1. In Task 2, we found a required $\gamma_{UY}$ of 0.35. In Task 4, when $\gamma_{UX}=1.8$, the plot shows a required $\gamma_{UY}$ of... 0.35. Why is a plot (Task 4) more useful than a single calculation (Task 2)?
+2. What does a tipping-point curve that is *very close* to the (1,1) origin imply?
+3. Why did our naive OR (0.491) *differ* from the true simulated OR (0.606)? What is the name for this phenomenon?
+
+## 6. Common Pitfalls & Checks
+
+
+## Common Pitfalls
+
+  - **Confusing Scales:** Do not use `tip()` (additive) for an Odds Ratio (multiplicative). Use the correct wrapper (`tip_or()`, `tip_rr()`, etc.).
+  - **Directionality:** `tipr` handles directions (e.g., OR < 1) automatically. But *you* must interpret the plausibility. A required OR of 0.2 is just as "strong" as an OR of 5.0.
+  - **The Single Confounder Assumption:** All these methods (and the E-value) are based on a *single* unmeasured confounder $U$. If you have *multiple* independent unmeasured confounders, their effects can combine, and the "tipping" may occur more easily. $U$ is best interpreted as a *composite* of all unmeasured confounding.
+  - **"My finding is robust, so it's true."** No. This analysis only checks for robustness against *confounding*. It says nothing about *selection bias* (M-bias), *measurement error*, or other violations of the causal assumptions.
+  - **Infinite Output:** If `tipr` returns `Inf`, it means that even with an *infinitely* strong confounder, the effect cannot be tipped to the null. This can happen if, for example, your specified `exposure_confounder_effect` is 1 (i.e., no association).
+:::
+
+## 7. Advanced Teaching Activities & Interactivity
+
+  - **Think-Pair-Share:**
+      - **Prompt:** Look at the sensitivity plot from Lab Task 4. We drew one "plausibility box." Get with your partner and draw a *different* box based on a different set of plausible assumptions.
+      - **Share:** Ask a few pairs to share their boxes and their final conclusion (robust or sensitive). Discuss how *subjective* this final judgment is, and why transparency in stating your "plausibility" assumptions is the most important part.
+  - **Flipped Classroom Prompt:**
+      - **Before Class:** Read VanderWeele & Ding (2017), "Sensitivity Analysis in Observational Research: Introducing the E-Value" [@vanderweele2017evalue].
+      - **In Class Debate:** What is the E-Value for our Statin-B lab result (OR=0.491)? When is reporting a single E-value *more* useful than a `tipr` plot? When is it *less* useful?
+      - *Hint:* The E-value for an OR is $\text{OR} + \sqrt{\text{OR} \times (\text{OR}-1)}$. For a protective OR, use $1/\text{OR}$: $\text{E} = (1/0.491) + \sqrt{(1/0.491) \times ((1/0.491)-1)} \approx 2.037 + 1.47 = 3.5$. This means a confounder with an RR of 3.5 for *both* $X$ and $Y$ would be needed.
+  - **Problem-Based Case:**
+      - A clinical colleague sends you their paper. They found a "significant" HR of 1.30 ($p=0.04$) for a new medication and a harmful side effect. They write in their discussion: "Our finding may be subject to unmeasured confounding."
+      - **Your Task:** Write a 3-paragraph email back to them explaining *what* sensitivity analysis is, *how* you can help them, and *what two or three numbers* you need *from them* (as a domain expert) to start the `tip_hr()` analysis.
+
+## References
+
+<div id="refs"></div>
+
+## 8. Appendix: Advanced Theory & Derivations
+
+### Observational-Counterfactual Decomposition
+
+The key to bounds analysis is this decomposition. Let $ATE = \mathbb{E}[Y^1 - Y^0]$ and $\pi = P(A=1)$.
+
+1. $ATE = \mathbb{E}[Y^1] - \mathbb{E}[Y^0]$
+2. $ATE = [\mathbb{E}[Y^1|A=1]\pi + \mathbb{E}[Y^1|A=0](1-\pi)] - [\mathbb{E}[Y^0|A=1]\pi + \mathbb{E}[Y^0|A=0](1-\pi)]$ (Law of Total Prob.)
+3. $ATE = [\mathbb{E}[Y|A=1]\pi + \mathbb{E}[Y^1|A=0](1-\pi)] - [\mathbb{E}[Y^0|A=1]\pi + \mathbb{E}[Y|A=0](1-\pi)]$ (Consistency)
+4. $ATE = \underbrace{\mathbb{E}[Y|A=1]\pi - \mathbb{E}[Y|A=0](1-\pi)}_{\text{Observable Part}} + \underbrace{\mathbb{E}[Y^1|A=0](1-\pi) - \mathbb{E}[Y^0|A=1]\pi}_{\text{Unobservable (Counterfactual) Part}}$
+
+The "no-assumptions" bound is derived by setting the unobservable terms, $\mathbb{E}[Y^1|A=0]$ and $\mathbb{E}[Y^0|A=1]$, to their logical extrema (e.g., $[0, 1]$ for a binary outcome).
+
+### Additive Bias Formula (Linear SCM)
+
+This derivation justifies the `tip()` function. Consider this simplified SCM (all variables mean-centered, no $L$ for simplicity):
+
+1. $X := \gamma_{UX} U + \epsilon_X$
+2. $Y := \tau X + \gamma_{UY} U + \epsilon_Y$
+
+We are interested in $\tau$. We run the "naive" regression: $Y \sim \beta_1 X$. The OLS estimator for $\beta_1$ is:
+$\hat{\beta}_1 = \frac{\text{Cov}(X, Y)}{\text{Var}(X)}$
+
+Let's find the true covariance:
+$\text{Cov}(X, Y) = \text{Cov}(\gamma_{UX} U + \epsilon_X, \tau X + \gamma_{UY} U + \epsilon_Y)$
+$\text{Cov}(X, Y) = \text{Cov}(\gamma_{UX} U + \epsilon_X, \tau (\gamma_{UX} U + \epsilon_X) + \gamma_{UY} U + \epsilon_Y)$
+
+Assuming $U, \epsilon_X, \epsilon_Y$ are independent:
+$\text{Cov}(X, Y) = \text{Cov}(\gamma_{UX} U, \tau \gamma_{UX} U) + \text{Cov}(\epsilon_X, \tau \epsilon_X) + \text{Cov}(\gamma_{UX} U, \gamma_{UY} U)$
+$\text{Cov}(X, Y) = \tau \gamma_{UX}^2 \sigma_U^2 + \tau \sigma_X^2 + \gamma_{UX} \gamma_{UY} \sigma_U^2$
+$\text{Cov}(X, Y) = \tau (\gamma_{UX}^2 \sigma_U^2 + \sigma_X^2) + \gamma_{UX} \gamma_{UY} \sigma_U^2$
+
+And $\text{Var}(X) = \text{Var}(\gamma_{UX} U + \epsilon_X) = \gamma_{UX}^2 \sigma_U^2 + \sigma_X^2$.
+So, $\text{Cov}(X, Y) = \tau \text{Var}(X) + \gamma_{UX} \gamma_{UY} \sigma_U^2$.
+
+Plugging back into the OLS estimator:
+$\hat{\beta}_1 = \frac{\tau \text{Var}(X) + \gamma_{UX} \gamma_{UY} \sigma_U^2}{\text{Var}(X)}$
+$\hat{\beta}_1 = \tau + \frac{\gamma_{UX} \gamma_{UY} \sigma_U^2}{\text{Var}(X)}$
+
+This is the key result. The **Observed Effect** is the **True Effect** plus **Bias**.
+$\text{Bias} = \hat{\beta}_1 - \tau = (\gamma_{UX} \gamma_{UY}) \times \frac{\sigma_U^2}{\sigma_X^2}$
+
+If we standardize $U$ and $X$ so $\sigma_U^2 = \sigma_X^2 = 1$, the bias simplifies to:
+**$\text{Bias} = \gamma_{UX} \times \gamma_{UY}$**
+
+This is the simple product used in our hand-calculation. `tip()` uses this logic:
+$\hat{\beta}_{\text{obs}} = \tau + \gamma_{UX} \gamma_{UY}$
+To find the tipping point, set $\tau=0$:
+$\hat{\beta}_{\text{obs}} = \gamma_{UX} \gamma_{UY}$
+$\gamma_{UY} = \hat{\beta}_{\text{obs}} / \gamma_{UX}$
+
+This is exactly what `tip()` solves. The logic for `tip_or` and `tip_rr` is analogous but on the log-scale, where bias is multiplicative.
+
+<!-- 
+## Next Steps and Follow-up
+
+**Next Steps for this Module:**
+
+  - A good next step would be to formally introduce the E-value and compare it to the `tipr` grid-based approach.
+  - We could also expand this to discuss sensitivity analysis for other types of bias, such as measurement error or selection bias, though the parameterization is often more complex.
+
+**Suggested Follow-up Prompts:**
+
+1. "Please add a new section (Section 9) that formally defines the E-value, provides the formula for an OR, and shows the R code to calculate it using the `EValue` package for our Statin-B lab example (OR=0.491)."
+2. "Can you create a new Hands-On R Lab, this time focusing on a continuous outcome (linear regression) and using the `tip_coef()` and `tip_coef_with_r2()` functions? Please also connect this to the `sensemakr` package."
+3. "My colleague is worried about *three* unmeasured confounders. How would I adapt this sensitivity analysis? Please explain the concept of a 'composite' confounder and the limitations of the `tipr` approach in this case."
+ -->

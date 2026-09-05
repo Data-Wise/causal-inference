@@ -1,0 +1,23 @@
+status: active
+priority: --
+progress: 85
+next: Student presentations and course wrap-up
+type: teaching
+
+# ═══════════════════════════════════════════════════════════════════
+# Below is the original .STATUS content (preserved for reference)
+# ═══════════════════════════════════════════════════════════════════
+
+# causal-inference - Causal Inference Methods
+# Fall 2025 | STAT 579
+
+status: Active
+progress: 85
+week: 14
+next: Student presentations and course wrap-up
+target: Course completion Dec 18
+
+## Quick Notes
+- Week 14: Target trial emulation
+- Student presentations this week
+- Final project due Dec 15

@@ -36,15 +36,16 @@ This page provides a detailed week-by-week schedule for STAT 579. Readings shoul
 
 ### Part III: Advanced Topics & Applications
 
-| Week   | Dates      | Core Topic                                                                   | Primary Readings                           | Project Connection                   |
-| :----- | :--------- | :--------------------------------------------------------------------------- | :----------------------------------------- | :----------------------------------- |
-| **9**  | Oct 14, 16 | [Effect Modification](lectures/week-09_effect_modification.qmd)              | **HR:** Ch. 4–5; **Neal:** Ch. 10          | **Milestone: Project Proposal Due.** |
-| **9**  | Oct 14, 16 | [Effect Modification](lectures/week-09_effect_modification-rev1.qmd)        | **HR:** Ch. 4–5; **Neal:** Ch. 10          | |
-| **10** | Oct 21, 23 | [Mediation I (Foundations)](lectures/week-10_mediation_analysis_example.qmd) | **VanderWeele:** Ch. 1–2; **Neal:** Ch. 14 | Refine DAG with mediators.           |
-| **11** | Oct 28, 30 | [Mediation II (Application)](lectures/week-11_mediation_analysis.qmd)        | **VanderWeele:** Ch. 3; **HR:** Ch. 23     | \-                                   |
-| **12** | Nov 4, 6   | [Sensitivity Analysis](lectures/week-12_sensitivity_analysis-rev3.qmd)       | **Neal:** Ch. 8; **HR:** Ch. 14            | Plan robustness checks.              |
-| **13** | Nov 11, 13 | [Target Trial Emulation](lectures/week-13_target_trial.qmd)                  | **HR:** Ch. 22                             | Reframe project as a trial.          |
-| **14** | Nov 18, 20 | **Final Presentations**                                                      | \-                                         | Present your findings.               |
+| Week   | Dates      | Core Topic                                                                       | Primary Readings                           | Project Connection                   |
+| :----- | :--------- | :------------------------------------------------------------------------------- | :----------------------------------------- | :----------------------------------- |
+| **9**  | Oct 14, 16 | [Effect Modification](lectures/week-09_effect_modification.qmd)                  | **HR:** Ch. 4–5; **Neal:** Ch. 10          | **Milestone: Project Proposal Due.** |
+| **9**  | Oct 14, 16 | [Effect Modification](lectures/week-09_effect_modification-rev1.qmd)             | **HR:** Ch. 4–5; **Neal:** Ch. 10          |                                      |
+| **10** | Oct 21, 23 | [Mediation I (Foundations)](lectures/week-10_mediation_analysis.qmd)             | **VanderWeele:** Ch. 1–2; **Neal:** Ch. 14 | Refine DAG with mediators.           |
+| **11** | Oct 28, 30 | [Mediation II (Application)](lectures/week-11_mediation_analysis.qmd)            | **VanderWeele:** Ch. 3; **HR:** Ch. 23     | \-                                   |
+| **12** | Nov 4, 6   | [Sensitivity Analysis- E-Value](lectures/week-12_sensitivity_analysis-rev3.qmd)  | **Neal:** Ch. 8; **HR:** Ch. 14            | Plan robustness checks.              |
+| **12** | Nov 4, 6   | [Sensitivity Analysis- Tipping Point](lectures/week-12_sensitivity_analysis-rev4.qmd) | **Neal:** Ch. 8; **HR:** Ch. 14       | Plan robustness checks.              |
+| **13** | Nov 11, 13 | [Target Trial Emulation](lectures/week-13_target_trial-rev2.qmd)                      | **HR:** Ch. 22                             | Reframe project as a trial.          |
+| **14** | Nov 18, 20 | **Final Presentations**                                                          | -                                         | Present your findings.               |
 
 ***Note:** Thanksgiving Break is Nov 27-28.*
 

@@ -1,0 +1,843 @@
+---
+title: "Week 13: Target Trial Emulation"
+---
+
+## Overview
+
+Welcome, class, to STAT 579. We begin our journey into causal inference with what I consider the single most important conceptual tool for applied research: the **Target Trial** framework [@hernan2016specifying].
+
+In your statistical training so far, you have become experts at quantifying *associations*. You can build complex models to predict $Y$ from $A$. This course, however, is about a fundamentally different question: "What is the **causal effect** of $A$ on $Y$?"
+
+The central idea of the target trial framework is simple: every observational analysis that aims to estimate a causal effect is, implicitly, an *emulation* of a hypothetical, pragmatic randomized trial. This hypothetical, ideal experiment is what we call the "target trial."
+
+Why start here? Because this framework is the foundational *thinking process* that must precede any statistical analysis. Before you run a single regression or calculate a single weight, you must first design the experiment you *wish* you could have run.
+
+By explicitly designing this target trial *before* you analyze your observational data, you create a clear blueprint. This blueprint serves two critical purposes:
+
+1. **It clarifies your causal question.** A vague question like "what is the effect of aspirin?" becomes a precise, answerable question: "What is the 5-year risk of death if individuals with colon cancer *initiate* daily aspirin 1-month post-surgery, compared with the 5-year risk if they do not initiate aspirin?"
+2. **It protects you from common, severe biases.** As we will see, many infamous biases in observational research, such as **immortal time bias**, are "self-inflicted injuries" (@hernan2016specifying). They are not inherent to the data but are created by a flawed analysis plan. Explicitly emulating a target trial protocol prevents these errors.
+
+In this lecture, we will define the seven key components of a target trial protocol, distinguish between the two key causal questions (ITT vs. PP), and use this framework to design and critique observational studies.
+
+## Learning Objectives
+
+By the end of this session, you will be able to:
+
+1. **Define** the "target trial" framework and articulate its role as a unifying structure for designing and critiquing observational research.
+2. **Identify** and **explain** the seven essential components of a target trial protocol (Eligibility Criteria, Treatment Strategies, Assignment Procedure, Follow-up Period, Outcome, Causal Contrast, and Analysis Plan).
+3. **Differentiate** between the **Intention-to-Treat (ITT) effect** and the **Per-Protocol (PP) effect** as two distinct and valid causal contrasts, and explain the different causal questions they answer.
+4. **Explain** *why* a "naïve" per-protocol analysis (e.g., comparing only the adherers in a trial) is biased, using causal diagrams and the concept of post-randomization confounding.
+5. **Recognize** and **diagnose** common and severe emulation failures related to `Time Zero` misalignment, including **immortal time bias** and **prevalent user bias**.
+6. **Propose** valid emulation strategies (e.g., new-user design, grace periods) to address common challenges in observational data.
+
+## R Packages
+
+Today's lecture is primarily conceptual, but we will use the following packages to visualize our causal assumptions and prepare data. The lab will use `tidyverse` and `survival`.
+
+```{r}
+#| label: load-packages
+#| message: false
+#| warning: false
+
+# Load the pacman package, installing if-needed
+if (!require("pacman")) {
+  install.packages("pacman")
+}
+
+# Load (and install if-needed) packages for this session
+pacman::p_load(
+  tidyverse, # For all data wrangling and plotting
+  ggdag, # For plotting DAGs with ggplot2
+  dagitty, # For creating and analyzing DAGs
+  knitr, # For table formatting
+  kableExtra, # For prettier tables
+  survival, # For survival analysis in the lab
+  broom.helpers # For tidying model outputs
+)
+
+# Set a consistent theme for our DAGs
+theme_set(theme_dag_blank())
+```
+
+## 1. Comprehensive Topic Explanation
+
+### 1.1 The Central Problem: Association vs. Causation
+
+From our first lecture (and @hernan2020causalwhatif, Chapter 1), we know that the fundamental challenge of causal inference is that **association is not causation**.
+
+  - **Association** is what we *observe* in the data. It's a comparison of different people in different groups.
+      - $\text{Association} = \E{Y|A=1} - \E{Y|A=0}$
+  - **Causation** is what we *want to know*. It's a "what if" comparison of the *same* population under two different scenarios.
+      - $\text{Causation} = \E{Y^{a=1}} - \E{Y^{a=0}}$
+
+In the heart transplant example, the association was $0.11$ (transplant recipients had a *higher* risk of death), but the causal effect was $0$. The difference was **confounding**: sicker patients ($L=1$) were both more likely to get a transplant ($L \to A$) and more likely to die ($L \to Y$).
+
+### 1.2 The "Gold Standard": The Randomized Controlled Trial (RCT)
+
+The RCT is our conceptual "gold standard" because it provides a clear path to causal inference. By randomly assigning a treatment *strategy* $Z$, an RCT achieves two critical goals:
+
+1. **Breaks Confounding:** Random assignment $Z$ is, by definition, not caused by any patient characteristic (measured $L$ or unmeasured $U$). This breaks all backdoor paths between *assignment* and outcome.
+2. **Defines a Clear Intervention:** The trial protocol explicitly defines the treatment strategies being compared.
+
+Visually, randomization severs the link between any confounders ($L$ or $U$) and the intervention, $Z$.
+
+:::{#fig-rct-dag}
+```tikz
+\begin{tikzpicture}[scale=1.5, transform shape]
+    % Observational Study
+    \node (A) at (0, 0) {$A$};
+    \node (Y) at (2, 0) {$Y$};
+    \node (U) at (1, 1.5) {$U$};
+    \draw[->, very thick] (A) -- (Y);
+    \draw[->, very thick, dashed] (U) -- (A);
+    \draw[->, very thick, dashed] (U) -- (Y);
+    \node at (1, -0.5) {Observational Study};
+
+    % Randomized Trial
+    \node (Z_r) at (4, 1.5) {$Z$};
+    \node (A_r) at (6, 1.5) {$A$};
+    \node (Y_r) at (8, 1.5) {$Y$};
+    \node (U_r) at (6, 0) {$U$};
+    \draw[->, very thick] (Z_r) -- (A_r);
+    \draw[->, very thick] (A_r) -- (Y_r);
+    \draw[->, very thick, dashed] (U_r) -- (A_r);
+    \draw[->, very thick, dashed] (U_r) -- (Y_r);
+    \node at (6, -0.5) {Randomized Trial};
+\end{tikzpicture}
+```
+
+Left (**Observational study**): an unmeasured confounder $U$ (dashed arrows) affects both treatment $A$ and outcome $Y$, opening the backdoor path A <- U -> Y $A \leftarrow U \rightarrow Y$; therefore a simple contrast $\E{Y|A=1} − \E{Y|A=0}$ is generally biased. 
+Right (**Randomized trial**): assignment $Z$ is randomized and thus not caused by $U$, so the intention‑to‑treat (ITT) effect of assignment ($Z \to Y$) is unconfounded (no backdoor $Z ← U → Y$).
+*Caveat*: adherence A can still be influenced by $U$ (dashed arrow to $A$ on the right), so the per‑protocol contrast comparing $A=1$ vs $A=0$ may remain confounded by $U$ and requires additional adjustment or g‑methods to estimate. Dashed arrows indicate unmeasured (latent) variables.
+:::
+
+In the RCT (right), the **Intention-to-Treat (ITT)** effect, which is the causal effect of *assignment* ($Z$) on the outcome ($Y$), is unconfounded because the backdoor path $Z \leftarrow U \to Y$ is broken.
+
+### 1.3 The Unifying Idea: The Target Trial Framework
+
+Most observational studies are attempts to answer a causal question. The **target trial framework** formalizes this by stating that every observational analysis should be seen as an *emulation* of a hypothetical, pragmatic randomized trial.
+
+If we fail to emulate the trial correctly, we introduce biases *on top of* the usual confounding. By explicitly designing the target trial *first*, we can avoid these "self-inflicted injuries".
+
+### 1.4 The Seven Protocol Components
+
+To design our observational study "as if" it were a trial, we must explicitly specify the seven components of the target trial's protocol. We will use the example of estimating the effect of aspirin on mortality after colon cancer surgery, as described in @hernan2016specifying.
+
+#### 1. Eligibility Criteria
+
+  - **What it is:** The set of rules that define who is included in the trial.
+  - **Rationale:** This defines the population to which our causal effect estimate will apply (i.e., its generalizability or transportability). It also ensures that all participants are able to *initiate* either of the treatment strategies being compared.
+  - **Target Trial Example:** "Individuals with a new diagnosis of colon cancer, no prior aspirin use, and no contraindications, who survived 1 month post-surgery".
+  - **Observational Emulation Challenge:** We must apply these *same* criteria to our observational data. A common failure is **prevalent user bias**, where we include people *already* on aspirin. This is a form of selection bias, as it excludes those who may have tried aspirin and stopped (perhaps due to side effects) or who died shortly after initiation. The correct approach is a **new-user design**, where we only include individuals at the moment they *first* become eligible to initiate a strategy.
+
+#### 2. Treatment Strategies
+
+  - **What it is:** The interventions we wish to compare. These must be precisely defined and sustained over the follow-up.
+  - **Rationale:** A vague question like "the effect of aspirin" is ill-defined. We must specify *which* aspirin strategy (e.g., dose, timing, duration).
+  - **Target Trial Example:**
+      - **Strategy $g_1$:** "Initiate daily aspirin (81mg) at $T_0$ and continue daily, unless a contraindication or toxicity arises."
+      - **Strategy $g_0$:** "Do not initiate aspirin at $T_0$ and do not start during follow-up."
+  - **Observational Emulation Challenge:** We must find individuals in our data whose observed actions map to these strategies. Note that $g_1$ is a **dynamic strategy**: the treatment at time $k$ depends on a time-varying covariate (toxicity).
+
+#### 3. Assignment Procedure
+
+  - **What it is:** The method used to assign individuals to a treatment strategy.
+  - **Rationale:** This is the core of the causal inference.
+  - **Target Trial Example:** **Randomization** at $T_0$. This ensures the groups are exchangeable (comparable) at baseline. $Z \indep (Y^a, L, U)$.
+  - **Observational Emulation Challenge:** This is the one component we *cannot* replicate. Instead, we must *assume* **conditional exchangeability** (or "no unmeasured confounding"). We assume that, conditional on the *measured* baseline confounders $L$ (age, disease history, etc.), assignment to the aspirin strategy is "as if" random. We then use adjustment methods (matching, weighting, etc.) to emulate randomization.
+
+#### 4. Follow-up
+
+  - **What it is:** When follow-up starts and ends.
+  - **Rationale:** This must be precisely aligned with assignment and eligibility to avoid bias.
+  - **Target Trial Example:** Follow-up *must* start at **Time Zero ($T_0$)**—the moment of randomization. It ends at a pre-specified time (e.g., 5 years) or when the outcome occurs (e.g., death).
+  - **Observational Emulation Challenge:** Our observational follow-up *must also* start at Time Zero—the moment eligibility is met and the treatment strategy is *conceptually* assigned (e.g., at 1-month post-surgery). Any misalignment of $T_0$ with eligibility and assignment leads to bias (see Section 2.1).
+
+#### 5. Outcome
+
+  - **What it is:** What is being measured, and how.
+  - **Rationale:** Must be defined clearly and ascertained consistently across groups.
+  - **Target Trial Example:** "All-cause mortality within 5 years".
+  - **Observational Emulation Challenge:** We must ascertain the outcome (e.g., death from a national registry) in the same way for both groups to avoid differential measurement bias.
+
+#### 6. Causal Contrast (Estimand)
+
+  - **What it is:** The specific causal question we are asking.
+  - **Rationale:** We must decide if we care about the effect of *assignment* or the effect of *adherence*. These are two different causal questions.
+  - **Target Trial Example:**
+      - **Intention-to-Treat (ITT) Effect:** The causal effect of *assignment* to the strategies at $T_0$, regardless of subsequent adherence.
+      - **Per-Protocol (PP) Effect:** The causal effect of *adhering* to the strategies for the entire follow-up.
+  - **Observational Emulation Challenge:** We must also choose.
+      - *ITT-analog:* Effect of *initiation* at $T_0$.
+      - *PP-analog:* Effect of *adherence* over time. This is more complex as it involves time-varying treatments.
+
+#### 7. Analysis Plan
+
+  - **What it is:** The statistical method used to estimate the chosen causal contrast.
+  - **Rationale:** The method must match the causal contrast and assumptions.
+  - **Target Trial (ITT):** Unadjusted (or baseline-adjusted) comparison of risks/rates (e.g., Kaplan-Meier curves, risk ratio).
+  - **Observational Emulation (ITT-analog):** An adjusted comparison (e.g., matching, IP weighting) to account for *baseline* confounding.
+  - **Observational Emulation (PP-analog):** A g-method (e.g., IP weighting of a marginal structural model, g-formula) to account for *time-varying* confounding.
+
+## 2. Intuitive Clarifications of Challenging Ideas
+
+### 2.1 The Peril of Misaligned Time Zero ($T_0$)
+
+The most common "self-inflicted injury" in observational research is failing to align $T_0$ (the start of follow-up) with eligibility and treatment assignment [@hernan2016specifying].
+
+Imagine $T_0$ as the **starting line of a race**.
+
+  - **Target Trial (Correct):** An official (randomization) tells everyone who is eligible (e.g., "no injuries") to line up at the starting line ($T_0$). They are assigned a strategy ("run fast" vs. "run slow"). The official fires a gun, and *everyone* starts the race (follow-up) at that *exact moment*.
+  - **Observational Emulation (Flawed):** We are watching a marathon that has already started.
+
+::: {.callout-warning}
+
+#### Emulation Failure 1: Prevalent User Bias
+
+**The Error:** We start our study at the 10-mile mark. Our $T_0$ is 10 miles into the race. We compare the people already wearing the "fast shoes" (prevalent users) to those in "slow shoes".
+
+**The Bias:** This is **selection bias**. The only people we see in the "fast shoes" group are those who *survived* the first 10 miles (i.e., didn't get a cramp, quit, or collapse). We have selected a biased sample of "survivors" of the early effects of the shoes. This bias is particularly problematic if the treatment has short-term harms.
+
+**The Fix:** A **new-user design**. We must stand at the *real* starting line ($T_0$) and only include people as they *initiate* their strategy.
+:::
+
+::: {.callout-warning}
+
+#### Emulation Failure 4: Immortal Time Bias
+
+**The Error:** We stand at the starting line ($T_0$). We fire the gun. We wait until the 10-mile mark and *then* we assign people to groups: "Fast Shoe Group" (if they are wearing fast shoes *at 10 miles*) vs. "Slow Shoe Group" (all others).
+
+**The Bias:** This is a severe, self-inflicted bias. The "Fast Shoe Group" *by definition* had to survive the first 10 miles (the **"immortal time"**) to even be included in their group. This guarantees they will look better than the "Slow Shoe Group," which includes all the people who dropped out at mile 6. This is a form of selection bias where we condition on survival.
+
+**The Fix:** Align assignment with $T_0$. Classify people into "Fast Shoe Strategy" vs. "Slow Shoe Strategy" based *only* on the shoes they are wearing at the $T_0$ starting line (or, more realistically, that they *initiate* wearing at $T_0$).
+:::
+
+### 2.2 The Two Key Causal Questions: ITT vs. PP
+
+This is a major point of confusion from @hernan2020causalwhatif (Chapter 22). Both are valid causal contrasts, but they answer *different questions* by contrasting *different interventions*.
+
+Let $Z$ be the *assigned* strategy (what the doctor/randomization tells you to do) and $\overline{A}$ be the *received* strategy (what you actually do).
+
+#### 1. The Intention-to-Treat (ITT) Effect
+
+  - **Causal Question:** What is the causal effect of *assignment* to a strategy?
+  - **Intervention:** $Z=1$ ("Assign to $g_1$") vs. $Z=0$ ("Assign to $g_0$").
+  - **Causal Contrast:** $\E{Y^{z=1}} - \E{Y^{z=0}}$
+  - **Plain English:** "What is the 5-year mortality risk if we *assign* everyone to the aspirin strategy, versus if we *assign* everyone to the no-aspirin strategy?"
+  - **Key Feature:** This is a *pragmatic* or *policy-level* question. It answers: "What will happen if we *implement a program* that encourages everyone to take aspirin?" It already accounts for the fact that in the real world, people are not perfectly adherent.
+  - **Identification in an RCT:** Because $Z$ is randomized, $Z$ is unconfounded. We can estimate this directly: $\E{Y|Z=1} - \E{Y|Z=0}$ (assuming no loss to follow-up).
+
+#### 2. The Per-Protocol (PP) Effect
+
+  - **Causal Question:** What is the causal effect of *adhering* to a strategy?
+  - **Intervention:** $\overline{a}=\overline{g}_1$ ("Receive $g_1$") vs. $\overline{a}=\overline{g}_0$ ("Receive $g_0$").
+  - **Causal Contrast:** $\E{Y^{\overline{a}=\overline{g}_1}} - \E{Y^{\overline{a}=\overline{g}_0}}$
+  - **Plain English:** "What is the 5-year mortality risk if everyone *actually took aspirin* as prescribed, versus if everyone *actually took no aspirin* as prescribed?"
+  - **Key Feature:** This is the effect of the *treatment itself*. It's what a patient who *plans to adhere* wants to know.
+  - **Identification in an RCT:** This is hard! We *cannot* just compare the people who happened to adhere (the "naïve per-protocol" analysis).
+  - **Why is the "naïve" analysis biased?** Adherence ($\overline{A}$) is a post-randomization behavior. It is confounded by factors ($L_k, U_k$) like side effects or new symptoms, which themselves predict the outcome $Y$. This creates **treatment-confounder feedback** and selection bias.
+  - **Conclusion:** To estimate the PP effect, we must treat the RCT (or our observational study) as an observational study of a time-varying treatment and adjust for the time-varying confounders that predict adherence. This is why we need the g-methods from Part III.
+
+
+| Feature | Intention-to-Treat (ITT) Effect | Per-Protocol (PP) Effect |
+| :--- | :--- | :--- |
+| **Causal Question** | What is the effect of *assignment* to a strategy? | What is the effect of *adhering* to a strategy? |
+| **Intervention** | $Z=1$ (Assignment) vs. $Z=0$ (Assignment) | $\overline{a}=\overline{g}_1$ (Adherence) vs. $\overline{a}=\overline{g}_0$ (Adherence) |
+| **Causal Contrast** | $\E{Y^{z=1}} - \E{Y^{z=0}}$ | $\E{Y^{\overline{a}=\overline{g}_1}} - \E{Y^{\overline{a}=\overline{g}_0}}$ |
+| **Key Challenge** | In RCTs: None (if no loss to follow-up).<br>In Obs: Adjusting for *baseline* confounding. | In RCTs & Obs: Adjusting for *baseline AND time-varying* confounding (non-adherence). |
+| **Adjustment** | Baseline Adjustment (e.g., regression, matching). | G-methods (e.g., IP weighting, g-formula). |
+
+: Comparison of the Intention-to-Treat (ITT) Effect vs. the Per-Protocol (PP) Effect.{#tbl-itt-vs-pp}
+
+## 3. Simple, Hand-Calculation Numerical Example(s)
+
+### Example 1: Diagnosing Immortal Time Bias (Failure 4)
+
+Let's use a simple example to see the bias in action.
+
+  - **Goal:** Does Drug A reduce 1-year mortality?
+  - **Data:** 100 patients. 50 die at 6 months. 50 survive the full 12 months.
+  - **Incorrect Design:**
+      - $T_0$ = Study start.
+      - "Treated Group" ($A=1$): Defined as those who *survive* at least 9 months *and* are taking the drug at 9 months.
+      - "Untreated Group" ($A=0$): All others.
+  - **Analysis:**
+      - The 50 patients who died at 6 months *cannot* be in the "Treated Group" because they didn't survive to 9 months. They are all, by definition, in the "Untreated Group".
+      - The 50 patients who survived 12 months are the only ones eligible for the "Treated Group". Let's say 25 of them took the drug for >9 months (so they land in $A=1$) and 25 did not (so they land in $A=0$).
+  - **Calculate the Biased Risk:**
+      - **Risk (Treated, $A=1$):**
+          - N = 25 (the survivors who took the drug).
+          - Deaths = 0 (they all survived 12 months).
+          - Risk = 0 / 25 = **0%**
+      - **Risk (Untreated, $A=0$):**
+          - N = 75 (the 50 who died early + the 25 survivors who didn't take the drug).
+          - Deaths = 50 (the 50 who died early).
+          - Risk = 50 / 75 = **66.7%**
+  - **Biased Conclusion:** The drug appears to be miraculously effective (Risk Ratio = 0). The bias comes from the 9 months of "immortal time" we guaranteed for the treated group.
+
+### Example 2: Diagnosing Prevalent User Bias (Failure 1)
+
+  - **Goal:** Does Drug A prevent 1-year mortality?
+  - **Data:** We recruit 100 patients on Jan 1, 2024. This is our $T_0$.
+  - **Incorrect Design:**
+      - We define our groups based on their drug use *at $T_0$*.
+      - "Treated Group" ($A=1$): 50 patients who are *already* taking Drug A on Jan 1 (prevalent users).
+      - "Untreated Group" ($A=0$): 50 patients who are *not* taking Drug A on Jan 1.
+  - **The Unseen Problem:** The drug has a dangerous side effect: 10% of people who initiate it die within the first month. In 2023, 55 people *started* the drug. 5 died, leaving the 50 "healthy survivors" we see in our $A=1$ group. The 50 people in our $A=0$ group are just the general population.
+  - **Calculate the Biased Risk:**
+      - Assume the "baseline" 1-year risk for everyone is 20%.
+      - **Risk (Treated, $A=1$):**
+          - N = 50. These are "healthy survivors" of the initial risk. Let's say their 1-year risk is now only 10% (5 deaths).
+          - Risk = 5 / 50 = **10%**
+      - **Risk (Untreated, $A=0$):**
+          - N = 50. These are the general population. Their risk is 20% (10 deaths).
+          - Risk = 10 / 50 = **20%**
+  - **Biased Conclusion:** The drug looks protective (RR = 0.5). We've introduced selection bias by only including the "prevalent users" who were healthy enough to survive the initial high-risk period.
+
+## 4. R Code Examples & Interpretation
+
+Let's use `dagitty` and `ggdag` to visualize the causal structures for our key concepts.
+
+### 1. DAG: ITT vs. Naïve Per-Protocol in an RCT
+
+In an RCT, the **ITT effect** ($Z \to \dots \to Y$) is unconfounded. But the **PP effect** ($A \to Y$) is confounded by $U$ (e.g., frailty, motivation) which affects both adherence ($A$) and outcome ($Y$). A "naïve" analysis that just compares $A=1$ to $A=0$ will be biased by the open backdoor path $A \leftarrow U \to Y$.
+
+```{r}
+#| label: dag-rct-pp-2
+#| include: false
+#| fig-cap: "DAG for an RCT. The ITT effect (Z to Y) is unconfounded. The PP effect (A to Y) is confounded by U."
+
+rct_dag <- dagify(
+  Y ~ A + U + Z,
+  A ~ Z + U,
+  exposure = "A",
+  outcome = "Y",
+  latent = "U",
+  coords = list(
+    x = c(Z = 0, A = 2, Y = 4, U = 2),
+    y = c(Z = 2, A = 2, Y = 2, U = 0)
+  )
+)
+
+ggdag_paths(rct_dag, from = "A", to = "Y") +
+  geom_dag_point(color = "blue") +
+  geom_dag_text(color = "black") +
+  labs(title = "Red path is the causal effect (PP). Blue path is confounding.")
+```
+
+:::{#fig-rct-pp-dag}
+```tikz
+\begin{tikzpicture}[scale=1.5]
+    % Nodes
+    \node (Z) at (0, 2) {$Z$ (Assignment)};
+    \node (A) at (2, 2) {$A$ (Adherence)};
+    \node (Y) at (4, 2) {$Y$ (Outcome)};
+    \node (U) at (2, 0) {$U$ (Frailty)};
+
+    % Arrows
+    \draw[->, very thick] (Z) -- (A);
+    \draw[->, very thick, red, line width=2pt] (A) -- (Y);
+    
+    \draw[->, very thick, dashed] (U) -- (A);
+    \draw[->, very thick, dashed, blue, line width=2pt] (U) -- (Y);
+    
+    % This is the ITT path
+    \draw[->, very thick, green, bend left=15] (Z) to node[above, sloped, midway, pos=0.4, font=\small] {ITT Effect} (Y);
+    
+    % Backdoor path
+    \path[->, very thick, blue, dashed, bend right=30] (A) edge[<-] node[below, sloped, midway, pos=0.7, font=\small] {Confounding} (U);
+\end{tikzpicture}
+```
+DAG for an RCT. The ITT effect ($Z \to Y$) is unconfounded. The green arrow indicates the ITT effect of assignment (it is not a direct effect of $Z$ on $Y$, but goes through $A$).
+The PP effect ($A \to Y$) is confounded by $U$. Note that the red arrow indicates the causal effect of interest for the PP analysis, while the blue dashed arrows indicate confounding paths.
+:::
+
+### 2. DAG: Per-Protocol Emulation with Time-Varying Confounding
+
+This is the key challenge for estimating the PP effect. To get the effect of the *full strategy* ($A_0, A_1$) on $Y$, we must adjust for $L_0$ and $L_1$. But $L_1$ (e.g., a side effect) is *caused by* $A_0$.
+
+This creates **treatment-confounder feedback**. As we see, $L_1$ is:
+
+1. A **confounder** for the $A_1 \to Y$ effect (it opens the backdoor path $A_1 \leftarrow L_1 \to Y$).
+2. A **mediator** for the $A_0 \to Y$ effect (it is on the causal path $A_0 \to L_1 \to Y$).
+
+Standard regression adjustment for $L_1$ would block part of the $A_0$ effect and (as we'll see in Ch. 20) can introduce selection bias. This is why we need g-methods.
+
+:::{#fig-pp-feedback-dag}
+```tikz
+\begin{tikzpicture}[scale=1.5, transform shape]
+    \node (L0) at (0, 1.5) {$L_0$};
+    \node (A0) at (0, 0) {$A_0$};
+    \node (L1) at (2, 1.5) {$L_1$};
+    \node (A1) at (2, 0) {$A_1$};
+    \node (Y) at (4, 0.75) {$Y$};
+
+    \draw[->, very thick] (L0) -- (A0);
+    \draw[->, very thick] (L0) -- (L1);
+    \draw[->, very thick] (A0) -- (L1);
+    \draw[->, very thick] (A0) -- (A1);
+    \draw[->, very thick, bend left=15] (A0) to (Y);
+    \draw[->, very thick] (L1) -- (A1);
+    \draw[->, very thick] (L1) -- (Y);
+    \draw[->, very thick] (A1) -- (Y);
+\end{tikzpicture}
+```
+Target trial emulation with treatment-confounder feedback. $L_1$ is a time-varying confounder for the $A1 \to Y$ effect that is also affected by past treatment $A_0$.
+:::
+
+## 5. Hands-On R Lab
+
+**STAT 579: R Lab 2**
+**Emulating a Target Trial: Aspirin & Mortality**
+
+### Lab Objectives
+
+1. Simulate a "messy" observational dataset that includes baseline confounders and time-to-event data.
+2. Perform a **biased analysis** using a design that fails to emulate the target trial (Emulation Failure 4: Immortal Time Bias).
+3. Perform a **correct emulation** of the target trial by:
+      - Defining eligibility at time zero.
+      - Assigning treatment strategies at time zero (using a grace period).
+      - Starting follow-up at time zero.
+4. Adjust for baseline confounding in the emulated trial using a regression model.
+5. Compare and interpret the results from the biased and correct analyses.
+
+### 1. Warm-up & Setup
+
+**Reading:** Before starting the lab, please review @hernan2016specifying, sections 2 and 3.
+
+**Warm-up Questions (Discuss with a partner):**
+
+1. What are the 7 components of the aspirin target trial described in Section 2 of the paper?
+2. What is "immortal time"? How does Emulation Failure 4 (Fig 1) guarantee that the treated group will have a "period... during which the risk is guaranteed to be exactly zero"?
+
+First, let's load our packages and set a random seed for reproducibility.
+
+```{r}
+#| label: lab-setup-lab-3
+pacman::p_load(tidyverse, survival, lubridate, gtsummary)
+set.seed(1989) # For reproducibility
+```
+
+### 2. Simulate "Messy" Observational Data
+
+We will simulate a "raw" dataset of 2,000 patients who had colon cancer surgery. This represents the messy electronic medical record (EMR) data we get *before* applying our target trial design.
+
+  - `U_frailty` is an **unmeasured** "healthy/frail" status. Healthy ($U=0$) patients are more likely to take aspirin and less likely to die. This is our unmeasured confounder.
+  - `age` and `history_chd` are our *measured* confounders ($L$).
+  - Aspirin initiation can happen any time after surgery.
+  - Death can happen any time after surgery.
+
+
+```{r}
+#| label: simulate-data-lab-3
+n <- 2000
+dat_raw <- tibble(
+  id = 1:n,
+  # U: Unmeasured confounder
+  U_frailty = rbinom(n, 1, 0.4), # 40% are frail
+
+  # L: Measured confounders
+  age = rnorm(n, 60, 8),
+  history_chd = rbinom(n, 1, 0.2 + U_frailty * 0.2), # Frail more likely to have CHD
+
+  # Surgery Date (our "anchor" event)
+  surgery_date = as.Date("2020-01-01") + runif(n, 0, 365),
+
+  # A: Aspirin Initiation
+  # Healthy (U=0) and younger patients are more likely to initiate
+  prob_asa = plogis(
+    -1 - 0.5 * U_frailty + 0.1 * (age - 60) - 0.2 * history_chd
+  ),
+  initiates_asa = rbinom(n, 1, prob_asa),
+  asa_init_date = if_else(
+    initiates_asa == 1,
+    surgery_date + runif(n, 1, 730), # Initiates 1 day to 2 yrs post-op
+    as.Date(NA)
+  ),
+
+  # Y: Death
+  # We simulate a "true" survival time.
+  # Hazard is higher for frail, older, CHD patients
+  log_haz_death = -5 + 1.5 * U_frailty + 0.05 * (age - 60) + 0.5 * history_chd,
+
+  # We generate a time-to-death assuming no aspirin
+  time_to_death_no_asa = rexp(n, exp(log_haz_death)),
+
+  # True Causal Effect: Aspirin has a Hazard Ratio of 0.7
+  time_to_death = if_else(
+    initiates_asa == 1,
+    time_to_death_no_asa / 0.7,
+    time_to_death_no_asa
+  ),
+
+  death_date = surgery_date + time_to_death
+)
+
+# Clean up raw data
+dat_raw <- dat_raw |>
+  select(
+    id,
+    U_frailty,
+    age,
+    history_chd,
+    surgery_date,
+    asa_init_date,
+    death_date
+  )
+```
+
+### 3. Task 0: Explore the Raw Data
+
+Before any analysis, look at the raw data. Get a feel for the variables.
+
+```{r}
+#| label: lab-task0-solution-lab-2
+#| eval: false
+#| code-fold: false
+glimpse(dat_raw)
+
+summary(dat_raw)
+
+# How many people initiated aspirin?
+dat_raw |>
+  summarise(
+    n_total = n(),
+    n_initiators = sum(!is.na(asa_init_date)),
+    percent_initiators = 100 * (n_initiators / n_total)
+  )
+```
+
+### 4. Task 1: The Biased "Immortal Time" Analysis
+
+**Goal:** Perform a flawed analysis based on "Emulation Failure 4".
+
+  - **$T_0$:** 1 month post-surgery (our "anchor").
+  - **Groups:**
+      - `"Ever Aspirin"`: Anyone who *ever* initiated aspirin (even 2 years later).
+      - `"Never Aspirin"`: Anyone who never did.
+  - **Follow-up:** Start at $T_0$ for 5 years.
+
+
+```{r}
+#| label: lab-task1-skeleton-lab-2
+#| eval: false
+#| code-fold: false
+# STUDENT TO FILL IN
+dat_biased <- dat_raw |>
+  mutate(
+    time_zero = surgery_date + months(1), # 1 month after surgery_date
+
+    # Biased group assignment based on *any* future use
+    strategy_group = if_else(
+      is.na(asa_init_date),
+      "Never Aspirin",
+      "Ever Aspirin"
+    ),
+
+    # Follow-up ends at 5 years (1826 days) post-T0 or at death
+    followup_end = time_zero + days(1826),
+    time_to_event = as.numeric(
+      pmin(death_date, followup_end, na.rm = TRUE) - time_zero
+    ),
+    status = if_else(!is.na(death_date) & death_date <= followup_end, 1, 0)
+  ) |>
+  # Filter out anyone who died *before* T0
+  dplyr::filter(time_to_event > 0)
+s
+# Run the Cox model
+cox_biased <- coxph(
+  Surv(time_to_event, status) ~ strategy_group + age + history_chd,
+  data = dat_biased
+)
+
+# Display the biased result
+tbl_regression(cox_biased, exponentiate = TRUE)
+```
+
+
+::: {.callout-important}
+
+## Solution: Task 1
+
+```{r}
+#| label: lab-task1-solution-lab-3
+#| eval: false
+#| code-fold: false
+# STUDENT TO FILL IN
+
+dat_biased <- dat_raw |>
+  mutate(
+    time_zero = surgery_date + months(1),
+
+    # Biased group assignment based on *any* future use
+    strategy_group = if_else(
+      is.na(asa_init_date),
+      "Never Aspirin",
+      "Ever Aspirin"
+    ),
+
+    # Follow-up ends at 5 years (1826 days) post-T0 or at death
+    followup_end = time_zero + days(1826),
+    time_to_event = as.numeric(
+      pmin(death_date, followup_end, na.rm = TRUE) - time_zero
+    ),
+    status = if_else(!is.na(death_date) & death_date <= followup_end, 1, 0)
+  ) |>
+  # Filter out anyone who died *before* T0
+  dplyr::filter(time_to_event > 0)
+
+# Run the Cox model
+cox_biased <- coxph(
+  Surv(time_to_event, status) ~ strategy_group + age + history_chd,
+  data = dat_biased
+)
+
+# Display the biased result
+tbl_regression(cox_biased, exponentiate = TRUE)
+```
+<!-- 
+**Interpretation:** This (biased) analysis suggests that "Ever Aspirin" users have a **52% lower hazard of death** (HR = 0.48) compared to "Never Aspirin" users. This looks like a miracle drug!
+
+**Why is it wrong?** An individual who initiated aspirin 2 years *after* surgery must have survived for those 2 years. Their follow-up time from $T_0$ includes 2 years of **immortal time** during which they *could not* have died (because if they had, they never would have initiated aspirin and would be in the "Never Aspirin" group). 
+-->
+:::
+
+### 5. Task 2: Emulating the Target Trial (Correctly)
+
+Now, let's follow the target trial protocol. We will align $T_0$, eligibility, and treatment assignment.
+
+  - **$T_0$:** 1 month post-surgery.
+  - **Eligibility:** Must be alive at $T_0$.
+  - **Strategies:** We'll use a 3-month (90-day) **grace period** to make the emulation realistic.
+      - `Strategy 1 (Aspirin)`: Initiates aspirin between $T_0$ and $T_0 + 90$ days.
+      - `Strategy 0 (No Aspirin)`: Does *not* initiate aspirin between $T_0$ and $T_0 + 90$ days.
+  - **Analysis:** ITT-analog. We compare the groups *as defined at baseline* and follow them for 5 years, regardless of what they do after the grace period.
+
+
+```{r}
+#| label: lab-task2-skeleton-lab-2
+#| eval: false
+#| code-fold: false
+# STUDENT TO FILL IN
+dat_tt <- dat_raw |>
+  mutate(
+    time_zero = `...`,
+    followup_end = `...`,
+
+    # Define strategy assignment *at T0* (using a 90-day grace period)
+    asa_within_grace = !is.na(asa_init_date) &
+      asa_init_date >= `...` &
+      asa_init_date <= (`...` + days(90)),
+
+    strategy_group = if_else(
+      asa_within_grace == TRUE,
+      "Aspirin Strategy",
+      "No Aspirin Strategy"
+    ),
+
+    # Define outcome and follow-up time *from T0*
+    time_to_event = as.numeric(pmin(`...`, `...`, na.rm = TRUE) - `...`),
+    status = if_else(!is.na(`...`) & `...` <= `...`, 1, 0)
+  ) |>
+  # Apply eligibility criteria AT T0
+  dplyr::filter(time_to_event > 0) # Must be alive at T0
+
+# Run the Cox model, adjusting for baseline confounders
+cox_tt <- coxph(
+  Surv(time_to_event, status) ~ strategy_group + age + history_chd,
+  data = dat_tt
+)
+
+# Display the target trial emulation result
+tbl_regression(cox_tt, exponentiate = TRUE)
+```
+
+
+::: {.callout-important}
+
+## Solution: Task 2
+
+```{r}
+#| label: lab-task2-solution-lab-3
+#| eval: false
+#| code-fold: false
+dat_tt <- dat_raw |>
+  mutate(
+    time_zero = surgery_date + months(1),
+    followup_end = time_zero + days(1826),
+
+    # Define strategy assignment *at T0* (using a 90-day grace period)
+    asa_within_grace = !is.na(asa_init_date) &
+      asa_init_date >= time_zero &
+      asa_init_date <= (time_zero + days(90)),
+
+    strategy_group = if_else(
+      asa_within_grace == TRUE,
+      "Aspirin Strategy",
+      "No Aspirin Strategy"
+    ),
+
+    # Define outcome and follow-up time *from T0*
+    time_to_event = as.numeric(
+      pmin(death_date, followup_end, na.rm = TRUE) - time_zero
+    ),
+    status = if_else(!is.na(death_date) & death_date <= followup_end, 1, 0)
+  ) |>
+  # Apply eligibility criteria AT T0
+  dplyr::filter(time_to_event > 0) # Must be alive at T0
+
+# Run the Cox model, adjusting for baseline confounders
+cox_tt <- coxph(
+  Surv(time_to_event, status) ~ strategy_group + age + history_chd,
+  data = dat_tt
+)
+
+# Display the target trial emulation result
+tbl_regression(cox_tt, exponentiate = TRUE)
+```
+
+<!-- **Interpretation:** This (correct) analysis estimates a **24% lower hazard of death** (HR = 0.76) for the Aspirin Strategy. This is much more modest than the 52% reduction from the biased analysis, and much closer to our *true* simulated effect (HR = 0.7). We still have residual confounding from the unmeasured `U_frailty`, so our estimate is not perfect, but we have successfully *prevented the self-inflicted immortal time bias*. -->
+:::
+
+<!-- ### 6. Lab Reflection & Retrieval
+
+1. **Reflection:** In your own words, why did the Task 1 result (HR $\approx$ 0.48) differ so much from the Task 2 result (HR $\approx$ 0.76)? Where *exactly* was the immortal time in the `dat_biased` analysis?
+2. **Retrieval 1:** What are the seven components of a target trial protocol?
+3. **Retrieval 2:** What is the key difference between an Intention-to-Treat (ITT) effect and a Per-Protocol effect? Which did our Task 2 analysis most closely resemble?
+4. **Elaboration:** In Task 2, we adjusted for `age` and `history_chd`. Why? What causal assumption are we making when we do this?
+5. **Extension:** How would our Task 2 analysis change if we wanted to estimate the *per-protocol* effect (i.e., the effect of *staying* on aspirin)? What data would we need to collect over time? What analysis method would we have to use? -->
+
+*(End of Lab)*
+
+## 6. Common Pitfalls & Checks
+
+::: {.callout-warning}
+
+## Common Pitfall: Misaligned Time Zero
+
+The single biggest mistake in observational studies of sustained treatments is misaligning $T_0$. The @hernan2016specifying paper gives 4 classic examples. Always check your (or others') analyses for these:
+
+1. **Failure 1 (Prevalent User Bias):** $T_0$ is *after* strategy assignment.
+
+      - *Example:* Study of statins and dementia. $T_0$ is age 65. "Treated" group are those taking statins at age 65.
+      - *Bias:* Selection bias. You miss everyone who tried statins and quit (maybe due to side effects) and everyone who died before 65 (maybe due to the statin).
+      - *Fix:* A **new-user design**. We must stand at the *real* starting line ($T_0$) and only include people as they *initiate* their strategy.
+
+2. **Failure 2 (Eligibility after $T_0$):** $T_0$ is at eligibility, but *after* strategy assignment.
+
+      - *Example:* Study of aspirin. $T_0$ is 1-month post-surgery (eligibility). But the "treated" group is defined as those who started aspirin *before* surgery.
+      - *Bias:* Selection bias. The "treated" group is selected on surviving *until* $T_0$.
+
+3. **Failure 3 (Immortal Time before Eligibility):** $T_0$ is *before* eligibility is fully met.
+
+      - *Example:* Study of post-surgery aspirin. $T_0$ is the date of *cancer diagnosis*. "Treated" is defined as starting aspirin at diagnosis.
+      - *Bias:* Immortal time. The outcome (death) can't happen between $T_0$ (diagnosis) and the end of eligibility (1-month post-surgery).
+
+4. **Failure 4 (Immortal Time after $T_0$):** $T_0$ is at eligibility, but strategy is assigned *later*.
+
+      - *Example:* Our hand-calculation and lab example. $T_0$ is 1-month post-surgery. "Treated" is defined as "used aspirin for $\ge 6$ months."
+      - *Bias:* Immortal time. The treated group is guaranteed to be alive and in follow-up for at least 6 months.
+:::
+
+::: {.callout-question}
+
+## Check Your Understanding
+
+1. **Question:** An analyst wants to study the effect of statins on heart attacks. They define the "treated" group as anyone who filled $\ge 2$ statin prescriptions and the "control" group as anyone who filled 0. They start follow-up for *everyone* at Jan 1, 2020. A patient who dies on Jan 15, 2020 (and filled 0 prescriptions) is put in the control group. What bias is this?
+
+  - **Answer:** This is classic immortal time bias (Emulation Failure 4). The "treated" group is guaranteed to be immortal for the time it takes to fill 2 prescriptions, while the "control" group includes people who die early.
+
+2. **Question:** What is the *only* way to correctly estimate a per-protocol effect in a trial with non-adherence and time-varying prognostic factors (e.g., factors that predict both adherence and the outcome)?
+
+  - **Answer:** You must use a method that can handle time-varying treatment-confounder feedback, such as the g-methods (IP weighting, g-formula, g-estimation).
+
+3. **Question:** You are emulating a target trial. You find that many people in your observational data don't start their assigned "aspirin" strategy exactly at $T_0$, but rather 2-3 months later. If you *exclude* them, what bias might you introduce? What is a better approach?
+
+  - **Answer:** Excluding them could introduce selection bias if the reasons for their delay are related to the outcome. A better approach is to specify a **grace period** (e.g., 3 months) in your target trial protocol. This defines the "Aspirin Strategy" as "initiating within 3 months". This makes the emulation more realistic and increases the number of eligible individuals.
+:::
+
+<!-- ## 7. Learning Activities
+
+  - **Flipped Classroom:**
+      - *Prep:* Students read a classic observational study abstract (e.g., a real study on hormone replacement therapy or statins).
+      - *Activity:* In class, break into small groups. Each group must write the 7-component protocol for the *target trial* that the observational study was trying to emulate.
+      - *Discussion:* Groups present their protocols. The class discusses where the observational study *deviated* from the target trial (e.g., "They used prevalent users, which misaligns $T_0$" or "They didn't have data on confounder $L_k$").
+  - **Think-Pair-Share:**
+      - *Prompt:* "I propose a study to estimate the effect of *never* smoking on lung cancer. I'll use a database of 60-year-olds, define $T_0$ as their 60th birthday, and define my 'never-smoker' group as those who report 0 cigarettes smoked in their life. What is the target trial I am emulating? Is this a valid emulation?"
+      - *Think:* Student considers the 7 components.
+      - *Pair:* Student discusses with a neighbor. They should realize...
+      - *Share:* The class discusses that this is **Emulation Failure 1** (prevalent user bias). The "assignment" to "never-smoker" vs. "smoker" strategies happened *long ago* (e.g., at age 15), not at $T_0=60$. We are comparing 60-year-old smokers and 60-year-old never-smokers. This is biased unless we can adjust for all confounders accumulated since age 15. The *correct* target trial would randomize people to "start smoking" vs. "never start smoking" at age 15 and follow them for 45 years.
+  - **Design Critique:**
+      - *Activity:* Present two *different* target trial protocols for the same observational database (e.g., 1. Initiation trial; 2. Discontinuation trial). Ask students to discuss which protocol is (a) more feasible to emulate with the available data and (b) answers a more relevant clinical or policy question. -->
+
+## Appendix: Advanced Theory & Derivations
+
+### Formalizing the ITT and Per-Protocol Estimands
+
+Let's formalize the concepts from Section 2. We use the potential outcomes framework from @hernan2020causalwhatif (Chapter 22).
+
+  - Let $Z_i$ be the **randomized assignment** for individual $i$ at $T_0$.
+      - $Z=1$: Assigned to "strategy $g_1$" (e.g., take aspirin).
+      - $Z=0$: Assigned to "strategy $g_0$" (e.g., no aspirin).
+  - Let $\overline{A}_i = (A_{i,0}, A_{i,1}, \dots, A_{i,K})$ be the **received treatment history**.
+  - Let $Y_i$ be the observed outcome.
+
+#### The Intention-to-Treat (ITT) Effect
+
+The ITT effect is the causal effect of *assignment*.
+
+  - **Potential Outcomes:**
+      - $Y_i^{z=1}$: The outcome for individual $i$ *if they had been assigned* to strategy $g_1$.
+      - $Y_i^{z=0}$: The outcome for individual $i$ *if they had been assigned* to strategy $g_0$.
+  - **Causal Contrast (Estimand):**
+
+$$
+ACE_{ITT} = \E{Y^{z=1}} - \E{Y^{z=0}}
+$$
+
+  * **Identification:** By randomization, assignment $Z_i$ is independent of the potential outcomes: $(Y_i^{z=1}, Y_i^{z=0}) \indep Z_i$. This is **exchangeability**.
+  * **Result:** Because of exchangeability, $\E{Y^{z}} = \E{Y|Z=z}$. Therefore, the causal ITT effect is identified by the simple associational contrast:
+
+$$
+ACE_{ITT} = \E{Y | Z=1} - \E{Y | Z=0}
+$$
+
+This holds assuming no loss to follow-up (selection bias).
+
+#### The Per-Protocol (PP) Effect
+
+The PP effect is the causal effect of *adhering* to the strategies.
+
+  - **Potential Outcomes:** Let $\overline{g}_1$ and $\overline{g}_0$ be the full treatment *histories* specified in the protocol (e.g., $g_1$ = "take aspirin daily for 5 years", $g_0$ = "take no aspirin for 5 years").
+      - $Y_i^{\overline{a}=\overline{g}_1}$: The outcome for individual $i$ *if they had perfectly adhered* to strategy $g_1$.
+      - $Y_i^{\overline{a}=\overline{g}_0}$: The outcome for individual $i$ *if they had perfectly adhered* to strategy $g_0$.
+  - **Causal Contrast (Estimand):**
+
+$$
+ACE_{PP} = \E{Y^{\overline{a}=\overline{g}_1}} - \E{Y^{\overline{a}=\overline{g}_0}}
+$$
+
+  - **Identification Challenge:** This is *not* identified by a simple associational contrast, even in an RCT.
+  - **The "Naïve" Analysis (BIAS):** The analysis that compares $\E{Y | \overline{A} = \overline{g}_1}$ vs. $\E{Y | \overline{A} = \overline{g}_0}$ is **confounded**.
+  - **Why?** $\overline{A}$ (received treatment) is a post-randomization behavior. Unmeasured factors $U$ (like frailty, motivation) can affect both *whether* a person adheres ($\overline{A}$) and their outcome ($Y$). This creates a confounding path: $\overline{A} \leftarrow U \to Y$.
+  - **Result:** To estimate the PP effect, we must treat the RCT as an observational study. We must assume **sequential exchangeability** conditional on the measured *time-varying* covariates $L_k$ (e.g., symptoms, side effects) that predict adherence. We must then use g-methods (IP weighting, g-formula) to adjust for this time-varying confounding.
+
+### Formalizing "Cloning" for Complex Assignment
+
+In Section 2.2, we discussed two problems: (1) individuals being eligible for multiple strategies at $T_0$, and (2) grace periods. Both are solved by "cloning" [@hernan2020causalwhatif, Chapter 22].
+
+1. **The Problem:** At $T_0$, an individual (e.g., $L_0=0$) is eligible for both strategy $g_1$ ("start when $L_1=1$") and strategy $g_0$ ("never start"). Their observed data $\overline{A}$ and $\overline{L}$ are consistent with both.
+2. **The Solution:**
+      - Create two "clones" of this individual in the dataset.
+      - `Clone 1`: Assign to strategy $g_1$.
+      - `Clone 2`: Assign to strategy $g_0$.
+      - Follow both clones over time.
+      - If the real person's $L_1$ becomes 1 and they *start* treatment ($A_1=1$), their data are no longer consistent with strategy $g_0$. We therefore **censor** `Clone 2` at time $k=1$. `Clone 1` continues.
+      - If the real person's $L_1$ becomes 1 and they *do not* start treatment ($A_1=0$), their data are no longer consistent with strategy $g_1$. We therefore **censor** `Clone 1` at time $k=1$. `Clone 2` continues.
+3. **The Analysis:** This "cloning and censoring" procedure creates a new dataset where assignment is clear at $T_0$. However, it introduces *time-varying censoring* that is highly informative (it depends on $L_k$ and $A_k$).
+4. **The Result:** We *must* use a g-method (like IP weighting) to handle this induced selection bias. We would create weights $SW^C$ to account for this censoring, as described in Chapter 21 of @hernan2020causalwhatif.
+
+This advanced technique is the formal basis for emulating target trials with complex, dynamic strategies or grace periods.
+
+## References
+

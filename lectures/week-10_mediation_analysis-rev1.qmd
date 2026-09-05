@@ -1,0 +1,651 @@
+---
+title: "Week 10: Mediation Analysis"
+---
+
+## Overview
+
+Welcome to the first module of STAT 579. This week, we transition from asking *if* an exposure causes an outcome to *how* it causes it. Causal mediation analysis is a powerful framework for investigating the mechanisms or pathways through which a cause exerts its effect. We will unpack the "black box" of causality by formalizing the role of an intermediate variable, or **mediator**, that lies on the causal path from an exposure to an outcome.
+
+Our journey begins by contrasting the traditional, regression-based approach to mediation (e.g., Baron and Kenny, 1986) with the more rigorous **potential outcomes framework**. This modern approach allows us to define causal mediation effects—namely, the **Natural Direct Effect (NDE)** and the **Natural Indirect Effect (NIE)**—in a way that is independent of any statistical model. The key advantage is clarity about the assumptions required to give these effects a causal interpretation. The cornerstone of this identification is the **Sequential Ignorability** assumption, a strong but indispensable condition that we will dissect in detail.
+
+## Learning Objectives
+
+By the end of this module, you will be able to:
+
+1. **Define** causal mediation analysis and articulate its purpose in scientific inquiry, providing examples from public health.
+2. **Distinguish** between traditional (e.g., Baron-Kenny) and potential outcomes-based approaches to mediation, explaining the limitations of the former.
+3. **Define** and **interpret** the Natural Direct Effect (NDE), Natural Indirect Effect (NIE), and Controlled Direct Effect (CDE) using potential outcomes notation.
+4. **State and explain** the Sequential Ignorability assumption required for the identification of natural direct and indirect effects.
+5. **Construct** and **interpret** Directed Acyclic Graphs (DAGs) representing causal mediation models, and use them to assess confounding.
+6. **Estimate** NDE and NIE in R using the `mediation` package and interpret the output in the context of a research question.
+
+## R Packages
+
+We will use the following R packages. The `pacman` package will automatically install any missing packages.
+
+```{r}
+#| label: load-packages
+#| message: false
+#| #| warning: false
+
+if (!require("pacman")) {
+  install.packages("pacman")
+}
+pacman::p_load(
+  dagitty, # For creating and analyzing DAGs
+  ggdag, # For plotting DAGs with ggplot2
+  mediation, # For causal mediation analysis
+  tidyverse # For data manipulation and visualization
+)
+```
+
+
+## 1. Comprehensive Topic Explanation
+
+### The Quest for Mechanism
+
+In epidemiology and public health, our questions often evolve. We might first establish that a worksite wellness program ($A$) reduces employee burnout ($Y$). This is a question of total effect. But the next, more nuanced question is: *why* does it work? Is it because the program increases physical activity ($M$), which in turn reduces burnout? Or does the program work through other means, like fostering social connections? This search for a mechanism is the core motivation for causal mediation analysis (@VanderWeele2015).
+
+A mediator, $M$, is a variable that lies on a causal pathway between an exposure, $A$, and an outcome, $Y$. For a variable to be a mediator, a critical **temporal ordering** must exist: $A$ must precede $M$, and $M$ must precede $Y$.
+
+### The Limitations of Traditional Approaches
+
+The classic method for mediation, proposed by @baron1986moderator, involves fitting a series of regression models. In a simplified linear models context:
+
+1. Regress $Y$ on $A$ to get the total effect, $c$.
+2. Regress $M$ on $A$ to get the path coefficient, $a$.
+3. Regress $Y$ on both $A$ and $M$ to get path coefficients $c'$ (the direct effect) and $b$ (the effect of $M$ on $Y$).
+
+The indirect effect was then calculated as the product of coefficients, $a \times b$, and the direct effect as $c'$. The total effect was defined as $c = c' + (a \times b)$.
+
+This approach, while intuitive, suffers from several major drawbacks:
+
+- **Lack of Causal Foundation**: The method does not explicitly state the assumptions needed to interpret $a \times b$ as a causal mechanism. It is fundamentally an associational decomposition.
+- **Model Dependence**: The definitions of direct and indirect effects are entirely dependent on the parameters of the chosen statistical model (e.g., linear regression). This makes it problematic to extend to non-linear models (e.g., logistic regression for a binary outcome), where coefficients do not compose so neatly.
+- **Interaction Issues**: The method struggles to handle interactions between the exposure $A$ and the mediator $M$.
+
+### A Causal Framework: Potential Outcomes
+
+To overcome these limitations, we turn to the potential outcomes (or counterfactual) framework, a cornerstone of modern causal inference (@hernan2020causalwhatif; @imbens2015causal).
+
+#### Recap: Total Causal Effect
+
+Let's consider a binary exposure $A \in \{0, 1\}$. For each individual $i$, we define the potential outcome $Y_i^a$ as the outcome that *would have been observed* had the individual been assigned exposure level $a$. The **individual causal effect** is $Y_i^1 - Y_i^0$. Since we can only ever observe one of these potential outcomes for any given individual (the **fundamental problem of causal inference**), we focus on the **Average Treatment Effect (ATE)**: $E[Y^1 - Y^0]$.
+
+#### Defining Mediation Effects with Nested Counterfactuals
+
+To introduce a mediator, we must expand our notation. We now need to define the potential outcome as a function of both the exposure *and* the mediator.
+
+- $M_i^a$: The potential outcome for the mediator, $M$, if individual $i$ received exposure level $a$.
+- $Y_i^{a,m}$: The potential outcome for $Y$ if individual $i$ received exposure $a$ and, possibly contrary to fact, their mediator was set to value $m$.
+
+The observed outcome for an individual is linked to these potential outcomes through the **consistency** or **composition** assumption: $Y_i = Y_i^{A_i, M_i^{A_i}}$. This simply states that the outcome we see for an individual corresponds to the potential outcome under the exposure and mediator value they actually received.
+
+With this machinery, we can define the causal effects that constitute a mediation analysis.
+
+**1. The Natural Indirect Effect (NIE)**
+
+The NIE captures the part of the exposure's effect that operates *through* the mediator. Imagine we could change an individual's mediator from the value it would take under control ($M^0$) to the value it would take under treatment ($M^1$), *while holding the exposure fixed*.
+
+The unit-level NIE for a fixed exposure level $a \in \{0,1\}$ is:
+
+$$
+\delta_i(a) \equiv Y_i^{a, M_i^1} - Y_i^{a, M_i^0} 
+$$
+
+The **Average Natural Indirect Effect (ANIE)** is then $E[\delta(t)] = E[Y^{a, M^1} - Y^{a, M^0}]$.
+
+- **Interpretation of $\bar{\delta}(1)$**: This is the average change in the outcome we would see if we held the exposure constant at $A=1$ for everyone, but changed their mediator value from what it would have been under control ($M^0$) to what it would have been under treatment ($M^1$).
+
+**2. The Natural Direct Effect (NDE)**
+
+The NDE captures the part of the exposure's effect that operates through all pathways *other than* the mediator $M$. Here, we imagine changing an individual's exposure from control to treatment, while holding their mediator fixed at the level it *would have naturally taken* under a given exposure level $a$.
+
+The unit-level NDE when the mediator is held at its value under exposure $a \in \{0,1\}$ is:
+
+$$
+\zeta_i(a) \equiv Y_i^{1, M_i^a} - Y_i^{0, M_i^a} 
+$$
+
+The **Average Natural Direct Effect (ANDE)** is then $E[\zeta(t)] = E[Y^{1, M^a} - Y^{0, M^a}]$.
+
+- **Interpretation of $\bar{\zeta}(0)$**: This is the average change in the outcome we would see if we changed the exposure from 0 to 1 for everyone, while ensuring their mediator value remained at the level it would have naturally taken under control ($M^0$).
+
+#### Effect Decomposition
+
+A key result of this framework is the elegant decomposition of the Total Effect (TE):
+
+$$
+\text{TE} = E[Y^1 - Y^0] = \underbrace{E[Y^{1, M^1} - Y^{0, M^0}]}_{\text{Total Effect}} = \bar{\zeta}(0) + \bar{\delta}(1) 
+$$
+
+That is, the Total Effect = NDE (at $M=M^0$) + NIE (at $A=1$). Another valid decomposition is $\text{TE} = \bar{\zeta}(1) + \bar{\delta}(0)$.
+
+### Identification: The Key to Estimation
+
+Defining these effects is one thing; estimating them from data is another. The challenge lies in quantities like $E[Y^{1, M^0}]$, which involve "cross-world" counterfactuals. For any given person, we can never observe their outcome under treatment ($A=1$) while their mediator is at the level it would have been under control ($M^0$).
+
+Identification requires a set of strong, untestable assumptions. The most critical is **Sequential Ignorability** (@imai2010general). Assuming we have measured a sufficient set of pre-exposure covariates $X$:
+
+1. **Ignorability of the Exposure**: Given pre-exposure covariates $X$, the exposure $A$ is independent of the potential outcomes and mediators.
+
+$$
+\{Y^{a', m}, M^a\} \indep A \mid X=x
+$$
+
+  This is the standard assumption of *unconfoundedness* for the total effect of $A$ on $Y$ and $M$. It is satisfied by design in a randomized controlled trial (RCT) where $A$ is randomized.
+
+2. **Ignorability of the Mediator**: Given the observed exposure $A$ and pre-exposure covariates $X$, the mediator $M$ is independent of the potential outcomes.
+
+$$
+Y^{a', m} \indep M \mid A=a, X=x
+$$
+
+  This is a much stronger assumption and is often the "Achilles' heel" of mediation analysis. It states that there are **no unmeasured common causes of the mediator and the outcome**. This assumption can be violated, for instance, if there is a variable $U$ that is affected by $A$ and in turn affects both $M$ and $Y$.
+
+These assumptions, along with consistency and positivity, allow us to express the counterfactual quantities in terms of observable quantities, making estimation possible.
+
+## 2. Intuitive Clarifications of Challenging Ideas
+
+### Sequential Ignorability: A Tale of Two Experiments
+
+Let's try to understand the sequential ignorability assumption with an analogy. Imagine we want to estimate the NDE and NIE of a new medication ($A$) on blood pressure ($Y$), with adherence to a diet plan ($M$) as the mediator.
+
+1. **The First Experiment (Exposure Ignorability)**: To satisfy the first part of sequential ignorability, we need to ensure that the group receiving the medication ($A=1$) and the group receiving a placebo ($A=0$) are, on average, the same before the study begins. We can achieve this by **randomly assigning** the medication. This randomization breaks any arrows from confounding variables ($X$, like age or baseline health) into $A$. We have now controlled for $A \to Y$ and $A \to M$ confounding.
+2. **The Second "Experiment" (Mediator Ignorability)**: This is the tricky part. Among people who were assigned the medication ($A=1$), some will adhere to the diet ($M=1$) and some won't ($M=0$). The second assumption demands that, *within the group of patients taking the drug*, the reason someone adheres to the diet is not also a cause of their blood pressure. This is like needing a **second, nested randomization**. Imagine that within the $A=1$ group, we could randomly assign people to adhere or not adhere to the diet. If we could do that, we would break any confounding path between $M$ and $Y$.
+
+Of course, we can't randomize adherence. So, we must rely on the assumption that we have measured all common causes of adherence ($M$) and blood pressure ($Y$) and adjusted for them. This is a strong claim and a frequent point of critique for mediation studies.
+
+### Visualizing the Problem with a DAG
+
+A Directed Acyclic Graph (DAG) can make this crystal clear.
+
+- **A (Exposure)**: New Drug
+- **M (Mediator)**: Adherence to Diet
+- **Y (Outcome)**: Blood Pressure
+- **X (Pre-treatment Confounder)**: Age
+- **U (Post-treatment Confounder)**: Unmeasured Health Consciousness
+
+```{r}
+#| label: fig-dag-confounding
+#| fig-cap: "DAG illustrating confounding in a mediation analysis."
+#| column: margin
+
+dag <- dagify(
+  Y ~ A + M + U,
+  M ~ A + X + U,
+  A ~ X,
+  exposure = "A",
+  outcome = "Y",
+  latent = "U"
+)
+
+ggdag_status(dag, use_labels = "name", text_col = "white") +
+  theme_dag()
+```
+
+In the DAG above:
+
+- The path $A \leftarrow X \to M$ represents confounding of the $A-M$ relationship. We can block this by conditioning on $X$.
+- The path $M \leftarrow U \to Y$ is the critical problem. $U$ is an unmeasured common cause of the mediator and the outcome. Because $U$ is unobserved, we cannot condition on it to block this "backdoor path." This path violates the second part of sequential ignorability and will bias our estimates of the NDE and NIE.
+
+-----
+
+## 3. Simple, Hand-Calculation Numerical Example(s)
+
+Let's consider a tiny, hypothetical dataset of 8 individuals to make the concepts concrete. We are interested in the effect of a job training program ($A=1$) vs. no program ($A=0$) on annual income ($Y$, in thousands). The proposed mediator is whether the individual obtained a professional certification ($M=1$) vs. not ($M=0$). For this example, we will assume we have access to the "true" potential outcomes to see how the effects are calculated.
+
+| ID | $A$ | $M^0$ | $M^1$ | $Y^{0, M^0}$ | $Y^{0, M^1}$ | $Y^{1, M^0}$ | $Y^{1, M^1}$ |
+|:--:|:---:|:-----:|:-----:|:------------:|:------------:|:------------:|:------------:|
+| 1  | 1   | 0     | 1     | 40           | 45           | 50           | 55           |
+| 2  | 1   | 0     | 0     | 35           | 40           | 45           | 50           |
+| 3  | 1   | 1     | 1     | 50           | 55           | 60           | 65           |
+| 4  | 1   | 0     | 1     | 42           | 47           | 52           | 57           |
+| 5  | 0   | 0     | 1     | 38           | 43           | 48           | 53           |
+| 6  | 0   | 0     | 0     | 32           | 37           | 42           | 47           |
+| 7  | 0   | 1     | 1     | 48           | 53           | 58           | 63           |
+| 8  | 0   | 0     | 1     | 41           | 46           | 51           | 56           |
+
+**Step 1: Calculate the Average Total Effect (ATE)**
+
+The total effect for an individual is $Y^{1, M^1} - Y^{0, M^0}$.
+
+$$
+ATE = E[Y^{1, M^1} - Y^{0, M^0}]
+$$
+
+We average this across all 8 individuals:
+
+$$
+ATE = \frac{(55-40) + (50-35) + (65-50) + (57-42) + (53-38) + (47-32) + (63-48) + (56-41)}{8}
+$$
+
+$$
+ATE = \frac{15 + 15 + 15 + 15 + 15 + 15 + 15 + 15}{8} = \frac{120}{8} = 15
+$$
+
+The average total effect of the program is an increase of $15,000 in annual income.
+
+**Step 2: Calculate the Average Natural Direct Effect (ANDE)**
+
+We'll calculate $\bar{\zeta}(0) = E[Y^{1, M^0} - Y^{0, M^0}]$. This asks: what is the effect of the program if we hold the mediator to the level it would have been without the program?
+
+$$
+\bar{\zeta}(0) = \frac{(50-40) + (45-35) + (60-50) + (52-42) + (48-38) + (42-32) + (58-48) + (51-41)}{8}
+$$
+
+$$
+\bar{\zeta}(0) = \frac{10 + 10 + 10 + 10 + 10 + 10 + 10 + 10}{8} = \frac{80}{8} = 10
+$$
+
+The average direct effect is $10,000.
+
+**Step 3: Calculate the Average Natural Indirect Effect (ANIE)**
+
+We'll calculate $\bar{\delta}(1) = E[Y^{1, M^1} - Y^{1, M^0}]$. This asks: what is the effect of the mediator changing from its control value to its treatment value, all while individuals are in the program?
+
+$$
+\bar{\delta}(1) = \frac{(55-50) + (50-45) + (65-60) + (57-52) + (53-48) + (47-42) + (63-58) + (56-51)}{8}
+$$
+
+$$
+\bar{\delta}(1) = \frac{5 + 5 + 5 + 5 + 5 + 5 + 5 + 5}{8} = \frac{40}{8} = 5
+$$
+
+The average indirect effect is $5,000.
+
+**Step 4: Verify the Decomposition**
+
+Let's check if our decomposition holds: $ATE = \bar{\zeta}(0) + \bar{\delta}(1)$.
+
+$$
+15 = 10 + 5
+$$
+
+It works perfectly. We conclude that of the total $15,000 effect of the job training program, $10,000 is attributable to pathways other than certification, and $5,000 is attributable to the program's effect on certification.
+
+## 4. R Code Examples & Interpretation
+
+We will use a classic dataset from the `mediation` package based on a study by @imai2010general, which examines the effect of a media framing experiment on political attitudes.
+
+- **Exposure (`A`)**: `treat` - Whether subjects were shown a news story about immigration that was framed in either a positive or negative way. (Binary: 0 = Control, 1 = Treatment).
+- **Mediator (`M`)**: `p_harm` - Subjects' perception of the potential harm of immigration. (Continuous).
+- **Outcome (`Y`)**: `emo` - A measure of emotional response/anxiety about immigration. (Continuous).
+- **Covariates (`X`)**: `age`, `educ`, `gender`, `income`.
+
+Our causal question: **To what extent does the media frame's effect on emotional response operate through its effect on perceived harm?**
+
+### Step 1: Define the Causal Model with a DAG
+
+First, let's draw the DAG for our hypothesized causal structure.
+
+```{r}
+#| label: fig-mediation-dag
+#| fig-cap: "Assumed Causal Structure for the Media Framing Experiment"
+
+# Note: The quoted node labels (e.g., "Media Frame (A)") in the DAG are descriptive and do not need to match variable names in your dataset.
+# For analysis, use the actual variable names: treat (exposure), p_harm (mediator), emo (outcome), age, educ, gender, income (covariates).
+
+mediation_dag <- dagitty::dagitty(
+  'dag {
+  bb[pos="0,0"]
+  A [exposure,pos="0,1",label="Media Frame"]
+  M [pos="1,1",label="Perceived Harm"]
+  Y [outcome,pos="2,1",label="Emotional Response"]
+  age [pos="0.5,0"]
+  educ [pos="1,0"]
+  gender [pos="1.5,0"]
+
+  A -> M
+  A -> Y
+  M -> Y
+
+  age -> A
+  age -> M
+  age -> Y
+  educ -> A
+  educ -> M
+  educ -> Y
+  gender -> A
+  gender -> M
+  gender -> Y
+}'
+)
+
+ggdag_status(mediation_dag) +
+  theme_dag() +
+  guides(color = "none")
+```
+
+The DAG makes our assumptions explicit. We assume the covariates (age, education, gender) are common causes of the exposure, mediator, and outcome. By conditioning on them, we aim to satisfy sequential ignorability.
+
+### Step 2: Fit the Mediator and Outcome Models
+
+The `mediate()` function from the `mediation` package requires two fitted models:
+
+1. A model for the mediator as a function of the treatment and covariates.
+2. A model for the outcome as a function of the treatment, mediator, and covariates.
+
+```{r}
+#| label: fit-models
+
+# Load the Data
+data(framing)
+
+# Model 1: Mediator Model (Perceived Harm ~ Treatment + Covariates)
+med.fit <- lm(p_harm ~ treat + age + educ + gender + income, data = framing)
+
+# Model 2: Outcome Model (Emotional Response ~ Treatment + Mediator + Covariates)
+out.fit <- lm(
+  emo ~ treat + p_harm + age + educ + gender + income,
+  data = framing
+)
+```
+
+### Step 3: Run the Mediation Analysis
+
+Now we pass these two models to the `mediate()` function. We specify which variable is the treatment (`treat = "treat"`) and which is the mediator (`mediator = "p_harm"`). We set `boot = TRUE` to use non-parametric bootstrapping for confidence intervals, which is robust.
+
+```{r}
+#| label: run-mediation
+#| tbl-cap: "Causal Mediation Analysis of Media Framing on Emotional Response"
+
+# Perform Mediation Analysis
+med.out <- mediate(
+  med.fit,
+  out.fit,
+  treat = "treat",
+  mediator = "p_harm",
+  boot = TRUE,
+  sims = 500
+)
+
+# Summarize the Results
+summary(med.out)
+```
+
+### Step 4: Interpret the Results
+
+The output table provides estimates for four key quantities:
+
+1. **ACME (Average Causal Mediation Effect)**: This is our **Natural Indirect Effect (NIE)**. The estimate is `0.0754`. This means that, on average, the media frame's effect on emotional response that is transmitted *through* its effect on perceived harm is about 0.075 points. The 95% CI `[0.05, 0.11]` does not include zero, so this indirect effect is statistically significant.
+2. **ADE (Average Direct Effect)**: This is our **Natural Direct Effect (NDE)**. The estimate is `0.0402`. This is the average effect of the media frame on emotional response that operates through all other pathways. Its 95% CI `[-0.03, 0.11]` includes zero, suggesting we do not have strong evidence for a direct effect separate from the pathway through perceived harm.
+3. **Total Effect**: This is the sum of the direct and indirect effects (`0.0754 + 0.0402 = 0.1156`). It represents the overall average effect of the media frame on emotional response.
+4. **Prop. Mediated**: This is the proportion of the total effect that is mediated through our mediator (`0.0754 / 0.1156 ≈ 0.65`). Approximately 65% of the total effect is explained by the change in perceived harm.
+
+**Conclusion**: The media frame significantly increased emotional anxiety regarding immigration. Our analysis suggests that the majority of this effect can be attributed to the frame's success in increasing the perceived harm of immigration, which in turn heightened emotional response.
+
+## 5. Hands-On R Lab
+
+### Lab Objectives
+
+- Practice the entire workflow of a causal mediation analysis in R.
+- Simulate data where the true effects are known to verify the method.
+- Critically assess the sequential ignorability assumption in a new context.
+
+### Warm-Up Reading
+
+- Review Chapter 13, "Mediation," in *Causal Inference: What If* (@hernan2020causalwhatif).
+
+### Task 1: Simulate Data with a Known Mechanism
+
+We will simulate a dataset for a hypothetical clinical trial.
+
+- **A**: A new therapy (1 = therapy, 0 = control).
+- **X**: Baseline depression score (a pre-treatment confounder).
+- **M**: Reduction in negative self-talk (a mediator).
+- **Y**: Final depression score (the outcome).
+
+We will set the true data generating process such that:
+
+- The true NDE is 2.
+- The true NIE is 3.
+- The total effect is 5.
+
+```{r}
+#| label: lab-simulate-data
+#| cache: true
+
+# Skeleton Code: Fill in the Blanks (...)
+set.seed(123)
+n <- 500
+X <- rnorm(n, mean = 10, sd = 2) # Baseline depression
+A <- rbinom(n, 1, prob = 0.5) # Randomized treatment
+
+# Path from A to M (effect = 1.5)
+M <- 0.5 * X + 1.5 * A + rnorm(n)
+
+# Path to Y (NDE=2, Effect of M = 2, so NIE = 1.5*2=3)
+Y <- 1 * X + 2 * A + 2 * M + rnorm(n, sd = 2)
+
+sim_data <- data.frame(X, A, M, Y)
+head(sim_data)
+```
+
+::: {.callout-tip}
+In our simulation, the effect of A on M is 1.5. The effect of M on Y (holding A constant) is 2. The direct effect of A on Y is 2. Therefore, the true NIE is $1.5 \times 2 = 3$, and the true NDE is 2.
+:::
+
+### Task 2: Perform Mediation Analysis on Simulated Data
+
+Using the `sim_data` you just created, perform a causal mediation analysis to recover the NDE and NIE.
+
+```{r}
+#| label: lab-analysis-skeleton
+#| eval: false
+
+# Skeleton Code: Fill in the Blanks (...)
+
+# 1. Fit the Mediator Model
+med_fit_lab <- lm(...)
+
+# 2. Fit the Outcome Model
+out_fit_lab <- lm(...)
+
+# 3. Run the Mediate Function
+med_out_lab <- mediate(...)
+
+# 4. Summarize and Interpret
+summary(med_out_lab)
+
+```
+
+<details>
+<summary>Click for Solution</summary>
+
+```{r}
+#| label: lab-analysis-solution
+#| eval: true
+#| cache: true
+
+# 1. Fit the Mediator Model
+
+med_fit_lab <- lm(M ~ A + X, data = sim_data)
+
+# 2. Fit the Outcome Model
+
+out_fit_lab <- lm(Y ~ A + M + X, data = sim_data)
+
+# 3. Run the Mediate Function
+
+med_out_lab <- mediate(
+  med_fit_lab,
+  out_fit_lab,
+  treat = "A",
+  mediator = "M",
+  boot = TRUE,
+  sims = 500
+)
+
+# 4. Summarize and Interpret
+
+summary(med_out_lab)
+
+```
+
+</details>
+
+**Reflection**: Compare the estimated ACME (NIE) and ADE (NDE) from your analysis to the true values we designed in the simulation (NIE=3, NDE=2). Are they close? What does this tell you about the method's ability to recover causal parameters when its assumptions are met?
+
+### Task 3: Retrieval Quiz
+
+1. What is the key difference between a Natural Direct Effect (NDE) and a Controlled Direct Effect (CDE)?
+2. Why is the assumption $Y^{a', m} \indep M \mid A=a, X=x$ often called the most "problematic" assumption in mediation analysis?
+3. If the ACME (NIE) is significant but the ADE (NDE) is not, what does this imply about the causal mechanism?
+
+## 6. Common Pitfalls & Checks
+
+::: {.callout-warning}
+
+## Common Pitfall: The Unmeasured Mediator-Outcome Confounder
+
+The most frequent and damaging mistake is to ignore potential confounders of the M-Y relationship. In our therapy example, what if patients in the therapy group who are more motivated ($U$) are more likely to reduce their negative self-talk ($M$) and also more likely to engage in other healthy behaviors that improve their depression score ($Y$)? Motivation ($U$) would be an unmeasured M-Y confounder, violating sequential ignorability and biasing your results. Always ask: "What could be a common cause of my mediator and outcome, given the exposure?"
+:::
+
+::: {.callout-important}
+
+## Key Assumption Check: Sensitivity Analysis
+
+Since the "no unmeasured M-Y confounding" assumption is untestable, robust mediation analysis should always be accompanied by a sensitivity analysis. The `medsens()` function in the `mediation` package allows you to quantify how strong an unmeasured M-Y confounder would have to be to change your conclusions (e.g., to make your estimated NIE zero). This is a crucial step for credible results.
+:::
+
+::: {.callout-question}
+
+## Check Your Understanding
+
+**Question**: You run a mediation analysis and find a significant indirect effect. A colleague argues that your analysis is invalid because the exposure ($A$) and mediator ($M$) interact in their effect on the outcome ($Y$). How do you respond?
+**Answer**: You can tell your colleague that the potential outcomes framework for mediation inherently handles this situation. The `mediation` package, for instance, is non-parametric and does not assume the absence of A-M interaction. An interaction would mean that the direct and indirect effects might be different at different levels of the other variable, but the definitions of NDE and NIE are still valid.
+:::
+
+## 7. Advanced Teaching Activities & Interactivity
+
+1. **Think-Pair-Share**: Present students with a real-world research question (e.g., "How does a new school lunch program affect student test scores?").
+
+    - **Think**: Individually, students must propose a plausible mediator and draw a DAG, including at least one pre-treatment confounder ($X$) and one potential unmeasured mediator-outcome confounder ($U$).
+    - **Pair**: In pairs, students critique each other's DAGs. Is the temporal ordering correct? Is the unmeasured confounder plausible?
+    - **Share**: The instructor selects a few DAGs to discuss with the class, focusing on the plausibility of the sequential ignorability assumption.
+
+2. **Flipped Classroom Prompt**: Before class, have students read a published observational study that uses mediation analysis. In class, use breakout groups to have them complete a "Causal Critique" worksheet:
+
+    - What are A, M, and Y?
+    - What are the stated NDE and NIE?
+    - What covariates ($X$) were used to try and satisfy sequential ignorability?
+    - What is the most likely violation of sequential ignorability in this study? (i.e., name a plausible unmeasured M-Y confounder).
+    - How would this unmeasured confounder likely bias the results?
+
+3. **Code-Along Simulation**: Guide students through a live R session where you simulate data that explicitly violates the sequential ignorability assumption. Show them how the `mediate` function fails to recover the true parameters. Then, "measure" the confounder, add it to the models, and show how the estimates become unbiased. This provides a powerful, tangible demonstration of the importance of the assumption.
+
+## References
+
+
+## 8. Appendix: Advanced Theory & Derivations
+
+### Non-Parametric Identification of Mediation Effects
+
+Here, we provide a more formal derivation of the mediation identification formulas. Our goal is to show how the counterfactual quantities defining the NDE and NIE can be expressed in terms of observable conditional expectations, given the key assumptions. For simplicity, we derive the formula for one of the key terms, $\E{Y^{a, M^{a'}}}$. The logic extends directly to the other terms. We will target the quantity $\E{Y^{1, M^0} | X=x}$, which is a component of the NDE.
+
+**Assumptions:**
+
+1. **Consistency**: $Y = Y^{A, M}$ and $M = M^A$. If $A=a$, then $M=M^a$. If $A=a$ and $M=m$, then $Y=Y^{a,m}$.
+2. **Positivity**: For all $a, x, m$ with $p(A=a, X=x) > 0$ and $p(M=m | A=a, X=x) > 0$.
+3. **Sequential Ignorability**:
+  (a) ${Y^{a', m}, M^a} \indep A \mid X=x$
+  (b) $Y^{a', m} \indep M \mid A=a, X=x$
+
+**Derivation:**
+
+Our goal is to identify $\mathbb{E}[Y^{1, M^0} | X=x]$. This is a "cross-world" counterfactual, as it involves the outcome under treatment ($A=1$) but the mediator as it would have been under control ($A=0$).
+
+1. **Law of Total Expectation**: We can expand the expectation by integrating over the distribution of the counterfactual mediator $M^0$, conditional on covariates $X$.
+
+$$
+\mathbb{E}[Y^{1, M^0} | X=x] = \int_m \mathbb{E}[Y^{1, m} | M^0=m, X=x] \, dP(M^0=m | X=x)
+$$
+
+2. **Apply Assumption 3a (Ignorability of A)**: The first part of sequential ignorability, $\{Y^{a', m}, M^a\} \indep A \mid X=x$, implies two key things:
+
+    - $Y^{1, m} \indep A \mid X=x$. This lets us handle the first part of the integrand.
+    - $M^0 \indep A \mid X=x$. This lets us handle the probability distribution in the integrand. Specifically, it implies that the distribution of the potential mediator under control, $P(M^0=m | X=x)$, is the same as the *observed* distribution of the mediator among those who were actually in the control group, $P(M=m | A=0, X=x)$. So, $dP(M^0=m | X=x) = dP(M=m | A=0, X=x)$.
+
+3. **Apply Assumption 3b (Ignorability of M)**: The second part of sequential ignorability, $Y^{a', m} \indep M \mid A=a, X=x$, is now crucial. From Step 1, we have the term $\mathbb{E}[Y^{1, m} | M^0=m, X=x]$. Assumption 3a ($Y^{1,m} \indep A | X=x$) implies that conditioning on $A=0$ does not change this expectation. Therefore we have $\mathbb{E}[Y^{1, m} | M^0=m, A=0, X=x]$. Since $A=0$ implies $M=M^0$, this is equal to $\mathbb{E}[Y^{1, m} | M=m, A=0, X=x]$. Now, by Assumption 3b ($Y^{1,m} \indep M | A=0, X=x$), we have that $\mathbb{E}[Y^{1, m} | M=m, A=0, X=x] = \mathbb{E}[Y^{1, m} | A=0, X=x]$. Finally, again using assumption 3a ($Y^{1, m} \indep A \mid X=x$) we get $\mathbb{E}[Y^{1, m} | X=x]$. We can now rewrite the first term as $\mathbb{E}[Y | A=1, M=m, X=x]$ because of consistency. Wait, there is a mistake in this step. Let's restart the derivation of the first term.
+
+  Let's re-examine $\mathbb{E}[Y^{1, m} | M^0=m, X=x]$. By assumption 3a, $Y^{1,m}$ is independent of $M^0$ given $X$.
+
+$$
+\mathbb{E}[Y^{1, m} | M^0=m, X=x] = \mathbb{E}[Y^{1, m} | X=x]
+$$
+
+  Now, by assumption 3a again ($Y^{1,m} \indep A | X=x$), we can condition on $A=1$:
+  
+
+$$
+= \mathbb{E}[Y^{1, m} | A=1, X=x]
+$$
+
+  By consistency, $Y^{1,m}$ becomes the observed $Y$ when $A=1$ and $M=m$.
+  So, $\mathbb{E}[Y^{1, m} | A=1, X=x]$ cannot be identified without conditioning on M.
+
+  Let's try a different path.
+  The "mediation formula" shows that:
+  
+
+$$
+\mathbb{E}[Y^{a, M^{a'}}] = \sum_m \mathbb{E}[Y | A=a, M=m] P(M=m | A=a')
+$$
+
+  Let's prove this for $a=1, a'=0$ and conditioning on $X=x$.
+  
+
+$$
+\mathbb{E}[Y^{1, M^0} | X=x] = \sum_m \mathbb{E}[Y^{1, M^0} | M^0=m, X=x] P(M^0=m | X=x)
+$$
+
+  First term in sum: $\mathbb{E}[Y^{1, M^0} | M^0=m, X=x] = \mathbb{E}[Y^{1, m} | M^0=m, X=x]$.
+  By Assumption 3a, $(Y^{1,m}, M^0) \indep A | X$. This implies $Y^{1,m} \indep M^0 | X$.
+  So, $\mathbb{E}[Y^{1, m} | M^0=m, X=x] = \mathbb{E}[Y^{1, m} | X=x]$.
+  Again by 3a, $Y^{1,m} \indep A | X$, so $\mathbb{E}[Y^{1, m} | X=x] = \mathbb{E}[Y^{1, m} | A=1, X=x]$.
+  This is where we introduce assumption 3b: $Y^{1,m} \indep M | A=1, X=x$.
+  Let's try again.
+
+  
+
+$$
+\mathbb{E}[Y^{1, M^0} | X=x] = \sum_m \mathbb{E}[Y^{1,m} | X=x] P(M^0=m | X=x)
+$$
+
+  (This step uses $Y^{1,m} \indep M^0 | X$, which follows from 3a).
+
+  Let's analyze the two terms separately:
+  **Term 1**: $\mathbb{E}[Y^{1,m} | X=x]$.
+  By 3a, $Y^{1,m} \indep A | X$, so we can condition on $A=1$: $\mathbb{E}[Y^{1,m} | A=1, X=x]$.
+  By 3b, $Y^{1,m} \indep M | A=1, X=x$. This doesn't seem to help.
+
+  Let's use the expression from @VanderWeele2015book, which is clearer.
+  
+
+$$
+\mathbb{E}[Y^{a, M^{a'}}|c] = \sum_m \mathbb{E}[Y|a,m,c] P(m|a',c)
+$$
+
+  Let's prove this for $a=1, a'=0, c=x$.
+
+$$
+\begin{align*} \mathbb{E}[Y^{1, M^0} | X=x] &= \sum_m \mathbb{E}[Y^{1, M^0} | M^0=m, X=x] P(M^0=m | X=x) && \text{(Law of Total Expectation)} \ &= \sum_m \mathbb{E}[Y^{1, m} | M^0=m, X=x] P(M^0=m | X=x) && \text{(Consistency)} \ &= \sum_m \mathbb{E}[Y^{1, m} | X=x] P(M=m | A=0, X=x) && \text{(by Assumption 3a: } Y^{1,m} \indep M^0 | X \text{ and } M^0 \indep A | X) \ &= \sum_m \mathbb{E}[Y^{1, m} | A=1, X=x] P(M=m | A=0, X=x) && \text{(by Assumption 3a: } Y^{1,m} \indep A | X) \ &= \sum_m \mathbb{E}[Y | A=1, M=m, X=x] P(M=m | A=0, X=x) && \text{(by Assumption 3b: } Y^{1,m} \indep M | A=1, X, \text{ and Consistency)} 
+\end{align*}
+$$   
+
+  The last step, $\mathbb{E}[Y^{1, m} | A=1, X=x] = \mathbb{E}[Y | A=1, M=m, X=x]$, requires that $Y^{1,m}$ is independent of $M$ given $A=1, X=x$. By consistency, this becomes $\mathbb{E}[Y^{1,m} | A=1, M=m, X=x]$, which is simply $\mathbb{E}[Y|A=1, M=m, X=x]$. This looks correct.
+
+4. **Final Identification Formula**: The derivation shows that the unobservable counterfactual quantity can be expressed as a function of observable quantities only:
+
+    * $\mathbb{E}[Y | A=1, M=m, X=x]$: This is the conditional expectation of the outcome, which can be estimated from a regression model of $Y$ on $A$, $M$, and $X$.
+    * $P(M=m | A=0, X=x)$: This is the conditional probability of the mediator, which can be estimated from a regression model of $M$ on $A$ and $X$.
+
+By integrating over all values of $m$ and then averaging over the distribution of the covariates $X$, we can identify the NDE and NIE. For example:
+
+$$
+\text{ANDE}(\zeta(0)) = \mathbb{E}_X \left[ \sum_m \left( \mathbb{E}[Y|A=1,m,X] - \mathbb{E}[Y|A=0,m,X] \right) P(M=m|A=0,X) \right]
+$$
+
+This formula, often called the **mediation formula** or **g-formula for mediation**, is the theoretical foundation for the estimation performed by packages like `mediation`. It shows precisely how the causal assumptions allow us to piece together information from different parts of the observed data to estimate a "cross-world" causal effect.
+

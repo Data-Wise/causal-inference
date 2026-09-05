@@ -71,13 +71,13 @@ p1 <- ggdag_status(
 print(p1)
 
 
-p2 <- ggdag_status(
-  dag_model,
-  layout     = "manual"
-) +
-  labs(title = "Manual repel with after_stat(label)") +
-  theme_dag()
-print(p2)
+# p2 <- ggdag_status(
+#   dag_model,
+#   layout     = "manual"
+# ) +
+#   labs(title = "Manual repel with after_stat(label)") +
+#   theme_dag()
+# print(p2)
 
 ```
 
@@ -111,6 +111,16 @@ Let's break this down. We are worried about an unmeasured confounder `U`. Its po
 
 A large E-value means that these confounder associations would have to be very large to explain away the result, making our finding more **robust**. A small E-value means that even a weak confounder could explain away the finding, making it **fragile**.
 
+### Why Risk Ratios?
+
+This definition is inherently expressed in terms of **risk ratios** because:
+
+- Risk ratios are **collapsible**, making them directly interpretable in the context of confounding;
+- The “minimum strength of confounding” is naturally expressed as a *ratio of risks* rather than odds or standardized mean differences;
+- Odds ratios and standardized mean differences can both be *mapped* to approximate risk ratios.
+
+Therefore, even when your study reports an odds ratio or a mean difference, the E-value is conceptually about *risk ratio equivalence*.
+
 ### Extending the Logic
 
 While our focus is on unmeasured confounding, the logic of sensitivity analysis applies to other untestable assumptions:
@@ -122,28 +132,14 @@ While our focus is on unmeasured confounding, the logic of sensitivity analysis 
 
 The E-value concept is a direct descendant of **Rosenbaum's sensitivity analysis for matched pairs**. In the 1980s, Paul Rosenbaum developed a method to quantify how a binary unmeasured confounder would affect the odds of receiving treatment. His parameter, gamma ($\Gamma$), measures the maximum odds ratio by which two individuals with the same measured covariates might differ in their odds of treatment due to an unmeasured confounder. The analysis then determines how large $\Gamma$ must be to render the study's conclusions uncertain. The E-value generalizes this logic beyond matched pairs and expresses the result on the familiar risk ratio scale.
 
-## 2. Intuitive Clarifications of Challenging Ideas
-
-### Analogy: The Causal Speed Bump 🚗
-
-Think of your observed association (e.g., a Relative Risk of 2.0) as a car moving towards a causal conclusion. Unmeasured confounding (`U`) is a **speed bump** on the road.
-
--   A **small speed bump** (a weak confounder, like one with $RR_{AU}=1.2$ and $RR_{UY}=1.2$) might slow your car down a bit, but it won't stop it. Your conclusion remains largely intact.
--   A **large speed bump** (a strong confounder, like one with $RR_{AU}=4.0$ and $RR_{UY}=4.0$) could bring your car to a complete halt, "explaining away" your entire association.
-
-The **E-value tells you the minimum height of the speed bump required to stop your car.**
-
--   An **E-value of 4.0** means you need a speed bump of at least "height 4.0" to stop your car. Any confounder weaker than that cannot fully explain your result. This makes your finding quite robust.
--   An **E-value of 1.2** means a tiny speed bump can stop you. Your finding is very fragile.
-
-### What the E-value is NOT
+## What the E-value is NOT
 
 It's crucial to avoid common misinterpretations.
 
 1.  **The E-value does NOT measure the actual confounding in your study.** It tells you the minimum amount of confounding that *would be necessary* to create the observed association if the true causal effect were null. The actual confounding could be smaller or larger.
 2.  **A large E-value does NOT prove your effect is causal.** It only provides a measure of resilience against a *single* unmeasured confounder with specific properties. Multiple, weaker confounders acting in concert could still explain the result. It is a tool for skepticism, not a stamp of proof.
 
-## 3. Simple, Hand-Calculation Numerical Example
+## Simple, Hand-Calculation Numerical Example
 
 Let's make this concrete. Imagine a study on the effect of a new medication (`A=1`) versus a placebo (`A=0`) on recovery from an illness (`Y=1`).
 
@@ -203,9 +199,11 @@ This means that to explain away our observed RR of 2.0, an unmeasured confounder
 
 For example, `U` could be "low baseline severity". To explain the result, patients with low severity would have to be **3.41 times** more likely to receive the new medication *and* **3.41 times** more likely to recover, regardless of medication. An association of this magnitude is very strong and perhaps implausible, giving us some confidence that our result is not entirely spurious.
 
-## 4. R Code Examples & Interpretation
+## R Code Examples & Interpretation
 
-The `EValue` package in R makes these calculations trivial.
+### Why the `evalue` Package Converts other Measures to risk Ratios
+
+The package follows the logic from @vanderweele2017evalue and @mathur2018web: every input (OR, HR, MD, etc.) is first **translated to an approximate risk ratio** before computing the E-value. This ensures that the E-value is always interpreted on the risk ratio scale, which is the foundation of its definition.
 
 ### E-value for a Relative Risk (RR)
 
@@ -218,43 +216,166 @@ evalue_result_rr <- evalues.RR(est = 2.0)
 print(evalue_result_rr)
 ```
 
-**Interpretation:** The output confirms our hand calculation. The E-value for the point estimate of 2.0 is **3.41**. The table shows the trade-off: if the confounder-exposure RR ($RR_{AU}$) was, say, 5.8, the confounder-outcome RR ($RR_{UY}$) would only need to be 1.5 to explain the effect.
+**Interpretation:** The output confirms our hand calculation. The E-value for the point estimate of 2.0 is `r evalue_result_rr[2,1]`. This means that to explain away the entire association, an unmeasured confounder would need to be associated with both exposure and outcome by a risk ratio of at least `r round(evalue_result_rr[2,1],3)` each.
 
-### E-value for an Odds Ratio (OR) with a Confidence Interval
+## When Input is an **Odds Ratio (OR)**
 
-In practice, we care more about the robustness of our entire finding, including its statistical uncertainty. The most conservative approach is to calculate the E-value for the limit of the confidence interval that is closest to the null (1.0 for ratio measures).
+When you call:
 
-Suppose a case-control study reports an OR of 2.5 with a 95% CI of \[1.5, 4.17\]. We care most about the **1.5**, as it's the weakest effect compatible with our data.
+```r
+evalues.OR(est = 2.5, lo = 1.5, hi = 4.17, rare = FALSE)
+```
+
+the package converts the odds ratio to a **risk ratio (RR)** approximation.
+
+If the outcome is **not rare**, the relationship between OR and RR is nonlinear. For interpretability, the package uses the “equal causative strength” RR equivalent to the given OR.
+
+- If `rare = TRUE`, it assumes the event is rare (< 15%), so $RR \approx OR$.
+- If `rare = FALSE` (default), it adjusts for non-rare outcomes using the identity:
+
+<!-- 
+$$
+RR = \frac{OR}{1 - p_0 + (p_0 \times OR)}
+$${#eq-or-to-rr} 
+-->
+
+$$
+RR \approx \sqrt{OR}
+$${#eq-or-to-rr-approx}
+
+This yields the “Risk Ratio equivalent” column in your output.
+
+That’s why your output shows:
 
 ```{r}
+#| echo: false
 #| label: evalue-or
-
-# Calculate E-value for point estimate and CI
-evalue_result_or <- evalues.OR(est = 2.5, lo = 1.5, hi = 4.17, rare=FALSE)
+evalue_result_or <- evalues.OR(est = 2.5, lo = 1.5, hi = 4.17, rare = FALSE)
 print(evalue_result_or)
 ```
 
-**Interpretation:**
+Even though you started with an **odds ratio**, the function *converts* to the RR scale to preserve conceptual consistency with the E-value’s definition. Here, the RR equivalent of the OR of 2.5 is $\sqrt{2.5} \approx$  `r round(sqrt(2.5),3)`. Similarly, the RR equivalent of the lower confidence limit of 1.5 is $\sqrt{1.5} \approx$ `r round(sqrt(1.5),3)`.
 
--   **Point Estimate:** To explain away the OR of 2.5, we would need a confounder with an OR of **4.44** for both its association with the exposure and the outcome.
--   **Confidence Interval:** To shift the lower bound of the CI to the null value of 1.0, we would need a confounder with an OR of **2.37**. This is the more important number. We should report: "An unmeasured confounder associated with both the exposure and the outcome by an odds ratio of 2.37-fold each, above and beyond the measured covariates, could explain away the observed association, but weaker confounding could not."
+**Interpretation:** The E-value for the point estimate of RR = `r round(evalue_result_or[1,1],3)` is `r round(evalue_result_or[2,1],3)`, while the E-value for the lower confidence limit of `r round(evalue_result_or[1,2],3)` is `r round(evalue_result_or[2,2],3)`. This means that to explain away the entire association (including uncertainty), an unmeasured confounder would need to be associated with both exposure and outcome by a risk ratio of at least `r round(evalue_result_or[2,2],3)` each.
 
-### E-value for a Continuous Outcome
+::: {.callout-tip}
+When the lower confidence limit is present, always report the E-value for the limit closest to the null. This is a more conservative measure of robustness.
+:::
 
-The logic also applies to continuous outcomes. The function `evalues.MD` works with the standardized mean difference, $d = \frac{\mu_1 - \mu_0}{\sigma}$. You also need the standard deviation (`sd`) of the outcome.
 
-Imagine a study finds that a tutoring program increases student test scores by 5 points, and the standard deviation of scores is 10.
+### E-value for a Continuous Outcome (Standardized Mean Difference)
+
+The E-value framework was originally designed for binary outcomes on the risk ratio (RR) scale. However, its logic can be extended to continuous outcomes (e.g., test scores, blood pressure, income) from linear regression.
+
+To do this, we must first convert our finding into a **standardized mean difference (SMD)**, also known as **Cohen's $d$**. This puts the effect on a "scale-free" metric that can then be (approximately) converted to the RR scale that the E-value formula requires.
+
+**The logic follows three steps:**
+
+1. **Standardize the Effect:** Calculate the standardized mean difference, $d = \frac{\mu_1 - \mu_0}{\sigma}$, where $\mu_1 - \mu_0$ is the mean difference found in your study (your regression coefficient $\beta_1$) and $\sigma$ is the standard deviation of the outcome.
+2. **Convert $d$ to an "Equivalent RR":** The `EValue` package uses an approximation to find the risk ratio that would, in a hypothetical cohort, be equivalent to observing a standardized mean difference of $d$.
+3. **Calculate the E-value:** The standard E-value formula is then applied to this equivalent risk ratio.
+
+::: {.callout-note}
+
+
+### Cohen's d and its Standard Error
+
+**Cohen's d** [@cohen1988statistical]:
+
+$$
+d = \frac{\bar{X}_1 - \bar{X}_2}{s_p}
+$$
+
+Where pooled SD is: 
+$$
+s_p = \sqrt{\frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{n_1 + n_2 - 2}}
+$$
+
+**Standard Error for d** [@hedges2014statistical]:
+
+$$
+SE_d = \sqrt{\frac{n_1 + n_2}{n_1 n_2} + \frac{d^2}{2(n_1 + n_2)}}
+$$
+
+**Key Nuances:**
+
+- This formula assumes **equal population variances**
+- The term $\frac{d^2}{2(n_1 + n_2)}$ accounts for uncertainty in estimating the population standard deviation
+- With small samples (<20 per group), this can substantially underestimate the true SE
+:::
+
+### ✅ Worked Example 1 (Point Estimate)
+
+Imagine a study finds that a new tutoring program ($A=1$) increases student test scores ($Y$) by **5 points** compared to no program ($A=0$). The standard deviation of all test scores in the sample is **10 points**.
+
+**Question:** How robust is this 5-point finding to unmeasured confounding?
+
+### Step-by-Step Hand Calculation
+
+1. **Standardize the Effect (Calculate Cohen's $d$):**
+
+$$
+d = \frac{\text{Mean Difference}}{\text{Standard Deviation}} = \frac{5}{10} = 0.5
+$$
+
+This is a "medium" sized effect.
+
+2. **Convert $d$ to an Equivalent Risk Ratio ($RR_{equiv}$):**
+    The conversion formula used by the `EValue` package (derived from @vanderweele2017evalue) is $RR_{equiv} \approx \exp(0.91 \times d)$.
+
+$$
+RR_{equiv} \approx \exp(0.91 \times 0.5) = \exp(0.455) \approx 1.576
+$$
+
+This means a standardized mean difference of 0.5 is approximately as strong as an association with a Risk Ratio of 1.58.
+
+1. **Calculate the E-value from this $RR_{equiv}$:**
+    We use the standard E-value formula: $E = RR + \sqrt{RR \times (RR - 1)}$
+
+$$
+\begin{aligned}
+E\text{-value} & = 1.576 + \sqrt{1.576 \times (1.576 - 1)}\\
+&= 1.576 + \sqrt{1.576 \times 0.576}\\
+&= 1.576 + \sqrt{0.9079}\\
+& \approx 1.576 + 0.953 = 2.529
+\end{aligned}
+$$
+
+**R Code Implementation:**
+
+  The `EValue::evalues.MD()` function performs these steps for us automatically. We just provide the estimated Cohen's $d$ (`est`), and in case of the having the the standard error (`se`) of the estimate, we can provide that as well. The standard error is optional; if omitted, the function will compute the E-value for the point estimate only.
 
 ```{r}
-#| label: evalue-md
+#| label: evalue-md-old
+#| include: false
+#| tbl-cap: "E-value calculation for a standardized mean difference"
 
-# est = 5 point difference, sd = 10
-evalue_result_md <- evalues.MD(est = 5, sd = 10)
+# Est = 5 point Difference, sd = 10 points, n=100 per group
+
+#SE_d = \sqrt{\frac{n_1 + n_2}{n_1 n_2} + \frac{d^2}{2(n_1 + n_2)}}
+
+n1 <- n2 <- 100
+sd_pooled <- 10
+d_est <- 5/sd_pooled  # Cohen's d
+se_d<- sqrt((n1 + n2)/(n1 * n2) + (d_est^2)/(2 * (n1 + n2))) * sd_pooled  # Olkin's SE formula
+evalue_result_md <- EValue::evalues.MD(d_est, se_d)
 print(evalue_result_md)
 ```
 
-**Interpretation:** The standardized difference is $d = 5/10 = 0.5$. The corresponding E-value is **2.37**. This means an unmeasured confounder (e.g., student motivation) would need to be associated with both receiving tutoring and higher test scores with a strength equivalent to a risk ratio of 2.37 to explain this 5-point difference.
 
+```{r}
+#| label: evalue-md-new
+evalue_result_md <- EValue::evalues.MD(.5)
+print(evalue_result_md)
+```
+
+
+**Interpretation:**
+
+  - The `RR` row (1.58) shows the equivalent Risk Ratio corresponding to our $d=0.5$ effect.
+  - The `E-values` row (2.53) shows our final result, which matches our hand calculation. 
+  - For the lower confidence limit, the E-value is `r round(evalue_result_md[2,2],2)`
+  - **Conclusion:** To fully explain away our 5-point finding, an unmeasured confounder $U$ (e.g., student motivation) would need to be associated with *both* receiving tutoring ($A$) and test scores ($Y$) by a risk ratio of **2.53-fold each**, above and beyond any covariates we already adjusted for.
 
 ## 5. Hands-On R Lab
 
@@ -263,12 +384,6 @@ print(evalue_result_md)
 -   Practice calculating and interpreting E-values using the `EValue` package.
 -   Apply sensitivity analysis to a simulated dataset.
 -   Reflect on the role of unmeasured confounding in your own research domain.
-
-### Reading Warm-Up (Flipped Classroom)
-
-**Instructions:** Please read VanderWeele, T. J., & Ding, P. (2017). Sensitivity Analysis in Observational Research: Introducing the E-Value. *Annals of Internal Medicine*, 167(4), 268–274.
-
-**Question:** In one sentence, what is the primary question the E-value helps an investigator answer? *(Answer: The E-value helps an investigator determine how strong an unmeasured confounder's associations with the exposure and outcome would need to be to explain away the observed exposure-outcome association.)*
 
 ### Lab Setup: Simulating Data
 
@@ -288,7 +403,7 @@ L <- rnorm(n, 50, 10)
 
 # Treatment assignment A depends on L and U
 # Health conscious people (U=1) are more likely to join
-prob_A <- plogis(-2 + 0.05 * L + 1.2 * U)
+prob_A <- plogis(-2 + 0.05 * L + 2.5 * U)
 A <- rbinom(n, 1, prob_A)
 
 # Outcome Y depends on A, L, and U
@@ -320,24 +435,21 @@ naive_model <- lm(…, data = sim_data)
 summary(…)
 ```
 
-\<details\>
+<details>
 
-\<summary\>Click for Solution\</summary\>
+<summary>Click for Solution</summary>
 
 ```{r}
 #| label: lab-task-1-solution
 
 # Fit the naive model
-
 naive_model <- lm(Y ~ A, data = sim_data)
 
 # Summarize the model
-
 summary(naive_model)
-
 ```
 
-**Commentary:** The naive model shows an association of -9.84. It suggests the program reduces stress by nearly 10 points. But this is confounded by both `L` and `U`.
+**Commentary:** The naive model shows an association of `r round(coef(naive_model)[2],3)`. It suggests the program reduces stress by nearly `r round(coef(naive_model)[2],3)` points. But this is confounded by both `L` and `U`.
 
 </details>
 
@@ -356,31 +468,30 @@ adj_model <- lm(…, data = sim_data)
 summary(…)
 ```
 
-\<details\>
+<details>
 
-\<summary\>Click for Solution\</summary\>
+<summary>Click for Solution</summary>
 
 ```{r}
 #| label: lab-task-2-solution
 
 # Fit the adjusted model
-
 adj_model <- lm(Y ~ A + L, data = sim_data)
+adj_model_tbl <- broom::tidy(adj_model)
+adj_model_tbl
 
-# Summarize the model
-
-summary(adj_model)
+sigma(adj_model)  # Get the residual standard deviation
 ```
 
-**Commentary:** After adjusting for workload `L`, the effect estimate for `A` is **-7.14**. The association was attenuated, as we expected, but it's still large and statistically significant. This is the estimate we will subject to sensitivity analysis.
+**Commentary:** After adjusting for workload `L`, the effect estimate for `A` is `r round(coef(adj_model)[2],3)`. The association is almost `r round(coef(adj_model)[2]/(-5),1)` the size of the true effect (-5), indicating some residual confounding likely remains due to unmeasured `U`.
 
 </details>
 
 #### Task 3: Calculate the E-value
 
-This is our primary research finding: an adjusted effect of -7.14. But we know "health consciousness" (`U`) is an unmeasured confounder. How robust is our -7.14 estimate? Calculate the E-value for this point estimate.
+This is our primary research finding: an adjusted effect of `r round(coef(adj_model)[2],3)`. But we know "health consciousness" (`U`) is an unmeasured confounder. How robust is our `r round(coef(adj_model)[2],3)` estimate? Calculate the E-value for this point estimate.
 
-*Hint:* You'll need the outcome standard deviation, which you can get with `sd(sim_data$Y)`.
+We need to use the `values.OLS` function because our outcome is continuous. The first argument is the estimate, the second is the standard error of the estimate, and the third is the standard deviation of the outcome `Y`, or the residual standard deviation from the model.
 
 ```{r}
 #| label: lab-task-3-skeleton
@@ -388,28 +499,31 @@ This is our primary research finding: an adjusted effect of -7.14. But we know "
 
 # TODO: Get the standard deviation of the outcome Y
 outcome_sd <- sd(…)
+outcome_sd <- sigma(…)
 
 # TODO: Calculate the E-value for the point estimate from adj_model
 # Remember the estimate is negative, but E-values are for positive associations,
 # so use the absolute value.
-evalues.MD(est = abs(…), sd = …)
+evalues.OLS(est = , se = , sd = )
 ```
 
-\<details\>
+<details>
 
-\<summary\>Click for Solution\</summary\>
+<summary>Click for Solution</summary>
 
 ```{r}
 #| label: lab-task-3-solution
 
 # Get the standard deviation of the outcome Y
 
-outcome_sd <- sd(sim_data$Y)
-print(paste("Outcome SD:", round(outcome_sd, 2)))
+mse_adj <- sigma(adj_model)
+print(paste("Outcome SD:", round(mse_adj, 2)))
+
+se_trt <- adj_model_tbl[adj_model_tbl$term == "A", "std.error"] |> as.numeric()
 
 # Calculate the E-value for the point estimate from adj_model
-
-evalues.MD(est = abs(-7.14), sd = outcome_sd)
+evalue_ols <- evalues.OLS(est = abs(coef(adj_model)[2]), se = se_trt, sd = mse_adj)
+evalue_ols
 ```
 
 </details>
@@ -422,73 +536,48 @@ Write one or two sentences interpreting the E-value you just calculated, in the 
 
 <summary>Click for Solution</summary>
 
-**Interpretation:** The E-value is **2.21**. This means that the unmeasured confounder, health consciousness, would need to be associated with both joining the wellness program and having lower stress by a risk ratio of at least 2.21-fold each, conditional on baseline workload, to fully explain away the observed effect. A confounder weaker than this cannot account for the entire effect.
+**Interpretation:** The E-value for the absolute value of the point estimate of `r abs(round(coef(adj_model)[2],2))` (RR= `r round(evalue_ols[1,1],2)`) is `r round(evalue_ols[2,1],2)` and for the lower confidence limit of `r round(evalue_ols[1,2],2)` is `r round(evalue_ols[2,2],2)`.
+
+This means that the unmeasured confounder, health consciousness, would need to be associated with both joining the wellness program and having lower stress by a risk ratio of at least `r round(evalue_ols[2,2],2)`-fold each, conditional on baseline workload, to fully explain away the observed effect. A confounder weaker than this cannot account for the entire effect.
 
 </details>
 
-#### Task 5 (Bonus): Check Against Reality
-
-We have "God's eye view" because we simulated the data. Let's calculate the *actual* strength of our unmeasured confounder `U`.
-
-1.  What is the association between `U` and `A` (health consciousness and joining the program), conditional on `L`? This is our $RR_{AU}$.
-2.  What is the association between `U` and `Y` (health consciousness and stress), conditional on `A` and `L`? This gives us $RR_{UY}$.
-
-```{r}
-#| label: lab-task-5-solution
-
-# 1. Association of U on A (RR_AU)
-# We can approximate this with an OR from a logistic regression
-u_a_model <- glm(A ~ U + L, data = true_data, family = "binomial")
-# The OR is exp(coef)
-rr_au_approx <- exp(coef(u_a_model)["U"])
-print(paste("Approximate RR_AU:", round(rr_au_approx, 2)))
-
-# 2. Association of U on Y (RR_UY)
-# This is a bit trickier, as Y is continuous. We can get the standardized effect.
-# From our simulation, the coefficient was -10.
-# So the standardized mean difference is abs(-10) / sd(Y)
-smd_uy <- abs(-10) / sd(true_data$Y)
-# We can convert this to an approximate RR
-rr_uy_approx <- exp(0.91 * smd_uy) # A common approximation
-print(paste("Approximate RR_UY:", round(rr_uy_approx, 2)))
-```
-
-**Commentary:** The actual strength of the confounder's associations are approximately $RR_{AU} \approx 3.37$ and $RR_{UY} \approx 1.62$. Notice that one of these (3.37) is *larger* than our E-value of 2.21, while the other (1.62) is smaller. The E-value assumes the two arms of confounding are equal. Since one of them is quite strong, it is plausible that `U` could indeed be responsible for a large part of the effect we saw. In fact, if we run the "true" model, we see the effect of A is -5, just as we specified.
-
 ### Retrieval Quiz & Reflection
 
-1.  **Q:** True or False: The E-value tells us the exact magnitude of bias due to unmeasured confounding. **A:** False. It provides a minimum threshold, not a measurement of the actual bias.
-2.  **Q:** You report an RR of 1.8 with a 95% CI of \[1.1, 2.9\]. Which E-value is more important to report for assessing the study's robustness? The one for the 1.8 or the one for the 1.1? **A:** The E-value for the 1.1, as it represents the sensitivity of the conclusion at the boundary of statistical significance. It's the most conservative and honest assessment.
+1.  **Q:** True or False: The E-value tells us the exact magnitude of bias due to unmeasured confounding. 
+    1.  **A:** False. It provides a minimum threshold, not a measurement of the actual bias.
+2.  **Q:** You report an RR of 1.8 with a 95% CI of \[1.1, 2.9\]. Which E-value is more important to report for assessing the study's robustness? The one for the 1.8 or the one for the 1.1? 
+    1.  **A:** The E-value for the 1.1, as it represents the sensitivity of the conclusion at the boundary of statistical significance. It's the most conservative and honest assessment.
 3.  **Reflection Prompt:** Consider a key causal question in your field of study. What is the most important potential unmeasured confounder? Search the literature for a typical effect size for that relationship. How does it compare to the E-values you might expect for typical findings in your field?
 
-## 6. Common Pitfalls & Checks
+## Common Pitfalls & Checks
 
 ::: callout-warning
-## ⚠️ Misinterpreting the E-value
+## Misinterpreting the E-value
 
 The most common pitfall is overstating the E-value's claim. It does **not** mean the result is "robust." It simply provides a specific quantitative benchmark against which subject-matter experts can debate the plausibility of confounding. An E-value of 3 is impressive in a field where known confounders have RRs of \~1.5, but unimpressive in a field where they can be 5 or higher.
 :::
 
 ::: callout-important
-## 📌 Always Report the E-value for the Confidence Interval
+## Always Report the E-value for the Confidence Interval
 
 The E-value for the point estimate is often reported, but the more critical value is for the limit of the confidence interval closest to the null. This value answers the question: "How much confounding would it take to move my confidence interval so that it includes the null?" This is the standard for rigorous sensitivity analysis.
 :::
 
 ::: callout-tip
-## 🧠 Compare the E-value to Known Associations
+## Compare the E-value to Known Associations
 
 An E-value is only useful when placed in context. After calculating it, the next step is to ask, "How does this value compare to the strength of *known* confounders that we *did* measure?" For example, if you calculated an E-value of 2.5, but you know that adjusting for smoking changed your estimate by a factor of 3.0, then it's highly plausible that other unmeasured confounders of similar strength exist.
 :::
 
 ::: callout-question
-## ❓ Check Your Understanding
+## Check Your Understanding
 
 **Q:** A study finds that drinking coffee is associated with a lower risk of death (Hazard Ratio = 0.80). The E-value is calculated to be 1.8. What does this mean? **A:** The observed HR is $1/0.80 = 1.25$ on the risk scale. The E-value of 1.8 means that an unmeasured factor (e.g., healthier lifestyle) would have to be associated with *both* drinking coffee and a lower risk of death by a risk ratio of at least 1.8 each (above and beyond measured covariates) to fully explain away the protective association.
 :::
 
 
-## 7. Advanced Teaching Activities & Interactivity
+## Advanced Teaching Activities & Interactivity
 
 -   **Think-Pair-Share:**
     -   **Prompt:** Find a recent news article reporting on an observational study (e.g., "Eating broccoli reduces cancer risk").
@@ -501,7 +590,7 @@ An E-value is only useful when placed in context. After calculating it, the next
     -   **Solution:** The E-value for an RR of 1.05 is just $1.05 + \sqrt{1.05 \times 0.05} \approx 1.28$. The review might state: "Although the finding is statistically significant, it is highly sensitive to unmeasured confounding. A weak confounder associated with both physician choice of the new drug and the outcome by a risk ratio of only 1.28 could explain away this finding, a level of confounding that is highly plausible in this context."
 
 
-## 8. Appendix: Advanced Theory & Derivations
+## Appendix: Advanced Theory & Derivations
 
 ### Derivation of the E-value for a Risk Ratio
 

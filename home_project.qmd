@@ -21,9 +21,9 @@ Keep these major deadlines on your calendar. A more detailed week-by-week schedu
 
 Here are the essential documents for your project. I recommend approaching them in the order listed.
 
-- [**Project Guidlines**](project/project_guidelines.qmd)
+- [**Project Guidelines**](project/project_guidelines.qmd)
 	- **Start here.** This document provides a high-level overview of the project's core objective, deliverables, and overall expectations.
-- [**Prject Schedule**](project/project_schedule.qmd)
+- [**Project Schedule**](project/project_schedule.qmd)
 	- **Your roadmap.** This file breaks the project into manageable weekly tasks and deliverables, aligning your work with the course topics.
 - [**Data Resources and Exploration**](project/data_resources.qmd)
 	- **Find your data.** Use this page to access data search tools and a curated list of datasets that are well-suited for target trial emulation.
@@ -33,5 +33,9 @@ Here are the essential documents for your project. I recommend approaching them 
 	- **How your proposal will be graded.** The detailed rubric for the project proposal.
 - [**Final Paper Rubric**](project/rubric_final_paper.qmd)
 	- **How your final paper will be graded.** The detailed rubric for the final written report.
+- [**Presentation Template**](templates/presentation_template.qmd)
+	- **Your presentation blueprint.** A template to help you structure your presentation, which is the second major graded deliverable.
+- [**Final Paper Template**](templates/final_paper_template.qmd)
+	- **Your final paper blueprint.** A template to help you structure your final written report, which is the third major graded deliverable.
 
 Good luck, and please don't hesitate to use office hours to discuss your project ideas.
